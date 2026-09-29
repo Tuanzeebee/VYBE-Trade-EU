@@ -105,6 +105,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/public/hs-codes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Search Hs Codes */
+        get: operations["search_hs_codes_api_public_hs_codes_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -315,6 +332,23 @@ export interface components {
         HTTPValidationError: {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
+        };
+        /** HsCodeOut */
+        HsCodeOut: {
+            /** Code */
+            code: string;
+            /** Formatted */
+            formatted: string;
+            /** Name Vi */
+            name_vi: string;
+            /** Name En */
+            name_en: string;
+            /** Chapter */
+            chapter: string;
+            /** Category */
+            category: string | null;
+            /** Supported */
+            supported: boolean;
         };
         /** LoginIn */
         LoginIn: {
@@ -691,6 +725,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PresignOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    search_hs_codes_api_public_hs_codes_get: {
+        parameters: {
+            query?: {
+                q?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HsCodeOut"][];
                 };
             };
             /** @description Validation Error */

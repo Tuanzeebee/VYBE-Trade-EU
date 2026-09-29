@@ -51,8 +51,17 @@ const B2_STRINGS = [
   'Ước lượng mua hàng'
 ];
 
-describe('catalog.json có bản tiếng Anh cho chuỗi A1, B1, B2', () => {
-  it.each([...A1_STRINGS, ...B1_STRINGS, ...B2_STRINGS])('%s', (vi) => {
+// Chuỗi mới ở B4 (ô chọn mã HS).
+const B4_STRINGS = [
+  'Gõ tên sản phẩm hoặc mã HS, ví dụ: gạo, rice, 1006',
+  'Đã hỗ trợ máy tính',
+  'Chưa hỗ trợ máy tính',
+  'Không tìm thấy mã HS phù hợp',
+  'Không tải được danh sách mã HS. Vui lòng thử lại.'
+];
+
+describe('catalog.json có bản tiếng Anh cho chuỗi A1, B1, B2, B4', () => {
+  it.each([...A1_STRINGS, ...B1_STRINGS, ...B2_STRINGS, ...B4_STRINGS])('%s', (vi) => {
     const en = translateText(vi, 'en');
     expect(en).not.toBe(vi);
     expect(en.trim()).not.toBe('');

@@ -8008,5 +8008,30 @@
     "Estimated purchases",
     "Estimated purchases",
     "Estimated purchases"
+  ],
+  "Gõ tên sản phẩm hoặc mã HS, ví dụ: gạo, rice, 1006": [
+    "Type a product name or HS code, e.g. rice, 1006",
+    "Type a product name or HS code, e.g. rice, 1006",
+    "Type a product name or HS code, e.g. rice, 1006"
+  ],
+  "Đã hỗ trợ máy tính": [
+    "Supported by calculators",
+    "Supported by calculators",
+    "Supported by calculators"
+  ],
+  "Chưa hỗ trợ máy tính": [
+    "Not yet supported by calculators",
+    "Not yet supported by calculators",
+    "Not yet supported by calculators"
+  ],
+  "Không tìm thấy mã HS phù hợp": [
+    "No matching HS code found",
+    "No matching HS code found",
+    "No matching HS code found"
+  ],
+  "Không tải được danh sách mã HS. Vui lòng thử lại.": [
+    "Could not load HS codes. Please try again.",
+    "Could not load HS codes. Please try again.",
+    "Could not load HS codes. Please try again."
   ]
 }
