@@ -1,0 +1,37 @@
+# Hạ tầng dev: Postgres 16 + pgvector, SeaweedFS (S3), Mailpit (SMTP giả).
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: evfta
+      POSTGRES_PASSWORD: evfta
+      POSTGRES_DB: evfta
+    ports: ["5432:5432"]
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U evfta"]
+      interval: 5s
+      retries: 10
+
+  # S3-compatible cho dev. MinIO đã ngừng phát image công khai nên dùng SeaweedFS.
+  # Không cấu hình identities = không kiểm khóa: CHỈ dùng ở dev.
+  s3:
+    image: chrislusf/seaweedfs
+    command: server -dir=/data -s3 -s3.port=8333
+    ports: ["8333:8333"]
+    volumes: [s3data:/data]
+
+  s3-init:
+    image: chrislusf/seaweedfs
+    depends_on: [s3]
+    restart: "no"
+    entrypoint: >
+      sh -c "until echo 's3.bucket.create -name evfta-private' | weed shell -master=s3:9333 2>&1 | grep -qvi error; do sleep 2; done"
+
+  mailpit:
+    image: axllent/mailpit
+    ports: ["1025:1025", "8025:8025"]
+
+volumes:
+  pgdata:
+  s3data:
