@@ -4,11 +4,11 @@ from logging.config import fileConfig
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import create_async_engine
 
+# Import models của từng module ở đây khi module có bảng, để autogenerate thấy chúng.
+import app.core.audit  # noqa: F401
 from alembic import context
 from app.core.config import get_settings
 from app.core.db import Base
-
-# Import models của từng module ở đây khi module có bảng, để autogenerate thấy chúng.
 
 config = context.config
 if config.config_file_name is not None:
