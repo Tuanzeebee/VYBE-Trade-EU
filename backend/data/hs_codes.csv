@@ -1,0 +1,28 @@
+# Danh mục mã HS đợt 1 (backlog C0) — nạp bằng: uv run python -m scripts.seed_hs_codes
+# Nguồn: PO cung cấp ngày 29/09/2026 (20 mã 6 số + tên tiếng Anh HS 2022).
+# TRẠNG THÁI: CHƯA xác nhận người duyệt luật TM đã ký danh sách này (C0 yêu cầu "đã ký").
+# name_en dùng để tìm kiếm, không phải câu chữ pháp lý. Cột thuế/SPS trong file nguồn KHÔNG nhập ở đây:
+# dữ liệu thuế chỉ vào bảng tariff_lines (C1) sau khi luật TM duyệt.
+# category: nhóm hàng theo đề xuất đã được PO đồng ý; is_calculator_supported = thuộc danh mục hỗ trợ đợt 1
+# (máy tính vẫn trả unsupported nếu chưa có dòng thuế/quy tắc đã duyệt).
+code,name_vi,name_en,category,is_calculator_supported
+090111,"Cà phê nhân, chưa rang","Coffee, not roasted, not decaffeinated",agriculture,true
+090121,Cà phê rang,"Coffee, roasted, not decaffeinated",agriculture,true
+080132,Hạt điều đã bóc vỏ,"Cashew nuts, shelled",agriculture,true
+090411,Hạt tiêu nguyên hạt,"Pepper of the genus Piper, neither crushed nor ground",spices,true
+090619,Quế,"Cinnamon, neither crushed nor ground — other",spices,true
+090240,Chè đen,Other black tea (fermented) and other partly fermented tea,agriculture,true
+100630,Gạo xát,Semi-milled or wholly milled rice,agriculture,true
+030617,Tôm đông lạnh,"Other shrimps and prawns, frozen",seafood,true
+160529,Tôm chế biến,"Shrimps and prawns, prepared or preserved — other",seafood,true
+030462,Phi lê cá tra đông lạnh,Frozen fillets of catfish (Pangasius spp.),seafood,true
+160414,Cá ngừ chế biến/đóng hộp,"Prepared or preserved tunas, skipjack and bonito, whole or in pieces",seafood,true
+081060,Sầu riêng tươi,"Durians, fresh",agriculture,true
+081090,"Thanh long, trái cây nhiệt đới khác","Other fruit, fresh",agriculture,true
+080450,Xoài (tươi hoặc sấy),"Guavas, mangoes and mangosteens, fresh or dried",agriculture,true
+081190,Trái cây đông lạnh,"Other fruit, frozen",agriculture,true
+200899,Trái cây chế biến,Fruit otherwise prepared or preserved — other,food_beverage,true
+080111,Dừa sấy khô,"Coconuts, desiccated",agriculture,true
+190219,"Bún, phở khô","Uncooked pasta, not containing eggs — other",food_beverage,true
+210390,"Nước mắm, nước sốt","Sauces and preparations therefor — other",food_beverage,true
+040900,Mật ong,Natural honey,agriculture,true

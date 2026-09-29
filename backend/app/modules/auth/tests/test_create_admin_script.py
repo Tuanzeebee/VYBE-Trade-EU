@@ -1,3 +1,6 @@
+import io
+import sys
+
 import pytest
 
 from scripts.create_admin import main
@@ -15,3 +18,16 @@ def test_script_refuses_blank_or_short_password(
 
 def test_script_requires_email_argument() -> None:
     assert main([], ask_password=lambda _prompt: "mat-khau-du-dai") == 2
+
+
+def test_script_prints_vietnamese_on_a_cp1252_console(monkeypatch: pytest.MonkeyPatch) -> None:
+    async def fake_create(email: str, password: str) -> None:
+        return None
+
+    monkeypatch.setattr("scripts.create_admin._create", fake_create)
+    raw = io.BytesIO()
+    console = io.TextIOWrapper(raw, encoding="cp1252", errors="strict")
+    monkeypatch.setattr(sys, "stdout", console)
+    assert main(["Root@X.vn"], ask_password=lambda _prompt: "mat-khau-du-dai") == 0
+    console.flush()
+    assert "Đã tạo admin root@x.vn" in raw.getvalue().decode("utf-8")
