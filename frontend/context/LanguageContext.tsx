@@ -4,7 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useEffect } from 'react';
+import { useLocale } from 'next-intl';
+import { usePathname, useRouter } from '../i18n/navigation';
 import { translateText } from '../i18n/translate';
 
 export type LanguageCode = 'vi' | 'en' | 'fr' | 'ja';
@@ -17,7 +19,7 @@ export interface LanguageOption {
   country: string;
 }
 
-export const LANGUAGES: LanguageOption[] = [
+const ALL_LANGUAGES: LanguageOption[] = [
   {
     code: 'vi',
     name: 'Tiếng Việt',
@@ -47,6 +49,9 @@ export const LANGUAGES: LanguageOption[] = [
     country: '日本 (Japan)'
   }
 ];
+
+// MVP chỉ có vi/en; ngôn ngữ thứ 3 (fr, ja) là P2 — ẩn khỏi giao diện, giữ dữ liệu dịch.
+export const LANGUAGES = ALL_LANGUAGES.filter((option) => option.code === 'vi' || option.code === 'en');
 
 export const TRANSLATIONS = {
   vi: {
@@ -418,16 +423,16 @@ interface LanguageContextType {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguageState] = useState<LanguageCode>(() => {
-    try {
-      const saved = localStorage.getItem('vybe_language') as LanguageCode;
-      return LANGUAGES.some((option) => option.code === saved) ? saved : 'vi';
-    } catch { return 'vi'; }
-  });
+  // Ngôn ngữ nằm trên URL (/vi, /en) — next-intl là nguồn sự thật, không còn localStorage.
+  const locale = useLocale();
+  const language: LanguageCode = LANGUAGES.some((option) => option.code === locale) ? (locale as LanguageCode) : 'vi';
+  const router = useRouter();
+  const pathname = usePathname();
 
   const setLanguage = (lang: LanguageCode) => {
-    setLanguageState(lang);
-    localStorage.setItem('vybe_language', lang);
+    if (!LANGUAGES.some((option) => option.code === lang)) return;
+    const search = typeof window === 'undefined' ? '' : window.location.search;
+    router.replace(`${pathname}${search}`, { locale: lang });
   };
 
   const currentLanguageOption = LANGUAGES.find(l => l.code === language) || LANGUAGES[0];
