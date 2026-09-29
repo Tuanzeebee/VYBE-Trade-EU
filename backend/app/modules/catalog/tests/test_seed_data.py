@@ -12,12 +12,19 @@ WAVE_1 = {
     "030462", "160414", "081060", "081090", "080450", "081190", "200899", "080111", "190219",
     "210390", "040900",
 }  # fmt: skip
+# Bổ sung từ Gói dữ liệu luật TM v0 (30/9/2026, dự thảo chưa duyệt).
+PACK_V0_EXTRA = {
+    "030487", "030743", "160521", "190590", "210111", "610910", "620342", "640399", "640411",
+    "940360",
+}  # fmt: skip
+# Nhóm hàng của pack (giày dép, gỗ) chưa có trong enum Industry: để trống, không đoán.
+NO_CATEGORY = {"640399", "640411", "940360"}
 
 
-def test_csv_has_exactly_the_wave_1_codes() -> None:
+def test_csv_has_exactly_the_wave_1_codes_and_the_v0_pack() -> None:
     rows = load_csv(DEFAULT_CSV)
-    assert len(rows) == 20
-    assert {r.code for r in rows} == WAVE_1
+    assert len(rows) == 30
+    assert {r.code for r in rows} == WAVE_1 | PACK_V0_EXTRA
 
 
 def test_csv_rows_are_complete() -> None:
@@ -25,7 +32,7 @@ def test_csv_rows_are_complete() -> None:
         assert len(row.code) == 6
         assert row.name_vi.strip()
         assert row.name_en.strip()
-        assert row.category is not None
+        assert (row.category is None) == (row.code in NO_CATEGORY)
         assert row.is_calculator_supported is True
 
 

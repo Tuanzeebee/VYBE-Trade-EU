@@ -35,9 +35,9 @@ async def test_multi_word_queries_ignore_order_and_accents(seeded: AsyncSession,
 @pytest.mark.parametrize(
     ("q", "expected"),
     [
-        ("cà phê", {"090111", "090121"}),
-        ("ca phe", {"090111", "090121"}),
-        ("coffee", {"090111", "090121"}),
+        ("cà phê", {"090111", "090121", "210111"}),
+        ("ca phe", {"090111", "090121", "210111"}),
+        ("coffee", {"090111", "090121", "210111"}),
         ("quế", {"090619"}),
         ("cinnamon", {"090619"}),
         ("mat ong", {"040900"}),
@@ -124,7 +124,7 @@ async def test_get_hs_code_accepts_dotted_and_plain(seeded: AsyncSession) -> Non
 
 async def test_upsert_is_idempotent_and_updates(seeded: AsyncSession) -> None:
     count = await seeded.scalar(text("SELECT count(*) FROM hs_codes"))
-    assert count == 20
+    assert count == 30
     await upsert_hs_codes(
         seeded,
         [
@@ -136,7 +136,7 @@ async def test_upsert_is_idempotent_and_updates(seeded: AsyncSession) -> None:
             )
         ],
     )
-    assert await seeded.scalar(text("SELECT count(*) FROM hs_codes")) == 20
+    assert await seeded.scalar(text("SELECT count(*) FROM hs_codes")) == 30
     hs = await get_hs_code(seeded, "100630")
     assert hs is not None
     assert hs.name_vi == "Gạo xát (đã sửa)"
