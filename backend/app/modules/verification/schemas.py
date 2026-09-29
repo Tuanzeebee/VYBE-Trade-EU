@@ -91,3 +91,11 @@ class QueueItem(BaseModel):
 class DecisionIn(BaseModel):
     decision: Literal["approve", "reject", "request_info"]
     reason: Annotated[str | None, Field(max_length=2000)] = None
+
+
+class PublicCertificateOut(BaseModel):
+    """Loại chứng nhận có thể lọc công khai trong danh bạ."""
+
+    code: str
+    name_vi: str
+    name_en: str

@@ -622,6 +622,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/public/suppliers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Search Suppliers */
+        get: operations["search_suppliers_api_public_suppliers_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/public/suppliers/filters": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Supplier Filters */
+        get: operations["supplier_filters_api_public_suppliers_filters_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/exporter/evidence-types": {
         parameters: {
             query?: never;
@@ -1634,6 +1668,13 @@ export interface components {
             /** Was Helpful */
             was_helpful: boolean;
         };
+        /** FilterOptions */
+        FilterOptions: {
+            /** Categories */
+            categories: string[];
+            /** Certificates */
+            certificates: components["schemas"]["PublicCertificateOut"][];
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
@@ -1829,6 +1870,18 @@ export interface components {
             is_active?: boolean | null;
             /** Image Keys */
             image_keys?: string[] | null;
+        };
+        /**
+         * PublicCertificateOut
+         * @description Loại chứng nhận có thể lọc công khai trong danh bạ.
+         */
+        PublicCertificateOut: {
+            /** Code */
+            code: string;
+            /** Name Vi */
+            name_vi: string;
+            /** Name En */
+            name_en: string;
         };
         /**
          * PublicCompanyOut
@@ -2124,6 +2177,48 @@ export interface components {
             ai_queries_this_week: number;
             /** Avg Confidence */
             avg_confidence: number | null;
+        };
+        /**
+         * SupplierCardOut
+         * @description Thẻ nhà cung cấp trong danh bạ (E3): tên, huy hiệu, nhóm hàng, quốc gia, mô tả ngắn.
+         */
+        SupplierCardOut: {
+            /** Slug */
+            slug: string;
+            /** Legal Name */
+            legal_name: string;
+            /** Country */
+            country: string;
+            /** Industry Sector */
+            industry_sector: string | null;
+            /**
+             * Verification Level
+             * @enum {string}
+             */
+            verification_level: "basic" | "evfta_verified";
+            /** Description Vi */
+            description_vi: string | null;
+            /** Description En */
+            description_en: string | null;
+            /** Logo Url */
+            logo_url: string | null;
+            /** Product Names */
+            product_names: string[];
+            /** Product Count */
+            product_count: number;
+            /** Categories */
+            categories: string[];
+        };
+        /** SupplierPage */
+        SupplierPage: {
+            /** Items */
+            items: components["schemas"]["SupplierCardOut"][];
+            /** Total */
+            total: number;
+            /** Page */
+            page: number;
+            /** Page Size */
+            page_size: number;
         };
         /**
          * TariffIn
@@ -3885,6 +3980,63 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    search_suppliers_api_public_suppliers_get: {
+        parameters: {
+            query?: {
+                q?: string;
+                hs?: string | null;
+                country?: string | null;
+                category?: string | null;
+                cert?: string | null;
+                page?: number;
+                page_size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SupplierPage"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    supplier_filters_api_public_suppliers_filters_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FilterOptions"];
                 };
             };
         };

@@ -9738,5 +9738,70 @@
     "Scale 1 (low) to 3 (high). Out-of-scope answers are not counted.",
     "Scale 1 (low) to 3 (high). Out-of-scope answers are not counted.",
     "Scale 1 (low) to 3 (high). Out-of-scope answers are not counted."
+  ],
+  "Yêu cầu báo giá": [
+    "Request a quote",
+    "Request a quote",
+    "Request a quote"
+  ],
+  "Nhà cung cấp Việt Nam đã xác minh": [
+    "Verified Vietnamese suppliers",
+    "Verified Vietnamese suppliers",
+    "Verified Vietnamese suppliers"
+  ],
+  "Chỉ những doanh nghiệp đã được xác minh mới xuất hiện trong danh bạ.": [
+    "Only verified businesses appear in the directory.",
+    "Only verified businesses appear in the directory.",
+    "Only verified businesses appear in the directory."
+  ],
+  "Tìm theo tên công ty, sản phẩm, mã HS hoặc chứng nhận": [
+    "Search by company name, product, HS code or certificate",
+    "Search by company name, product, HS code or certificate",
+    "Search by company name, product, HS code or certificate"
+  ],
+  "Tìm kiếm": [
+    "Search",
+    "Search",
+    "Search"
+  ],
+  "Không tải được danh bạ. Vui lòng thử lại.": [
+    "Could not load the directory. Please try again.",
+    "Could not load the directory. Please try again.",
+    "Could not load the directory. Please try again."
+  ],
+  "Chưa có nhà cung cấp phù hợp. Hãy thử bỏ bớt bộ lọc hoặc đổi từ khóa.": [
+    "No matching suppliers yet. Try removing some filters or changing the keywords.",
+    "No matching suppliers yet. Try removing some filters or changing the keywords.",
+    "No matching suppliers yet. Try removing some filters or changing the keywords."
+  ],
+  "Phân trang": [
+    "Pagination",
+    "Pagination",
+    "Pagination"
+  ],
+  "Trang trước": [
+    "Previous page",
+    "Previous page",
+    "Previous page"
+  ],
+  "Trang sau": [
+    "Next page",
+    "Next page",
+    "Next page"
+  ],
+  "Quay lại danh bạ": [
+    "Back to the directory",
+    "Back to the directory",
+    "Back to the directory"
+  ],
+  "Thành lập": [
+    "Founded",
+    "Founded",
+    "Founded"
+  ],
+  "Doanh nghiệp chưa đăng sản phẩm nào.": [
+    "This business has not listed any products yet.",
+    "This business has not listed any products yet.",
+    "This business has not listed any products yet."
   ]
 }

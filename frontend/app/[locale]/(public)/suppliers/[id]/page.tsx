@@ -1,13 +1,10 @@
 import { setRequestLocale } from 'next-intl/server';
-import { Suspense, use } from 'react';
-import { SupplierDetailRoute } from '@/components/routes/PublicRoutes';
+import SupplierProfile from '@/components/SupplierProfile';
+import type { Locale } from '@/i18n/translate';
 
-export default function Page({ params }: { params: Promise<{ locale: string; id: string }> }) {
-  const { locale, id } = use(params);
+// [id] là slug công khai của công ty.
+export default async function Page({ params }: { params: Promise<{ locale: string; id: string }> }) {
+  const { locale, id } = await params;
   setRequestLocale(locale);
-  return (
-    <Suspense>
-      <SupplierDetailRoute id={id} />
-    </Suspense>
-  );
+  return <SupplierProfile slug={id} locale={locale as Locale} />;
 }

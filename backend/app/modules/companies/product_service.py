@@ -1,10 +1,11 @@
 """Sản phẩm của exporter (B5) và hồ sơ công khai. Một phần API công khai của module companies."""
 
 import uuid
+from dataclasses import dataclass
 from datetime import UTC, datetime
 from typing import Any
 
-from sqlalchemy import or_, select
+from sqlalchemy import Select, and_, exists, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.audit import record
@@ -25,6 +26,8 @@ from app.modules.companies.models import (
 from app.modules.companies.schemas import (
     AdminProductOut,
     AdminProductPatch,
+    ExporterCardOut,
+    ExporterPage,
     ProductImageOut,
     ProductIn,
     ProductOut,
@@ -204,17 +207,123 @@ async def delete_product(session: AsyncSession, user: CurrentUser, product_id: u
     await session.commit()
 
 
+def verified_exporter_conditions(now: datetime) -> list[Any]:
+    """Điều kiện DUY NHẤT để công ty được hiện ra công khai (danh bạ và hồ sơ) — AGENTS.md §6.10:
+    đã xác minh, chưa bị ẩn, chưa hết hạn."""
+    return [
+        Company.type == CompanyType.exporter,
+        Company.verification_status == VerificationStatus.verified,
+        Company.is_hidden.is_(False),
+        or_(Company.expires_at.is_(None), Company.expires_at > now),
+    ]
+
+
+def _public_product_conditions() -> list[Any]:
+    return [Product.is_active.is_(True), Product.approval_status == ApprovalStatus.approved]
+
+
+def _literal_like(token: str) -> str:
+    escaped = token.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+    return f"%{escaped}%"
+
+
+@dataclass(frozen=True)
+class SearchTerm:
+    """Một từ khóa và các nơi khác (do module khác cung cấp) mà nó có thể khớp:
+    mã HS có tên khớp, công ty có chứng nhận khớp."""
+
+    token: str
+    hs_codes: Select[str]
+    company_ids: Select[uuid.UUID]
+
+
+async def search_verified_exporters(
+    session: AsyncSession,
+    storage: Storage,
+    *,
+    terms: list[SearchTerm],
+    hs_prefix: str | None,
+    country: str | None,
+    category_codes: Select[str] | None,
+    certified_ids: Select[uuid.UUID] | None,
+    page: int,
+    page_size: int,
+    now: datetime,
+) -> ExporterPage:
+    """Hàm truy vấn danh bạ DUY NHẤT. Mọi từ khóa phải khớp (AND); mỗi từ khớp nếu có ở tên công ty,
+    tên sản phẩm đang hiển thị, mã HS (kể cả theo tên HS) hoặc chứng nhận còn hạn."""
+    live_product = and_(Product.company_id == Company.id, *_public_product_conditions())
+    conditions: list[Any] = verified_exporter_conditions(now)
+    for term in terms:
+        pattern = _literal_like(term.token)
+        name_like = func.immutable_unaccent(func.lower(Company.legal_name)).like(
+            func.immutable_unaccent(func.lower(pattern)), escape="\\"
+        )
+        product_like = func.immutable_unaccent(func.lower(Product.name)).like(
+            func.immutable_unaccent(func.lower(pattern)), escape="\\"
+        )
+        conditions.append(
+            or_(
+                name_like,
+                exists().where(live_product, or_(product_like, Product.hs_code.in_(term.hs_codes))),
+                Company.id.in_(term.company_ids),
+            )
+        )
+    if hs_prefix:
+        conditions.append(exists().where(live_product, Product.hs_code.like(f"{hs_prefix}%")))
+    if country:
+        conditions.append(Company.country == country)
+    if category_codes is not None:
+        conditions.append(exists().where(live_product, Product.hs_code.in_(category_codes)))
+    if certified_ids is not None:
+        conditions.append(Company.id.in_(certified_ids))
+
+    total = await session.scalar(select(func.count()).select_from(Company).where(*conditions)) or 0
+    companies = (
+        await session.scalars(
+            select(Company)
+            .where(*conditions)
+            .order_by(Company.legal_name, Company.id)
+            .limit(page_size)
+            .offset((page - 1) * page_size)
+        )
+    ).all()
+    products: dict[uuid.UUID, list[Product]] = {c.id: [] for c in companies}
+    if companies:
+        rows = await session.scalars(
+            select(Product)
+            .where(Product.company_id.in_(products), *_public_product_conditions())
+            .order_by(Product.created_at, Product.id)
+        )
+        for row in rows:
+            products[row.company_id].append(row)
+    items = [
+        ExporterCardOut(
+            slug=c.slug,
+            legal_name=c.legal_name,
+            country=c.country,
+            industry_sector=c.industry_sector,
+            verification_level=c.verification_level.value,
+            verified_at=c.verified_at,
+            description_vi=c.description_vi,
+            description_en=c.description_en,
+            logo_url=await storage.presign_get(c.logo_key) if c.logo_key else None,
+            product_names=[p.name for p in products[c.id][:3]],
+            product_count=len(products[c.id]),
+            hs_codes=list(dict.fromkeys(p.hs_code for p in products[c.id])),
+        )
+        for c in companies
+    ]
+    return ExporterPage(items=items, total=total, page=page, page_size=page_size)
+
+
 async def get_public_profile(
     session: AsyncSession, storage: Storage, slug: str
 ) -> PublicCompanyOut:
     """Chỉ exporter đã xác minh, chưa bị ẩn, chưa hết hạn; chỉ sản phẩm đang bật và đã duyệt."""
     company = await session.scalar(
         select(Company).where(
-            Company.slug == slug,
-            Company.type == CompanyType.exporter,
-            Company.verification_status == VerificationStatus.verified,
-            Company.is_hidden.is_(False),
-            or_(Company.expires_at.is_(None), Company.expires_at > datetime.now(UTC)),
+            Company.slug == slug, *verified_exporter_conditions(datetime.now(UTC))
         )
     )
     if company is None:

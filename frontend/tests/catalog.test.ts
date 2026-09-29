@@ -362,8 +362,39 @@ const D3_STRINGS = [
   "Thang 1 (thấp) đến 3 (cao). Chưa tính câu ngoài phạm vi."
 ];
 
-describe('catalog.json có bản tiếng Anh cho chuỗi A1, B1, B2, B3, B4, B5, A2, C2, C4, C6, C7, D2, D3', () => {
-  it.each([...A1_STRINGS, ...B1_STRINGS, ...B2_STRINGS, ...B3_STRINGS, ...B4_STRINGS, ...B5_STRINGS, ...A2_STRINGS, ...C2_STRINGS, ...C4_STRINGS, ...C6_STRINGS, ...C7_STRINGS, ...D2_STRINGS, ...D3_STRINGS])('%s', (vi) => {
+const E2_STRINGS = [
+  "Đã xác minh",
+  "Sản phẩm",
+  "Yêu cầu báo giá",
+  "Xem hồ sơ",
+  "Nhà cung cấp Việt Nam đã xác minh",
+  "Chỉ những doanh nghiệp đã được xác minh mới xuất hiện trong danh bạ.",
+  "Tìm theo tên công ty, sản phẩm, mã HS hoặc chứng nhận",
+  "Mã HS",
+  "Quốc gia",
+  "Tất cả",
+  "Nhóm hàng",
+  "Chứng nhận",
+  "Tìm kiếm",
+  "Không tải được danh bạ. Vui lòng thử lại.",
+  "Chưa có nhà cung cấp phù hợp. Hãy thử bỏ bớt bộ lọc hoặc đổi từ khóa.",
+  "nhà cung cấp",
+  "Phân trang",
+  "Trang trước",
+  "Trang sau",
+  "Quay lại danh bạ",
+  "Thành lập",
+  "Doanh nghiệp chưa đăng sản phẩm nào.",
+  "Nông sản",
+  "Thủy sản",
+  "Thực phẩm & Đồ uống",
+  "Dệt may",
+  "Thủ công mỹ nghệ",
+  "Gia vị & Hương liệu"
+];
+
+describe('catalog.json có bản tiếng Anh cho chuỗi A1, B1, B2, B3, B4, B5, A2, C2, C4, C6, C7, D2, D3, E2', () => {
+  it.each([...A1_STRINGS, ...B1_STRINGS, ...B2_STRINGS, ...B3_STRINGS, ...B4_STRINGS, ...B5_STRINGS, ...A2_STRINGS, ...C2_STRINGS, ...C4_STRINGS, ...C6_STRINGS, ...C7_STRINGS, ...D2_STRINGS, ...D3_STRINGS, ...E2_STRINGS])('%s', (vi) => {
     const en = translateText(vi, 'en');
     expect(en).not.toBe(vi);
     expect(en.trim()).not.toBe('');

@@ -8,7 +8,7 @@ import datetime as dt
 import uuid
 from typing import Any
 
-from sqlalchemy import select
+from sqlalchemy import Select, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.audit import record
@@ -37,6 +37,7 @@ from app.modules.verification.schemas import (
     EvidenceIn,
     EvidenceOut,
     EvidencePatch,
+    PublicCertificateOut,
 )
 
 ENTITY = "evidence"
@@ -369,3 +370,60 @@ async def daily_refresh(session: AsyncSession, now: dt.datetime) -> int:
         await companies.refresh_completeness(session, company_id)
     await session.commit()
     return changed
+
+
+# Nhóm bằng chứng không bao giờ công khai: EUR.1 đã cấp chứa giá (backlog C6: che giá).
+NON_PUBLIC_GROUPS = ("origin",)
+
+
+def _public_types() -> Select[str]:
+    return select(EvidenceType.code).where(
+        EvidenceType.reviewed_by.is_not(None),
+        EvidenceType.is_active.is_(True),
+        EvidenceType.group.not_in(NON_PUBLIC_GROUPS),
+    )
+
+
+def _like_pattern(token: str) -> str:
+    escaped = token.strip().replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+    return f"%{escaped}%"
+
+
+def certified_company_ids(
+    today: dt.date, *, type_code: str | None = None, token: str | None = None
+) -> Select[uuid.UUID]:
+    """Truy vấn con: công ty có chứng nhận ĐÃ DUYỆT, CÒN HẠN, thuộc loại luật TM đã duyệt và được
+    phép công khai. Lọc theo mã loại hoặc tìm theo tên loại (vi không dấu / en)."""
+    query = (
+        select(Evidence.company_id)
+        .join(EvidenceType, EvidenceType.code == Evidence.type_code)
+        .where(
+            Evidence.approval_status == ApprovalStatus.approved,
+            or_(Evidence.expires_at.is_(None), Evidence.expires_at > today),
+            Evidence.type_code.in_(_public_types()),
+        )
+    )
+    if type_code is not None:
+        query = query.where(Evidence.type_code == type_code)
+    if token:
+        pattern = _like_pattern(token)
+        query = query.where(
+            or_(
+                func.immutable_unaccent(func.lower(EvidenceType.name_vi)).like(
+                    func.immutable_unaccent(func.lower(pattern)), escape="\\"
+                ),
+                func.lower(EvidenceType.name_en).like(func.lower(pattern), escape="\\"),
+            )
+        )
+    return query
+
+
+async def public_certificate_types(session: AsyncSession) -> list[PublicCertificateOut]:
+    rows = (
+        await session.scalars(
+            select(EvidenceType)
+            .where(EvidenceType.code.in_(_public_types()))
+            .order_by(EvidenceType.name_en)
+        )
+    ).all()
+    return [PublicCertificateOut(code=r.code, name_vi=r.name_vi, name_en=r.name_en) for r in rows]

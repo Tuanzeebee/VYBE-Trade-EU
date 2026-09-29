@@ -22,6 +22,7 @@ from app.modules.catalog.router import router as catalog_router
 from app.modules.companies.router import router as companies_router
 from app.modules.compliance.router import router as compliance_router
 from app.modules.copilot.router import router as copilot_router
+from app.modules.directory.router import router as directory_router
 from app.modules.notifications import handlers as notification_handlers
 from app.modules.verification.router import router as verification_router
 
@@ -54,6 +55,7 @@ app.include_router(companies_router)
 app.include_router(catalog_router)
 app.include_router(compliance_router)
 app.include_router(copilot_router)
+app.include_router(directory_router)
 app.include_router(verification_router)
 
 

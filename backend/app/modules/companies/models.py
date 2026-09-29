@@ -9,6 +9,7 @@ from sqlalchemy import (
     DateTime,
     Enum,
     ForeignKey,
+    Index,
     Numeric,
     SmallInteger,
     String,
@@ -41,6 +42,20 @@ class VerificationLevel(StrEnum):
 
 class Company(Base):
     __tablename__ = "companies"
+    __table_args__ = (
+        # Tìm tên công ty ở danh bạ (E2); biểu thức khớp product_service.search_verified_exporters.
+        Index(
+            "ix_companies_legal_name_trgm",
+            text("immutable_unaccent(lower(legal_name)) gin_trgm_ops"),
+            postgresql_using="gin",
+        ),
+        Index(
+            "ix_companies_directory",
+            "legal_name",
+            "id",
+            postgresql_where=text("verification_status = 'verified' AND NOT is_hidden"),
+        ),
+    )
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
     # Mỗi tài khoản một công ty trong MVP. FK tới users (module auth) chỉ ở tầng DB.
@@ -154,6 +169,12 @@ class Product(Base):
             "AND (moq IS NULL OR moq > 0)",
             name="positive_amounts",
         ),
+        Index(
+            "ix_products_name_trgm",
+            text("immutable_unaccent(lower(name)) gin_trgm_ops"),
+            postgresql_using="gin",
+        ),
+        Index("ix_products_company_hs", "company_id", "hs_code"),
     )
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)

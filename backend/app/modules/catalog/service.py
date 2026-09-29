@@ -6,7 +6,7 @@ B5 (sản phẩm) và C2 (máy tính) dùng lại các hàm ở đây.
 import re
 from collections.abc import Sequence
 
-from sqlalchemy import and_, func, or_, select
+from sqlalchemy import Select, and_, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.modules.catalog.models import HsCode
@@ -110,3 +110,34 @@ async def list_categories(session: AsyncSession) -> set[str]:
         select(HsCode.category).where(HsCode.category.is_not(None)).distinct()
     )
     return {c for c in rows if c}
+
+
+def hs_codes_matching(token: str) -> Select[str]:
+    """Truy vấn con: mã HS khớp MỘT từ khóa. Số → tiền tố mã; chữ → tên vi (không dấu) hoặc en.
+    Cho module khác ghép vào truy vấn của mình mà không đụng bảng hs_codes."""
+    token = token.strip()
+    digits = _SEPARATORS.sub("", token)
+    if _DIGITS.fullmatch(digits):
+        return select(HsCode.code).where(HsCode.code.like(f"{digits}%"))
+    pattern = f"%{_escape_like(token)}%"
+    return select(HsCode.code).where(
+        or_(
+            func.immutable_unaccent(func.lower(HsCode.name_vi)).like(
+                func.immutable_unaccent(func.lower(pattern)), escape="\\"
+            ),
+            func.lower(HsCode.name_en).like(func.lower(pattern), escape="\\"),
+        )
+    )
+
+
+def hs_codes_in_category(category: str) -> Select[str]:
+    return select(HsCode.code).where(HsCode.category == category)
+
+
+async def categories_for_codes(
+    session: AsyncSession, codes: Sequence[str]
+) -> dict[str, str | None]:
+    if not codes:
+        return {}
+    rows = await session.execute(select(HsCode.code, HsCode.category).where(HsCode.code.in_(codes)))
+    return {code: category for code, category in rows.all()}

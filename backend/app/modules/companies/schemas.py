@@ -376,3 +376,27 @@ class AdminProductPatch(BaseModel):
     description_en: Text | None = None
     is_active: bool | None = None
     approval_status: Literal["approved", "hidden"] | None = None
+
+
+class ExporterCardOut(BaseModel):
+    """Một dòng danh bạ công khai: chỉ trường được phép lộ (không email, mã số thuế, địa chỉ)."""
+
+    slug: str
+    legal_name: str
+    country: str
+    industry_sector: str | None
+    verification_level: Literal["basic", "evfta_verified"]
+    verified_at: datetime | None
+    description_vi: str | None
+    description_en: str | None
+    logo_url: str | None
+    product_names: list[str]  # tối đa 3 sản phẩm đầu
+    product_count: int
+    hs_codes: list[str]  # mã HS của các sản phẩm đang hiển thị (không trùng)
+
+
+class ExporterPage(BaseModel):
+    items: list[ExporterCardOut]
+    total: int
+    page: int
+    page_size: int
