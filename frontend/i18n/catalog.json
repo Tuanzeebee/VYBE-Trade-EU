@@ -10033,5 +10033,70 @@
     "Sign in with a buyer account to see your quote requests.",
     "Sign in with a buyer account to see your quote requests.",
     "Sign in with a buyer account to see your quote requests."
+  ],
+  "Xem bản gốc": [
+    "View original",
+    "View original",
+    "View original"
+  ],
+  "Xem bản dịch": [
+    "View translation",
+    "View translation",
+    "View translation"
+  ],
+  "Nội dung hội thoại": [
+    "Conversation",
+    "Conversation",
+    "Conversation"
+  ],
+  "Không tải được tin nhắn. Vui lòng thử lại.": [
+    "Could not load the messages. Please try again.",
+    "Could not load the messages. Please try again.",
+    "Could not load the messages. Please try again."
+  ],
+  "Chưa có tin nhắn. Hãy gửi lời chào đầu tiên; tin nhắn sẽ được dịch sang ngôn ngữ của người nhận.": [
+    "No messages yet. Send the first greeting; messages are translated into the recipient's language.",
+    "No messages yet. Send the first greeting; messages are translated into the recipient's language.",
+    "No messages yet. Send the first greeting; messages are translated into the recipient's language."
+  ],
+  "Không gửi được tin nhắn. Vui lòng thử lại.": [
+    "Could not send the message. Please try again.",
+    "Could not send the message. Please try again.",
+    "Could not send the message. Please try again."
+  ],
+  "Tin nhắn": [
+    "Message",
+    "Message",
+    "Message"
+  ],
+  "Hội thoại": [
+    "Conversations",
+    "Conversations",
+    "Conversations"
+  ],
+  "Đăng nhập để xem hội thoại của bạn.": [
+    "Sign in to see your conversations.",
+    "Sign in to see your conversations.",
+    "Sign in to see your conversations."
+  ],
+  "Không tải được danh sách hội thoại. Vui lòng thử lại.": [
+    "Could not load the conversation list. Please try again.",
+    "Could not load the conversation list. Please try again.",
+    "Could not load the conversation list. Please try again."
+  ],
+  "Chưa có hội thoại nào. Hội thoại được mở tự động khi có yêu cầu báo giá.": [
+    "No conversations yet. A conversation opens automatically when a quote request is sent.",
+    "No conversations yet. A conversation opens automatically when a quote request is sent.",
+    "No conversations yet. A conversation opens automatically when a quote request is sent."
+  ],
+  "Danh sách hội thoại": [
+    "Conversation list",
+    "Conversation list",
+    "Conversation list"
+  ],
+  "Mở hội thoại": [
+    "Open conversation",
+    "Open conversation",
+    "Open conversation"
   ]
 }

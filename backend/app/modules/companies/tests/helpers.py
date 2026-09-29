@@ -5,7 +5,7 @@ from httpx import AsyncClient
 PASSWORD = "mat-khau-du-dai"  # noqa: S105 — mật khẩu giả cho test
 
 
-async def login_as(client: AsyncClient, role: str, email: str) -> None:
+async def login_as(client: AsyncClient, role: str, email: str, language: str = "vi") -> None:
     """Đăng ký (lần đầu) hoặc đăng nhập; cookie phiên nằm trong client."""
     r = await client.post(
         "/api/auth/register",
@@ -13,7 +13,7 @@ async def login_as(client: AsyncClient, role: str, email: str) -> None:
             "email": email,
             "password": PASSWORD,
             "role": role,
-            "preferred_language": "vi",
+            "preferred_language": language,
             "accept_terms": True,
         },
     )

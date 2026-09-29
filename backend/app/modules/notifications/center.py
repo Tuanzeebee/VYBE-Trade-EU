@@ -19,14 +19,14 @@ _EXPORTER_LINKS: dict[NotificationType, str] = {
     NotificationType.verification_status: "/exporter?tab=verification",
     NotificationType.expiry_alert: "/exporter?tab=verification",
     NotificationType.rfq: "/exporter?tab=rfq",
-    NotificationType.message: "/exporter?tab=messages",
+    NotificationType.message: "/conversations",
     NotificationType.new_match: "/suppliers",
 }
 _BUYER_LINKS: dict[NotificationType, str] = {
     NotificationType.verification_status: "/buyer",
     NotificationType.expiry_alert: "/buyer",
     NotificationType.rfq: "/buyer/rfqs",
-    NotificationType.message: "/buyer?tab=messages",
+    NotificationType.message: "/conversations",
     NotificationType.new_match: "/suppliers",
 }
 

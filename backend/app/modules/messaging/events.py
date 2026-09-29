@@ -26,3 +26,13 @@ class RfqStatusChanged(Event):
     product_name: str
     old_status: str
     new_status: str
+
+
+@dataclass(frozen=True)
+class MessageSent(Event):
+    """Có tin nhắn mới: thông báo trong ứng dụng và email cho công ty nhận (H1, H2)."""
+
+    conversation_id: uuid.UUID
+    sender_company_id: uuid.UUID
+    recipient_company_id: uuid.UUID
+    sender_name: str

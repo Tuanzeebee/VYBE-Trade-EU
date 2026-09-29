@@ -454,8 +454,26 @@ const F1_STRINGS = [
   "Đăng nhập bằng tài khoản buyer để xem các yêu cầu báo giá."
 ];
 
-describe('catalog.json có bản tiếng Anh cho chuỗi A1, B1, B2, B3, B4, B5, A2, C2, C4, C6, C7, D2, D3, E2, H1, F1', () => {
-  it.each([...A1_STRINGS, ...B1_STRINGS, ...B2_STRINGS, ...B3_STRINGS, ...B4_STRINGS, ...B5_STRINGS, ...A2_STRINGS, ...C2_STRINGS, ...C4_STRINGS, ...C6_STRINGS, ...C7_STRINGS, ...D2_STRINGS, ...D3_STRINGS, ...E2_STRINGS, ...H1_STRINGS, ...F1_STRINGS])('%s', (vi) => {
+const F2_STRINGS = [
+  "Xem bản gốc",
+  "Xem bản dịch",
+  "Nội dung hội thoại",
+  "Không tải được tin nhắn. Vui lòng thử lại.",
+  "Chưa có tin nhắn. Hãy gửi lời chào đầu tiên; tin nhắn sẽ được dịch sang ngôn ngữ của người nhận.",
+  "Không gửi được tin nhắn. Vui lòng thử lại.",
+  "Tin nhắn",
+  "Gửi",
+  "Hội thoại",
+  "Đăng nhập để xem hội thoại của bạn.",
+  "Không tải được danh sách hội thoại. Vui lòng thử lại.",
+  "Chưa có hội thoại nào. Hội thoại được mở tự động khi có yêu cầu báo giá.",
+  "Danh sách hội thoại",
+  "Mở hội thoại",
+  "Bạn có tin nhắn mới."
+];
+
+describe('catalog.json có bản tiếng Anh cho chuỗi A1, B1, B2, B3, B4, B5, A2, C2, C4, C6, C7, D2, D3, E2, H1, F1, F2', () => {
+  it.each([...A1_STRINGS, ...B1_STRINGS, ...B2_STRINGS, ...B3_STRINGS, ...B4_STRINGS, ...B5_STRINGS, ...A2_STRINGS, ...C2_STRINGS, ...C4_STRINGS, ...C6_STRINGS, ...C7_STRINGS, ...D2_STRINGS, ...D3_STRINGS, ...E2_STRINGS, ...H1_STRINGS, ...F1_STRINGS, ...F2_STRINGS])('%s', (vi) => {
     const en = translateText(vi, 'en');
     expect(en).not.toBe(vi);
     expect(en.trim()).not.toBe('');

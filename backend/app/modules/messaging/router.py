@@ -5,9 +5,11 @@ from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import get_session
+from app.core.translation import TranslationService, get_translation_service
 from app.modules.auth.schemas import CurrentUser
 from app.modules.auth.service import require_role
-from app.modules.messaging import service
+from app.modules.messaging import conversation_service, service
+from app.modules.messaging.conversation_schemas import ConversationOut, MessageIn, MessageOut
 from app.modules.messaging.models import RfqStatus
 from app.modules.messaging.schemas import RfqIn, RfqOut, RfqStatusIn
 
@@ -44,3 +46,35 @@ async def set_rfq_status(
     rfq_id: uuid.UUID, data: RfqStatusIn, user: Exporter, session: DB
 ) -> RfqOut:
     return await service.set_status(session, user, rfq_id, data.status)
+
+
+Translator = Annotated[TranslationService, Depends(get_translation_service)]
+
+
+@router.get("/api/me/conversations")
+async def list_my_conversations(user: Member, session: DB) -> list[ConversationOut]:
+    return await conversation_service.list_conversations(session, user)
+
+
+@router.get("/api/me/conversations/{conversation_id}/messages")
+async def list_messages(
+    conversation_id: uuid.UUID,
+    user: Member,
+    session: DB,
+    after: uuid.UUID | None = None,
+    limit: Annotated[int, Query(ge=1, le=conversation_service.MAX_PAGE)] = 100,
+) -> list[MessageOut]:
+    return await conversation_service.list_messages(
+        session, user, conversation_id, after=after, limit=limit
+    )
+
+
+@router.post(
+    "/api/me/conversations/{conversation_id}/messages", status_code=status.HTTP_201_CREATED
+)
+async def send_message(
+    conversation_id: uuid.UUID, data: MessageIn, user: Member, session: DB, translator: Translator
+) -> MessageOut:
+    return await conversation_service.send_message(
+        session, user, conversation_id, data.body, translator
+    )

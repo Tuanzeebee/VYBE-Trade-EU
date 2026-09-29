@@ -14,6 +14,7 @@ from app.core.events import publish
 from app.modules.auth.schemas import CurrentUser
 from app.modules.companies import product_service
 from app.modules.companies import service as companies
+from app.modules.messaging import conversation_service
 from app.modules.messaging.events import RfqCreated, RfqStatusChanged
 from app.modules.messaging.models import Rfq, RfqStatus
 from app.modules.messaging.schemas import RfqIn, RfqOut
@@ -116,6 +117,7 @@ async def create_rfq(
     )
     session.add(rfq)
     await session.flush()
+    conversation_service.open_for_rfq(session, rfq)
     out = (await _to_out(session, [rfq]))[0]
     await session.commit()
     await publish(

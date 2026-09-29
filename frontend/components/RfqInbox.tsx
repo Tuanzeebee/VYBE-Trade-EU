@@ -4,6 +4,7 @@
 // Exporter mở một RFQ mới thì backend tự chuyển sang "Đã xem".
 import React, { useCallback, useEffect, useState } from 'react';
 import { useLanguage } from '../context/LanguageContext';
+import { Link } from '../i18n/navigation';
 import { changeRfqStatus, listRfqs, NEXT_STATUSES, openRfq, STATUS_LABELS, type Rfq, type RfqStatus } from '../lib/rfqApi';
 
 const BADGE: Record<RfqStatus, string> = {
@@ -115,6 +116,9 @@ export default function RfqInbox({ role }: { role: 'buyer' | 'exporter' }) {
                     </div>
                   </dl>
                   {r.message && <p className="whitespace-pre-line rounded-xl bg-slate-50 p-3">{r.message}</p>}
+                  <Link href={`/conversations?rfq=${r.id}`} className="inline-block text-sm font-semibold text-teal-800 underline">
+                    {tr('Mở hội thoại')}
+                  </Link>
                   {role === 'exporter' && NEXT_STATUSES[r.status].length > 0 && (
                     <div className="flex flex-wrap gap-2">
                       {NEXT_STATUSES[r.status].map((s) => (

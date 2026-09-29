@@ -11,7 +11,7 @@ from app.core.db import get_sessionmaker
 from app.core.events import subscribe
 from app.modules.auth import service as auth
 from app.modules.companies import service as companies
-from app.modules.messaging.events import RfqCreated, RfqStatusChanged
+from app.modules.messaging.events import MessageSent, RfqCreated, RfqStatusChanged
 from app.modules.notifications import center
 from app.modules.notifications.models import NotificationType
 from app.modules.verification.events import VerificationStatusChanged
@@ -126,7 +126,24 @@ async def on_rfq_status_changed(event: RfqStatusChanged) -> None:
     )
 
 
+async def on_message_sent(event: MessageSent) -> None:
+    """Bên nhận thấy tin mới trong ứng dụng và nhận email (không kèm nội dung tin)."""
+    await _record_in_app(
+        NotificationType.message,
+        event.recipient_company_id,
+        {"conversation_id": str(event.conversation_id), "sender_name": event.sender_name},
+    )
+    await _enqueue(
+        {
+            "type": "message",
+            "company_id": str(event.recipient_company_id),
+            "context": {"sender_name": event.sender_name},
+        }
+    )
+
+
 def register() -> None:
     subscribe(VerificationStatusChanged, on_verification_status_changed)
     subscribe(RfqCreated, on_rfq_created)
     subscribe(RfqStatusChanged, on_rfq_status_changed)
+    subscribe(MessageSent, on_message_sent)

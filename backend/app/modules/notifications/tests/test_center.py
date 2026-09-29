@@ -56,8 +56,8 @@ async def test_requires_a_session(api_client: AsyncClient, call: tuple[str, str]
         (NotificationType.expiry_alert, "exporter", "/exporter?tab=verification"),
         (NotificationType.rfq, "exporter", "/exporter?tab=rfq"),
         (NotificationType.rfq, "buyer", "/buyer/rfqs"),
-        (NotificationType.message, "exporter", "/exporter?tab=messages"),
-        (NotificationType.message, "buyer", "/buyer?tab=messages"),
+        (NotificationType.message, "exporter", "/conversations"),
+        (NotificationType.message, "buyer", "/conversations"),
         (NotificationType.new_match, "buyer", "/suppliers"),
     ],
 )

@@ -82,3 +82,51 @@ class Rfq(Base):
         server_default=text("clock_timestamp()"),
         onupdate=text("clock_timestamp()"),
     )
+
+
+class Conversation(Base):
+    """Hội thoại giữa hai công ty, mở tự động cùng RFQ (F2). Mỗi RFQ đúng một hội thoại."""
+
+    __tablename__ = "conversations"
+    __table_args__ = (
+        Index("ix_conversations_company_a", "company_a_id"),
+        Index("ix_conversations_company_b", "company_b_id"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, primary_key=True, default=uuid.uuid4, server_default=text("gen_random_uuid()")
+    )
+    rfq_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("rfqs.id"), unique=True)
+    company_a_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("companies.id"))  # buyer
+    company_b_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("companies.id"))  # exporter
+    created_at: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=text("clock_timestamp()")
+    )
+
+
+class Message(Base):
+    """Tin nhắn; lưu cả bản gốc và bản dịch cho người nhận (F3)."""
+
+    __tablename__ = "messages"
+    __table_args__ = (
+        CheckConstraint("length(btrim(body_original)) > 0", name="body_not_blank"),
+        CheckConstraint(
+            "(body_translated IS NULL) = (translated_language IS NULL)",
+            name="translation_and_language_together",
+        ),
+        Index("ix_messages_conversation_sent", "conversation_id", "sent_at", "id"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, primary_key=True, default=uuid.uuid4, server_default=text("gen_random_uuid()")
+    )
+    conversation_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("conversations.id"))
+    sender_company_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("companies.id"))
+    body_original: Mapped[str] = mapped_column(Text)
+    body_translated: Mapped[str | None] = mapped_column(Text)
+    original_language: Mapped[str] = mapped_column(String(2))
+    translated_language: Mapped[str | None] = mapped_column(String(2))
+    sent_at: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=text("clock_timestamp()")
+    )
+    read_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))

@@ -44,8 +44,10 @@ async def make_exporter(
     return str(created["id"]), str(product["id"])
 
 
-async def make_buyer(client: AsyncClient, email: str = "buyer@x.de", **company: Any) -> str:
-    await login_as(client, "buyer", email)
+async def make_buyer(
+    client: AsyncClient, email: str = "buyer@x.de", language: str = "vi", **company: Any
+) -> str:
+    await login_as(client, "buyer", email, language)
     created = (await client.post("/api/me/company", json=buyer_body(**company))).json()
     await client.post("/api/auth/logout")
     return str(created["id"])
