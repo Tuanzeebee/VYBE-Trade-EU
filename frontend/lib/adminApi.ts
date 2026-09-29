@@ -84,3 +84,42 @@ export const reviewEvidenceRule = (id: string) =>
   act(() => createApiClient().POST('/api/admin/evidence-rules/{rule_id}/review', { params: { path: { rule_id: id } } }), REVIEW_ERRORS);
 export const deleteEvidenceRule = (id: string) =>
   act(() => createApiClient().DELETE('/api/admin/evidence-rules/{rule_id}', { params: { path: { rule_id: id } } }), { 404: 'Không tìm thấy dòng dữ liệu.' });
+
+// ── Kiểm duyệt hồ sơ, sản phẩm, nhật ký, thống kê (I4, I5) ─────────────────────
+export type AdminCompany = components['schemas']['AdminCompanyOut'];
+export type AdminProduct = components['schemas']['AdminProductOut'];
+export type AuditLog = components['schemas']['AuditLogOut'];
+export type Stats = components['schemas']['StatsOut'];
+
+export const getStats = () => read(() => createApiClient().GET('/api/admin/stats'));
+
+export const listCompanies = (query: { q?: string; status?: AdminCompany['verification_status']; hidden?: boolean; limit?: number; offset?: number } = {}) =>
+  read(() => createApiClient().GET('/api/admin/companies', { params: { query } }));
+
+export const listProducts = (query: { company_id?: string; q?: string; limit?: number; offset?: number } = {}) =>
+  read(() => createApiClient().GET('/api/admin/products', { params: { query } }));
+
+export const listAuditLogs = (query: { entity_type?: string; entity_id?: string; action_type?: string; limit?: number; offset?: number } = {}) =>
+  read(() => createApiClient().GET('/api/admin/audit-logs', { params: { query } }));
+
+const HIDE_ERRORS = { 404: 'Không tìm thấy dữ liệu.', 422: 'Dữ liệu không hợp lệ.' };
+
+export const setCompanyHidden = (id: string, hidden: boolean) =>
+  act(
+    () =>
+      createApiClient().PATCH('/api/admin/companies/{company_id}', {
+        params: { path: { company_id: id } },
+        body: { is_hidden: hidden },
+      }),
+    HIDE_ERRORS,
+  );
+
+export const setProductHidden = (id: string, hidden: boolean) =>
+  act(
+    () =>
+      createApiClient().PATCH('/api/admin/products/{product_id}', {
+        params: { path: { product_id: id } },
+        body: { approval_status: hidden ? 'hidden' : 'approved' },
+      }),
+    HIDE_ERRORS,
+  );

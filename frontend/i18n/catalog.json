@@ -9353,5 +9353,170 @@
     "Create EUR.1 draft",
     "Create EUR.1 draft",
     "Create EUR.1 draft"
+  ],
+  "Không tải được số liệu. Vui lòng thử lại.": [
+    "Unable to load the figures. Please try again.",
+    "Unable to load the figures. Please try again.",
+    "Unable to load the figures. Please try again."
+  ],
+  "Hồ sơ chờ duyệt": [
+    "Profiles awaiting review",
+    "Profiles awaiting review",
+    "Profiles awaiting review"
+  ],
+  "Chưa có doanh nghiệp nào được xác minh. Duyệt hồ sơ ở tab Chờ duyệt.": [
+    "No company has been verified yet. Review profiles in the Pending review tab.",
+    "No company has been verified yet. Review profiles in the Pending review tab.",
+    "No company has been verified yet. Review profiles in the Pending review tab."
+  ],
+  "Chưa có hồ sơ nào đang chờ duyệt.": [
+    "No profile is awaiting review.",
+    "No profile is awaiting review.",
+    "No profile is awaiting review."
+  ],
+  "Ẩn hồ sơ hoặc sản phẩm không đổi trạng thái xác minh; mọi thao tác đều được ghi vào nhật ký.": [
+    "Hiding a profile or product does not change its verification status; every action is written to the log.",
+    "Hiding a profile or product does not change its verification status; every action is written to the log.",
+    "Hiding a profile or product does not change its verification status; every action is written to the log."
+  ],
+  "Tìm theo tên": [
+    "Search by name",
+    "Search by name",
+    "Search by name"
+  ],
+  "Tìm": [
+    "Search",
+    "Search",
+    "Search"
+  ],
+  "Tất cả": [
+    "All",
+    "All",
+    "All"
+  ],
+  "Đã ẩn": [
+    "Hidden",
+    "Hidden",
+    "Hidden"
+  ],
+  "Xem sản phẩm": [
+    "View products",
+    "View products",
+    "View products"
+  ],
+  "Ẩn hồ sơ": [
+    "Hide profile",
+    "Hide profile",
+    "Hide profile"
+  ],
+  "Hiện hồ sơ": [
+    "Show profile",
+    "Show profile",
+    "Show profile"
+  ],
+  "Ẩn sản phẩm": [
+    "Hide product",
+    "Hide product",
+    "Hide product"
+  ],
+  "Hiện sản phẩm": [
+    "Show product",
+    "Show product",
+    "Show product"
+  ],
+  "Chưa có sản phẩm.": [
+    "No products.",
+    "No products.",
+    "No products."
+  ],
+  "Không tải được danh sách. Vui lòng thử lại.": [
+    "Unable to load the list. Please try again.",
+    "Unable to load the list. Please try again.",
+    "Unable to load the list. Please try again."
+  ],
+  "Không tìm thấy dữ liệu.": [
+    "Data not found.",
+    "Data not found.",
+    "Data not found."
+  ],
+  "Dữ liệu không hợp lệ.": [
+    "The data is not valid.",
+    "The data is not valid.",
+    "The data is not valid."
+  ],
+  "Loại đối tượng": [
+    "Object type",
+    "Object type",
+    "Object type"
+  ],
+  "Mã đối tượng": [
+    "Object ID",
+    "Object ID",
+    "Object ID"
+  ],
+  "Lọc": [
+    "Filter",
+    "Filter",
+    "Filter"
+  ],
+  "Không tải được nhật ký. Vui lòng thử lại.": [
+    "Unable to load the log. Please try again.",
+    "Unable to load the log. Please try again.",
+    "Unable to load the log. Please try again."
+  ],
+  "Chưa có nhật ký phù hợp.": [
+    "No matching log entries.",
+    "No matching log entries.",
+    "No matching log entries."
+  ],
+  "Thời gian": [
+    "Time",
+    "Time",
+    "Time"
+  ],
+  "Hành động": [
+    "Action",
+    "Action",
+    "Action"
+  ],
+  "Đối tượng": [
+    "Object",
+    "Object",
+    "Object"
+  ],
+  "Người thực hiện": [
+    "Performed by",
+    "Performed by",
+    "Performed by"
+  ],
+  "Trước": [
+    "Before",
+    "Before",
+    "Before"
+  ],
+  "Sau": [
+    "After",
+    "After",
+    "After"
+  ],
+  "Hệ thống": [
+    "System",
+    "System",
+    "System"
+  ],
+  "Tổng quan": [
+    "Overview",
+    "Overview",
+    "Overview"
+  ],
+  "Hồ sơ & sản phẩm": [
+    "Profiles & products",
+    "Profiles & products",
+    "Profiles & products"
+  ],
+  "Nhật ký": [
+    "Log",
+    "Log",
+    "Log"
   ]
 }
