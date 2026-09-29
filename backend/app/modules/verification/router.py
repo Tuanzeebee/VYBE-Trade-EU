@@ -18,13 +18,27 @@ from app.modules.verification.admin_schemas import (
     RuleIn,
     RuleOut,
 )
-from app.modules.verification.schemas import ChecklistItem, EvidenceIn, EvidenceOut, EvidencePatch
+from app.modules.verification.schemas import (
+    ChecklistItem,
+    EvidenceIn,
+    EvidenceOut,
+    EvidencePatch,
+    EvidenceTypePublic,
+)
 
 router = APIRouter(tags=["verification"])
 
 Exporter = Annotated[CurrentUser, Depends(require_role("exporter"))]
 DB = Annotated[AsyncSession, Depends(get_session)]
 Store = Annotated[Storage, Depends(get_storage)]
+
+
+@router.get("/api/exporter/evidence-types")
+async def list_available_evidence_types(user: Exporter, session: DB) -> list[EvidenceTypePublic]:
+    return [
+        EvidenceTypePublic.model_validate(t)
+        for t in await evidence_service.list_available_types(session)
+    ]
 
 
 @router.get("/api/exporter/evidences")

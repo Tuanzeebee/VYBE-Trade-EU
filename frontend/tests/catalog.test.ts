@@ -210,8 +210,50 @@ const C4_STRINGS = [
   'Kiểm tra xuất xứ'
 ];
 
-describe('catalog.json có bản tiếng Anh cho chuỗi A1, B1, B2, B3, B4, B5, A2, C2, C4', () => {
-  it.each([...A1_STRINGS, ...B1_STRINGS, ...B2_STRINGS, ...B3_STRINGS, ...B4_STRINGS, ...B5_STRINGS, ...A2_STRINGS, ...C2_STRINGS, ...C4_STRINGS])('%s', (vi) => {
+const C6_STRINGS = [
+  'Chưa nộp',
+  'Chờ duyệt',
+  'Đã duyệt',
+  'Hết hạn',
+  'Bị từ chối',
+  'Bằng chứng do quản trị viên xem xét và duyệt. Nộp đủ bằng chứng không phải kết quả xác minh doanh nghiệp.',
+  'Danh sách kiểm theo nhóm hàng',
+  'Thêm sản phẩm có mã HS để xem những bằng chứng cần nộp cho nhóm hàng của bạn.',
+  'Bắt buộc',
+  'Chỉ nhắc',
+  'Bằng chứng đã nộp',
+  'Chưa có bằng chứng nào. Chọn loại bằng chứng bên dưới và tải file lên.',
+  'Số chứng chỉ',
+  'Tổ chức cấp',
+  'Ngày cấp',
+  'Ngày hết hạn',
+  'Lý do từ chối',
+  'Xem file',
+  'Xóa',
+  'Nộp bằng chứng mới',
+  'Loại bằng chứng',
+  'Chọn loại',
+  'Hạn dùng do hệ thống tự tính',
+  'tháng kể từ ngày cấp.',
+  'File bằng chứng',
+  'PDF, PNG hoặc JPEG, tối đa 10MB.',
+  'Nộp bằng chứng',
+  'Vui lòng chọn loại bằng chứng.',
+  'Vui lòng chọn file bằng chứng.',
+  'Vui lòng nhập ngày cấp.',
+  'Ngày cấp không được ở tương lai.',
+  'Ngày hết hạn phải sau ngày cấp.',
+  'File phải là PDF, PNG hoặc JPEG.',
+  'File tối đa 10MB.',
+  'Không tải được file lên. Vui lòng thử lại.',
+  'Bằng chứng chưa hợp lệ. Vui lòng kiểm tra loại, ngày cấp, ngày hết hạn và file.',
+  'Không nộp được bằng chứng. Vui lòng thử lại.',
+  'Không xóa được bằng chứng. Vui lòng thử lại.',
+  'Không kết nối được máy chủ. Vui lòng thử lại.'
+];
+
+describe('catalog.json có bản tiếng Anh cho chuỗi A1, B1, B2, B3, B4, B5, A2, C2, C4, C6', () => {
+  it.each([...A1_STRINGS, ...B1_STRINGS, ...B2_STRINGS, ...B3_STRINGS, ...B4_STRINGS, ...B5_STRINGS, ...A2_STRINGS, ...C2_STRINGS, ...C4_STRINGS, ...C6_STRINGS])('%s', (vi) => {
     const en = translateText(vi, 'en');
     expect(en).not.toBe(vi);
     expect(en.trim()).not.toBe('');

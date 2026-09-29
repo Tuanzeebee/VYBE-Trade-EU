@@ -143,8 +143,10 @@ describe('SellerOnboarding hoàn tất — gửi hồ sơ và danh sách sản p
     fireEvent.click(screen.getByRole('button', { name: /Hoàn tất & Gửi hồ sơ/ }));
     await waitFor(() => expect(onComplete).toHaveBeenCalledTimes(1));
     const [profile, sent] = onComplete.mock.calls[0];
-    expect(profile).toMatchObject({ companyName: 'Công ty A', taxCode: '0312345678', markets: 'EU,US', agreeCommitment: 'true' });
+    expect(profile).toMatchObject({ companyName: 'Công ty A', taxCode: '0312345678', markets: 'EU,US' });
     expect(profile).not.toHaveProperty('market');
+    // Không còn chứng chỉ/mã vùng trồng mẫu trong hồ sơ gửi đi (bằng chứng thật lưu trên server, C6).
+    for (const gone of ['certificates', 'pucCode', 'phcCode', 'agreeCommitment']) expect(profile).not.toHaveProperty(gone);
     expect(JSON.parse(profile.products)).toEqual([{ name: 'Gạo thơm' }, { name: 'Cà phê' }]);
     expect(profile.interest).toBe('1006.30');
     expect(sent).toEqual(products);

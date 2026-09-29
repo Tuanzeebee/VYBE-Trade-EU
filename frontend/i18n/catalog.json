@@ -8663,5 +8663,225 @@
     "Check origin",
     "Check origin",
     "Check origin"
+  ],
+  "Chưa nộp": [
+    "Not submitted",
+    "Not submitted",
+    "Not submitted"
+  ],
+  "Chờ duyệt": [
+    "Pending review",
+    "Pending review",
+    "Pending review"
+  ],
+  "Đã duyệt": [
+    "Approved",
+    "Approved",
+    "Approved"
+  ],
+  "Hết hạn": [
+    "Expired",
+    "Expired",
+    "Expired"
+  ],
+  "Bị từ chối": [
+    "Rejected",
+    "Rejected",
+    "Rejected"
+  ],
+  "Bằng chứng do quản trị viên xem xét và duyệt. Nộp đủ bằng chứng không phải kết quả xác minh doanh nghiệp.": [
+    "Evidence is reviewed and approved by an administrator. Submitting all evidence is not the result of company verification.",
+    "Evidence is reviewed and approved by an administrator. Submitting all evidence is not the result of company verification.",
+    "Evidence is reviewed and approved by an administrator. Submitting all evidence is not the result of company verification."
+  ],
+  "Danh sách kiểm theo nhóm hàng": [
+    "Checklist by product group",
+    "Checklist by product group",
+    "Checklist by product group"
+  ],
+  "Thêm sản phẩm có mã HS để xem những bằng chứng cần nộp cho nhóm hàng của bạn.": [
+    "Add a product with an HS code to see which evidence you need for your product group.",
+    "Add a product with an HS code to see which evidence you need for your product group.",
+    "Add a product with an HS code to see which evidence you need for your product group."
+  ],
+  "Chỉ nhắc": [
+    "Reminder only",
+    "Reminder only",
+    "Reminder only"
+  ],
+  "Chưa có bằng chứng nào. Chọn loại bằng chứng bên dưới và tải file lên.": [
+    "No evidence yet. Choose an evidence type below and upload a file.",
+    "No evidence yet. Choose an evidence type below and upload a file.",
+    "No evidence yet. Choose an evidence type below and upload a file."
+  ],
+  "Số chứng chỉ": [
+    "Certificate number",
+    "Certificate number",
+    "Certificate number"
+  ],
+  "Tổ chức cấp": [
+    "Issuer",
+    "Issuer",
+    "Issuer"
+  ],
+  "Ngày cấp": [
+    "Issue date",
+    "Issue date",
+    "Issue date"
+  ],
+  "Ngày hết hạn": [
+    "Expiry date",
+    "Expiry date",
+    "Expiry date"
+  ],
+  "Lý do từ chối": [
+    "Rejection reason",
+    "Rejection reason",
+    "Rejection reason"
+  ],
+  "Xem file": [
+    "View file",
+    "View file",
+    "View file"
+  ],
+  "Nộp bằng chứng mới": [
+    "Submit new evidence",
+    "Submit new evidence",
+    "Submit new evidence"
+  ],
+  "Loại bằng chứng": [
+    "Evidence type",
+    "Evidence type",
+    "Evidence type"
+  ],
+  "Chọn loại": [
+    "Choose a type",
+    "Choose a type",
+    "Choose a type"
+  ],
+  "Hạn dùng do hệ thống tự tính": [
+    "The validity period is calculated by the system:",
+    "The validity period is calculated by the system:",
+    "The validity period is calculated by the system:"
+  ],
+  "tháng kể từ ngày cấp.": [
+    "months from the issue date.",
+    "months from the issue date.",
+    "months from the issue date."
+  ],
+  "File bằng chứng": [
+    "Evidence file",
+    "Evidence file",
+    "Evidence file"
+  ],
+  "PDF, PNG hoặc JPEG, tối đa 10MB.": [
+    "PDF, PNG or JPEG, up to 10MB.",
+    "PDF, PNG or JPEG, up to 10MB.",
+    "PDF, PNG or JPEG, up to 10MB."
+  ],
+  "Nộp bằng chứng": [
+    "Submit evidence",
+    "Submit evidence",
+    "Submit evidence"
+  ],
+  "Vui lòng chọn loại bằng chứng.": [
+    "Please choose an evidence type.",
+    "Please choose an evidence type.",
+    "Please choose an evidence type."
+  ],
+  "Vui lòng chọn file bằng chứng.": [
+    "Please choose an evidence file.",
+    "Please choose an evidence file.",
+    "Please choose an evidence file."
+  ],
+  "Vui lòng nhập ngày cấp.": [
+    "Please enter the issue date.",
+    "Please enter the issue date.",
+    "Please enter the issue date."
+  ],
+  "Ngày cấp không được ở tương lai.": [
+    "The issue date cannot be in the future.",
+    "The issue date cannot be in the future.",
+    "The issue date cannot be in the future."
+  ],
+  "Ngày hết hạn phải sau ngày cấp.": [
+    "The expiry date must be after the issue date.",
+    "The expiry date must be after the issue date.",
+    "The expiry date must be after the issue date."
+  ],
+  "File phải là PDF, PNG hoặc JPEG.": [
+    "The file must be a PDF, PNG or JPEG.",
+    "The file must be a PDF, PNG or JPEG.",
+    "The file must be a PDF, PNG or JPEG."
+  ],
+  "File tối đa 10MB.": [
+    "The file can be at most 10MB.",
+    "The file can be at most 10MB.",
+    "The file can be at most 10MB."
+  ],
+  "Không tải được file lên. Vui lòng thử lại.": [
+    "Unable to upload the file. Please try again.",
+    "Unable to upload the file. Please try again.",
+    "Unable to upload the file. Please try again."
+  ],
+  "Bằng chứng chưa hợp lệ. Vui lòng kiểm tra loại, ngày cấp, ngày hết hạn và file.": [
+    "The evidence is not valid. Please check the type, issue date, expiry date and file.",
+    "The evidence is not valid. Please check the type, issue date, expiry date and file.",
+    "The evidence is not valid. Please check the type, issue date, expiry date and file."
+  ],
+  "Không nộp được bằng chứng. Vui lòng thử lại.": [
+    "Unable to submit the evidence. Please try again.",
+    "Unable to submit the evidence. Please try again.",
+    "Unable to submit the evidence. Please try again."
+  ],
+  "Không xóa được bằng chứng. Vui lòng thử lại.": [
+    "Unable to delete the evidence. Please try again.",
+    "Unable to delete the evidence. Please try again.",
+    "Unable to delete the evidence. Please try again."
+  ],
+  "Kiểm tra lại hồ sơ trước khi hoàn tất": [
+    "Review your profile before finishing",
+    "Review your profile before finishing",
+    "Review your profile before finishing"
+  ],
+  "Hoàn thiện hồ sơ không đồng nghĩa đã xác minh: việc xác minh do quản trị viên thực hiện.": [
+    "A complete profile does not mean it is verified: verification is done by an administrator.",
+    "A complete profile does not mean it is verified: verification is done by an administrator.",
+    "A complete profile does not mean it is verified: verification is done by an administrator."
+  ],
+  "3. Bằng chứng đã nộp": [
+    "3. Submitted evidence",
+    "3. Submitted evidence",
+    "3. Submitted evidence"
+  ],
+  "bằng chứng đã nộp": [
+    "evidence submitted",
+    "evidence submitted",
+    "evidence submitted"
+  ],
+  "Chưa có bằng chứng — bạn có thể bổ sung sau.": [
+    "No evidence yet — you can add it later.",
+    "No evidence yet — you can add it later.",
+    "No evidence yet — you can add it later."
+  ],
+  "Hồ sơ đã được lưu.": [
+    "Your profile has been saved.",
+    "Your profile has been saved.",
+    "Your profile has been saved."
+  ],
+  "Hồ sơ doanh nghiệp, sản phẩm xuất khẩu và bằng chứng đã nộp đã được ghi nhận. Quản trị viên sẽ xem xét bằng chứng của bạn.": [
+    "Your company profile, export products and submitted evidence have been recorded. An administrator will review your evidence.",
+    "Your company profile, export products and submitted evidence have been recorded. An administrator will review your evidence.",
+    "Your company profile, export products and submitted evidence have been recorded. An administrator will review your evidence."
+  ],
+  "Bằng chứng & chứng nhận": [
+    "Evidence & certificates",
+    "Evidence & certificates",
+    "Evidence & certificates"
+  ],
+  "Nộp chứng nhận chất lượng, bằng chứng xuất xứ và các giấy tờ theo danh sách kiểm của nhóm hàng. Quản trị viên sẽ xem xét từng bằng chứng.": [
+    "Submit quality certificates, origin evidence and the documents on the checklist for your product group. An administrator will review each item.",
+    "Submit quality certificates, origin evidence and the documents on the checklist for your product group. An administrator will review each item.",
+    "Submit quality certificates, origin evidence and the documents on the checklist for your product group. An administrator will review each item."
   ]
 }

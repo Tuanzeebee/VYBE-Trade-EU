@@ -244,6 +244,304 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/tariff-lines": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Tariff Lines */
+        get: operations["list_tariff_lines_api_admin_tariff_lines_get"];
+        put?: never;
+        /** Create Tariff Line */
+        post: operations["create_tariff_line_api_admin_tariff_lines_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/tariff-lines/{line_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete Tariff Line */
+        delete: operations["delete_tariff_line_api_admin_tariff_lines__line_id__delete"];
+        options?: never;
+        head?: never;
+        /** Update Tariff Line */
+        patch: operations["update_tariff_line_api_admin_tariff_lines__line_id__patch"];
+        trace?: never;
+    };
+    "/api/admin/tariff-lines/{line_id}/review": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Review Tariff Line */
+        post: operations["review_tariff_line_api_admin_tariff_lines__line_id__review_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/roo-rules": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Roo Rules */
+        get: operations["list_roo_rules_api_admin_roo_rules_get"];
+        put?: never;
+        /** Create Roo Rule */
+        post: operations["create_roo_rule_api_admin_roo_rules_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/roo-rules/{rule_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete Roo Rule */
+        delete: operations["delete_roo_rule_api_admin_roo_rules__rule_id__delete"];
+        options?: never;
+        head?: never;
+        /** Update Roo Rule */
+        patch: operations["update_roo_rule_api_admin_roo_rules__rule_id__patch"];
+        trace?: never;
+    };
+    "/api/admin/roo-rules/{rule_id}/review": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Review Roo Rule */
+        post: operations["review_roo_rule_api_admin_roo_rules__rule_id__review_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/exporter/evidence-types": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Available Evidence Types */
+        get: operations["list_available_evidence_types_api_exporter_evidence_types_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/exporter/evidences": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Evidences */
+        get: operations["list_evidences_api_exporter_evidences_get"];
+        put?: never;
+        /** Create Evidence */
+        post: operations["create_evidence_api_exporter_evidences_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/exporter/evidences/checklist": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Evidence Checklist */
+        get: operations["evidence_checklist_api_exporter_evidences_checklist_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/exporter/evidences/{evidence_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Evidence */
+        get: operations["get_evidence_api_exporter_evidences__evidence_id__get"];
+        put?: never;
+        post?: never;
+        /** Delete Evidence */
+        delete: operations["delete_evidence_api_exporter_evidences__evidence_id__delete"];
+        options?: never;
+        head?: never;
+        /** Update Evidence */
+        patch: operations["update_evidence_api_exporter_evidences__evidence_id__patch"];
+        trace?: never;
+    };
+    "/api/admin/evidence-types": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Evidence Types */
+        get: operations["list_evidence_types_api_admin_evidence_types_get"];
+        put?: never;
+        /** Create Evidence Type */
+        post: operations["create_evidence_type_api_admin_evidence_types_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/evidence-types/{code}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update Evidence Type */
+        patch: operations["update_evidence_type_api_admin_evidence_types__code__patch"];
+        trace?: never;
+    };
+    "/api/admin/evidence-types/{code}/review": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Review Evidence Type */
+        post: operations["review_evidence_type_api_admin_evidence_types__code__review_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/evidence-rules": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Evidence Rules */
+        get: operations["list_evidence_rules_api_admin_evidence_rules_get"];
+        put?: never;
+        /** Create Evidence Rule */
+        post: operations["create_evidence_rule_api_admin_evidence_rules_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/evidence-rules/{rule_id}/review": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Review Evidence Rule */
+        post: operations["review_evidence_rule_api_admin_evidence_rules__rule_id__review_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/evidence-rules/{rule_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete Evidence Rule */
+        delete: operations["delete_evidence_rule_api_admin_evidence_rules__rule_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/evidences/{evidence_id}/review": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Review Evidence */
+        post: operations["review_evidence_api_admin_evidences__evidence_id__review_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -265,6 +563,24 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** ChecklistItem */
+        ChecklistItem: {
+            /** Type Code */
+            type_code: string;
+            /** Name Vi */
+            name_vi: string;
+            /** Name En */
+            name_en: string;
+            /** Required */
+            required: boolean;
+            /** Note */
+            note: string | null;
+            /**
+             * State
+             * @enum {string}
+             */
+            state: "missing" | "pending" | "approved" | "expired" | "rejected";
+        };
         /** CompanyIn */
         CompanyIn: {
             /** Registration Number */
@@ -466,6 +782,163 @@ export interface components {
              */
             preferred_language: "vi" | "en";
         };
+        /**
+         * DutyType
+         * @enum {string}
+         */
+        DutyType: "ad_valorem" | "specific" | "mixed";
+        /** EvidenceIn */
+        EvidenceIn: {
+            /** Type Code */
+            type_code: string;
+            /** File Key */
+            file_key: string;
+            /** Certificate Number */
+            certificate_number?: string | null;
+            /** Issuer */
+            issuer?: string | null;
+            /**
+             * Issued At
+             * Format: date
+             */
+            issued_at: string;
+            /** Expires At */
+            expires_at?: string | null;
+        };
+        /** EvidenceOut */
+        EvidenceOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Type Code */
+            type_code: string;
+            /** Type Name Vi */
+            type_name_vi: string;
+            /** Type Name En */
+            type_name_en: string;
+            /** Certificate Number */
+            certificate_number: string | null;
+            /** Issuer */
+            issuer: string | null;
+            /**
+             * Issued At
+             * Format: date
+             */
+            issued_at: string;
+            /** Expires At */
+            expires_at: string | null;
+            /**
+             * Approval Status
+             * @enum {string}
+             */
+            approval_status: "pending" | "approved" | "rejected";
+            /** Reject Reason */
+            reject_reason: string | null;
+            /** File Url */
+            file_url: string;
+        };
+        /**
+         * EvidencePatch
+         * @description Chỉ trường được gửi mới đổi. Sửa bằng chứng luôn đưa nó về `pending` để duyệt lại.
+         */
+        EvidencePatch: {
+            /** Type Code */
+            type_code?: string | null;
+            /** File Key */
+            file_key?: string | null;
+            /** Certificate Number */
+            certificate_number?: string | null;
+            /** Issuer */
+            issuer?: string | null;
+            /** Issued At */
+            issued_at?: string | null;
+            /** Expires At */
+            expires_at?: string | null;
+        };
+        /** EvidenceReviewIn */
+        EvidenceReviewIn: {
+            /**
+             * Decision
+             * @enum {string}
+             */
+            decision: "approve" | "reject";
+            /** Reason */
+            reason?: string | null;
+        };
+        /** EvidenceTypeIn */
+        EvidenceTypeIn: {
+            /** Code */
+            code: string;
+            /** Name Vi */
+            name_vi: string;
+            /** Name En */
+            name_en: string;
+            /** Group */
+            group: string;
+            /** Validity Months */
+            validity_months?: number | null;
+            /**
+             * Is Active
+             * @default true
+             */
+            is_active?: boolean;
+            /** Source */
+            source?: string | null;
+        };
+        /** EvidenceTypeOut */
+        EvidenceTypeOut: {
+            /** Code */
+            code: string;
+            /** Name Vi */
+            name_vi: string;
+            /** Name En */
+            name_en: string;
+            /** Group */
+            group: string;
+            /** Validity Months */
+            validity_months: number | null;
+            /** Is Active */
+            is_active: boolean;
+            /** Source */
+            source: string | null;
+            /** Reviewed By */
+            reviewed_by: string | null;
+            /** Reviewed At */
+            reviewed_at: string | null;
+        };
+        /** EvidenceTypePatch */
+        EvidenceTypePatch: {
+            /** Name Vi */
+            name_vi?: string | null;
+            /** Name En */
+            name_en?: string | null;
+            /** Group */
+            group?: string | null;
+            /** Validity Months */
+            validity_months?: number | null;
+            /** Is Active */
+            is_active?: boolean | null;
+            /** Source */
+            source?: string | null;
+        };
+        /**
+         * EvidenceTypePublic
+         * @description Loại bằng chứng exporter được nộp (đã duyệt, đang bật) — không lộ thông tin duyệt.
+         */
+        EvidenceTypePublic: {
+            /** Code */
+            code: string;
+            /** Name Vi */
+            name_vi: string;
+            /** Name En */
+            name_en: string;
+            /** Group */
+            group: string;
+            /** Validity Months */
+            validity_months: number | null;
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
@@ -529,12 +1002,12 @@ export interface components {
              * Purpose
              * @enum {string}
              */
-            purpose: "logo" | "product_image";
+            purpose: "logo" | "product_image" | "evidence";
             /**
              * Content Type
              * @enum {string}
              */
-            content_type: "image/png" | "image/jpeg" | "image/webp";
+            content_type: "image/png" | "image/jpeg" | "image/webp" | "application/pdf";
         };
         /** PresignOut */
         PresignOut: {
@@ -806,6 +1279,117 @@ export interface components {
             /** Source */
             source: string | null;
         };
+        /** RooRuleIn */
+        RooRuleIn: {
+            /** Hs Code */
+            hs_code: string;
+            rule_type: components["schemas"]["RuleType"];
+            /** Threshold Pct */
+            threshold_pct?: number | string | null;
+            /** Rule Text */
+            rule_text?: string | null;
+            /**
+             * Requires Expert
+             * @default false
+             */
+            requires_expert?: boolean;
+            /** Source */
+            source?: string | null;
+            /**
+             * Valid From
+             * Format: date
+             */
+            valid_from: string;
+            /** Valid Until */
+            valid_until?: string | null;
+        };
+        /** RooRuleOut */
+        RooRuleOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Hs Code */
+            hs_code: string;
+            rule_type: components["schemas"]["RuleType"];
+            /** Threshold Pct */
+            threshold_pct: string | null;
+            /** Rule Text */
+            rule_text: string | null;
+            /** Requires Expert */
+            requires_expert: boolean;
+            /** Source */
+            source: string | null;
+            /**
+             * Valid From
+             * Format: date
+             */
+            valid_from: string;
+            /** Valid Until */
+            valid_until: string | null;
+            /** Reviewed By */
+            reviewed_by: string | null;
+            /** Reviewed At */
+            reviewed_at: string | null;
+        };
+        /** RooRulePatch */
+        RooRulePatch: {
+            /** Hs Code */
+            hs_code?: string | null;
+            rule_type?: components["schemas"]["RuleType"] | null;
+            /** Threshold Pct */
+            threshold_pct?: number | string | null;
+            /** Rule Text */
+            rule_text?: string | null;
+            /** Requires Expert */
+            requires_expert?: boolean | null;
+            /** Source */
+            source?: string | null;
+            /** Valid From */
+            valid_from?: string | null;
+            /** Valid Until */
+            valid_until?: string | null;
+        };
+        /** RuleIn */
+        RuleIn: {
+            /** Category */
+            category: string;
+            /** Evidence Type Code */
+            evidence_type_code: string;
+            /**
+             * Is Required
+             * @default true
+             */
+            is_required?: boolean;
+            /** Note */
+            note?: string | null;
+        };
+        /** RuleOut */
+        RuleOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Category */
+            category: string;
+            /** Evidence Type Code */
+            evidence_type_code: string;
+            /** Is Required */
+            is_required: boolean;
+            /** Note */
+            note: string | null;
+            /** Reviewed By */
+            reviewed_by: string | null;
+            /** Reviewed At */
+            reviewed_at: string | null;
+        };
+        /**
+         * RuleType
+         * @enum {string}
+         */
+        RuleType: "WO" | "CTH" | "MaxNOM" | "CTH_OR_MaxNOM";
         /**
          * TariffIn
          * @description Số tiền nhận dạng CHUỖI JSON (không nhận số) để không bao giờ đi qua float.
@@ -819,6 +1403,117 @@ export interface components {
             product_value: number | string;
             /** Shipments Per Year */
             shipments_per_year?: number | null;
+        };
+        /** TariffLineIn */
+        TariffLineIn: {
+            /** Hs Code */
+            hs_code: string;
+            /** Destination */
+            destination: string;
+            duty_type: components["schemas"]["DutyType"];
+            /** Mfn Rate */
+            mfn_rate?: number | string | null;
+            /** Mfn Specific */
+            mfn_specific?: string | null;
+            /** Evfta Rate Current */
+            evfta_rate_current?: number | string | null;
+            /** Staging Category */
+            staging_category?: string | null;
+            /** Zero From */
+            zero_from?: string | null;
+            /**
+             * Quota Required
+             * @default false
+             */
+            quota_required?: boolean;
+            /** Quota Note */
+            quota_note?: string | null;
+            /** Condition Note */
+            condition_note?: string | null;
+            /** Source Url */
+            source_url?: string | null;
+            /**
+             * Valid From
+             * Format: date
+             */
+            valid_from: string;
+            /** Valid Until */
+            valid_until?: string | null;
+        };
+        /** TariffLineOut */
+        TariffLineOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Hs Code */
+            hs_code: string;
+            /** Destination */
+            destination: string;
+            duty_type: components["schemas"]["DutyType"];
+            /** Mfn Rate */
+            mfn_rate: string | null;
+            /** Mfn Specific */
+            mfn_specific: string | null;
+            /** Evfta Rate Current */
+            evfta_rate_current: string | null;
+            /** Staging Category */
+            staging_category: string | null;
+            /** Zero From */
+            zero_from: string | null;
+            /** Quota Required */
+            quota_required: boolean;
+            /** Quota Note */
+            quota_note: string | null;
+            /** Condition Note */
+            condition_note: string | null;
+            /** Source Url */
+            source_url: string | null;
+            /**
+             * Valid From
+             * Format: date
+             */
+            valid_from: string;
+            /** Valid Until */
+            valid_until: string | null;
+            /** Reviewed By */
+            reviewed_by: string | null;
+            /** Reviewed At */
+            reviewed_at: string | null;
+        };
+        /**
+         * TariffLinePatch
+         * @description Mọi trường tùy chọn; chỉ trường được gửi mới đổi (kể cả gửi null để xóa).
+         */
+        TariffLinePatch: {
+            /** Hs Code */
+            hs_code?: string | null;
+            /** Destination */
+            destination?: string | null;
+            duty_type?: components["schemas"]["DutyType"] | null;
+            /** Mfn Rate */
+            mfn_rate?: number | string | null;
+            /** Mfn Specific */
+            mfn_specific?: string | null;
+            /** Evfta Rate Current */
+            evfta_rate_current?: number | string | null;
+            /** Staging Category */
+            staging_category?: string | null;
+            /** Zero From */
+            zero_from?: string | null;
+            /** Quota Required */
+            quota_required?: boolean | null;
+            /** Quota Note */
+            quota_note?: string | null;
+            /** Condition Note */
+            condition_note?: string | null;
+            /** Source Url */
+            source_url?: string | null;
+            /** Valid From */
+            valid_from?: string | null;
+            /** Valid Until */
+            valid_until?: string | null;
         };
         /** TariffOut */
         TariffOut: {
@@ -1525,6 +2220,880 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["RooOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_tariff_lines_api_admin_tariff_lines_get: {
+        parameters: {
+            query?: {
+                hs_code?: string | null;
+                reviewed?: boolean | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TariffLineOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_tariff_line_api_admin_tariff_lines_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TariffLineIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TariffLineOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_tariff_line_api_admin_tariff_lines__line_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                line_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_tariff_line_api_admin_tariff_lines__line_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                line_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TariffLinePatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TariffLineOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    review_tariff_line_api_admin_tariff_lines__line_id__review_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                line_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TariffLineOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_roo_rules_api_admin_roo_rules_get: {
+        parameters: {
+            query?: {
+                hs_code?: string | null;
+                reviewed?: boolean | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RooRuleOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_roo_rule_api_admin_roo_rules_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RooRuleIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RooRuleOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_roo_rule_api_admin_roo_rules__rule_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                rule_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_roo_rule_api_admin_roo_rules__rule_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                rule_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RooRulePatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RooRuleOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    review_roo_rule_api_admin_roo_rules__rule_id__review_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                rule_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RooRuleOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_available_evidence_types_api_exporter_evidence_types_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EvidenceTypePublic"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_evidences_api_exporter_evidences_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EvidenceOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_evidence_api_exporter_evidences_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EvidenceIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EvidenceOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    evidence_checklist_api_exporter_evidences_checklist_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ChecklistItem"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_evidence_api_exporter_evidences__evidence_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                evidence_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EvidenceOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_evidence_api_exporter_evidences__evidence_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                evidence_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_evidence_api_exporter_evidences__evidence_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                evidence_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EvidencePatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EvidenceOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_evidence_types_api_admin_evidence_types_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EvidenceTypeOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_evidence_type_api_admin_evidence_types_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EvidenceTypeIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EvidenceTypeOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_evidence_type_api_admin_evidence_types__code__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                code: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EvidenceTypePatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EvidenceTypeOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    review_evidence_type_api_admin_evidence_types__code__review_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                code: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EvidenceTypeOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_evidence_rules_api_admin_evidence_rules_get: {
+        parameters: {
+            query?: {
+                category?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RuleOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_evidence_rule_api_admin_evidence_rules_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RuleIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RuleOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    review_evidence_rule_api_admin_evidence_rules__rule_id__review_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                rule_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RuleOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_evidence_rule_api_admin_evidence_rules__rule_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                rule_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    review_evidence_api_admin_evidences__evidence_id__review_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                evidence_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EvidenceReviewIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EvidenceOut"];
                 };
             };
             /** @description Validation Error */

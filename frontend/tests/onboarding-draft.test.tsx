@@ -78,9 +78,12 @@ describe('A2 — wizard lưu nháp từng bước', () => {
     expect(onSaveProducts).not.toHaveBeenCalled();
   });
 
-  it('bước 3 nói rõ bằng chứng chưa được lưu lên hệ thống (bổ sung sau)', () => {
+  it('bước 3 là bằng chứng thật (C6): có form nộp, không còn giấy phép/chứng chỉ mẫu hay OCR', async () => {
     renderWizard({ initialStep: 3 });
-    expect(screen.getByRole('note')).toHaveTextContent('bổ sung sau');
+    expect(await screen.findByRole('button', { name: 'Nộp bằng chứng' })).toBeInTheDocument();
+    for (const fake of [/HACCP Codex/, /ISO 22000/, /OCR/, /L2 Enhanced/, /0314892345/]) {
+      expect(screen.queryByText(fake)).not.toBeInTheDocument();
+    }
   });
 });
 

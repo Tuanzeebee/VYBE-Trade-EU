@@ -114,6 +114,15 @@ async def _get_owned(
     return row
 
 
+async def list_available_types(session: AsyncSession) -> list[EvidenceType]:
+    rows = await session.scalars(
+        select(EvidenceType)
+        .where(EvidenceType.reviewed_by.is_not(None), EvidenceType.is_active.is_(True))
+        .order_by(EvidenceType.group, EvidenceType.code)
+    )
+    return list(rows)
+
+
 async def list_evidence(
     session: AsyncSession, user: CurrentUser, storage: Storage
 ) -> list[EvidenceOut]:

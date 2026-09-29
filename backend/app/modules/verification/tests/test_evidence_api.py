@@ -290,3 +290,32 @@ async def test_checklist_empty_without_products(
     await add_type(db_session, reviewer_id)
     await add_rule(db_session, reviewer_id, "iso_9001")
     assert (await api_client.get(f"{LIST}/checklist")).json() == []
+
+
+async def test_exporter_sees_only_reviewed_active_types(
+    api_client: AsyncClient, db_session: AsyncSession, exporter: str, reviewer_id: uuid.UUID
+) -> None:
+    await add_type(db_session, reviewer_id, code="visible", validity=12)
+    await add_type(db_session, None, code="draft")
+    await add_type(db_session, reviewer_id, code="inactive", active=False)
+    r = await api_client.get("/api/exporter/evidence-types")
+    assert r.status_code == 200, r.text
+    [item] = r.json()
+    assert (item["code"], item["validity_months"], item["name_vi"]) == (
+        "visible",
+        12,
+        "Loại visible",
+    )
+    assert set(item) == {
+        "code",
+        "name_vi",
+        "name_en",
+        "group",
+        "validity_months",
+    }  # không lộ dữ liệu duyệt
+
+
+async def test_evidence_types_401_and_403(api_client: AsyncClient) -> None:
+    assert (await api_client.get("/api/exporter/evidence-types")).status_code == 401
+    await login_as(api_client, "buyer", "b2@x.vn")
+    assert (await api_client.get("/api/exporter/evidence-types")).status_code == 403

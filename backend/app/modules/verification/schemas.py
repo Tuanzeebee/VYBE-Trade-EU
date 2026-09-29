@@ -44,6 +44,18 @@ class EvidenceOut(BaseModel):
     file_url: str  # URL tải xuống có hạn ngắn (pre-signed)
 
 
+class EvidenceTypePublic(BaseModel):
+    """Loại bằng chứng exporter được nộp (đã duyệt, đang bật) — không lộ thông tin duyệt."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    code: str
+    name_vi: str
+    name_en: str
+    group: str
+    validity_months: int | None
+
+
 class ChecklistItem(BaseModel):
     type_code: str
     name_vi: str
