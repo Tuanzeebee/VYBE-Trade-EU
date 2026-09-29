@@ -6,7 +6,8 @@ from sqlalchemy.ext.asyncio import create_async_engine
 
 # Import models của từng module ở đây khi module có bảng, để autogenerate thấy chúng.
 import app.core.audit
-import app.modules.auth.models  # noqa: F401
+import app.modules.auth.models
+import app.modules.companies.models  # noqa: F401
 from alembic import context
 from app.core.config import get_settings
 from app.core.db import Base
