@@ -8,7 +8,7 @@ import AuthPage from '../AuthPage';
 import BuyerOnboarding from '../BuyerOnboarding';
 import SellerOnboarding from '../SellerOnboarding';
 import SellerWorkspace from '../SellerWorkspace';
-import AdminDashboard from '../AdminDashboard';
+import AdminConsole from '../AdminConsole';
 import { LegacyGate } from '../app-shell/LegacyGate';
 import { PublicShell } from '../app-shell/PublicShell';
 import { useLegacyNavigate } from '../app-shell/useLegacyNavigate';
@@ -219,7 +219,7 @@ export function AdminRoute() {
     <LegacyGate page="admin">
       {() => (
         <PublicShell>
-          <AdminDashboard />
+          <AdminConsole />
         </PublicShell>
       )}
     </LegacyGate>

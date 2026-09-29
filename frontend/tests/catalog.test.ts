@@ -252,8 +252,67 @@ const C6_STRINGS = [
   'Không kết nối được máy chủ. Vui lòng thử lại.'
 ];
 
-describe('catalog.json có bản tiếng Anh cho chuỗi A1, B1, B2, B3, B4, B5, A2, C2, C4, C6', () => {
-  it.each([...A1_STRINGS, ...B1_STRINGS, ...B2_STRINGS, ...B3_STRINGS, ...B4_STRINGS, ...B5_STRINGS, ...A2_STRINGS, ...C2_STRINGS, ...C4_STRINGS, ...C6_STRINGS])('%s', (vi) => {
+const C7_STRINGS = [
+  'Trạng thái xác minh do quản trị viên quyết định. Từ chối và yêu cầu bổ sung phải có lý do; doanh nghiệp sẽ thấy lý do này.',
+  'Vui lòng nhập lý do.',
+  'Không tải được hàng đợi. Vui lòng thử lại.',
+  'Không có hồ sơ nào đang chờ duyệt.',
+  'Gửi lúc',
+  'MST',
+  'Quốc gia',
+  'Chưa nộp bằng chứng.',
+  'Duyệt bằng chứng',
+  'Từ chối bằng chứng',
+  'Lý do từ chối bằng chứng',
+  'Lý do quyết định (bắt buộc khi từ chối hoặc yêu cầu bổ sung)',
+  'Duyệt xác minh',
+  'Yêu cầu bổ sung',
+  'Từ chối',
+  'Yêu cầu này đã được xử lý hoặc công ty không còn ở trạng thái chờ duyệt.',
+  'Cần nhập lý do khi từ chối hoặc yêu cầu bổ sung.',
+  'Không tìm thấy yêu cầu.',
+  'Cần nhập lý do khi từ chối bằng chứng.',
+  'Không tìm thấy bằng chứng.',
+  'Không tìm thấy dòng dữ liệu.',
+  'Dòng đã duyệt không xóa được.',
+  'Dữ liệu chưa duyệt không bao giờ hiện ra công khai và không được máy tính tuân thủ dùng. Sửa dữ liệu đã duyệt sẽ đưa nó về chưa duyệt.',
+  'Dữ liệu tuân thủ',
+  'Dòng thuế',
+  'Quy tắc xuất xứ',
+  'Loại bằng chứng',
+  'Luật bằng chứng theo nhóm hàng',
+  'Mã HS',
+  'Nơi đến',
+  'Loại thuế',
+  'Hạn ngạch',
+  'Hiệu lực',
+  'Loại quy tắc',
+  'Ngưỡng NOM',
+  'Cần chuyên gia',
+  'Mã',
+  'Tên',
+  'Nhóm',
+  'Hạn (tháng)',
+  'Đang bật',
+  'Nhóm hàng',
+  'Mức độ',
+  'Ghi chú',
+  'Có',
+  'Không',
+  'Bắt buộc',
+  'Chỉ nhắc',
+  'Trạng thái',
+  'Chưa duyệt',
+  'Duyệt',
+  'dòng chưa duyệt',
+  'Không tải được dữ liệu. Vui lòng thử lại.',
+  'Chưa có dữ liệu. Nhập bằng script CSV rồi quay lại để duyệt.',
+  'Quản trị',
+  'Chờ duyệt'
+];
+
+describe('catalog.json có bản tiếng Anh cho chuỗi A1, B1, B2, B3, B4, B5, A2, C2, C4, C6, C7', () => {
+  it.each([...A1_STRINGS, ...B1_STRINGS, ...B2_STRINGS, ...B3_STRINGS, ...B4_STRINGS, ...B5_STRINGS, ...A2_STRINGS, ...C2_STRINGS, ...C4_STRINGS, ...C6_STRINGS, ...C7_STRINGS])('%s', (vi) => {
     const en = translateText(vi, 'en');
     expect(en).not.toBe(vi);
     expect(en.trim()).not.toBe('');

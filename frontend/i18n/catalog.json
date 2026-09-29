@@ -8883,5 +8883,255 @@
     "Submit quality certificates, origin evidence and the documents on the checklist for your product group. An administrator will review each item.",
     "Submit quality certificates, origin evidence and the documents on the checklist for your product group. An administrator will review each item.",
     "Submit quality certificates, origin evidence and the documents on the checklist for your product group. An administrator will review each item."
+  ],
+  "Trạng thái xác minh do quản trị viên quyết định. Từ chối và yêu cầu bổ sung phải có lý do; doanh nghiệp sẽ thấy lý do này.": [
+    "Verification status is decided by an administrator. Rejections and requests for more information need a reason; the company will see it.",
+    "Verification status is decided by an administrator. Rejections and requests for more information need a reason; the company will see it.",
+    "Verification status is decided by an administrator. Rejections and requests for more information need a reason; the company will see it."
+  ],
+  "Vui lòng nhập lý do.": [
+    "Please enter a reason.",
+    "Please enter a reason.",
+    "Please enter a reason."
+  ],
+  "Không tải được hàng đợi. Vui lòng thử lại.": [
+    "Unable to load the queue. Please try again.",
+    "Unable to load the queue. Please try again.",
+    "Unable to load the queue. Please try again."
+  ],
+  "Không có hồ sơ nào đang chờ duyệt.": [
+    "There are no profiles waiting for review.",
+    "There are no profiles waiting for review.",
+    "There are no profiles waiting for review."
+  ],
+  "Gửi lúc": [
+    "Submitted at",
+    "Submitted at",
+    "Submitted at"
+  ],
+  "MST": [
+    "Tax ID",
+    "Tax ID",
+    "Tax ID"
+  ],
+  "Quốc gia": [
+    "Country",
+    "Country",
+    "Country"
+  ],
+  "Chưa nộp bằng chứng.": [
+    "No evidence submitted.",
+    "No evidence submitted.",
+    "No evidence submitted."
+  ],
+  "Duyệt bằng chứng": [
+    "Approve evidence",
+    "Approve evidence",
+    "Approve evidence"
+  ],
+  "Từ chối bằng chứng": [
+    "Reject evidence",
+    "Reject evidence",
+    "Reject evidence"
+  ],
+  "Lý do từ chối bằng chứng": [
+    "Reason for rejecting the evidence",
+    "Reason for rejecting the evidence",
+    "Reason for rejecting the evidence"
+  ],
+  "Lý do quyết định (bắt buộc khi từ chối hoặc yêu cầu bổ sung)": [
+    "Decision reason (required when rejecting or requesting more information)",
+    "Decision reason (required when rejecting or requesting more information)",
+    "Decision reason (required when rejecting or requesting more information)"
+  ],
+  "Duyệt xác minh": [
+    "Approve verification",
+    "Approve verification",
+    "Approve verification"
+  ],
+  "Yêu cầu bổ sung": [
+    "Request more information",
+    "Request more information",
+    "Request more information"
+  ],
+  "Từ chối": [
+    "Reject",
+    "Reject",
+    "Reject"
+  ],
+  "Yêu cầu này đã được xử lý hoặc công ty không còn ở trạng thái chờ duyệt.": [
+    "This request was already handled or the company is no longer waiting for review.",
+    "This request was already handled or the company is no longer waiting for review.",
+    "This request was already handled or the company is no longer waiting for review."
+  ],
+  "Cần nhập lý do khi từ chối hoặc yêu cầu bổ sung.": [
+    "A reason is required when rejecting or requesting more information.",
+    "A reason is required when rejecting or requesting more information.",
+    "A reason is required when rejecting or requesting more information."
+  ],
+  "Không tìm thấy yêu cầu.": [
+    "Request not found.",
+    "Request not found.",
+    "Request not found."
+  ],
+  "Cần nhập lý do khi từ chối bằng chứng.": [
+    "A reason is required when rejecting evidence.",
+    "A reason is required when rejecting evidence.",
+    "A reason is required when rejecting evidence."
+  ],
+  "Không tìm thấy bằng chứng.": [
+    "Evidence not found.",
+    "Evidence not found.",
+    "Evidence not found."
+  ],
+  "Không tìm thấy dòng dữ liệu.": [
+    "Data row not found.",
+    "Data row not found.",
+    "Data row not found."
+  ],
+  "Dòng đã duyệt không xóa được.": [
+    "Reviewed rows cannot be deleted.",
+    "Reviewed rows cannot be deleted.",
+    "Reviewed rows cannot be deleted."
+  ],
+  "Dữ liệu chưa duyệt không bao giờ hiện ra công khai và không được máy tính tuân thủ dùng. Sửa dữ liệu đã duyệt sẽ đưa nó về chưa duyệt.": [
+    "Unreviewed data never appears publicly and is never used by the compliance calculators. Editing reviewed data makes it unreviewed again.",
+    "Unreviewed data never appears publicly and is never used by the compliance calculators. Editing reviewed data makes it unreviewed again.",
+    "Unreviewed data never appears publicly and is never used by the compliance calculators. Editing reviewed data makes it unreviewed again."
+  ],
+  "Dữ liệu tuân thủ": [
+    "Compliance data",
+    "Compliance data",
+    "Compliance data"
+  ],
+  "Dòng thuế": [
+    "Tariff lines",
+    "Tariff lines",
+    "Tariff lines"
+  ],
+  "Quy tắc xuất xứ": [
+    "Rules of origin",
+    "Rules of origin",
+    "Rules of origin"
+  ],
+  "Luật bằng chứng theo nhóm hàng": [
+    "Evidence rules by product group",
+    "Evidence rules by product group",
+    "Evidence rules by product group"
+  ],
+  "Nơi đến": [
+    "Destination",
+    "Destination",
+    "Destination"
+  ],
+  "Loại thuế": [
+    "Duty type",
+    "Duty type",
+    "Duty type"
+  ],
+  "MFN": [
+    "MFN",
+    "MFN",
+    "MFN"
+  ],
+  "EVFTA": [
+    "EVFTA",
+    "EVFTA",
+    "EVFTA"
+  ],
+  "Hạn ngạch": [
+    "Quota",
+    "Quota",
+    "Quota"
+  ],
+  "Hiệu lực": [
+    "Validity",
+    "Validity",
+    "Validity"
+  ],
+  "Loại quy tắc": [
+    "Rule type",
+    "Rule type",
+    "Rule type"
+  ],
+  "Ngưỡng NOM": [
+    "NOM threshold",
+    "NOM threshold",
+    "NOM threshold"
+  ],
+  "Cần chuyên gia": [
+    "Needs expert",
+    "Needs expert",
+    "Needs expert"
+  ],
+  "Mã": [
+    "Code",
+    "Code",
+    "Code"
+  ],
+  "Tên": [
+    "Name",
+    "Name",
+    "Name"
+  ],
+  "Nhóm": [
+    "Group",
+    "Group",
+    "Group"
+  ],
+  "Hạn (tháng)": [
+    "Validity (months)",
+    "Validity (months)",
+    "Validity (months)"
+  ],
+  "Đang bật": [
+    "Active",
+    "Active",
+    "Active"
+  ],
+  "Mức độ": [
+    "Level",
+    "Level",
+    "Level"
+  ],
+  "Ghi chú": [
+    "Note",
+    "Note",
+    "Note"
+  ],
+  "Trạng thái": [
+    "Status",
+    "Status",
+    "Status"
+  ],
+  "Chưa duyệt": [
+    "Unreviewed",
+    "Unreviewed",
+    "Unreviewed"
+  ],
+  "Duyệt": [
+    "Approve",
+    "Approve",
+    "Approve"
+  ],
+  "dòng chưa duyệt": [
+    "unreviewed rows",
+    "unreviewed rows",
+    "unreviewed rows"
+  ],
+  "Không tải được dữ liệu. Vui lòng thử lại.": [
+    "Unable to load the data. Please try again.",
+    "Unable to load the data. Please try again.",
+    "Unable to load the data. Please try again."
+  ],
+  "Chưa có dữ liệu. Nhập bằng script CSV rồi quay lại để duyệt.": [
+    "No data yet. Import it with the CSV script, then come back to review it.",
+    "No data yet. Import it with the CSV script, then come back to review it.",
+    "No data yet. Import it with the CSV script, then come back to review it."
+  ],
+  "Quản trị": [
+    "Administration",
+    "Administration",
+    "Administration"
   ]
 }
