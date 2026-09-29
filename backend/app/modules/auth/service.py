@@ -170,6 +170,16 @@ async def update_me(session: AsyncSession, user_id: uuid.UUID, data: MePatch) ->
     return _to_current(user)
 
 
+async def get_admin_by_email(session: AsyncSession, email: str) -> CurrentUser | None:
+    """Admin theo email (script nhập dữ liệu cần một actor thật để ghi audit)."""
+    user = await session.scalar(
+        select(User).where(
+            User.email == email.lower(), User.role == UserRole.admin, User.deleted_at.is_(None)
+        )
+    )
+    return _to_current(user) if user else None
+
+
 async def create_admin(session: AsyncSession, email: str, password: str) -> uuid.UUID:
     """Chỉ gọi từ scripts/create_admin.py — không có API tạo admin."""
     validate_password(password)

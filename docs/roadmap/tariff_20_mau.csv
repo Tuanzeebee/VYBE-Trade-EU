@@ -1,5 +1,6 @@
 # MẪU RỖNG cho luật TM điền — backlog C1/C2. Chỉ cột hs_code và name_en được điền sẵn (từ backend/data/hs_codes.csv, danh sách 20 mã đợt 1 CHƯA ký).
 # KHÔNG điền số thay luật TM. Sau khi luật TM điền và ký, đổi tên thành tariff_20.csv và đặt vào backend/tests/fixtures/compliance/.
+# Nhập vào hệ thống (CHƯA DUYỆT): uv run python -m scripts.import_compliance_data tariff <file> --actor <email admin> [--dry-run]; admin duyệt trong màn hình quản trị.
 # duty_type: ad_valorem | specific | mixed. Thuế suất là % (vd 12.5). Ngày dạng YYYY-MM-DD. quota_required: true | false.
 # destination: mã ISO-2 nước đến (luật TM cho biết thuế chung cả EU hay khác từng nước; nếu khác thì mỗi nước một dòng).
 # expected_status: ok | needs_review | unsupported (ca gạo ST25 phải là needs_review nếu có hạn ngạch).

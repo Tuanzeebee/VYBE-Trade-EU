@@ -1,0 +1,26 @@
+# MẪU RỖNG cho luật TM điền — quy tắc xuất xứ theo mặt hàng (PSR, backlog C4). Chỉ điền sẵn hs_code và name_en.
+# KHÔNG điền số thay luật TM. Nhập bằng: uv run python -m scripts.import_compliance_data psr <file> --actor <email admin> [--dry-run]
+# Dữ liệu vào hệ thống ở trạng thái CHƯA DUYỆT; admin duyệt trong màn hình quản trị. Cột reviewed_by, reviewed_at bị bỏ qua khi nhập.
+# rule_type: WO | CTH | MaxNOM | CTH_OR_MaxNOM (đạt một trong hai). threshold_pct: % nguyên liệu không xuất xứ tối đa, chỉ với MaxNOM và CTH_OR_MaxNOM (để trống với WO, CTH).
+# requires_expert: true khi quy tắc cần chuyên gia đánh giá (kết quả luôn inconclusive). Ngày dạng YYYY-MM-DD; valid_until là ngày đã hết hiệu lực.
+hs_code,name_en,rule_type,threshold_pct,requires_expert,rule_text,source,valid_from,valid_until,reviewed_by,reviewed_at
+090111,"Coffee, not roasted, not decaffeinated",,,,,,,,,
+090121,"Coffee, roasted, not decaffeinated",,,,,,,,,
+080132,"Cashew nuts, shelled",,,,,,,,,
+090411,"Pepper of the genus Piper, neither crushed nor ground",,,,,,,,,
+090619,"Cinnamon, neither crushed nor ground — other",,,,,,,,,
+090240,Other black tea (fermented) and other partly fermented tea,,,,,,,,,
+100630,Semi-milled or wholly milled rice,,,,,,,,,
+030617,"Other shrimps and prawns, frozen",,,,,,,,,
+160529,"Shrimps and prawns, prepared or preserved — other",,,,,,,,,
+030462,Frozen fillets of catfish (Pangasius spp.),,,,,,,,,
+160414,"Prepared or preserved tunas, skipjack and bonito, whole or in pieces",,,,,,,,,
+081060,"Durians, fresh",,,,,,,,,
+081090,"Other fruit, fresh",,,,,,,,,
+080450,"Guavas, mangoes and mangosteens, fresh or dried",,,,,,,,,
+081190,"Other fruit, frozen",,,,,,,,,
+200899,Fruit otherwise prepared or preserved — other,,,,,,,,,
+080111,"Coconuts, desiccated",,,,,,,,,
+190219,"Uncooked pasta, not containing eggs — other",,,,,,,,,
+210390,"Sauces and preparations therefor — other",,,,,,,,,
+040900,Natural honey,,,,,,,,,

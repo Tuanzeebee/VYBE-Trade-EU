@@ -81,7 +81,7 @@ async def _save[Row: (TariffLine, ProductSpecificRule)](session: AsyncSession, r
 
 
 async def _create[Row: (TariffLine, ProductSpecificRule)](
-    session: AsyncSession, actor: CurrentUser, row: Row, entity: str
+    session: AsyncSession, actor: CurrentUser, row: Row, entity: str, commit: bool = True
 ) -> Row:
     session.add(row)
     await session.flush()
@@ -95,7 +95,7 @@ async def _create[Row: (TariffLine, ProductSpecificRule)](
         before=None,
         after=_snapshot(row),
     )
-    return await _save(session, row)
+    return await _save(session, row) if commit else row
 
 
 async def _update[Row: (TariffLine, ProductSpecificRule)](
@@ -187,11 +187,11 @@ async def list_tariff_lines(
 
 
 async def create_tariff_line(
-    session: AsyncSession, actor: CurrentUser, data: TariffLineIn
+    session: AsyncSession, actor: CurrentUser, data: TariffLineIn, commit: bool = True
 ) -> TariffLine:
     await _require_hs(session, data.hs_code)
     _check_window(data.valid_from, data.valid_until)
-    return await _create(session, actor, TariffLine(**data.model_dump()), TARIFF_ENTITY)
+    return await _create(session, actor, TariffLine(**data.model_dump()), TARIFF_ENTITY, commit)
 
 
 async def update_tariff_line(
@@ -232,12 +232,14 @@ async def list_roo_rules(
 
 
 async def create_roo_rule(
-    session: AsyncSession, actor: CurrentUser, data: RooRuleIn
+    session: AsyncSession, actor: CurrentUser, data: RooRuleIn, commit: bool = True
 ) -> ProductSpecificRule:
     await _require_hs(session, data.hs_code)
     _check_window(data.valid_from, data.valid_until)
     _check_threshold(data.rule_type, data.threshold_pct)
-    return await _create(session, actor, ProductSpecificRule(**data.model_dump()), RULE_ENTITY)
+    return await _create(
+        session, actor, ProductSpecificRule(**data.model_dump()), RULE_ENTITY, commit
+    )
 
 
 async def update_roo_rule(
