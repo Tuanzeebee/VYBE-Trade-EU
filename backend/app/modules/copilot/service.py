@@ -10,7 +10,7 @@ import logging
 import time
 import uuid
 
-from sqlalchemy import case, func, select
+from sqlalchemy import case, func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.chat import ChatModel
@@ -192,3 +192,13 @@ async def ai_stats(
     )
     average = await session.scalar(select(score).where(AiQuery.created_at >= since))
     return int(total or 0), None if average is None else float(average)
+
+
+async def redact_user_contacts(session: AsyncSession, user_id: uuid.UUID) -> None:
+    """Xóa tài khoản (J2): phiếu chuyển chuyên gia lưu email liên hệ — che đi. ai_queries thì
+    append-only và chỉ giữ câu hỏi đã che PII cùng id người dùng (không còn định danh được)."""
+    await session.execute(
+        update(EscalationTicket)
+        .where(EscalationTicket.user_id == user_id)
+        .values(contact_email="redacted@invalid")
+    )

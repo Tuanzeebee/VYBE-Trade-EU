@@ -269,6 +269,13 @@ async def admin_update_company(
         if name in fields and getattr(patch, name) != getattr(company, name):
             before[name], after[name] = getattr(company, name), getattr(patch, name)
     hide_change = "is_hidden" in fields and patch.is_hidden != company.is_hidden
+    if (
+        hide_change
+        and patch.is_hidden is False
+        and await auth.get_contact(session, company.owner_user_id) is None
+    ):
+        # Chủ đã xóa tài khoản (J2): không đưa hồ sơ trở lại công khai.
+        raise AppError("account_deleted", "The owner deleted their account", 409)
     hide_before, hide_after = company.is_hidden, patch.is_hidden
 
     for name, value in after.items():
@@ -305,6 +312,18 @@ async def count_by_verification_status(session: AsyncSession) -> dict[str, int]:
         select(Company.verification_status, func.count()).group_by(Company.verification_status)
     )
     return {status.value: count for status, count in rows.all()}
+
+
+async def anonymize_owner(session: AsyncSession, user_id: uuid.UUID) -> None:
+    """Chủ tài khoản bị xóa (J2): công ty biến khỏi danh bạ và hồ sơ công khai, xóa email liên hệ
+    và địa chỉ (có thể là địa chỉ cá nhân). Tên pháp lý và mã số thuế là thông tin doanh nghiệp."""
+    company = await session.scalar(select(Company).where(Company.owner_user_id == user_id))
+    if company is None:
+        return
+    company.is_hidden = True
+    company.contact_email = None
+    company.address = None
+    await session.flush()
 
 
 async def get_owner_user_id(session: AsyncSession, company_id: uuid.UUID) -> uuid.UUID | None:

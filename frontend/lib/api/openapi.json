@@ -243,6 +243,58 @@
         }
       }
     },
+    "/api/me/delete": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Delete Me",
+        "operationId": "delete_me_api_me_delete_post",
+        "parameters": [
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteAccountIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/admin/companies": {
       "get": {
         "tags": [
@@ -6800,6 +6852,22 @@
           "decision"
         ],
         "title": "DecisionIn"
+      },
+      "DeleteAccountIn": {
+        "properties": {
+          "password": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "title": "Password"
+          }
+        },
+        "type": "object",
+        "required": [
+          "password"
+        ],
+        "title": "DeleteAccountIn",
+        "description": "Xóa tài khoản là không thể hoàn tác nên phải nhập lại mật khẩu."
       },
       "DocumentOut": {
         "properties": {

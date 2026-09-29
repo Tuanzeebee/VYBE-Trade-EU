@@ -6,6 +6,7 @@ import CountryFlag from './CountryFlag.tsx';
 import LanguageSelectorModal from './LanguageSelectorModal.tsx';
 import { ROLE_LABELS, type DemoUser, getUserPage } from '../lib/demoAuth.ts';
 import NotificationBell from './NotificationBell';
+import { Link } from '../i18n/navigation';
 
 export interface HeaderProps {
   currentPage: string;
@@ -220,6 +221,13 @@ export default function Header({
                         {tr("Cập nhật hồ sơ xuất khẩu")}
                       </button>
                     )}
+                    <Link
+                      href="/account"
+                      onClick={() => setHeaderProfileOpen(false)}
+                      className="block w-full px-4 py-3 text-left text-slate-600 hover:bg-slate-50"
+                    >
+                      {tr("Tài khoản của tôi")}
+                    </Link>
                     <button 
                       onClick={() => {
                         setHeaderProfileOpen(false);

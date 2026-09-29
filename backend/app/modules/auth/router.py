@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.config import get_settings
 from app.core.db import get_session
 from app.modules.auth import service
-from app.modules.auth.schemas import CurrentUser, LoginIn, MePatch, RegisterIn
+from app.modules.auth.schemas import CurrentUser, DeleteAccountIn, LoginIn, MePatch, RegisterIn
 
 router = APIRouter(tags=["auth"])
 DB = Annotated[AsyncSession, Depends(get_session)]
@@ -54,3 +54,11 @@ async def me(user: Me) -> CurrentUser:
 @router.patch("/api/me")
 async def patch_me(data: MePatch, user: Me, session: DB) -> CurrentUser:
     return await service.update_me(session, user.id, data)
+
+
+@router.post("/api/me/delete", status_code=status.HTTP_204_NO_CONTENT, response_class=Response)
+async def delete_me(data: DeleteAccountIn, user: Me, session: DB) -> Response:
+    await service.anonymize_user(session, user, data)
+    response = Response(status_code=status.HTTP_204_NO_CONTENT)
+    response.delete_cookie(service.COOKIE_NAME, path="/")
+    return response

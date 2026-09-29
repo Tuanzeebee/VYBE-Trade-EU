@@ -3,6 +3,7 @@
 Module khác chỉ dùng get_current_user, require_role và schema CurrentUser.
 """
 
+import secrets
 import uuid
 from collections.abc import Awaitable, Callable
 from datetime import UTC, datetime, timedelta
@@ -24,7 +25,14 @@ from app.core.security import (
     verify_password,
 )
 from app.modules.auth.models import Session, User, UserRole
-from app.modules.auth.schemas import Contact, CurrentUser, LoginIn, MePatch, RegisterIn
+from app.modules.auth.schemas import (
+    Contact,
+    CurrentUser,
+    DeleteAccountIn,
+    LoginIn,
+    MePatch,
+    RegisterIn,
+)
 
 COOKIE_NAME = "evfta_session"
 MAX_FAILED_LOGINS = 5
@@ -214,3 +222,48 @@ async def create_admin(session: AsyncSession, email: str, password: str) -> uuid
     )
     await session.commit()
     return user.id
+
+
+# ── Xóa tài khoản (J2): ẩn danh hóa PII, giữ audit ─────────────────────────────
+AnonymizeHook = Callable[[AsyncSession, uuid.UUID], Awaitable[None]]
+_anonymize_hooks: list[AnonymizeHook] = []
+
+
+def register_anonymize_hook(hook: AnonymizeHook) -> None:
+    """Module khác đăng ký việc dọn PII của riêng mình; chạy CÙNG transaction với việc xóa để
+    không có trạng thái nửa vời (tài khoản đã xóa nhưng công ty vẫn hiện)."""
+    if hook not in _anonymize_hooks:
+        _anonymize_hooks.append(hook)
+
+
+async def anonymize_user(session: AsyncSession, user: CurrentUser, data: DeleteAccountIn) -> None:
+    """Xóa tài khoản bằng ẩn danh hóa: email, điện thoại, mật khẩu không dùng lại được, mọi phiên
+    bị hủy, module khác dọn PII của mình. audit_logs giữ nguyên và ghi thêm `user.delete`
+    (không kèm email)."""
+    row = await session.scalar(select(User).where(User.id == user.id, User.deleted_at.is_(None)))
+    if row is None:
+        raise AppError("unauthenticated", "Login required", 401)
+    if row.role == UserRole.admin:
+        raise AppError("forbidden", "Admin accounts cannot be deleted here", 403)
+    if not verify_password(row.password_hash, data.password):
+        raise AppError("wrong_password", "Password is incorrect", 403)
+    record_before = {"role": row.role.value, "preferred_language": row.preferred_language}
+    row.email = f"deleted-{row.id}@invalid"
+    row.phone = None
+    row.password_hash = hash_password(secrets.token_urlsafe(32))
+    row.locked_until = None
+    row.failed_login_count = 0
+    row.deleted_at = datetime.now(UTC)
+    await session.execute(delete(Session).where(Session.user_id == row.id))
+    for hook in _anonymize_hooks:
+        await hook(session, row.id)
+    await record(
+        session,
+        actor_id=row.id,
+        action_type="user.delete",
+        entity_type="user",
+        entity_id=str(row.id),
+        before=record_before,
+        after={"deleted": True},
+    )
+    await session.commit()

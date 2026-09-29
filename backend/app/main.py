@@ -17,13 +17,17 @@ from app.core.ratelimit import enforce_public_limit
 from app.core.storage import Storage, get_storage
 from app.jobs.app import app as jobs_app
 from app.modules.admin.router import router as admin_router
+from app.modules.auth import service as auth_service
 from app.modules.auth.router import router as auth_router
 from app.modules.catalog.router import router as catalog_router
+from app.modules.companies import service as companies_service
 from app.modules.companies.router import router as companies_router
 from app.modules.compliance.router import router as compliance_router
+from app.modules.copilot import service as copilot_service
 from app.modules.copilot.router import router as copilot_router
 from app.modules.directory.router import router as directory_router
 from app.modules.messaging.router import router as messaging_router
+from app.modules.notifications import center as notification_center
 from app.modules.notifications import handlers as notification_handlers
 from app.modules.notifications.router import router as notifications_router
 from app.modules.verification.router import router as verification_router
@@ -31,6 +35,10 @@ from app.modules.verification.router import router as verification_router
 setup_logging()
 log = logging.getLogger(__name__)
 notification_handlers.register()
+# Xóa tài khoản (J2): mỗi module dọn PII của mình trong cùng transaction.
+auth_service.register_anonymize_hook(companies_service.anonymize_owner)
+auth_service.register_anonymize_hook(notification_center.delete_for_user)
+auth_service.register_anonymize_hook(copilot_service.redact_user_contacts)
 
 
 @asynccontextmanager

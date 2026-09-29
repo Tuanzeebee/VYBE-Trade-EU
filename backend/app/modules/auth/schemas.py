@@ -51,3 +51,9 @@ class Contact(BaseModel):
     email: str
     preferred_language: str
     role: str = "exporter"
+
+
+class DeleteAccountIn(BaseModel):
+    """Xóa tài khoản là không thể hoàn tác nên phải nhập lại mật khẩu."""
+
+    password: str = Field(min_length=1, max_length=256)

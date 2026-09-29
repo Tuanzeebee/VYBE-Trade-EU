@@ -6,7 +6,7 @@ Giao diện dựng nội dung từ (type, payload) theo ngôn ngữ người dù
 import uuid
 from typing import Any
 
-from sqlalchemy import func, select, update
+from sqlalchemy import delete, func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.errors import AppError
@@ -115,3 +115,8 @@ async def mark_all_read(session: AsyncSession, user: CurrentUser) -> int:
     )
     await session.commit()
     return int(result.rowcount or 0)  # type: ignore[attr-defined]
+
+
+async def delete_for_user(session: AsyncSession, user_id: uuid.UUID) -> None:
+    """Xóa tài khoản (J2): thông báo chỉ có ý nghĩa với chủ của nó."""
+    await session.execute(delete(Notification).where(Notification.user_id == user_id))

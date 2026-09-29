@@ -69,6 +69,23 @@ export interface paths {
         patch: operations["patch_me_api_me_patch"];
         trace?: never;
     };
+    "/api/me/delete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Delete Me */
+        post: operations["delete_me_api_me_delete_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/companies": {
         parameters: {
             query?: never;
@@ -1621,6 +1638,14 @@ export interface components {
             /** Reason */
             reason?: string | null;
         };
+        /**
+         * DeleteAccountIn
+         * @description Xóa tài khoản là không thể hoàn tác nên phải nhập lại mật khẩu.
+         */
+        DeleteAccountIn: {
+            /** Password */
+            password: string;
+        };
         /** DocumentOut */
         DocumentOut: {
             /**
@@ -2967,6 +2992,39 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["CurrentUser"];
                 };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_me_api_me_delete_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteAccountIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Validation Error */
             422: {

@@ -10098,5 +10098,60 @@
     "Open conversation",
     "Open conversation",
     "Open conversation"
+  ],
+  "Mật khẩu không đúng.": [
+    "The password is incorrect.",
+    "The password is incorrect.",
+    "The password is incorrect."
+  ],
+  "Tài khoản quản trị không xóa được tại đây.": [
+    "Administrator accounts cannot be deleted here.",
+    "Administrator accounts cannot be deleted here.",
+    "Administrator accounts cannot be deleted here."
+  ],
+  "Tài khoản của tôi": [
+    "My account",
+    "My account",
+    "My account"
+  ],
+  "Đăng nhập để quản lý tài khoản.": [
+    "Sign in to manage your account.",
+    "Sign in to manage your account.",
+    "Sign in to manage your account."
+  ],
+  "Vui lòng nhập mật khẩu để xác nhận.": [
+    "Please enter your password to confirm.",
+    "Please enter your password to confirm.",
+    "Please enter your password to confirm."
+  ],
+  "Xóa tài khoản": [
+    "Delete account",
+    "Delete account",
+    "Delete account"
+  ],
+  "Email, số điện thoại và thông tin liên hệ của công ty sẽ bị xóa; công ty của bạn không còn xuất hiện trong danh bạ. Nhật ký thao tác được giữ lại để phục vụ kiểm toán nhưng không còn gắn với email của bạn. Việc này không thể hoàn tác.": [
+    "Your email, phone number and the company's contact details will be erased and your company will no longer appear in the directory. The activity log is kept for auditing but is no longer linked to your email. This cannot be undone.",
+    "Your email, phone number and the company's contact details will be erased and your company will no longer appear in the directory. The activity log is kept for auditing but is no longer linked to your email. This cannot be undone.",
+    "Your email, phone number and the company's contact details will be erased and your company will no longer appear in the directory. The activity log is kept for auditing but is no longer linked to your email. This cannot be undone."
+  ],
+  "Xóa tài khoản của tôi": [
+    "Delete my account",
+    "Delete my account",
+    "Delete my account"
+  ],
+  "Nhập mật khẩu để xác nhận": [
+    "Enter your password to confirm",
+    "Enter your password to confirm",
+    "Enter your password to confirm"
+  ],
+  "Đang xóa...": [
+    "Deleting...",
+    "Deleting...",
+    "Deleting..."
+  ],
+  "Xóa vĩnh viễn": [
+    "Delete permanently",
+    "Delete permanently",
+    "Delete permanently"
   ]
 }
