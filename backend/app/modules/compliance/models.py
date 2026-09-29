@@ -28,6 +28,53 @@ class DutyType(StrEnum):
     mixed = "mixed"
 
 
+class CheckType(StrEnum):
+    tariff = "tariff"
+    roo = "roo"
+
+
+class ComplianceCheck(Base):
+    """Nhật ký MỖI lần chạy máy tính (kể cả khách). Append-only: trigger forbid_mutation() chặn
+    UPDATE/DELETE/TRUNCATE (migration 0010). Chỉ compliance.service.log_check được ghi.
+
+    rule_id chưa có khóa ngoại tới product_specific_rules (bảng đó tạo ở C4).
+    """
+
+    __tablename__ = "compliance_checks"
+    __table_args__ = (
+        CheckConstraint("hs_code ~ '^[0-9]{6,8}$'", name="hs_code_format"),
+        CheckConstraint("destination_country ~ '^[A-Z]{2}$'", name="destination_iso2"),
+        CheckConstraint("product_value IS NULL OR product_value > 0", name="positive_value"),
+        CheckConstraint(
+            "(check_type = 'tariff' AND status IN ('ok', 'unsupported', 'needs_review'))"
+            " OR (check_type = 'roo'"
+            " AND status IN ('pass', 'fail', 'inconclusive', 'unsupported'))",
+            name="status_matches_type",
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, primary_key=True, default=uuid.uuid4, server_default=text("gen_random_uuid()")
+    )
+    company_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("companies.id"), index=True)
+    check_type: Mapped[CheckType] = mapped_column(Enum(CheckType, name="check_type"))
+    hs_code: Mapped[str] = mapped_column(String(8))
+    product_value: Mapped[Decimal | None] = mapped_column(Numeric(14, 2))
+    origin_country: Mapped[str | None] = mapped_column(String(2))
+    destination_country: Mapped[str] = mapped_column(String(2))
+    mfn_duty_rate: Mapped[Decimal | None] = mapped_column(Numeric(7, 4))
+    evfta_duty_rate: Mapped[Decimal | None] = mapped_column(Numeric(7, 4))
+    savings_amount: Mapped[Decimal | None] = mapped_column(Numeric(14, 2))
+    regional_value_content_pct: Mapped[Decimal | None] = mapped_column(Numeric(5, 2))
+    originating_status: Mapped[str | None] = mapped_column(String(16))
+    tariff_line_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("tariff_lines.id"))
+    rule_id: Mapped[uuid.UUID | None] = mapped_column(Uuid)
+    status: Mapped[str] = mapped_column(String(16))
+    created_at: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=text("clock_timestamp()")
+    )
+
+
 class TariffLine(Base):
     """Dòng thuế EU (MFN / EVFTA) do người duyệt luật TM nhập và duyệt.
 

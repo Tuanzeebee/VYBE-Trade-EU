@@ -15,6 +15,7 @@ from app.core.storage import Storage, get_storage
 from app.modules.auth.router import router as auth_router
 from app.modules.catalog.router import router as catalog_router
 from app.modules.companies.router import router as companies_router
+from app.modules.compliance.router import router as compliance_router
 
 setup_logging()
 log = logging.getLogger(__name__)
@@ -33,6 +34,7 @@ register_error_handlers(app)
 app.include_router(auth_router)
 app.include_router(companies_router)
 app.include_router(catalog_router)
+app.include_router(compliance_router)
 
 
 @app.get("/health")
