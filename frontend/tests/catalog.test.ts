@@ -150,8 +150,34 @@ const A2_STRINGS = [
   'Không thể lưu sản phẩm. Vui lòng thử lại.'
 ];
 
-describe('catalog.json có bản tiếng Anh cho chuỗi A1, B1, B2, B3, B4, B5, A2', () => {
-  it.each([...A1_STRINGS, ...B1_STRINGS, ...B2_STRINGS, ...B3_STRINGS, ...B4_STRINGS, ...B5_STRINGS, ...A2_STRINGS])('%s', (vi) => {
+const C2_STRINGS = [
+  'Kết quả',
+  'Tiết kiệm mỗi lô',
+  'Thuế MFN',
+  'Thuế EVFTA',
+  'Tiết kiệm mỗi năm',
+  'Mã HS này chưa được hỗ trợ. Vui lòng liên hệ để được tư vấn.',
+  'Trường hợp này cần kiểm tra thêm (ví dụ hạn ngạch hoặc thuế tuyệt đối), nên chúng tôi không đưa ra con số.',
+  'Kết quả chỉ mang tính tham khảo, không thay thế tư vấn pháp lý hoặc xác nhận của cơ quan hải quan.',
+  'Xem nhà cung cấp cho mã HS này',
+  'Máy tính tiết kiệm thuế EVFTA',
+  'Nhập mã HS, nước EU nhập khẩu và giá trị lô hàng để ước tính thuế nhập khẩu tiết kiệm được nhờ EVFTA.',
+  'Sản phẩm (mã HS)',
+  'Nước EU nhập khẩu',
+  'Giá trị lô hàng (EUR)',
+  'Số lô hàng mỗi năm (không bắt buộc)',
+  'Tính tiết kiệm thuế',
+  'Đang tính...',
+  'Bạn đã tính quá nhiều lần. Vui lòng thử lại sau một phút.',
+  'Dữ liệu chưa hợp lệ. Vui lòng kiểm tra lại mã HS, nước nhập khẩu và giá trị lô hàng.',
+  'Không kết nối được máy chủ. Vui lòng thử lại.',
+  'Vui lòng chọn mã HS.',
+  'Giá trị lô hàng phải là số dương, tối đa 2 chữ số thập phân (ví dụ 10000 hoặc 10000.50).',
+  'Số lô hàng mỗi năm phải là số nguyên từ 1 đến 10000.'
+];
+
+describe('catalog.json có bản tiếng Anh cho chuỗi A1, B1, B2, B3, B4, B5, A2, C2', () => {
+  it.each([...A1_STRINGS, ...B1_STRINGS, ...B2_STRINGS, ...B3_STRINGS, ...B4_STRINGS, ...B5_STRINGS, ...A2_STRINGS, ...C2_STRINGS])('%s', (vi) => {
     const en = translateText(vi, 'en');
     expect(en).not.toBe(vi);
     expect(en.trim()).not.toBe('');

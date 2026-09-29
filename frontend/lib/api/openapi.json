@@ -890,6 +890,112 @@
         }
       }
     },
+    "/api/admin/compliance-checks.csv": {
+      "get": {
+        "tags": [
+          "compliance"
+        ],
+        "summary": "Export Compliance Checks",
+        "operationId": "export_compliance_checks_api_admin_compliance_checks_csv_get",
+        "parameters": [
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/public/tariff": {
+      "post": {
+        "tags": [
+          "compliance"
+        ],
+        "summary": "Calculate Tariff",
+        "operationId": "calculate_tariff_api_public_tariff_post",
+        "parameters": [
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TariffIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TariffOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/health": {
       "get": {
         "summary": "Health",
@@ -2846,6 +2952,198 @@
           "accept_terms"
         ],
         "title": "RegisterIn"
+      },
+      "TariffIn": {
+        "properties": {
+          "hs_code": {
+            "type": "string",
+            "maxLength": 32,
+            "title": "Hs Code"
+          },
+          "destination": {
+            "type": "string",
+            "title": "Destination"
+          },
+          "product_value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              }
+            ],
+            "title": "Product Value"
+          },
+          "shipments_per_year": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 10000,
+                "minimum": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Shipments Per Year"
+          }
+        },
+        "type": "object",
+        "required": [
+          "hs_code",
+          "destination",
+          "product_value"
+        ],
+        "title": "TariffIn",
+        "description": "Số tiền nhận dạng CHUỖI JSON (không nhận số) để không bao giờ đi qua float."
+      },
+      "TariffOut": {
+        "properties": {
+          "check_id": {
+            "type": "string",
+            "title": "Check Id"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ok",
+              "unsupported",
+              "needs_review"
+            ],
+            "title": "Status"
+          },
+          "hs_code": {
+            "type": "string",
+            "title": "Hs Code"
+          },
+          "hs_formatted": {
+            "type": "string",
+            "title": "Hs Formatted"
+          },
+          "destination": {
+            "type": "string",
+            "title": "Destination"
+          },
+          "product_value": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Product Value"
+          },
+          "mfn_rate": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mfn Rate"
+          },
+          "evfta_rate": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Evfta Rate"
+          },
+          "mfn_duty": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mfn Duty"
+          },
+          "evfta_duty": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Evfta Duty"
+          },
+          "savings": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Savings"
+          },
+          "annual_savings": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Annual Savings"
+          },
+          "quota_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quota Note"
+          },
+          "condition_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Condition Note"
+          }
+        },
+        "type": "object",
+        "required": [
+          "check_id",
+          "status",
+          "hs_code",
+          "hs_formatted",
+          "destination",
+          "product_value",
+          "mfn_rate",
+          "evfta_rate",
+          "mfn_duty",
+          "evfta_duty",
+          "savings",
+          "annual_savings",
+          "quota_note",
+          "condition_note"
+        ],
+        "title": "TariffOut"
       },
       "ValidationError": {
         "properties": {

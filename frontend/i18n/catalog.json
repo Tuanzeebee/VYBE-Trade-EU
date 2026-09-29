@@ -8403,5 +8403,115 @@
     "Unable to save products. Please try again.",
     "Unable to save products. Please try again.",
     "Unable to save products. Please try again."
+  ],
+  "Kết quả": [
+    "Result",
+    "Result",
+    "Result"
+  ],
+  "Tiết kiệm mỗi lô": [
+    "Savings per shipment",
+    "Savings per shipment",
+    "Savings per shipment"
+  ],
+  "Thuế MFN": [
+    "MFN duty",
+    "MFN duty",
+    "MFN duty"
+  ],
+  "Thuế EVFTA": [
+    "EVFTA duty",
+    "EVFTA duty",
+    "EVFTA duty"
+  ],
+  "Tiết kiệm mỗi năm": [
+    "Annual savings",
+    "Annual savings",
+    "Annual savings"
+  ],
+  "Mã HS này chưa được hỗ trợ. Vui lòng liên hệ để được tư vấn.": [
+    "This HS code is not supported yet. Please contact us for advice.",
+    "This HS code is not supported yet. Please contact us for advice.",
+    "This HS code is not supported yet. Please contact us for advice."
+  ],
+  "Trường hợp này cần kiểm tra thêm (ví dụ hạn ngạch hoặc thuế tuyệt đối), nên chúng tôi không đưa ra con số.": [
+    "This case needs further review (for example a quota or a specific duty), so we do not provide a figure.",
+    "This case needs further review (for example a quota or a specific duty), so we do not provide a figure.",
+    "This case needs further review (for example a quota or a specific duty), so we do not provide a figure."
+  ],
+  "Kết quả chỉ mang tính tham khảo, không thay thế tư vấn pháp lý hoặc xác nhận của cơ quan hải quan.": [
+    "Results are indicative only and do not replace legal advice or confirmation from customs authorities.",
+    "Results are indicative only and do not replace legal advice or confirmation from customs authorities.",
+    "Results are indicative only and do not replace legal advice or confirmation from customs authorities."
+  ],
+  "Xem nhà cung cấp cho mã HS này": [
+    "View suppliers for this HS code",
+    "View suppliers for this HS code",
+    "View suppliers for this HS code"
+  ],
+  "Máy tính tiết kiệm thuế EVFTA": [
+    "EVFTA tariff savings calculator",
+    "EVFTA tariff savings calculator",
+    "EVFTA tariff savings calculator"
+  ],
+  "Nhập mã HS, nước EU nhập khẩu và giá trị lô hàng để ước tính thuế nhập khẩu tiết kiệm được nhờ EVFTA.": [
+    "Enter an HS code, the EU importing country and the shipment value to estimate the import duty you save under EVFTA.",
+    "Enter an HS code, the EU importing country and the shipment value to estimate the import duty you save under EVFTA.",
+    "Enter an HS code, the EU importing country and the shipment value to estimate the import duty you save under EVFTA."
+  ],
+  "Sản phẩm (mã HS)": [
+    "Product (HS code)",
+    "Product (HS code)",
+    "Product (HS code)"
+  ],
+  "Nước EU nhập khẩu": [
+    "EU importing country",
+    "EU importing country",
+    "EU importing country"
+  ],
+  "Giá trị lô hàng (EUR)": [
+    "Shipment value (EUR)",
+    "Shipment value (EUR)",
+    "Shipment value (EUR)"
+  ],
+  "Số lô hàng mỗi năm (không bắt buộc)": [
+    "Shipments per year (optional)",
+    "Shipments per year (optional)",
+    "Shipments per year (optional)"
+  ],
+  "Tính tiết kiệm thuế": [
+    "Calculate tax savings",
+    "Calculate tax savings",
+    "Calculate tax savings"
+  ],
+  "Đang tính...": [
+    "Calculating...",
+    "Calculating...",
+    "Calculating..."
+  ],
+  "Bạn đã tính quá nhiều lần. Vui lòng thử lại sau một phút.": [
+    "You have calculated too many times. Please try again in a minute.",
+    "You have calculated too many times. Please try again in a minute.",
+    "You have calculated too many times. Please try again in a minute."
+  ],
+  "Dữ liệu chưa hợp lệ. Vui lòng kiểm tra lại mã HS, nước nhập khẩu và giá trị lô hàng.": [
+    "The data is not valid. Please check the HS code, importing country and shipment value.",
+    "The data is not valid. Please check the HS code, importing country and shipment value.",
+    "The data is not valid. Please check the HS code, importing country and shipment value."
+  ],
+  "Vui lòng chọn mã HS.": [
+    "Please select an HS code.",
+    "Please select an HS code.",
+    "Please select an HS code."
+  ],
+  "Giá trị lô hàng phải là số dương, tối đa 2 chữ số thập phân (ví dụ 10000 hoặc 10000.50).": [
+    "The shipment value must be a positive number with at most 2 decimal places (for example 10000 or 10000.50).",
+    "The shipment value must be a positive number with at most 2 decimal places (for example 10000 or 10000.50).",
+    "The shipment value must be a positive number with at most 2 decimal places (for example 10000 or 10000.50)."
+  ],
+  "Số lô hàng mỗi năm phải là số nguyên từ 1 đến 10000.": [
+    "Shipments per year must be a whole number from 1 to 10000.",
+    "Shipments per year must be a whole number from 1 to 10000.",
+    "Shipments per year must be a whole number from 1 to 10000."
   ]
 }

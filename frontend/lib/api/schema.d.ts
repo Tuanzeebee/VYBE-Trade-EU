@@ -193,6 +193,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/compliance-checks.csv": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Export Compliance Checks */
+        get: operations["export_compliance_checks_api_admin_compliance_checks_csv_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/public/tariff": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Calculate Tariff */
+        post: operations["calculate_tariff_api_public_tariff_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -701,6 +735,54 @@ export interface components {
              * @constant
              */
             accept_terms: true;
+        };
+        /**
+         * TariffIn
+         * @description Số tiền nhận dạng CHUỖI JSON (không nhận số) để không bao giờ đi qua float.
+         */
+        TariffIn: {
+            /** Hs Code */
+            hs_code: string;
+            /** Destination */
+            destination: string;
+            /** Product Value */
+            product_value: number | string;
+            /** Shipments Per Year */
+            shipments_per_year?: number | null;
+        };
+        /** TariffOut */
+        TariffOut: {
+            /** Check Id */
+            check_id: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "ok" | "unsupported" | "needs_review";
+            /** Hs Code */
+            hs_code: string;
+            /** Hs Formatted */
+            hs_formatted: string;
+            /** Destination */
+            destination: string;
+            /** Product Value */
+            product_value: string;
+            /** Mfn Rate */
+            mfn_rate: string | null;
+            /** Evfta Rate */
+            evfta_rate: string | null;
+            /** Mfn Duty */
+            mfn_duty: string | null;
+            /** Evfta Duty */
+            evfta_duty: string | null;
+            /** Savings */
+            savings: string | null;
+            /** Annual Savings */
+            annual_savings: string | null;
+            /** Quota Note */
+            quota_note: string | null;
+            /** Condition Note */
+            condition_note: string | null;
         };
         /** ValidationError */
         ValidationError: {
@@ -1272,6 +1354,72 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HsCodeOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    export_compliance_checks_api_admin_compliance_checks_csv_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    calculate_tariff_api_public_tariff_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TariffIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TariffOut"];
                 };
             };
             /** @description Validation Error */
