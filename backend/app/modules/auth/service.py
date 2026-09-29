@@ -173,7 +173,11 @@ async def update_me(session: AsyncSession, user_id: uuid.UUID, data: MePatch) ->
 async def get_contact(session: AsyncSession, user_id: uuid.UUID) -> Contact | None:
     """Email và ngôn ngữ của người dùng còn hoạt động (đã xóa tài khoản → None)."""
     user = await session.scalar(select(User).where(User.id == user_id, User.deleted_at.is_(None)))
-    return Contact(email=user.email, preferred_language=user.preferred_language) if user else None
+    if user is None:
+        return None
+    return Contact(
+        email=user.email, preferred_language=user.preferred_language, role=user.role.value
+    )
 
 
 async def get_admin_by_email(session: AsyncSession, email: str) -> CurrentUser | None:

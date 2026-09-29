@@ -393,8 +393,25 @@ const E2_STRINGS = [
   "Gia vị & Hương liệu"
 ];
 
-describe('catalog.json có bản tiếng Anh cho chuỗi A1, B1, B2, B3, B4, B5, A2, C2, C4, C6, C7, D2, D3, E2', () => {
-  it.each([...A1_STRINGS, ...B1_STRINGS, ...B2_STRINGS, ...B3_STRINGS, ...B4_STRINGS, ...B5_STRINGS, ...A2_STRINGS, ...C2_STRINGS, ...C4_STRINGS, ...C6_STRINGS, ...C7_STRINGS, ...D2_STRINGS, ...D3_STRINGS, ...E2_STRINGS])('%s', (vi) => {
+const H1_STRINGS = [
+  "Thông báo",
+  "chưa đọc",
+  "Đánh dấu tất cả đã đọc",
+  "Không tải được thông báo. Vui lòng thử lại.",
+  "Chưa có thông báo. Khi có yêu cầu báo giá, tin nhắn hoặc thay đổi xác minh, bạn sẽ thấy ở đây.",
+  "Hồ sơ của bạn đã được xác minh.",
+  "Yêu cầu xác minh của bạn bị từ chối.",
+  "Quản trị viên cần bạn bổ sung thông tin để xác minh.",
+  "Xác minh của bạn đã hết hạn.",
+  "Trạng thái xác minh của bạn đã thay đổi.",
+  "Xác minh của bạn sắp hết hạn.",
+  "Bạn có yêu cầu báo giá mới.",
+  "Bạn có tin nhắn mới.",
+  "Có nhà cung cấp mới phù hợp với tìm kiếm của bạn."
+];
+
+describe('catalog.json có bản tiếng Anh cho chuỗi A1, B1, B2, B3, B4, B5, A2, C2, C4, C6, C7, D2, D3, E2, H1', () => {
+  it.each([...A1_STRINGS, ...B1_STRINGS, ...B2_STRINGS, ...B3_STRINGS, ...B4_STRINGS, ...B5_STRINGS, ...A2_STRINGS, ...C2_STRINGS, ...C4_STRINGS, ...C6_STRINGS, ...C7_STRINGS, ...D2_STRINGS, ...D3_STRINGS, ...E2_STRINGS, ...H1_STRINGS])('%s', (vi) => {
     const en = translateText(vi, 'en');
     expect(en).not.toBe(vi);
     expect(en.trim()).not.toBe('');

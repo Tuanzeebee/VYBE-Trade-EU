@@ -5,6 +5,7 @@ import { useLanguage, LANGUAGES } from '../context/LanguageContext.tsx';
 import CountryFlag from './CountryFlag.tsx';
 import LanguageSelectorModal from './LanguageSelectorModal.tsx';
 import { ROLE_LABELS, type DemoUser, getUserPage } from '../lib/demoAuth.ts';
+import NotificationBell from './NotificationBell';
 
 export interface HeaderProps {
   currentPage: string;
@@ -175,6 +176,7 @@ export default function Header({
               )}
             </div>
 
+            {user && <NotificationBell />}
             {user ? (
               <div className="relative">
                 <button 

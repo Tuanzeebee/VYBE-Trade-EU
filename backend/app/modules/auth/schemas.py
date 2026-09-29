@@ -50,3 +50,4 @@ class Contact(BaseModel):
 
     email: str
     preferred_language: str
+    role: str = "exporter"

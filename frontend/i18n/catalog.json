@@ -9803,5 +9803,70 @@
     "This business has not listed any products yet.",
     "This business has not listed any products yet.",
     "This business has not listed any products yet."
+  ],
+  "chưa đọc": [
+    "unread",
+    "unread",
+    "unread"
+  ],
+  "Đánh dấu tất cả đã đọc": [
+    "Mark all as read",
+    "Mark all as read",
+    "Mark all as read"
+  ],
+  "Không tải được thông báo. Vui lòng thử lại.": [
+    "Could not load notifications. Please try again.",
+    "Could not load notifications. Please try again.",
+    "Could not load notifications. Please try again."
+  ],
+  "Chưa có thông báo. Khi có yêu cầu báo giá, tin nhắn hoặc thay đổi xác minh, bạn sẽ thấy ở đây.": [
+    "No notifications yet. Quote requests, messages and verification changes will appear here.",
+    "No notifications yet. Quote requests, messages and verification changes will appear here.",
+    "No notifications yet. Quote requests, messages and verification changes will appear here."
+  ],
+  "Hồ sơ của bạn đã được xác minh.": [
+    "Your profile has been verified.",
+    "Your profile has been verified.",
+    "Your profile has been verified."
+  ],
+  "Yêu cầu xác minh của bạn bị từ chối.": [
+    "Your verification request was rejected.",
+    "Your verification request was rejected.",
+    "Your verification request was rejected."
+  ],
+  "Quản trị viên cần bạn bổ sung thông tin để xác minh.": [
+    "An administrator needs more information from you to verify your profile.",
+    "An administrator needs more information from you to verify your profile.",
+    "An administrator needs more information from you to verify your profile."
+  ],
+  "Xác minh của bạn đã hết hạn.": [
+    "Your verification has expired.",
+    "Your verification has expired.",
+    "Your verification has expired."
+  ],
+  "Trạng thái xác minh của bạn đã thay đổi.": [
+    "Your verification status has changed.",
+    "Your verification status has changed.",
+    "Your verification status has changed."
+  ],
+  "Xác minh của bạn sắp hết hạn.": [
+    "Your verification is about to expire.",
+    "Your verification is about to expire.",
+    "Your verification is about to expire."
+  ],
+  "Bạn có yêu cầu báo giá mới.": [
+    "You have a new quote request.",
+    "You have a new quote request.",
+    "You have a new quote request."
+  ],
+  "Bạn có tin nhắn mới.": [
+    "You have a new message.",
+    "You have a new message.",
+    "You have a new message."
+  ],
+  "Có nhà cung cấp mới phù hợp với tìm kiếm của bạn.": [
+    "A new supplier matches your search.",
+    "A new supplier matches your search.",
+    "A new supplier matches your search."
   ]
 }
