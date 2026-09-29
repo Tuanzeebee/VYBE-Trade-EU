@@ -33,6 +33,8 @@ jobs:
       - run: uv run mypy app
       - run: uv run alembic upgrade head
       - run: uv run pytest
+      - name: openapi.json khớp code
+        run: uv run python -m scripts.export_openapi && git diff --exit-code openapi.json
 
   frontend:
     runs-on: ubuntu-latest
@@ -47,6 +49,8 @@ jobs:
           cache: npm
           cache-dependency-path: frontend/package-lock.json
       - run: npm ci
+      - name: kiểu API khớp openapi.json
+        run: npm run generate:api:types && git diff --exit-code lib/api/schema.d.ts
       - run: npm run lint
       - run: npm run typecheck
       - run: npm test

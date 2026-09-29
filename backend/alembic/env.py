@@ -9,6 +9,7 @@ from app.core.config import get_settings
 from app.core.db import Base
 
 # Import models của từng module ở đây khi module có bảng, để autogenerate thấy chúng.
+from app.modules.auth import models as _auth_models  # noqa: F401
 
 config = context.config
 if config.config_file_name is not None:

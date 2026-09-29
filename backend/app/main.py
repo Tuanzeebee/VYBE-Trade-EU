@@ -10,6 +10,7 @@ from app.core.db import get_session
 from app.core.errors import register_error_handlers
 from app.core.logging import RequestIdMiddleware, setup_logging
 from app.core.storage import Storage, get_storage
+from app.modules.auth.router import router as auth_router
 
 setup_logging()
 log = logging.getLogger(__name__)
@@ -17,6 +18,7 @@ log = logging.getLogger(__name__)
 app = FastAPI(title="evfta.eu API")
 app.add_middleware(RequestIdMiddleware)
 register_error_handlers(app)
+app.include_router(auth_router)
 
 
 @app.get("/health")

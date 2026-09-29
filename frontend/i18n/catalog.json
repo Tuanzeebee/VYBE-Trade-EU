@@ -7818,5 +7818,45 @@
     "GlobalG.A.P. IFA Version 5.4",
     "GlobalG.A.P. IFA version 5.4",
     "GlobalG.A.P. IFA バージョン 5.4"
+  ],
+  "Ít nhất 10 ký tự": [
+    "At least 10 characters",
+    "Au moins 10 caractères",
+    "10文字以上"
+  ],
+  "Tôi đồng ý với Điều khoản sử dụng và Chính sách bảo mật.": [
+    "I agree to the Terms of Use and Privacy Policy.",
+    "J’accepte les Conditions d’utilisation et la Politique de confidentialité.",
+    "利用規約とプライバシーポリシーに同意します。"
+  ],
+  "Vui lòng đồng ý Điều khoản và Chính sách bảo mật.": [
+    "Please accept the Terms and Privacy Policy.",
+    "Veuillez accepter les Conditions et la Politique de confidentialité.",
+    "利用規約とプライバシーポリシーに同意してください。"
+  ],
+  "Tài khoản tạm khóa 15 phút do nhập sai mật khẩu nhiều lần.": [
+    "Account locked for 15 minutes after too many failed password attempts.",
+    "Compte verrouillé 15 minutes après trop de tentatives de mot de passe incorrectes.",
+    "パスワードの入力ミスが多いため、アカウントを15分間ロックしました。"
+  ],
+  "Mật khẩu cần ít nhất 10 ký tự.": [
+    "Password must be at least 10 characters.",
+    "Le mot de passe doit contenir au moins 10 caractères.",
+    "パスワードは10文字以上にしてください。"
+  ],
+  "Không kết nối được máy chủ. Vui lòng thử lại.": [
+    "Cannot reach the server. Please try again.",
+    "Impossible de joindre le serveur. Veuillez réessayer.",
+    "サーバーに接続できません。もう一度お試しください。"
+  ],
+  "Đã có lỗi xảy ra. Vui lòng thử lại.": [
+    "Something went wrong. Please try again.",
+    "Une erreur est survenue. Veuillez réessayer.",
+    "エラーが発生しました。もう一度お試しください。"
+  ],
+  "Vui lòng đăng nhập.": [
+    "Please log in.",
+    "Veuillez vous connecter.",
+    "ログインしてください。"
   ]
 }

@@ -15,6 +15,12 @@ class Settings(BaseSettings):
     s3_access_key: str = "devkey"
     s3_secret_key: str = "devkey"  # noqa: S105 — chỉ mặc định cho S3 dev
 
+    # Phiên đăng nhập — tạm theo mặc định cookie ASP.NET của VYBE (14 ngày), chờ ADR phiên.
+    session_cookie_name: str = "evfta_session"
+    session_days: int = 14
+    session_cookie_secure: bool = True
+    consent_version: str = "2026-09"
+
 
 @lru_cache
 def get_settings() -> Settings:

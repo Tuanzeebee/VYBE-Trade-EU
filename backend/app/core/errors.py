@@ -1,6 +1,7 @@
 """Một dạng lỗi chuẩn cho toàn API: {"error": {"code": ..., "message": ...}}."""
 
 from fastapi import FastAPI, Request
+from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
@@ -29,6 +30,14 @@ async def _http_error(_: Request, exc: StarletteHTTPException) -> JSONResponse:
     )
 
 
+async def _validation_error(_: Request, exc: RequestValidationError) -> JSONResponse:
+    # Không trả lại giá trị người dùng nhập (có thể là mật khẩu), chỉ tên trường.
+    fields = sorted({".".join(str(p) for p in e["loc"][1:]) for e in exc.errors()})
+    body = _body("validation_error", "Dữ liệu không hợp lệ: " + ", ".join(fields))
+    return JSONResponse(body, status_code=422)
+
+
 def register_error_handlers(app: FastAPI) -> None:
     app.exception_handler(AppError)(_app_error)
     app.exception_handler(StarletteHTTPException)(_http_error)
+    app.exception_handler(RequestValidationError)(_validation_error)

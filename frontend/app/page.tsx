@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import HomePage from '../components/HomePage';
@@ -16,7 +16,7 @@ import SellerWorkspace from '../components/SellerWorkspace';
 import AdminDashboard from '../components/AdminDashboard';
 import ProductAiTrust from '../components/ProductAiTrust';
 import ProductVerification from '../components/ProductVerification';
-import { getSession, getUserPage, logout, completeOnboarding, type DemoUser } from '../lib/demoAuth';
+import { getSession, getUserPage, logout, completeOnboarding, refreshSession, type DemoUser } from '../lib/demoAuth';
 import { useLanguage } from '../context/LanguageContext';
 import { X } from 'lucide-react';
 
@@ -51,6 +51,23 @@ export default function Page() {
   const [selectedMarket, setSelectedMarket] = useState('Tất cả thị trường');
   const [selectedTrust, setSelectedTrust] = useState('Tất cả cấp độ');
   const [activeNavModal, setActiveNavModal] = useState<string | null>(null);
+  const [signupRole, setSignupRole] = useState<'buyer' | 'seller' | undefined>(undefined);
+
+  useEffect(() => {
+    // Link /?type=buyer|exporter mở thẳng form đăng ký với vai trò chọn sẵn (A1).
+    const type = new URLSearchParams(window.location.search).get('type');
+    if (type === 'buyer' || type === 'exporter') {
+      setSignupRole(type === 'buyer' ? 'buyer' : 'seller');
+      setPage('register');
+    }
+    // Bản chụp localStorage chỉ để render nhanh; server mới quyết định phiên còn hiệu lực.
+    void refreshSession().then((fresh) => {
+      setUser(fresh);
+      if (!fresh) {
+        setPage((page) => (['workspace', 'onboarding', 'seller-profile', 'admin'].includes(page) ? 'login' : page));
+      }
+    });
+  }, []);
 
   function setCurrentPage(page: Page) {
     const protectedPage = ['workspace', 'onboarding', 'seller-profile', 'admin'].includes(page);
@@ -96,8 +113,9 @@ export default function Page() {
     return (
       <AuthPage 
         key={currentPage} 
-        mode={currentPage} 
-        onModeChange={setCurrentPage} 
+        mode={currentPage}
+        initialRole={signupRole}
+        onModeChange={setCurrentPage}
         onAuthenticated={authenticated} 
         onNavigateHome={() => setCurrentPage('home')} 
       />
