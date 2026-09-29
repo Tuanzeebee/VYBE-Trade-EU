@@ -10,6 +10,7 @@ from pydantic import (
     Field,
     StringConstraints,
     field_validator,
+    model_validator,
 )
 
 # Tạm theo 6 nhóm ngành của giao diện cũ; B4 chuyển sang nhóm hàng theo mã HS.
@@ -130,10 +131,135 @@ class CompanyFilters(BaseModel):
 
 
 class PresignIn(BaseModel):
-    purpose: Literal["logo"]
+    purpose: Literal["logo", "product_image"]
     content_type: Literal["image/png", "image/jpeg", "image/webp"]
 
 
 class PresignOut(BaseModel):
     upload_url: str
     key: str
+
+
+# ── Sản phẩm (B5) ─────────────────────────────────────────────────────────────
+Currency = Literal["USD", "EUR", "VND"]
+Unit = Literal["kg", "tonne", "piece", "carton", "liter", "container_20ft", "container_40ft"]
+# Numeric(14, 2): tối đa 12 chữ số nguyên + 2 thập phân; Decimal, không bao giờ float.
+Amount = Annotated[Decimal, Field(gt=0, max_digits=14, decimal_places=2)]
+ProductName = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=255)]
+HsCodeInput = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=16)]
+ImageKey = Annotated[str, StringConstraints(min_length=1, max_length=255)]
+MAX_IMAGES = 10
+
+
+def _check_price_order(low: Decimal | None, high: Decimal | None) -> None:
+    if low is not None and high is not None and low > high:
+        raise ValueError("price_min must not exceed price_max")
+
+
+class ProductIn(BaseModel):
+    name: ProductName
+    hs_code: (
+        HsCodeInput  # bắt buộc; service chuẩn hóa '1006.30' → '100630' và kiểm có trong danh mục
+    )
+    description_vi: Text | None = None
+    description_en: Text | None = None
+    price_min: Amount | None = None
+    price_max: Amount | None = None
+    currency: Currency = "USD"
+    unit: Unit | None = None
+    moq: Amount | None = None
+    moq_unit: Unit | None = None
+    is_active: bool = True
+    image_keys: list[ImageKey] = Field(default_factory=list, max_length=MAX_IMAGES)
+
+    @model_validator(mode="after")
+    def _prices(self) -> "ProductIn":
+        _check_price_order(self.price_min, self.price_max)
+        return self
+
+
+class ProductPatch(BaseModel):
+    """Chỉ các trường gửi lên mới được sửa; image_keys gửi lên thay thế toàn bộ ảnh."""
+
+    name: ProductName | None = None
+    hs_code: HsCodeInput | None = None
+    description_vi: Text | None = None
+    description_en: Text | None = None
+    price_min: Amount | None = None
+    price_max: Amount | None = None
+    currency: Currency | None = None
+    unit: Unit | None = None
+    moq: Amount | None = None
+    moq_unit: Unit | None = None
+    is_active: bool | None = None
+    image_keys: list[ImageKey] | None = Field(default=None, max_length=MAX_IMAGES)
+
+    @model_validator(mode="after")
+    def _prices(self) -> "ProductPatch":
+        _check_price_order(self.price_min, self.price_max)
+        return self
+
+
+class ProductImageOut(BaseModel):
+    key: str
+    url: str
+
+
+class ProductOut(BaseModel):
+    id: uuid.UUID
+    name: str
+    hs_code: str
+    hs_formatted: str
+    hs_name_vi: str
+    hs_name_en: str
+    description_vi: str | None
+    description_en: str | None
+    price_min: Decimal | None
+    price_max: Decimal | None
+    currency: str
+    unit: str | None
+    moq: Decimal | None
+    moq_unit: str | None
+    is_active: bool
+    approval_status: Literal["pending", "approved", "hidden"]
+    images: list[ProductImageOut]
+    created_at: datetime
+
+
+class PublicProductOut(BaseModel):
+    """Sản phẩm trên hồ sơ công khai — không lộ id nội bộ, trạng thái duyệt hay khóa ảnh."""
+
+    name: str
+    hs_code: str
+    hs_formatted: str
+    hs_name_vi: str
+    hs_name_en: str
+    description_vi: str | None
+    description_en: str | None
+    price_min: Decimal | None
+    price_max: Decimal | None
+    currency: str
+    unit: str | None
+    moq: Decimal | None
+    moq_unit: str | None
+    images: list[str]
+
+
+class PublicCompanyOut(BaseModel):
+    """Hồ sơ công khai của exporter đã xác minh. Không có email liên hệ, mã số thuế,
+    số đăng ký kinh doanh hay địa chỉ chi tiết."""
+
+    slug: str
+    legal_name: str
+    country: str
+    industry_sector: str | None
+    founded_year: int | None
+    website: str | None
+    description_vi: str | None
+    description_en: str | None
+    logo_url: str | None
+    export_markets: list[str]
+    languages_spoken: list[str]
+    verification_level: Literal["basic", "evfta_verified"]
+    verified_at: datetime | None
+    products: list[PublicProductOut]

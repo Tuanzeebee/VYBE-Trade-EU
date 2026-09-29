@@ -58,3 +58,20 @@ def buyer_body(**overrides: Any) -> dict[str, Any]:
     }
     body.update(overrides)
     return body
+
+
+def product_body(**overrides: Any) -> dict[str, Any]:
+    body: dict[str, Any] = {
+        "name": "Gạo thơm Jasmine xuất khẩu",
+        "hs_code": "1006.30",
+        "description_vi": "Gạo thơm, hạt dài, độ ẩm dưới 14%.",
+        "description_en": "Fragrant long-grain rice, moisture below 14%.",
+        "price_min": "480.00",
+        "price_max": "560.50",
+        "currency": "USD",
+        "unit": "tonne",
+        "moq": "25",
+        "moq_unit": "tonne",
+    }
+    body.update(overrides)
+    return body

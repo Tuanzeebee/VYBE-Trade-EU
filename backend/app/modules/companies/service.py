@@ -188,9 +188,13 @@ async def list_companies(session: AsyncSession, filters: CompanyFilters) -> list
     return [_to_out(c) for c in companies]
 
 
-async def presign_logo(
+async def presign_upload(
     session: AsyncSession, user: CurrentUser, storage: Storage, data: PresignIn
 ) -> PresignOut:
+    """URL tải lên có hạn ngắn; khóa file luôn nằm dưới thư mục của công ty mình."""
+    if data.purpose == "product_image" and user.role != "exporter":
+        raise AppError("forbidden", "Not allowed for this role", 403)
     company = await _own_company(session, user)
-    key = f"logos/{company.id}/{uuid.uuid4().hex}.{_EXTENSIONS[data.content_type]}"
+    folder = "products" if data.purpose == "product_image" else "logos"
+    key = f"{folder}/{company.id}/{uuid.uuid4().hex}.{_EXTENSIONS[data.content_type]}"
     return PresignOut(upload_url=await storage.presign_put(key, data.content_type), key=key)

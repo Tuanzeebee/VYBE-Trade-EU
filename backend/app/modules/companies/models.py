@@ -5,6 +5,7 @@ from enum import StrEnum
 
 from sqlalchemy import (
     Boolean,
+    CheckConstraint,
     DateTime,
     Enum,
     ForeignKey,
@@ -12,6 +13,7 @@ from sqlalchemy import (
     SmallInteger,
     String,
     Text,
+    UniqueConstraint,
     func,
     text,
 )
@@ -130,3 +132,71 @@ class CompanySourcingCategory(Base):
         ForeignKey("companies.id", ondelete="CASCADE"), primary_key=True
     )
     category: Mapped[str] = mapped_column(String(32), primary_key=True, index=True)
+
+
+class ApprovalStatus(StrEnum):
+    pending = "pending"
+    approved = "approved"
+    hidden = "hidden"
+
+
+class Product(Base):
+    """Sản phẩm của exporter. hs_code bắt buộc (khóa ngoại tới danh mục HS của module catalog)."""
+
+    __tablename__ = "products"
+    __table_args__ = (
+        CheckConstraint(
+            "price_min IS NULL OR price_max IS NULL OR price_min <= price_max", name="price_order"
+        ),
+        CheckConstraint(
+            "(price_min IS NULL OR price_min > 0) AND (price_max IS NULL OR price_max > 0) "
+            "AND (moq IS NULL OR moq > 0)",
+            name="positive_amounts",
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    company_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("companies.id", ondelete="CASCADE"), index=True
+    )
+    hs_code: Mapped[str] = mapped_column(
+        String(8), ForeignKey("hs_codes.code", ondelete="RESTRICT"), index=True
+    )
+    name: Mapped[str] = mapped_column(String(255))
+    description_vi: Mapped[str | None] = mapped_column(Text)
+    description_en: Mapped[str | None] = mapped_column(Text)
+    price_min: Mapped[Decimal | None] = mapped_column(Numeric(14, 2))
+    price_max: Mapped[Decimal | None] = mapped_column(Numeric(14, 2))
+    currency: Mapped[str] = mapped_column(String(3), default="USD", server_default="USD")
+    unit: Mapped[str | None] = mapped_column(String(32))
+    moq: Mapped[Decimal | None] = mapped_column(Numeric(14, 2))
+    moq_unit: Mapped[str | None] = mapped_column(String(32))
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, server_default=text("true"))
+    approval_status: Mapped[ApprovalStatus] = mapped_column(
+        Enum(ApprovalStatus, name="approval_status"),
+        default=ApprovalStatus.approved,
+        server_default=ApprovalStatus.approved.value,
+    )
+    # clock_timestamp() (không phải now()) để thứ tự tạo không trùng trong cùng một transaction.
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=text("clock_timestamp()")
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+    images: Mapped[list["ProductImage"]] = relationship(
+        cascade="all, delete-orphan", lazy="selectin", order_by="ProductImage.position"
+    )
+
+
+class ProductImage(Base):
+    __tablename__ = "product_images"
+    __table_args__ = (UniqueConstraint("product_id", "key"),)
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    product_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("products.id", ondelete="CASCADE"), index=True
+    )
+    key: Mapped[str] = mapped_column(String(255))
+    position: Mapped[int] = mapped_column(SmallInteger)
