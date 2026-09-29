@@ -32,6 +32,7 @@ ignore = ["RUF001", "RUF002", "RUF003"]  # cho phép chữ tiếng Việt trong 
 
 [tool.ruff.lint.per-file-ignores]
 "**/tests/**" = ["S101", "E501"]  # dữ liệu synthetic trong test có thể dài
+"app/modules/copilot/prompt.py" = ["E501"]  # văn bản prompt
 
 [tool.mypy]
 strict = true

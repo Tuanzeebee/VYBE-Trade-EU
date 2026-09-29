@@ -335,3 +335,37 @@ async def test_stats_zero_state(api_client: AsyncClient, db_session: AsyncSessio
     await login_admin(api_client, db_session)
     stats = (await api_client.get("/api/admin/stats")).json()
     assert (stats["verified_count"], stats["pending_count"]) == (0, 0)
+
+
+async def test_ai_stats_match_manual_count(
+    api_client: AsyncClient, db_session: AsyncSession
+) -> None:
+    from app.modules.copilot.models import AiQuery
+
+    def row(confidence: str, days_ago: int = 0) -> AiQuery:
+        return AiQuery(
+            question="q",
+            language="vi",
+            confidence=confidence,
+            model_name="m",
+            latency_ms=1,
+            answer="a",
+            created_at=dt.datetime.now(dt.UTC) - dt.timedelta(days=days_ago),
+        )
+
+    db_session.add_all(
+        [row("high"), row("high"), row("medium"), row("low"), row("out_of_scope"), row("high", 30)]
+    )
+    await db_session.flush()
+    await login_admin(api_client, db_session)
+    stats = (await api_client.get("/api/admin/stats")).json()
+    assert stats["ai_queries_this_week"] == 5  # câu hỏi 30 ngày trước không tính
+    assert stats["avg_confidence"] == pytest.approx((3 + 3 + 2 + 1) / 4)  # bỏ out_of_scope
+
+
+async def test_ai_stats_zero_state_has_no_fake_average(
+    api_client: AsyncClient, db_session: AsyncSession
+) -> None:
+    await login_admin(api_client, db_session)
+    stats = (await api_client.get("/api/admin/stats")).json()
+    assert (stats["ai_queries_this_week"], stats["avg_confidence"]) == (0, None)

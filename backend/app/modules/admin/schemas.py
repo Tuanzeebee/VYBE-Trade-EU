@@ -19,7 +19,10 @@ class AuditLogOut(BaseModel):
 
 
 class StatsOut(BaseModel):
-    """Số liệu dashboard nội bộ. Chỉ số AI thêm ở D3 (Task 29)."""
+    """Số liệu dashboard nội bộ."""
 
     verified_count: int
     pending_count: int
+    ai_queries_this_week: int
+    # Trung bình high=3, medium=2, low=1; bỏ out_of_scope. None khi chưa có câu nào được chấm.
+    avg_confidence: float | None
