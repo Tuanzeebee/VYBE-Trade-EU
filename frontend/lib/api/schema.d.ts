@@ -350,6 +350,57 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/exporter/documents/eur1": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Request Eur1 */
+        post: operations["request_eur1_api_exporter_documents_eur1_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/exporter/documents": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Documents */
+        get: operations["list_documents_api_exporter_documents_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/exporter/documents/{document_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Document */
+        get: operations["get_document_api_exporter_documents__document_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/exporter/evidence-types": {
         parameters: {
             query?: never;
@@ -844,11 +895,75 @@ export interface components {
             /** Reason */
             reason?: string | null;
         };
+        /** DocumentOut */
+        DocumentOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Document Type
+             * @constant
+             */
+            document_type: "eur1_draft";
+            /**
+             * Compliance Check Id
+             * Format: uuid
+             */
+            compliance_check_id: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "queued" | "ready" | "failed";
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** File Url */
+            file_url: string | null;
+        };
         /**
          * DutyType
          * @enum {string}
          */
         DutyType: "ad_valorem" | "specific" | "mixed";
+        /**
+         * Eur1In
+         * @description Dữ liệu hóa đơn để phủ lên bản nháp EUR.1. Khối lượng là CHUỖI JSON.
+         */
+        Eur1In: {
+            /**
+             * Compliance Check Id
+             * Format: uuid
+             */
+            compliance_check_id: string;
+            /** Consignee Name */
+            consignee_name: string;
+            /** Consignee Address */
+            consignee_address: string;
+            /** Consignee Country */
+            consignee_country: string;
+            /** Invoice Number */
+            invoice_number: string;
+            /**
+             * Invoice Date
+             * Format: date
+             */
+            invoice_date: string;
+            /** Goods Description */
+            goods_description: string;
+            /** Packages */
+            packages: string;
+            /** Gross Mass Kg */
+            gross_mass_kg: number | string;
+            /** Transport Details */
+            transport_details?: string | null;
+            /** Remarks */
+            remarks?: string | null;
+        };
         /** EvidenceIn */
         EvidenceIn: {
             /** Type Code */
@@ -2677,6 +2792,105 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["RooRuleOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    request_eur1_api_exporter_documents_eur1_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Eur1In"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DocumentOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_documents_api_exporter_documents_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DocumentOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_document_api_exporter_documents__document_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                document_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DocumentOut"];
                 };
             };
             /** @description Validation Error */

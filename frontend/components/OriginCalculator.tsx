@@ -4,6 +4,7 @@
 // Ba trạng thái riêng: Đạt / Không đạt / Chưa kết luận (thêm "ngoài phạm vi dữ liệu"). Không có tính năng cấp C/O.
 import React, { useState } from 'react';
 import HsCodePicker, { type HsCodeOption } from './HsCodePicker';
+import Eur1DraftPanel from './Eur1DraftPanel';
 import { useLanguage } from '../context/LanguageContext';
 import {
   calculateRoo,
@@ -34,7 +35,7 @@ const REASONS: Record<string, string> = {
 
 const pct = (value: string) => `${Number(value)}%`;
 
-function Result({ data }: { data: RooResult }) {
+function Result({ data, goodsName }: { data: RooResult; goodsName: string }) {
   const { tr } = useLanguage();
   const headline = { pass: 'Đạt', fail: 'Không đạt', inconclusive: 'Chưa kết luận', unsupported: 'Chưa hỗ trợ' }[data.status];
   const tone = { pass: 'text-emerald-800', fail: 'text-rose-800', inconclusive: 'text-amber-800', unsupported: 'text-slate-800' }[data.status];
@@ -68,6 +69,7 @@ function Result({ data }: { data: RooResult }) {
       <p className="mt-5 text-xs text-slate-500">
         {tr('Kết quả chỉ mang tính tham khảo. Cơ quan cấp chứng nhận xuất xứ chính thức là Bộ Công Thương.')}
       </p>
+      {data.status === 'pass' && <Eur1DraftPanel checkId={data.check_id} goodsName={goodsName} />}
     </section>
   );
 }
@@ -235,7 +237,7 @@ export default function OriginCalculator() {
           {tr(busy ? 'Đang kiểm tra...' : 'Kiểm tra xuất xứ')}
         </button>
       </form>
-      {result && <Result data={result} />}
+      {result && <Result data={result} goodsName={hs?.name_en ?? ''} />}
     </div>
   );
 }

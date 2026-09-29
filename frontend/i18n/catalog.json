@@ -9213,5 +9213,145 @@
     "Submit a request so an administrator can review your profile and evidence. Only verified companies appear in the supplier directory.",
     "Submit a request so an administrator can review your profile and evidence. Only verified companies appear in the supplier directory.",
     "Submit a request so an administrator can review your profile and evidence. Only verified companies appear in the supplier directory."
+  ],
+  "Chỉ tạo được bản nháp khi kết quả xuất xứ là Đạt.": [
+    "A draft can only be created when the origin result is Pass.",
+    "A draft can only be created when the origin result is Pass.",
+    "A draft can only be created when the origin result is Pass."
+  ],
+  "Không tìm thấy kết quả xuất xứ hoặc bạn chưa có hồ sơ doanh nghiệp.": [
+    "The origin result was not found or you do not have a company profile yet.",
+    "The origin result was not found or you do not have a company profile yet.",
+    "The origin result was not found or you do not have a company profile yet."
+  ],
+  "Dữ liệu hóa đơn chưa hợp lệ. Vui lòng kiểm tra lại các ô.": [
+    "The invoice data is not valid. Please check the fields.",
+    "The invoice data is not valid. Please check the fields.",
+    "The invoice data is not valid. Please check the fields."
+  ],
+  "Bạn thao tác quá nhiều lần. Vui lòng thử lại sau một phút.": [
+    "You have made too many requests. Please try again in a minute.",
+    "You have made too many requests. Please try again in a minute.",
+    "You have made too many requests. Please try again in a minute."
+  ],
+  "Vui lòng nhập tên người nhận hàng.": [
+    "Please enter the consignee's name.",
+    "Please enter the consignee's name.",
+    "Please enter the consignee's name."
+  ],
+  "Vui lòng nhập địa chỉ người nhận hàng.": [
+    "Please enter the consignee's address.",
+    "Please enter the consignee's address.",
+    "Please enter the consignee's address."
+  ],
+  "Vui lòng nhập số hóa đơn.": [
+    "Please enter the invoice number.",
+    "Please enter the invoice number.",
+    "Please enter the invoice number."
+  ],
+  "Vui lòng nhập ngày hóa đơn.": [
+    "Please enter the invoice date.",
+    "Please enter the invoice date.",
+    "Please enter the invoice date."
+  ],
+  "Ngày hóa đơn không được ở tương lai.": [
+    "The invoice date cannot be in the future.",
+    "The invoice date cannot be in the future.",
+    "The invoice date cannot be in the future."
+  ],
+  "Vui lòng nhập mô tả hàng hóa.": [
+    "Please enter the description of goods.",
+    "Please enter the description of goods.",
+    "Please enter the description of goods."
+  ],
+  "Vui lòng nhập quy cách đóng gói.": [
+    "Please enter the packaging details.",
+    "Please enter the packaging details.",
+    "Please enter the packaging details."
+  ],
+  "Khối lượng phải là số dương, tối đa 2 chữ số thập phân.": [
+    "The mass must be a positive number with at most 2 decimal places.",
+    "The mass must be a positive number with at most 2 decimal places.",
+    "The mass must be a positive number with at most 2 decimal places."
+  ],
+  "Không tạo được bản nháp. Vui lòng thử lại sau.": [
+    "Unable to create the draft. Please try again later.",
+    "Unable to create the draft. Please try again later.",
+    "Unable to create the draft. Please try again later."
+  ],
+  "Đăng nhập bằng tài khoản nhà xuất khẩu (đã có hồ sơ doanh nghiệp) để tạo bản nháp EUR.1 từ kết quả này.": [
+    "Sign in with an exporter account (with a company profile) to create an EUR.1 draft from this result.",
+    "Sign in with an exporter account (with a company profile) to create an EUR.1 draft from this result.",
+    "Sign in with an exporter account (with a company profile) to create an EUR.1 draft from this result."
+  ],
+  "Bản nháp EUR.1": [
+    "EUR.1 draft",
+    "EUR.1 draft",
+    "EUR.1 draft"
+  ],
+  "Đây chỉ là bản nháp để rà soát, không phải chứng từ chính thức. Cơ quan cấp chính thức là Bộ Công Thương; mọi trang bản nháp đều có watermark.": [
+    "This is only a draft for review, not an official document. The official issuing authority is the Ministry of Industry and Trade (Bộ Công Thương); every page of the draft carries a watermark.",
+    "This is only a draft for review, not an official document. The official issuing authority is the Ministry of Industry and Trade (Bộ Công Thương); every page of the draft carries a watermark.",
+    "This is only a draft for review, not an official document. The official issuing authority is the Ministry of Industry and Trade (Bộ Công Thương); every page of the draft carries a watermark."
+  ],
+  "Tên người nhận hàng": [
+    "Consignee name",
+    "Consignee name",
+    "Consignee name"
+  ],
+  "Nước người nhận hàng": [
+    "Consignee country",
+    "Consignee country",
+    "Consignee country"
+  ],
+  "Địa chỉ người nhận hàng": [
+    "Consignee address",
+    "Consignee address",
+    "Consignee address"
+  ],
+  "Số hóa đơn": [
+    "Invoice number",
+    "Invoice number",
+    "Invoice number"
+  ],
+  "Ngày hóa đơn": [
+    "Invoice date",
+    "Invoice date",
+    "Invoice date"
+  ],
+  "Mô tả hàng hóa": [
+    "Description of goods",
+    "Description of goods",
+    "Description of goods"
+  ],
+  "Khối lượng cả bì (kg)": [
+    "Gross mass (kg)",
+    "Gross mass (kg)",
+    "Gross mass (kg)"
+  ],
+  "Thông tin vận chuyển (không bắt buộc)": [
+    "Transport details (optional)",
+    "Transport details (optional)",
+    "Transport details (optional)"
+  ],
+  "Ghi chú (không bắt buộc)": [
+    "Remarks (optional)",
+    "Remarks (optional)",
+    "Remarks (optional)"
+  ],
+  "Đang tạo bản nháp...": [
+    "Creating the draft...",
+    "Creating the draft...",
+    "Creating the draft..."
+  ],
+  "Tải bản nháp (PDF)": [
+    "Download draft (PDF)",
+    "Download draft (PDF)",
+    "Download draft (PDF)"
+  ],
+  "Tạo bản nháp EUR.1": [
+    "Create EUR.1 draft",
+    "Create EUR.1 draft",
+    "Create EUR.1 draft"
   ]
 }

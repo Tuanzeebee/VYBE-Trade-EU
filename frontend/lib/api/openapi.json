@@ -1695,6 +1695,177 @@
         }
       }
     },
+    "/api/exporter/documents/eur1": {
+      "post": {
+        "tags": [
+          "compliance"
+        ],
+        "summary": "Request Eur1",
+        "operationId": "request_eur1_api_exporter_documents_eur1_post",
+        "parameters": [
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Eur1In"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/exporter/documents": {
+      "get": {
+        "tags": [
+          "compliance"
+        ],
+        "summary": "List Documents",
+        "operationId": "list_documents_api_exporter_documents_get",
+        "parameters": [
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DocumentOut"
+                  },
+                  "title": "Response List Documents Api Exporter Documents Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/exporter/documents/{document_id}": {
+      "get": {
+        "tags": [
+          "compliance"
+        ],
+        "summary": "Get Document",
+        "operationId": "get_document_api_exporter_documents__document_id__get",
+        "parameters": [
+          {
+            "name": "document_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Document Id"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/exporter/evidence-types": {
       "get": {
         "tags": [
@@ -3845,6 +4016,60 @@
         ],
         "title": "DecisionIn"
       },
+      "DocumentOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "document_type": {
+            "type": "string",
+            "const": "eur1_draft",
+            "title": "Document Type"
+          },
+          "compliance_check_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Compliance Check Id"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "queued",
+              "ready",
+              "failed"
+            ],
+            "title": "Status"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "file_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "File Url"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "document_type",
+          "compliance_check_id",
+          "status",
+          "created_at",
+          "file_url"
+        ],
+        "title": "DocumentOut"
+      },
       "DutyType": {
         "type": "string",
         "enum": [
@@ -3853,6 +4078,104 @@
           "mixed"
         ],
         "title": "DutyType"
+      },
+      "Eur1In": {
+        "properties": {
+          "compliance_check_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Compliance Check Id"
+          },
+          "consignee_name": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Consignee Name"
+          },
+          "consignee_address": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Consignee Address"
+          },
+          "consignee_country": {
+            "type": "string",
+            "title": "Consignee Country"
+          },
+          "invoice_number": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Invoice Number"
+          },
+          "invoice_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Invoice Date"
+          },
+          "goods_description": {
+            "type": "string",
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Goods Description"
+          },
+          "packages": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Packages"
+          },
+          "gross_mass_kg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              }
+            ],
+            "title": "Gross Mass Kg"
+          },
+          "transport_details": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Transport Details"
+          },
+          "remarks": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Remarks"
+          }
+        },
+        "type": "object",
+        "required": [
+          "compliance_check_id",
+          "consignee_name",
+          "consignee_address",
+          "consignee_country",
+          "invoice_number",
+          "invoice_date",
+          "goods_description",
+          "packages",
+          "gross_mass_kg"
+        ],
+        "title": "Eur1In",
+        "description": "Dữ liệu hóa đơn để phủ lên bản nháp EUR.1. Khối lượng là CHUỖI JSON."
       },
       "EvidenceIn": {
         "properties": {
