@@ -164,7 +164,9 @@ async def get_company_summaries(
         return {}
     rows = await session.scalars(select(Company).where(Company.id.in_(company_ids)))
     return {
-        c.id: CompanySummary(id=c.id, legal_name=c.legal_name, tax_id=c.tax_id, country=c.country)
+        c.id: CompanySummary(
+            id=c.id, legal_name=c.legal_name, tax_id=c.tax_id, country=c.country, address=c.address
+        )
         for c in rows
     }
 

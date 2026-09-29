@@ -2,6 +2,7 @@ import datetime as dt
 import uuid
 from decimal import Decimal
 from enum import StrEnum
+from typing import Any
 
 from sqlalchemy import (
     Boolean,
@@ -17,6 +18,7 @@ from sqlalchemy import (
     func,
     text,
 )
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.db import Base
@@ -79,6 +81,43 @@ class ComplianceCheck(Base):
     status: Mapped[str] = mapped_column(String(16))
     created_at: Mapped[dt.datetime] = mapped_column(
         DateTime(timezone=True), server_default=text("clock_timestamp()")
+    )
+
+
+class DocumentType(StrEnum):
+    eur1_draft = "eur1_draft"
+
+
+class DocumentStatus(StrEnum):
+    queued = "queued"
+    ready = "ready"
+    failed = "failed"
+
+
+class Document(Base):
+    """Tài liệu hệ thống sinh cho công ty (C5: bản NHÁP EUR.1). Chỉ sinh khi RoO = pass."""
+
+    __tablename__ = "documents"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, primary_key=True, default=uuid.uuid4, server_default=text("gen_random_uuid()")
+    )
+    company_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("companies.id"), index=True)
+    requested_by: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"))
+    document_type: Mapped[DocumentType] = mapped_column(Enum(DocumentType, name="document_type"))
+    compliance_check_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("compliance_checks.id"))
+    input_data: Mapped[dict[str, Any]] = mapped_column(JSONB)  # dữ liệu hóa đơn người dùng nhập
+    file_key: Mapped[str | None] = mapped_column(String(512))
+    status: Mapped[DocumentStatus] = mapped_column(
+        Enum(DocumentStatus, name="document_status"),
+        default=DocumentStatus.queued,
+        server_default="queued",
+    )
+    created_at: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=text("clock_timestamp()")
+    )
+    updated_at: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
     )
 
 

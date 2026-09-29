@@ -15,6 +15,7 @@ class Storage(Protocol):
     async def ping(self) -> None: ...
     async def presign_get(self, key: str) -> str: ...
     async def presign_put(self, key: str, content_type: str) -> str: ...
+    async def put(self, key: str, data: bytes, content_type: str) -> None: ...
 
 
 class S3Storage:
@@ -40,6 +41,16 @@ class S3Storage:
             ExpiresIn=PRESIGN_SECONDS,
         )
         return url
+
+    async def put(self, key: str, data: bytes, content_type: str) -> None:
+        """Ghi file từ phía server (PDF hệ thống sinh); file người dùng tải lên dùng presign_put."""
+        await run_in_threadpool(
+            self._client.put_object,
+            Bucket=self._bucket,
+            Key=key,
+            Body=data,
+            ContentType=content_type,
+        )
 
     async def presign_put(self, key: str, content_type: str) -> str:
         url: str = await run_in_threadpool(

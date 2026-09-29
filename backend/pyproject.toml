@@ -12,6 +12,8 @@ dependencies = [
     "procrastinate>=3.10.0",
     "psycopg[binary,pool]>=3.3.6",
     "pydantic-settings>=2.15.0",
+    "pypdf>=6.19.0",
+    "reportlab>=5.0.1",
     "slowapi>=0.1.10",
     "sqlalchemy[asyncio]>=2.1.1",
 ]
@@ -36,7 +38,7 @@ python_version = "3.12"
 plugins = ["pydantic.mypy"]
 
 [[tool.mypy.overrides]]
-module = ["boto3.*", "botocore.*"]
+module = ["boto3.*", "botocore.*", "reportlab.*", "asyncpg.*"]
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]

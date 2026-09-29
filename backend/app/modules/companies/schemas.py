@@ -300,6 +300,7 @@ class CompanySummary(BaseModel):
     legal_name: str
     tax_id: str | None
     country: str
+    address: str | None = None
 
 
 class VerificationState(BaseModel):

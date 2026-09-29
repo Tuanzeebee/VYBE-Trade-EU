@@ -3,6 +3,7 @@
 import asyncio
 import os
 from collections.abc import AsyncIterator
+from typing import ClassVar
 
 import asyncpg
 import pytest
@@ -38,8 +39,14 @@ def pytest_sessionstart() -> None:
 
 
 class FakeStorage:
+    # File đã ghi qua put(): dùng chung giữa các phiên bản trong một test.
+    objects: ClassVar[dict[str, bytes]] = {}
+
     async def ping(self) -> None:
         return None
+
+    async def put(self, key: str, data: bytes, content_type: str) -> None:
+        FakeStorage.objects[key] = data
 
     async def presign_get(self, key: str) -> str:
         return f"https://fake/{key}"

@@ -77,7 +77,8 @@ async def test_money_is_exact_decimal(db_session: AsyncSession) -> None:
 )
 async def test_compliance_checks_append_only(db_session: AsyncSession, sql: str) -> None:
     await _tariff_check(db_session)
-    with pytest.raises(DBAPIError, match="append-only"):
+    # TRUNCATE còn bị chặn thêm bởi khóa ngoại từ documents (C5), nên thông báo có thể khác.
+    with pytest.raises(DBAPIError, match="append-only|cannot truncate"):
         await db_session.execute(text(sql))
 
 

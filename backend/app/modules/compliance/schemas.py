@@ -1,4 +1,6 @@
+import datetime as dt
 import re
+import uuid
 from decimal import Decimal
 from typing import Annotated, Any, Literal, Self
 
@@ -132,3 +134,63 @@ class RooOut(BaseModel):
     threshold_pct: Decimal | None
     rule_text: str | None
     source: str | None
+
+
+# ── Bản nháp EUR.1 (C5) ─────────────────────────────────────────────────────
+class Eur1In(BaseModel):
+    """Dữ liệu hóa đơn để phủ lên bản nháp EUR.1. Khối lượng là CHUỖI JSON."""
+
+    model_config = ConfigDict(strict=True)
+
+    compliance_check_id: uuid.UUID
+    consignee_name: Annotated[str, Field(min_length=1, max_length=255)]
+    consignee_address: Annotated[str, Field(min_length=1, max_length=500)]
+    consignee_country: str
+    invoice_number: Annotated[str, Field(min_length=1, max_length=64)]
+    invoice_date: dt.date
+    goods_description: Annotated[str, Field(min_length=1, max_length=2000)]
+    packages: Annotated[str, Field(min_length=1, max_length=255)]
+    gross_mass_kg: Decimal
+    transport_details: Annotated[str | None, Field(max_length=500)] = None
+    remarks: Annotated[str | None, Field(max_length=500)] = None
+
+    @field_validator("compliance_check_id", mode="before")
+    @classmethod
+    def _uuid(cls, value: Any) -> uuid.UUID:
+        return uuid.UUID(str(value))
+
+    @field_validator("invoice_date", mode="before")
+    @classmethod
+    def _date(cls, value: Any) -> dt.date:
+        if isinstance(value, dt.date):
+            return value
+        return dt.date.fromisoformat(str(value))
+
+    @field_validator("consignee_country")
+    @classmethod
+    def _country(cls, value: str) -> str:
+        upper = value.strip().upper()
+        if upper not in EU_MEMBERS:
+            raise ValueError("consignee_country must be an EU member state (ISO 3166-1 alpha-2)")
+        return upper
+
+    @field_validator("invoice_date")
+    @classmethod
+    def _not_future(cls, value: dt.date) -> dt.date:
+        if value > dt.datetime.now(dt.UTC).date():
+            raise ValueError("invoice_date cannot be in the future")
+        return value
+
+    @field_validator("gross_mass_kg", mode="before")
+    @classmethod
+    def _mass(cls, value: Any) -> Decimal:
+        return parse_amount(value)
+
+
+class DocumentOut(BaseModel):
+    id: uuid.UUID
+    document_type: Literal["eur1_draft"]
+    compliance_check_id: uuid.UUID
+    status: Literal["queued", "ready", "failed"]
+    created_at: dt.datetime
+    file_url: str | None  # URL ký sẵn ngắn hạn, chỉ khi ready

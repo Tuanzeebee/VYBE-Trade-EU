@@ -6,9 +6,10 @@ from fastapi.responses import Response, StreamingResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import get_session
+from app.core.storage import Storage, get_storage
 from app.modules.auth.schemas import CurrentUser
 from app.modules.auth.service import get_optional_user, require_role
-from app.modules.compliance import admin_service, service
+from app.modules.compliance import admin_service, documents, service
 from app.modules.compliance.admin_schemas import (
     RooRuleIn,
     RooRuleOut,
@@ -17,7 +18,14 @@ from app.modules.compliance.admin_schemas import (
     TariffLineOut,
     TariffLinePatch,
 )
-from app.modules.compliance.schemas import RooIn, RooOut, TariffIn, TariffOut
+from app.modules.compliance.schemas import (
+    DocumentOut,
+    Eur1In,
+    RooIn,
+    RooOut,
+    TariffIn,
+    TariffOut,
+)
 
 router = APIRouter(tags=["compliance"])
 
@@ -125,3 +133,25 @@ async def review_roo_rule(rule_id: uuid.UUID, admin: Admin, session: DB) -> RooR
 async def delete_roo_rule(rule_id: uuid.UUID, admin: Admin, session: DB) -> Response:
     await admin_service.delete_roo_rule(session, admin, rule_id)
     return Response(status_code=204)
+
+
+# ── Bản nháp EUR.1 của exporter (C5) ───────────────────────────────────────────
+Exporter = Annotated[CurrentUser, Depends(require_role("exporter"))]
+Store = Annotated[Storage, Depends(get_storage)]
+
+
+@router.post("/api/exporter/documents/eur1", status_code=202)
+async def request_eur1(data: Eur1In, user: Exporter, session: DB, storage: Store) -> DocumentOut:
+    return await documents.request_eur1(session, user, data, storage)
+
+
+@router.get("/api/exporter/documents")
+async def list_documents(user: Exporter, session: DB, storage: Store) -> list[DocumentOut]:
+    return await documents.list_documents(session, user, storage)
+
+
+@router.get("/api/exporter/documents/{document_id}")
+async def get_document(
+    document_id: uuid.UUID, user: Exporter, session: DB, storage: Store
+) -> DocumentOut:
+    return await documents.get_document(session, user, storage, document_id)
