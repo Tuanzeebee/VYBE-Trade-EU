@@ -1,7 +1,7 @@
 'use client';
 
 // Trang đăng nhập, onboarding, workspace seller, admin — tách từ app/page.tsx cũ, giữ nguyên component.
-// Phiên đăng nhập thật (A1); hồ sơ doanh nghiệp exporter lưu trên server (B1).
+// Phiên đăng nhập thật (A1); hồ sơ doanh nghiệp exporter (B1) và buyer (B2) lưu trên server.
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import AuthPage from '../AuthPage';
@@ -14,7 +14,7 @@ import { PublicShell } from '../app-shell/PublicShell';
 import { useLegacyNavigate } from '../app-shell/useLegacyNavigate';
 import { useRouter } from '../../i18n/navigation';
 import { completeOnboarding, getUserPage, logout, type DemoUser } from '../../lib/demoAuth';
-import { companyToForm, getMyCompany, profileToCompany, saveMyCompany } from '../../lib/companyApi';
+import { buyerProfileToCompany, companyToForm, getMyCompany, profileToCompany, saveMyCompany } from '../../lib/companyApi';
 import { hrefFor, roleFromType } from '../../lib/legacyNav';
 
 const WORKSPACE_TABS = ['verification', 'profile', 'overview', 'products', 'rfq', 'notifications', 'licenses'] as const;
@@ -77,12 +77,24 @@ function OnboardingContent({ user }: { user: DemoUser }) {
   const navigate = useLegacyNavigate(user);
   const goHome = useGoHome();
   const handleLogout = useLogout();
-  const initialCompany = useCompanyForm(user.role === 'seller');
-  if (user.role === 'buyer') {
-    const onBuyerComplete = (profile: Record<string, string>) => goHome(completeOnboarding(user.id, profile));
-    return <BuyerOnboarding key={user.id} user={user} onComplete={onBuyerComplete} onLogout={handleLogout} />;
-  }
+  const initialCompany = useCompanyForm(true);
   if (initialCompany === undefined) return null;
+  if (user.role === 'buyer') {
+    // Hồ sơ buyer lên server trước; nhu cầu từng đơn hàng vẫn lưu trình duyệt tới F1 (RFQ).
+    const onBuyerComplete = async (profile: Record<string, string>) => {
+      await saveMyCompany(buyerProfileToCompany(profile));
+      goHome(completeOnboarding(user.id, profile));
+    };
+    return (
+      <BuyerOnboarding
+        key={user.id}
+        user={user}
+        initialCompany={initialCompany ?? undefined}
+        onComplete={onBuyerComplete}
+        onLogout={handleLogout}
+      />
+    );
+  }
   // Lưu hồ sơ lên server trước; sản phẩm/chứng nhận vẫn lưu trình duyệt tới B5/C6.
   const onComplete = async (profile: Record<string, string>) => {
     await saveMyCompany(profileToCompany(profile));

@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { ArrowLeft, ArrowRight, Building2, Check, Globe, LogOut, PackageSearch, ShieldCheck, Sprout } from 'lucide-react';
 import type { DemoUser } from '../lib/demoAuth';
+import { COMPANY_SIZES, COUNTRIES, INDUSTRIES, PROCUREMENT_ESTIMATES } from '../lib/companyApi';
 import LanguageSelect from './LanguageSelect';
 import { useLanguage } from "../context/LanguageContext";
 
@@ -10,9 +11,11 @@ const CERTIFICATES = ['ISO 22000', 'HACCP', 'GlobalG.A.P.', 'USDA Organic', 'EU 
 const INPUT = 'mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 outline-none focus:border-[#083832] focus:ring-1 focus:ring-[#083832]';
 const LABEL = 'block text-sm font-semibold text-slate-700';
 
-export default function BuyerOnboarding({ user, onComplete, onLogout }: {
+export default function BuyerOnboarding({ user, initialCompany, onComplete, onLogout }: {
   user: DemoUser;
-  onComplete: (profile: Record<string, string>) => void;
+  /** Hồ sơ đã lưu trên server (B2), đổi sang giá trị của form. */
+  initialCompany?: Record<string, string>;
+  onComplete: (profile: Record<string, string>) => void | Promise<void>;
   onLogout: () => void;
 }) {
   const { tr } = useLanguage();
@@ -26,6 +29,8 @@ export default function BuyerOnboarding({ user, onComplete, onLogout }: {
     quantity: '', unit: 'Tấn', frequency: '', market: user.profile?.market || '', incoterm: 'FOB',
     budget: '', minTrustLevel: 'L2', requiredCertificates: '', factoryAudit: 'false',
     traceability: 'false', verificationNotes: '', agreeCommitment: 'false',
+    vatNumber: '', procurementEstimate: '',
+    ...initialCompany,
   });
   function update(field: keyof typeof profile, value: string) {
     setProfile((current) => ({ ...current, [field]: value }));
@@ -37,11 +42,16 @@ export default function BuyerOnboarding({ user, onComplete, onLogout }: {
     update('requiredCertificates', (selected.includes(certificate)
       ? selected.filter((item) => item !== certificate) : [...selected, certificate]).join(', '));
   }
-  function submit(event: React.FormEvent) {
+  function toggleInterest(label: string) {
+    const selected = profile.interest.split(', ').filter(Boolean);
+    update('interest', (selected.includes(label) ? selected.filter((item) => item !== label) : [...selected, label]).join(', '));
+  }
+  async function submit(event: React.FormEvent) {
     event.preventDefault();
     setError('');
+    if (step === 2 && !profile.interest.trim()) { setError('Vui lòng chọn ít nhất một nhóm hàng cần tìm.'); return; }
     if (step < 4) { setFurthestStep(Math.max(furthestStep, step + 1)); setStep(step + 1); return; }
-    try { onComplete(profile); }
+    try { await onComplete(profile); }
     catch (cause) { setError(cause instanceof Error ? cause.message : 'Không thể lưu hồ sơ. Vui lòng thử lại.'); }
   }
 
@@ -78,22 +88,24 @@ export default function BuyerOnboarding({ user, onComplete, onLogout }: {
           {step === 1 && <>
             <label className={LABEL}>{tr("Tên công ty *")}<input required maxLength={200} autoComplete="organization" className={INPUT} value={profile.companyName} onChange={(e) => update('companyName', e.target.value)} placeholder={tr("Ví dụ: Global Foods Trading Ltd.")} /></label>
             <div className="grid gap-5 sm:grid-cols-2">
-              <label className={LABEL}>{tr("Quốc gia *")}<input required maxLength={100} list="buyer-countries" autoComplete="country-name" className={INPUT} value={profile.country} onChange={(e) => update('country', e.target.value)} placeholder={tr("Ví dụ: Germany")} /><datalist id="buyer-countries">{['United States', 'Canada', 'Germany', 'France', 'United Kingdom', 'Netherlands', 'Japan', 'South Korea', 'Australia', 'Singapore', 'United Arab Emirates'].map((country) => <option key={country} value={country} />)}</datalist></label>
+              <label className={LABEL}>{tr("Quốc gia *")}<select required autoComplete="country-name" className={INPUT} value={profile.country} onChange={(e) => update('country', e.target.value)}><option value="">{tr("Chọn quốc gia")}</option>{COUNTRIES.map((country) => <option value={country.name} key={country.code}>{country.name}</option>)}</select></label>
               <label className={LABEL}>{tr("Khu vực *")}<select required className={INPUT} value={profile.region} onChange={(e) => update('region', e.target.value)}><option value="">{tr("Chọn khu vực")}</option>{['Bắc Mỹ', 'Châu Âu', 'Châu Á – Thái Bình Dương', 'Trung Đông', 'Châu Phi', 'Mỹ Latinh'].map((region) => <option value={region} key={region}>{tr(region)}</option>)}</select></label>
             </div>
             <div className="grid gap-5 sm:grid-cols-2">
-              <label className={LABEL}>{tr("Quy mô công ty *")}<select required className={INPUT} value={profile.companySize} onChange={(e) => update('companySize', e.target.value)}><option value="">{tr("Chọn quy mô nhân sự")}</option>{['1–10 nhân sự', '11–50 nhân sự', '51–200 nhân sự', '201–500 nhân sự', 'Trên 500 nhân sự'].map((size) => <option value={size} key={size}>{tr(size)}</option>)}</select></label>
+              <label className={LABEL}>{tr("Quy mô công ty *")}<select required className={INPUT} value={profile.companySize} onChange={(e) => update('companySize', e.target.value)}><option value="">{tr("Chọn quy mô nhân sự")}</option>{COMPANY_SIZES.map((size) => <option value={size.label} key={size.code}>{tr(size.label)}</option>)}</select></label>
               <label className={LABEL}>{tr("Loại hình doanh nghiệp")}<select className={INPUT} value={profile.businessType} onChange={(e) => update('businessType', e.target.value)}>{['Nhà nhập khẩu', 'Nhà phân phối', 'Chuỗi bán lẻ', 'Nhà sản xuất thực phẩm', 'Đại lý thương mại'].map((type) => <option value={type} key={type}>{tr(type)}</option>)}</select></label>
             </div>
             <label className={LABEL}>{tr("Website công ty")}<input type="url" maxLength={300} autoComplete="url" className={INPUT} value={profile.website} onChange={(e) => update('website', e.target.value)} placeholder={tr("https://company.com")} /></label>
+            <label className={LABEL}>{tr("Mã số VAT")}<input maxLength={32} className={INPUT} value={profile.vatNumber} onChange={(e) => update('vatNumber', e.target.value)} placeholder={tr("Ví dụ: DE123456789")} /></label>
             <div className="grid gap-5 sm:grid-cols-2"><label className={LABEL}>{tr("Người liên hệ *")}<input required maxLength={120} autoComplete="name" className={INPUT} value={profile.contactName} onChange={(e) => update('contactName', e.target.value)} /></label><label className={LABEL}>{tr("Email liên hệ *")}<input required type="email" autoComplete="email" className={INPUT} value={profile.contactEmail} onChange={(e) => update('contactEmail', e.target.value)} /></label></div>
             <label className={LABEL}>{tr("Điện thoại liên hệ")}<input type="tel" maxLength={40} autoComplete="tel" className={INPUT} value={profile.phone} onChange={(e) => update('phone', e.target.value)} placeholder={tr("+49…")} /></label>
           </>}
           {step === 2 && <>
-            <label className={LABEL}>{tr("Ngành hàng cần tìm *")}<select required className={INPUT} value={profile.interest} onChange={(e) => update('interest', e.target.value)}><option value="">{tr("Chọn ngành hàng")}</option>{['Cà phê & hồ tiêu', 'Gạo & ngũ cốc', 'Hạt điều & hạt dinh dưỡng', 'Trái cây & rau củ', 'Thủy sản', 'Thực phẩm chế biến'].map((category) => <option value={category} key={category}>{tr(category)}</option>)}</select></label>
+            <fieldset><legend className={LABEL}>{tr("Nhóm hàng cần tìm *")}</legend><p className="mt-1 text-xs text-slate-500">{tr("Chọn một hoặc nhiều nhóm hàng bạn quan tâm.")}</p><div className="mt-3 grid grid-cols-2 gap-3">{INDUSTRIES.map((industry) => <label key={industry.code} className="flex cursor-pointer items-center gap-2 rounded-xl border border-slate-200 p-3 text-sm"><input type="checkbox" checked={profile.interest.split(', ').includes(industry.label)} onChange={() => toggleInterest(industry.label)} className="h-4 w-4 accent-teal-800" />{tr(industry.label)}</label>)}</div></fieldset>
             <label className={LABEL}>{tr("Sản phẩm và thông số mong muốn")}<textarea rows={3} maxLength={2000} className={INPUT} value={profile.productDetails} onChange={(e) => update('productDetails', e.target.value)} placeholder={tr("Ví dụ: Robusta Grade 1, độ ẩm tối đa 12.5%, bao đay 60kg…")} /></label>
             <div className="grid gap-5 sm:grid-cols-2"><label className={LABEL}>{tr("Khối lượng dự kiến mỗi đợt *")}<div className="flex gap-2"><input required type="number" min="0.01" step="0.01" className={INPUT} value={profile.quantity} onChange={(e) => update('quantity', e.target.value)} /><select aria-label={tr("Đơn vị khối lượng")} className={`${INPUT} max-w-36`} value={profile.unit} onChange={(e) => update('unit', e.target.value)}>{['Tấn', 'Kg', 'Container 20ft', 'Container 40ft'].map((unit) => <option value={unit} key={unit}>{tr(unit)}</option>)}</select></div></label><label className={LABEL}>{tr("Tần suất mua hàng *")}<select required className={INPUT} value={profile.frequency} onChange={(e) => update('frequency', e.target.value)}><option value="">{tr("Chọn tần suất")}</option>{['Đơn hàng thử nghiệm', 'Hàng tháng', 'Hàng quý', 'Theo mùa vụ', 'Hợp đồng dài hạn'].map((frequency) => <option value={frequency} key={frequency}>{tr(frequency)}</option>)}</select></label></div>
             <div className="grid gap-5 sm:grid-cols-2"><label className={LABEL}>{tr("Thị trường / cảng đến")}<input maxLength={200} className={INPUT} value={profile.market} onChange={(e) => update('market', e.target.value)} placeholder={tr("Ví dụ: Hamburg, Germany")} /></label><label className={LABEL}>{tr("Điều kiện giao hàng")}<select className={INPUT} value={profile.incoterm} onChange={(e) => update('incoterm', e.target.value)}>{['FOB', 'CIF', 'CFR', 'EXW', 'Thỏa thuận với nhà cung cấp'].map((term) => <option value={term} key={term}>{tr(term)}</option>)}</select></label></div>
+            <label className={LABEL}>{tr("Ước lượng mua hàng mỗi năm")}<select className={INPUT} value={profile.procurementEstimate} onChange={(e) => update('procurementEstimate', e.target.value)}><option value="">{tr("Chọn mức ước lượng")}</option>{PROCUREMENT_ESTIMATES.map((estimate) => <option value={estimate.label} key={estimate.code}>{tr(estimate.label)}</option>)}</select></label>
             <label className={LABEL}>{tr("Ngân sách tham khảo")}<input maxLength={120} className={INPUT} value={profile.budget} onChange={(e) => update('budget', e.target.value)} placeholder={tr("Ví dụ: 2.500–3.000 USD/tấn; có thể để trống")} /></label>
           </>}
           {step === 3 && <>
@@ -105,8 +117,8 @@ export default function BuyerOnboarding({ user, onComplete, onLogout }: {
           </>}
           {step === 4 && <>
             {[
-              { title: 'Thông tin công ty', target: 1, rows: [['Tên công ty', profile.companyName], ['Quốc gia / khu vực', `${profile.country} / ${profile.region}`], ['Quy mô', profile.companySize], ['Loại hình', profile.businessType], ['Người liên hệ', profile.contactName], ['Email', profile.contactEmail], ['Điện thoại', profile.phone], ['Website', profile.website]] },
-              { title: 'Nhu cầu tìm nguồn hàng', target: 2, rows: [['Ngành hàng', profile.interest], ['Khối lượng mỗi đợt', `${profile.quantity} ${profile.unit}`], ['Tần suất', profile.frequency], ['Điểm đến', profile.market], ['Giao hàng', profile.incoterm], ['Ngân sách', profile.budget], ['Thông số sản phẩm', profile.productDetails]] },
+              { title: 'Thông tin công ty', target: 1, rows: [['Tên công ty', profile.companyName], ['Quốc gia / khu vực', `${profile.country} / ${profile.region}`], ['Quy mô', profile.companySize], ['Loại hình', profile.businessType], ['Người liên hệ', profile.contactName], ['Email', profile.contactEmail], ['Điện thoại', profile.phone], ['Website', profile.website], ['Mã số VAT', profile.vatNumber]] },
+              { title: 'Nhu cầu tìm nguồn hàng', target: 2, rows: [['Nhóm hàng', profile.interest], ['Ước lượng mua hàng', profile.procurementEstimate], ['Khối lượng mỗi đợt', `${profile.quantity} ${profile.unit}`], ['Tần suất', profile.frequency], ['Điểm đến', profile.market], ['Giao hàng', profile.incoterm], ['Ngân sách', profile.budget], ['Thông số sản phẩm', profile.productDetails]] },
               { title: 'Tiêu chí xác minh', target: 3, rows: [['Cấp độ tối thiểu', profile.minTrustLevel], ['Chứng nhận', profile.requiredCertificates || 'Chưa có yêu cầu cụ thể'], ['Thẩm định thực địa', profile.factoryAudit === 'true' ? 'Có' : 'Không yêu cầu'], ['Truy xuất nguồn gốc', profile.traceability === 'true' ? 'Có' : 'Không yêu cầu'], ['Tiêu chí khác', profile.verificationNotes]] },
             ].map(({ title, target, rows }) => <section key={title} className="rounded-2xl border border-slate-200 p-4 sm:p-5"><div className="mb-4 flex items-center justify-between gap-3"><h3 className="text-sm font-bold">{tr(title)}</h3><button type="button" onClick={() => goTo(target)} className="text-xs font-semibold text-teal-700 hover:underline" aria-label={tr(`Sửa ${title.toLowerCase()}`)}>{tr("Sửa")}</button></div><dl className="space-y-3">{rows.map(([label, value]) => <div key={label} className="grid gap-1 text-xs sm:grid-cols-3 sm:gap-3"><dt className="text-slate-500">{tr(label)}</dt><dd className="break-words font-semibold sm:col-span-2">{tr(value || 'Chưa cung cấp')}</dd></div>)}</dl></section>)}
             <label className="flex cursor-pointer items-start gap-3 rounded-xl bg-teal-50 p-4 text-sm leading-6 text-teal-900"><input required type="checkbox" checked={profile.agreeCommitment === 'true'} onChange={(e) => update('agreeCommitment', String(e.target.checked))} className="mt-1 h-4 w-4 shrink-0 accent-teal-800" />{tr("Tôi xác nhận thông tin công ty và nhu cầu mua hàng đã được kiểm tra, sẵn sàng kết nối với nhà cung cấp Việt Nam.")}</label>

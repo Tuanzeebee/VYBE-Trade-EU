@@ -82,8 +82,96 @@ export function profileToCompany(profile: Record<string, string>): CompanyIn {
   };
 }
 
+// ── Buyer (B2) ─────────────────────────────────────────────────────────────
+
+// 27 nước EU cùng vài thị trường nhập khẩu lớn khác; mã ISO-2 lưu vào DB.
+export const COUNTRIES: { code: string; name: string }[] = [
+  { code: 'AT', name: 'Austria' }, { code: 'BE', name: 'Belgium' }, { code: 'BG', name: 'Bulgaria' },
+  { code: 'HR', name: 'Croatia' }, { code: 'CY', name: 'Cyprus' }, { code: 'CZ', name: 'Czechia' },
+  { code: 'DK', name: 'Denmark' }, { code: 'EE', name: 'Estonia' }, { code: 'FI', name: 'Finland' },
+  { code: 'FR', name: 'France' }, { code: 'DE', name: 'Germany' }, { code: 'GR', name: 'Greece' },
+  { code: 'HU', name: 'Hungary' }, { code: 'IE', name: 'Ireland' }, { code: 'IT', name: 'Italy' },
+  { code: 'LV', name: 'Latvia' }, { code: 'LT', name: 'Lithuania' }, { code: 'LU', name: 'Luxembourg' },
+  { code: 'MT', name: 'Malta' }, { code: 'NL', name: 'Netherlands' }, { code: 'PL', name: 'Poland' },
+  { code: 'PT', name: 'Portugal' }, { code: 'RO', name: 'Romania' }, { code: 'SK', name: 'Slovakia' },
+  { code: 'SI', name: 'Slovenia' }, { code: 'ES', name: 'Spain' }, { code: 'SE', name: 'Sweden' },
+  { code: 'GB', name: 'United Kingdom' }, { code: 'CH', name: 'Switzerland' }, { code: 'NO', name: 'Norway' },
+  { code: 'US', name: 'United States' }, { code: 'CA', name: 'Canada' }, { code: 'AU', name: 'Australia' },
+  { code: 'JP', name: 'Japan' }, { code: 'KR', name: 'South Korea' }, { code: 'SG', name: 'Singapore' },
+  { code: 'AE', name: 'United Arab Emirates' },
+];
+
+/** Tên nước (hoặc mã) → mã ISO-2. Không có trong danh sách → null. */
+export function countryCode(nameOrCode: string): string | null {
+  const value = nameOrCode.trim();
+  const found = COUNTRIES.find((c) => c.code === value.toUpperCase() || c.name.toLowerCase() === value.toLowerCase());
+  return found?.code ?? null;
+}
+
+export function countryName(code: string): string {
+  return COUNTRIES.find((c) => c.code === code)?.name ?? code;
+}
+
+// Nhãn giữ đúng chữ của form buyer cũ; mã khớp backend (schemas.CompanySize / ProcurementEstimate).
+export const COMPANY_SIZES: { code: string; label: string }[] = [
+  { code: '1_10', label: '1–10 nhân sự' },
+  { code: '11_50', label: '11–50 nhân sự' },
+  { code: '51_200', label: '51–200 nhân sự' },
+  { code: '201_500', label: '201–500 nhân sự' },
+  { code: 'gt_500', label: 'Trên 500 nhân sự' },
+];
+
+export const PROCUREMENT_ESTIMATES: { code: string; label: string }[] = [
+  { code: 'lt_100k', label: 'Dưới 100.000 EUR/năm' },
+  { code: '100k_500k', label: '100.000 – 500.000 EUR/năm' },
+  { code: '500k_2m', label: '500.000 – 2 triệu EUR/năm' },
+  { code: '2m_10m', label: '2 – 10 triệu EUR/năm' },
+  { code: 'gt_10m', label: 'Trên 10 triệu EUR/năm' },
+];
+
+const codeOf = (table: { code: string; label: string }[], label: string | undefined) =>
+  table.find((row) => row.label === label?.trim())?.code ?? null;
+const labelOf = (table: { code: string; label: string }[], code: string | null | undefined) =>
+  table.find((row) => row.code === code)?.label ?? '';
+
+/** Form buyer cũ (chuỗi hiển thị) → CompanyIn. Chỉ gửi trường của buyer. */
+export function buyerProfileToCompany(profile: Record<string, string>): CompanyIn {
+  const country = countryCode(profile.country ?? '');
+  if (!country) throw new Error('Vui lòng chọn quốc gia từ danh sách.');
+  const categories = (profile.interest ?? '')
+    .split(',')
+    .map((label) => INDUSTRIES.find((i) => i.label === label.trim())?.code)
+    .filter((code): code is Industry => code !== undefined);
+  return {
+    legal_name: (profile.companyName ?? '').trim(),
+    country,
+    company_size: codeOf(COMPANY_SIZES, profile.companySize) as CompanyIn['company_size'],
+    business_type: blank(profile.businessType),
+    website: blank(profile.website),
+    contact_email: blank(profile.contactEmail),
+    vat_number: blank(profile.vatNumber),
+    procurement_estimate: codeOf(PROCUREMENT_ESTIMATES, profile.procurementEstimate) as CompanyIn['procurement_estimate'],
+    sourcing_categories: [...new Set(categories)],
+  };
+}
+
+function buyerToForm(company: CompanyOut): Record<string, string> {
+  return {
+    companyName: company.legal_name,
+    country: countryName(company.country),
+    companySize: labelOf(COMPANY_SIZES, company.company_size),
+    businessType: company.business_type ?? '',
+    website: company.website ?? '',
+    contactEmail: company.contact_email ?? '',
+    vatNumber: company.vat_number ?? '',
+    procurementEstimate: labelOf(PROCUREMENT_ESTIMATES, company.procurement_estimate),
+    interest: company.sourcing_categories.map((code) => INDUSTRIES.find((i) => i.code === code)?.label ?? code).join(', '),
+  };
+}
+
 /** Dữ liệu server → giá trị ban đầu cho form cũ (trang sửa hồ sơ). */
 export function companyToForm(company: CompanyOut): Record<string, string> {
+  if (company.type === 'buyer') return buyerToForm(company);
   return {
     companyName: company.legal_name,
     taxCode: company.tax_id ?? '',

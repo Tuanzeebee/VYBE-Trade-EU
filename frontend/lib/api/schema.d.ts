@@ -148,6 +148,12 @@ export interface components {
             description_vi?: string | null;
             /** Description En */
             description_en?: string | null;
+            /** Company Size */
+            company_size?: ("1_10" | "11_50" | "51_200" | "201_500" | "gt_500") | null;
+            /** Procurement Estimate */
+            procurement_estimate?: ("lt_100k" | "100k_500k" | "500k_2m" | "2m_10m" | "gt_10m") | null;
+            /** Vat Number */
+            vat_number?: string | null;
             /** Legal Name */
             legal_name: string;
             /**
@@ -159,6 +165,8 @@ export interface components {
             export_markets?: string[];
             /** Languages Spoken */
             languages_spoken?: string[];
+            /** Sourcing Categories */
+            sourcing_categories?: ("agriculture" | "seafood" | "food_beverage" | "textiles" | "handicrafts" | "spices")[];
         };
         /** CompanyOut */
         CompanyOut: {
@@ -204,6 +212,14 @@ export interface components {
             export_markets: string[];
             /** Languages Spoken */
             languages_spoken: string[];
+            /** Company Size */
+            company_size: string | null;
+            /** Procurement Estimate */
+            procurement_estimate: string | null;
+            /** Vat Number */
+            vat_number: string | null;
+            /** Sourcing Categories */
+            sourcing_categories: string[];
             /**
              * Verification Status
              * @enum {string}
@@ -256,6 +272,12 @@ export interface components {
             description_vi?: string | null;
             /** Description En */
             description_en?: string | null;
+            /** Company Size */
+            company_size?: ("1_10" | "11_50" | "51_200" | "201_500" | "gt_500") | null;
+            /** Procurement Estimate */
+            procurement_estimate?: ("lt_100k" | "100k_500k" | "500k_2m" | "2m_10m" | "gt_10m") | null;
+            /** Vat Number */
+            vat_number?: string | null;
             /** Legal Name */
             legal_name?: string | null;
             /** Country */
@@ -264,6 +286,8 @@ export interface components {
             export_markets?: string[] | null;
             /** Languages Spoken */
             languages_spoken?: string[] | null;
+            /** Sourcing Categories */
+            sourcing_categories?: ("agriculture" | "seafood" | "food_beverage" | "textiles" | "handicrafts" | "spices")[] | null;
             /** Logo Key */
             logo_key?: string | null;
         };

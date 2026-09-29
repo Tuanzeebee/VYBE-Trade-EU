@@ -31,8 +31,28 @@ const B1_STRINGS = [
   'Thông tin doanh nghiệp chưa hợp lệ. Vui lòng kiểm tra lại.',
 ];
 
-describe('catalog.json có bản tiếng Anh cho chuỗi A1, B1', () => {
-  it.each([...A1_STRINGS, ...B1_STRINGS])('%s', (vi) => {
+// Chuỗi mới ở B2 (form hồ sơ buyer).
+const B2_STRINGS = [
+  'Chọn quốc gia',
+  'Mã số VAT',
+  'Ví dụ: DE123456789',
+  'Nhóm hàng cần tìm *',
+  'Chọn một hoặc nhiều nhóm hàng bạn quan tâm.',
+  'Ước lượng mua hàng mỗi năm',
+  'Chọn mức ước lượng',
+  'Dưới 100.000 EUR/năm',
+  '100.000 – 500.000 EUR/năm',
+  '500.000 – 2 triệu EUR/năm',
+  '2 – 10 triệu EUR/năm',
+  'Trên 10 triệu EUR/năm',
+  'Vui lòng chọn ít nhất một nhóm hàng cần tìm.',
+  'Vui lòng chọn quốc gia từ danh sách.',
+  'Nhóm hàng',
+  'Ước lượng mua hàng'
+];
+
+describe('catalog.json có bản tiếng Anh cho chuỗi A1, B1, B2', () => {
+  it.each([...A1_STRINGS, ...B1_STRINGS, ...B2_STRINGS])('%s', (vi) => {
     const en = translateText(vi, 'en');
     expect(en).not.toBe(vi);
     expect(en.trim()).not.toBe('');

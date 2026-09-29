@@ -7928,5 +7928,85 @@
     "Some company information is invalid. Please check and try again.",
     "Some company information is invalid. Please check and try again.",
     "Some company information is invalid. Please check and try again."
+  ],
+  "Chọn quốc gia": [
+    "Select country",
+    "Select country",
+    "Select country"
+  ],
+  "Mã số VAT": [
+    "VAT number",
+    "VAT number",
+    "VAT number"
+  ],
+  "Ví dụ: DE123456789": [
+    "Example: DE123456789",
+    "Example: DE123456789",
+    "Example: DE123456789"
+  ],
+  "Nhóm hàng cần tìm *": [
+    "Product groups you source *",
+    "Product groups you source *",
+    "Product groups you source *"
+  ],
+  "Chọn một hoặc nhiều nhóm hàng bạn quan tâm.": [
+    "Select one or more product groups you are interested in.",
+    "Select one or more product groups you are interested in.",
+    "Select one or more product groups you are interested in."
+  ],
+  "Ước lượng mua hàng mỗi năm": [
+    "Estimated annual purchases",
+    "Estimated annual purchases",
+    "Estimated annual purchases"
+  ],
+  "Chọn mức ước lượng": [
+    "Select an estimate",
+    "Select an estimate",
+    "Select an estimate"
+  ],
+  "Dưới 100.000 EUR/năm": [
+    "Under EUR 100,000 per year",
+    "Under EUR 100,000 per year",
+    "Under EUR 100,000 per year"
+  ],
+  "100.000 – 500.000 EUR/năm": [
+    "EUR 100,000 – 500,000 per year",
+    "EUR 100,000 – 500,000 per year",
+    "EUR 100,000 – 500,000 per year"
+  ],
+  "500.000 – 2 triệu EUR/năm": [
+    "EUR 500,000 – 2 million per year",
+    "EUR 500,000 – 2 million per year",
+    "EUR 500,000 – 2 million per year"
+  ],
+  "2 – 10 triệu EUR/năm": [
+    "EUR 2 – 10 million per year",
+    "EUR 2 – 10 million per year",
+    "EUR 2 – 10 million per year"
+  ],
+  "Trên 10 triệu EUR/năm": [
+    "Over EUR 10 million per year",
+    "Over EUR 10 million per year",
+    "Over EUR 10 million per year"
+  ],
+  "Vui lòng chọn ít nhất một nhóm hàng cần tìm.": [
+    "Please select at least one product group.",
+    "Please select at least one product group.",
+    "Please select at least one product group."
+  ],
+  "Vui lòng chọn quốc gia từ danh sách.": [
+    "Please choose a country from the list.",
+    "Please choose a country from the list.",
+    "Please choose a country from the list."
+  ],
+  "Nhóm hàng": [
+    "Product groups",
+    "Product groups",
+    "Product groups"
+  ],
+  "Ước lượng mua hàng": [
+    "Estimated purchases",
+    "Estimated purchases",
+    "Estimated purchases"
   ]
 }

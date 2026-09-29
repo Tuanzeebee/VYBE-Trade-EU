@@ -612,6 +612,54 @@
             ],
             "title": "Description En"
           },
+          "company_size": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "1_10",
+                  "11_50",
+                  "51_200",
+                  "201_500",
+                  "gt_500"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Company Size"
+          },
+          "procurement_estimate": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "lt_100k",
+                  "100k_500k",
+                  "500k_2m",
+                  "2m_10m",
+                  "gt_10m"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Procurement Estimate"
+          },
+          "vat_number": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 32
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vat Number"
+          },
           "legal_name": {
             "type": "string",
             "maxLength": 255,
@@ -641,6 +689,22 @@
             "type": "array",
             "maxItems": 20,
             "title": "Languages Spoken"
+          },
+          "sourcing_categories": {
+            "items": {
+              "type": "string",
+              "enum": [
+                "agriculture",
+                "seafood",
+                "food_beverage",
+                "textiles",
+                "handicrafts",
+                "spices"
+              ]
+            },
+            "type": "array",
+            "maxItems": 20,
+            "title": "Sourcing Categories"
           }
         },
         "type": "object",
@@ -811,6 +875,46 @@
             "type": "array",
             "title": "Languages Spoken"
           },
+          "company_size": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Company Size"
+          },
+          "procurement_estimate": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Procurement Estimate"
+          },
+          "vat_number": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vat Number"
+          },
+          "sourcing_categories": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Sourcing Categories"
+          },
           "verification_status": {
             "type": "string",
             "enum": [
@@ -889,6 +993,10 @@
           "logo_key",
           "export_markets",
           "languages_spoken",
+          "company_size",
+          "procurement_estimate",
+          "vat_number",
+          "sourcing_categories",
           "verification_status",
           "verification_level",
           "verified_at",
@@ -1027,6 +1135,54 @@
             ],
             "title": "Description En"
           },
+          "company_size": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "1_10",
+                  "11_50",
+                  "51_200",
+                  "201_500",
+                  "gt_500"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Company Size"
+          },
+          "procurement_estimate": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "lt_100k",
+                  "100k_500k",
+                  "500k_2m",
+                  "2m_10m",
+                  "gt_10m"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Procurement Estimate"
+          },
+          "vat_number": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 32
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vat Number"
+          },
           "legal_name": {
             "anyOf": [
               {
@@ -1083,6 +1239,29 @@
               }
             ],
             "title": "Languages Spoken"
+          },
+          "sourcing_categories": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "agriculture",
+                    "seafood",
+                    "food_beverage",
+                    "textiles",
+                    "handicrafts",
+                    "spices"
+                  ]
+                },
+                "type": "array",
+                "maxItems": 20
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sourcing Categories"
           },
           "logo_key": {
             "anyOf": [
