@@ -9133,5 +9133,85 @@
     "Administration",
     "Administration",
     "Administration"
+  ],
+  "Hãy tạo hồ sơ doanh nghiệp trước, sau đó bạn có thể gửi yêu cầu xác minh.": [
+    "Create your company profile first, then you can submit a verification request.",
+    "Create your company profile first, then you can submit a verification request.",
+    "Create your company profile first, then you can submit a verification request."
+  ],
+  "Trạng thái xác minh": [
+    "Verification status",
+    "Verification status",
+    "Verification status"
+  ],
+  "Chưa xác minh": [
+    "Not verified",
+    "Not verified",
+    "Not verified"
+  ],
+  "Đang chờ duyệt": [
+    "Awaiting review",
+    "Awaiting review",
+    "Awaiting review"
+  ],
+  "Đã xác minh": [
+    "Verified",
+    "Verified",
+    "Verified"
+  ],
+  "Cần bổ sung": [
+    "More information needed",
+    "More information needed",
+    "More information needed"
+  ],
+  "Mức EVFTA-verified: đã đủ bằng chứng bắt buộc còn hạn cho nhóm hàng của bạn.": [
+    "EVFTA-verified level: you have all the required, valid evidence for your product group.",
+    "EVFTA-verified level: you have all the required, valid evidence for your product group.",
+    "EVFTA-verified level: you have all the required, valid evidence for your product group."
+  ],
+  "Mức cơ bản: nộp đủ bằng chứng bắt buộc còn hạn để đạt EVFTA-verified.": [
+    "Basic level: submit all required, valid evidence to reach EVFTA-verified.",
+    "Basic level: submit all required, valid evidence to reach EVFTA-verified.",
+    "Basic level: submit all required, valid evidence to reach EVFTA-verified."
+  ],
+  "Có hiệu lực đến": [
+    "Valid until",
+    "Valid until",
+    "Valid until"
+  ],
+  "Quản trị viên đang xem xét hồ sơ của bạn.": [
+    "An administrator is reviewing your profile.",
+    "An administrator is reviewing your profile.",
+    "An administrator is reviewing your profile."
+  ],
+  "Lý do của quản trị viên": [
+    "Administrator's reason",
+    "Administrator's reason",
+    "Administrator's reason"
+  ],
+  "Hoàn thiện hồ sơ và nộp bằng chứng không đồng nghĩa đã xác minh: việc xác minh do quản trị viên quyết định.": [
+    "Completing your profile and submitting evidence does not mean you are verified: verification is decided by an administrator.",
+    "Completing your profile and submitting evidence does not mean you are verified: verification is decided by an administrator.",
+    "Completing your profile and submitting evidence does not mean you are verified: verification is decided by an administrator."
+  ],
+  "Gửi yêu cầu xác minh": [
+    "Submit verification request",
+    "Submit verification request",
+    "Submit verification request"
+  ],
+  "Hồ sơ đang chờ duyệt hoặc đã được xác minh, không gửi thêm được.": [
+    "Your profile is awaiting review or already verified, so it cannot be submitted again.",
+    "Your profile is awaiting review or already verified, so it cannot be submitted again.",
+    "Your profile is awaiting review or already verified, so it cannot be submitted again."
+  ],
+  "Hãy tạo hồ sơ doanh nghiệp trước khi gửi yêu cầu xác minh.": [
+    "Create your company profile before submitting a verification request.",
+    "Create your company profile before submitting a verification request.",
+    "Create your company profile before submitting a verification request."
+  ],
+  "Gửi yêu cầu để quản trị viên xem xét hồ sơ và bằng chứng của bạn. Chỉ doanh nghiệp đã xác minh mới hiện trong danh bạ nhà cung cấp.": [
+    "Submit a request so an administrator can review your profile and evidence. Only verified companies appear in the supplier directory.",
+    "Submit a request so an administrator can review your profile and evidence. Only verified companies appear in the supplier directory.",
+    "Submit a request so an administrator can review your profile and evidence. Only verified companies appear in the supplier directory."
   ]
 }

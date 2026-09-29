@@ -54,6 +54,7 @@ import {
   Filter
 } from 'lucide-react';
 import EvidenceManager from './EvidenceManager';
+import VerificationPanel from './VerificationPanel';
 import { useLanguage } from "../context/LanguageContext";
 
 export interface WorkspaceCertificateItem {
@@ -437,7 +438,7 @@ export default function SellerWorkspace({
               <span className="font-bold text-slate-800">
                 {tr(activeTab === 'profile' && 'Hồ sơ doanh nghiệp (Company Profile)')}
                 {tr(activeTab === 'licenses' && 'Tải lên & Quản lý Giấy phép & Chứng nhận')}
-                {tr(activeTab === 'verification' && 'Tiến trình xác minh cấp độ (L0 → L3)')}
+                {tr(activeTab === 'verification' && 'Xác minh doanh nghiệp')}
                 {tr(activeTab === 'overview' && 'Tổng quan & Chỉ số tăng trưởng')}
                 {tr(activeTab === 'products' && 'Quản lý Sản phẩm xuất khẩu')}
                 {tr(activeTab === 'rfq' && 'Cơ hội kết nối & Báo giá B2B')}
@@ -1008,292 +1009,16 @@ export default function SellerWorkspace({
             </div>
           )}
 
-          {/* -----------------------------------------------------------------------
-              TAB: XÁC MINH & CHỨNG NHẬN (VERIFICATION ROADMAP L0 -> L1 -> L2 -> L3)
-             ----------------------------------------------------------------------- */}
+          {/* Tab xác minh (I1, I2): trạng thái thật, gửi yêu cầu, lý do của quản trị viên. Không còn cấp độ L0–L3 mẫu. */}
           {activeTab === 'verification' && (
-            <div className="space-y-8 text-left animate-in fade-in duration-200">
-              
-              {/* Hero Banner: Headline, Kicker & 3D Globe Shield Illustration */}
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                
-                {/* Left: Titles */}
-                <div className="lg:col-span-8 z-10">
-                  <div className="inline-flex items-center gap-2 mb-3.5">
-                    <span className="w-4 h-4 rounded-full bg-[#0d9488]/15 flex items-center justify-center">
-                      <span className="w-2 h-0.5 rounded-full bg-[#0d9488]" />
-                    </span>
-                    <span className="text-[11px] sm:text-xs font-bold text-[#0d9488] tracking-widest uppercase">
-                      {tr("VERIFICATION")}</span>
-                  </div>
-
-                  <h1 className="text-3xl sm:text-4xl lg:text-[40px] font-bold text-slate-900 tracking-tight leading-[1.2] mb-3">
-                    {tr("Xác minh để trở thành")}<br />
-                    {tr("một đối tác đáng tin cậy toàn cầu")}</h1>
-
-                  <p className="text-slate-600 text-sm sm:text-base leading-relaxed max-w-xl font-normal">
-                    {tr("Nâng cao mức độ tin cậy, mở rộng cơ hội kết nối với các buyer quốc tế và tham gia sâu hơn vào chuỗi cung ứng toàn cầu.")}</p>
-                </div>
-
-                {/* Right: 3D Globe with Emerald Shield Vector Graphic */}
-                <div className="lg:col-span-4 flex items-center justify-center lg:justify-end">
-                  <div className="relative w-48 h-48 sm:w-56 sm:h-56 flex items-center justify-center">
-                    <div className="absolute inset-0 bg-radial-[at_50%_50%] from-teal-200/40 via-transparent to-transparent pointer-events-none rounded-full filter blur-xl" />
-
-                    <svg viewBox="0 0 200 200" className="w-full h-full drop-shadow-lg" fill="none">
-                      <ellipse cx="100" cy="100" rx="90" ry="40" stroke="#0d9488" strokeWidth="1" strokeDasharray="3 3" opacity="0.4" transform="rotate(-20 100 100)" />
-                      <circle cx="170" cy="70" r="3.5" fill="#14b8a6" />
-                      <circle cx="30" cy="130" r="3" fill="#2dd4bf" />
-
-                      <circle cx="105" cy="105" r="65" fill="url(#globeGrad)" />
-                      <defs>
-                        <linearGradient id="globeGrad" x1="50" y1="50" x2="160" y2="160">
-                          <stop offset="0%" stopColor="#e2e8f0" />
-                          <stop offset="60%" stopColor="#cbd5e1" />
-                          <stop offset="100%" stopColor="#94a3b8" />
-                        </linearGradient>
-                      </defs>
-
-                      <path d="M 80 75 Q 110 65 140 85 Q 130 115 100 120 Z" fill="#94a3b8" opacity="0.5" />
-                      <path d="M 75 125 Q 110 115 130 145 Q 90 160 75 125 Z" fill="#94a3b8" opacity="0.4" />
-
-                      <path d="M 140 100 C 150 90 155 70 145 60 C 135 60 130 75 140 100 Z" fill="#10b981" />
-                      <path d="M 145 105 C 160 105 170 95 168 82 C 155 82 145 92 145 105 Z" fill="#059669" />
-
-                      <g transform="translate(55, 35)">
-                        <path 
-                          d="M 35 10 L 10 22 V 48 C 10 68 22 84 35 90 C 48 84 60 68 60 48 V 22 Z" 
-                          fill="url(#shieldGrad)" 
-                          stroke="#ffffff" 
-                          strokeWidth="2.5" 
-                        />
-                        <defs>
-                          <linearGradient id="shieldGrad" x1="10" y1="10" x2="60" y2="90">
-                            <stop offset="0%" stopColor="#34d399" />
-                            <stop offset="50%" stopColor="#10b981" />
-                            <stop offset="100%" stopColor="#047857" />
-                          </linearGradient>
-                        </defs>
-                        <path 
-                          d="M 23 48 L 31 56 L 47 38" 
-                          stroke="#ffffff" 
-                          strokeWidth="4" 
-                          strokeLinecap="round" 
-                          strokeLinejoin="round" 
-                        />
-                      </g>
-                    </svg>
-
-                  </div>
-                </div>
-
+            <div className="space-y-6 text-left animate-in fade-in duration-200">
+              <div className="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200/80 shadow-xs">
+                <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                  {tr("Xác minh doanh nghiệp")}</h1>
+                <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-2xl leading-relaxed">
+                  {tr("Gửi yêu cầu để quản trị viên xem xét hồ sơ và bằng chứng của bạn. Chỉ doanh nghiệp đã xác minh mới hiện trong danh bạ nhà cung cấp.")}</p>
               </div>
-
-              {/* 4 Progression Cards (L0 -> L1 -> L2 -> L3) Connected with Arrows */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-stretch">
-                
-                {/* ----------------- CARD 1: L0 UNVERIFIED ----------------- */}
-                <div className="relative flex flex-col justify-between rounded-2xl bg-white border border-slate-200/90 p-5 shadow-xs hover:shadow-md transition-all">
-                  <div>
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600">
-                        <Clock className="w-5 h-5 stroke-[2]" />
-                      </div>
-                      <ChevronRight className="w-4 h-4 text-slate-300" />
-                    </div>
-
-                    <h3 className="text-xl font-bold text-slate-900 leading-tight">{tr("L0")}</h3>
-                    <h4 className="text-sm font-semibold text-slate-700 mt-0.5">{tr("Unverified")}</h4>
-
-                    <p className="text-xs text-slate-500 mt-2 mb-4 leading-relaxed">
-                      {tr("Hồ sơ cơ bản,")}<br />
-                      {tr("chưa xác minh")}</p>
-
-                    <div className="space-y-2 text-xs text-slate-600 pt-3 border-t border-slate-100">
-                      <div className="flex items-center gap-2">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-slate-400" />
-                        <span>{tr("Thông tin doanh nghiệp")}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-slate-400" />
-                        <span>{tr("Sản phẩm cơ bản")}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="pt-6">
-                    <button 
-                      disabled
-                      className="w-full py-2.5 rounded-xl bg-slate-100 text-slate-400 text-xs font-semibold cursor-default text-center"
-                    >
-                      {tr("Đã hoàn thành")}</button>
-                  </div>
-
-                  <div className="hidden lg:flex absolute -right-3 top-1/2 -translate-y-1/2 z-20 pointer-events-none">
-                    <ArrowRight className="w-4 h-4 text-blue-500 stroke-[2.5]" />
-                  </div>
-                </div>
-
-                {/* ----------------- CARD 2: L1 BASIC VERIFIED ----------------- */}
-                <div className="relative flex flex-col justify-between rounded-2xl bg-white border border-slate-200/90 p-5 shadow-xs hover:shadow-md transition-all">
-                  <div>
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600">
-                        <ShieldCheck className="w-5 h-5 stroke-[2.2]" />
-                      </div>
-                      <ChevronRight className="w-4 h-4 text-slate-300" />
-                    </div>
-
-                    <h3 className="text-xl font-bold text-slate-900 leading-tight">{tr("L1")}</h3>
-                    <h4 className="text-sm font-semibold text-slate-800 mt-0.5">{tr("Basic Verified")}</h4>
-
-                    <p className="text-xs text-slate-500 mt-2 mb-4 leading-relaxed">
-                      {tr("Đã đối chiếu MST")}<br />
-                      {tr("và thông tin cơ bản")}</p>
-
-                    <div className="space-y-2 text-xs text-slate-600 pt-3 border-t border-slate-100">
-                      <div className="flex items-center gap-2">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-blue-600" />
-                        <span>{tr("Xác minh MST")}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-blue-600" />
-                        <span>{tr("Đối chiếu tên công ty")}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-blue-600" />
-                        <span>{tr("Hồ sơ đầy đủ hơn")}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="pt-6">
-                    <button 
-                      onClick={() => setActiveModal('upgrade-l1')}
-                      className="w-full py-2.5 rounded-xl border border-blue-500 text-blue-600 hover:bg-blue-50 text-xs font-semibold transition-colors cursor-pointer text-center shadow-2xs"
-                    >
-                      {tr("Đã xác thực L1")}</button>
-                  </div>
-
-                  <div className="hidden lg:flex absolute -right-3 top-1/2 -translate-y-1/2 z-20 pointer-events-none">
-                    <ArrowRight className="w-4 h-4 text-teal-500 stroke-[2.5]" />
-                  </div>
-                </div>
-
-                {/* ----------------- CARD 3: L2 ENHANCED VERIFIED ----------------- */}
-                <div className="relative flex flex-col justify-between rounded-2xl bg-[#f0fdfa] border-2 border-[#14b8a6] p-5 shadow-md">
-                  <div>
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="w-10 h-10 rounded-xl bg-emerald-100 border border-emerald-200 flex items-center justify-center text-emerald-700">
-                        <ShieldCheck className="w-5 h-5 stroke-[2.2]" />
-                      </div>
-                      <span className="text-[10px] font-bold text-teal-800 bg-teal-100/80 px-2 py-0.5 rounded-md">
-                        {tr("Cấp độ hiện tại")}</span>
-                    </div>
-
-                    <h3 className="text-xl font-bold text-slate-900 leading-tight">{tr("L2")}</h3>
-                    <h4 className="text-sm font-semibold text-slate-900 mt-0.5">{tr("Enhanced Verified")}</h4>
-
-                    <p className="text-xs text-slate-500 mt-2 mb-4 leading-relaxed">
-                      {tr("Đã kiểm tra chứng chỉ")}<br />
-                      {tr("và năng lực sản xuất")}</p>
-
-                    <div className="space-y-2 text-xs text-slate-700 pt-3 border-t border-teal-200/50">
-                      <div className="flex items-center gap-2">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                        <span>{tr("Giấy phép, chứng nhận")}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                        <span>{tr("Năng lực sản xuất")}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                        <span>{tr("Kiểm tra bởi VYBE")}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="pt-6">
-                    <button 
-                      onClick={() => setActiveModal('upgrade-l2')}
-                      className="w-full py-2.5 rounded-xl bg-[#083832] hover:bg-[#062924] text-white text-xs font-semibold transition-colors cursor-pointer text-center shadow-xs"
-                    >
-                      {tr("Đã kích hoạt L2 ✓")}</button>
-                  </div>
-
-                  <div className="hidden lg:flex absolute -right-3 top-1/2 -translate-y-1/2 z-20 pointer-events-none">
-                    <ArrowRight className="w-4 h-4 text-amber-500 stroke-[2.5]" />
-                  </div>
-                </div>
-
-                {/* ----------------- CARD 4: L3 VYBE CERTIFIED ----------------- */}
-                <div className="relative flex flex-col justify-between rounded-2xl bg-[#fffbeb]/60 border border-amber-200/80 p-5 shadow-xs hover:shadow-md transition-all">
-                  <div>
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="w-10 h-10 rounded-xl bg-amber-100 border border-amber-300 flex items-center justify-center text-amber-700">
-                        <Award className="w-5 h-5 stroke-[2.2]" />
-                      </div>
-                      <ChevronRight className="w-4 h-4 text-amber-400" />
-                    </div>
-
-                    <h3 className="text-xl font-bold text-slate-900 leading-tight">{tr("L3")}</h3>
-                    <h4 className="text-sm font-semibold text-amber-950 mt-0.5">{tr("VYBE Certified")}</h4>
-
-                    <p className="text-xs text-slate-500 mt-2 mb-4 leading-relaxed">
-                      {tr("Đối tác ưu tiên")}<br />
-                      {tr("được VYBE chứng nhận")}</p>
-
-                    <div className="space-y-2 text-xs text-slate-700 pt-3 border-t border-amber-200/60">
-                      <div className="flex items-center gap-2">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-amber-600" />
-                        <span>{tr("Tham chiếu giao dịch thật")}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-amber-600" />
-                        <span>{tr("Đánh giá chuyên sâu")}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-amber-600" />
-                        <span>{tr("Hiển thị ưu tiên với buyer")}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="pt-6">
-                    <button 
-                      onClick={() => setActiveModal('upgrade-l3')}
-                      className="w-full py-2.5 rounded-xl bg-[#d97706] hover:bg-[#b45309] text-white text-xs font-semibold transition-all shadow-xs cursor-pointer text-center"
-                    >
-                      {tr("Đạt VYBE Certified")}</button>
-                  </div>
-                </div>
-
-              </div>
-
-              {/* Bottom Banner: Evidence Record Bất biến */}
-              <div className="rounded-2xl bg-white border border-slate-200/80 p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div className="flex items-center gap-3.5">
-                  <div className="w-11 h-11 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 shrink-0">
-                    <FileCheck className="w-6 h-6 stroke-[2]" />
-                  </div>
-                  <div>
-                    <h4 className="text-xs sm:text-sm font-bold text-slate-900 leading-snug">
-                      {tr("Mỗi cấp độ được hỗ trợ bởi Evidence Record bất biến")}</h4>
-                    <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5 leading-relaxed font-normal">
-                      {tr("Tất cả dữ liệu, tài liệu và quyết định xác minh được lưu trữ an toàn bằng công nghệ Temporal Tables, đảm bảo minh bạch và có thể kiểm tra bất cứ lúc nào.")}</p>
-                  </div>
-                </div>
-
-                <button 
-                  onClick={() => setActiveModal('evidence-record')}
-                  className="text-xs sm:text-[13px] font-semibold text-slate-700 hover:text-slate-950 flex items-center gap-1 shrink-0 transition-colors cursor-pointer"
-                >
-                  <span>{tr("Tìm hiểu thêm")}</span>
-                  <ArrowRight className="w-4 h-4 stroke-[2.2]" />
-                </button>
-              </div>
-
+              <VerificationPanel />
             </div>
           )}
 
