@@ -6,8 +6,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import get_session
 from app.modules.auth.schemas import CurrentUser
-from app.modules.auth.service import require_role
+from app.modules.auth.service import get_optional_user, require_role
 from app.modules.compliance import service
+from app.modules.compliance.schemas import TariffIn, TariffOut
 
 router = APIRouter(tags=["compliance"])
 
@@ -22,3 +23,13 @@ async def export_compliance_checks(
         media_type="text/csv",
         headers={"Content-Disposition": 'attachment; filename="compliance-checks.csv"'},
     )
+
+
+# Công khai (khách dùng không cần đăng nhập). Rate limit 30/phút áp ở mức app (J1).
+@router.post("/api/public/tariff")
+async def calculate_tariff(
+    data: TariffIn,
+    user: Annotated[CurrentUser | None, Depends(get_optional_user)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> TariffOut:
+    return await service.calculate_tariff(session, data, user)

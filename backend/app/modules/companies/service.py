@@ -91,6 +91,14 @@ async def _own_company(session: AsyncSession, user: CurrentUser) -> Company:
     return company
 
 
+async def get_company_id(session: AsyncSession, user_id: uuid.UUID) -> uuid.UUID | None:
+    """Id công ty của người dùng (None nếu chưa tạo) — module khác dùng để gắn bản ghi."""
+    company_id: uuid.UUID | None = await session.scalar(
+        select(Company.id).where(Company.owner_user_id == user_id)
+    )
+    return company_id
+
+
 def _reject_foreign_fields(company_type: CompanyType, values: dict[str, Any]) -> None:
     foreign = _ONLY_BUYER if company_type is CompanyType.exporter else _ONLY_EXPORTER
     for field in foreign:

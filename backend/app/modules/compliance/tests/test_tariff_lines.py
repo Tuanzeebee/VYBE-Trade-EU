@@ -1,5 +1,6 @@
 import datetime as dt
 import pathlib
+import re
 import uuid
 from decimal import Decimal
 
@@ -137,7 +138,7 @@ def test_only_compliance_service_queries_tariff_lines() -> None:
         for path in app_dir.rglob("*.py")
         if "tests" not in path.parts
         and path.name != "models.py"
-        and "TariffLine" in path.read_text(encoding="utf-8")
+        and re.search(r"TariffLine", path.read_text(encoding="utf-8"))
         and path.relative_to(app_dir).as_posix() != "modules/compliance/service.py"
     ]
     assert offenders == []

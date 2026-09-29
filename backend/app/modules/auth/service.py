@@ -140,6 +140,15 @@ async def get_current_user(
     return _to_current(user)
 
 
+async def get_optional_user(
+    session: Annotated[AsyncSession, Depends(get_session)],
+    evfta_session: Annotated[str | None, Cookie()] = None,
+) -> CurrentUser | None:
+    """Dependency cho endpoint công khai: có phiên thì trả người dùng, khách thì None."""
+    user = await _user_from_token(session, evfta_session)
+    return _to_current(user) if user else None
+
+
 def require_role(*roles: str) -> Callable[..., Awaitable[CurrentUser]]:
     """Dependency cấp router: 401 khi thiếu phiên, 403 khi sai vai trò."""
 
