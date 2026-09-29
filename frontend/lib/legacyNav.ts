@@ -159,3 +159,10 @@ export function findSupplier(id: string): SupplierData {
   }
   return DEFAULT_SELLER_DETAIL;
 }
+
+/** /register?type=buyer|exporter chọn sẵn vai trò; giá trị khác (kể cả admin) bỏ qua. */
+export function roleFromType(type: string | null | undefined): 'buyer' | 'seller' | undefined {
+  if (type === 'exporter' || type === 'seller') return 'seller';
+  if (type === 'buyer') return 'buyer';
+  return undefined;
+}

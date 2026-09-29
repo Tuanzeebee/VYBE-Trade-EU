@@ -49,7 +49,7 @@ export function PublicShell({ children }: { children: React.ReactNode }) {
 
   function handleLogout() {
     try {
-      logout();
+      void logout();
       setUser(null);
       router.push('/login');
     } catch {

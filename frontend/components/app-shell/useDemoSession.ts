@@ -1,19 +1,25 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { getSession, type DemoUser } from '../../lib/demoAuth';
+import { refreshSession, type DemoUser } from '../../lib/demoAuth';
 
-/** Phiên demo cũ (localStorage) — chỉ đọc sau khi mount để HTML server và client khớp nhau. A1 thay bằng phiên thật. */
+/**
+ * Phiên đăng nhập hiện tại, xác nhận với server (GET /api/me) sau khi mount.
+ * `ready` chỉ bật khi server đã trả lời — trang cần đăng nhập chờ tới lúc đó mới render.
+ */
 export function useDemoSession() {
   const [user, setUser] = useState<DemoUser | null>(null);
   const [ready, setReady] = useState(false);
   useEffect(() => {
-    try {
-      setUser(getSession());
-    } catch {
-      setUser(null);
-    }
-    setReady(true);
+    let active = true;
+    refreshSession().then((current) => {
+      if (!active) return;
+      setUser(current);
+      setReady(true);
+    });
+    return () => {
+      active = false;
+    };
   }, []);
   return { user, ready, setUser };
 }

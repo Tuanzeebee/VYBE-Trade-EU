@@ -14,7 +14,7 @@ import { PublicShell } from '../app-shell/PublicShell';
 import { useLegacyNavigate } from '../app-shell/useLegacyNavigate';
 import { useRouter } from '../../i18n/navigation';
 import { completeOnboarding, getUserPage, logout, type DemoUser } from '../../lib/demoAuth';
-import { hrefFor } from '../../lib/legacyNav';
+import { hrefFor, roleFromType } from '../../lib/legacyNav';
 
 const WORKSPACE_TABS = ['verification', 'profile', 'overview', 'products', 'rfq', 'notifications', 'licenses'] as const;
 type WorkspaceTab = (typeof WORKSPACE_TABS)[number];
@@ -28,7 +28,7 @@ function useLogout() {
   const router = useRouter();
   return () => {
     try {
-      logout();
+      void logout();
       router.push('/login');
     } catch {
       console.warn('Unable to clear session storage.');
@@ -39,10 +39,12 @@ function useLogout() {
 function AuthContent({ mode, user }: { mode: 'login' | 'register'; user: DemoUser | null }) {
   const navigate = useLegacyNavigate(user);
   const goHome = useGoHome();
+  const initialRole = roleFromType(useSearchParams().get('type'));
   return (
     <AuthPage
       key={mode}
       mode={mode}
+      initialRole={initialRole}
       onModeChange={(next) => navigate(next)}
       onAuthenticated={goHome}
       onNavigateHome={() => navigate('home')}

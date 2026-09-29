@@ -8,6 +8,7 @@ import {
   parseDirectoryQuery,
   rememberSupplier,
   resolvePage,
+  roleFromType,
   type LegacyPage,
 } from '@/lib/legacyNav';
 
@@ -154,4 +155,14 @@ describe('findSupplier', () => {
   it('id lạ → hồ sơ mặc định như trước', () => {
     expect(findSupplier('khong-co').id).toBe(DEFAULT_SELLER_DETAIL.id);
   });
+});
+
+describe('roleFromType — /register?type= chọn sẵn vai trò', () => {
+  it.each([
+    ['exporter', 'seller'],
+    ['seller', 'seller'],
+    ['buyer', 'buyer'],
+    ['admin', undefined],
+    [null, undefined],
+  ] as const)('%s → %s', (type, role) => expect(roleFromType(type)).toBe(role));
 });

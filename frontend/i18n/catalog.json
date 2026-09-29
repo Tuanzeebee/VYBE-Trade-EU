@@ -7818,5 +7818,45 @@
     "GlobalG.A.P. IFA Version 5.4",
     "GlobalG.A.P. IFA version 5.4",
     "GlobalG.A.P. IFA バージョン 5.4"
+  ],
+  "Tài khoản tạm khóa 15 phút do đăng nhập sai nhiều lần.": [
+    "Account locked for 15 minutes after too many failed sign-in attempts.",
+    "Account locked for 15 minutes after too many failed sign-in attempts.",
+    "Account locked for 15 minutes after too many failed sign-in attempts."
+  ],
+  "Mật khẩu cần ít nhất 10 ký tự.": [
+    "Password requires at least 10 characters.",
+    "Password requires at least 10 characters.",
+    "Password requires at least 10 characters."
+  ],
+  "Vui lòng đồng ý Điều khoản sử dụng và Chính sách bảo mật.": [
+    "Please accept the Terms of Use and Privacy Policy.",
+    "Please accept the Terms of Use and Privacy Policy.",
+    "Please accept the Terms of Use and Privacy Policy."
+  ],
+  "Không kết nối được máy chủ. Vui lòng thử lại.": [
+    "Cannot reach the server. Please try again.",
+    "Cannot reach the server. Please try again.",
+    "Cannot reach the server. Please try again."
+  ],
+  "Thông tin chưa hợp lệ. Vui lòng kiểm tra lại.": [
+    "Some information is invalid. Please check and try again.",
+    "Some information is invalid. Please check and try again.",
+    "Some information is invalid. Please check and try again."
+  ],
+  "Ít nhất 10 ký tự": [
+    "At least 10 characters",
+    "At least 10 characters",
+    "At least 10 characters"
+  ],
+  "Mật khẩu được mã hóa và phiên đăng nhập được bảo vệ phía máy chủ.": [
+    "Passwords are hashed and sign-in sessions are protected on the server.",
+    "Passwords are hashed and sign-in sessions are protected on the server.",
+    "Passwords are hashed and sign-in sessions are protected on the server."
+  ],
+  "Tôi đồng ý với Điều khoản sử dụng và Chính sách bảo mật của nền tảng.": [
+    "I agree to the platform Terms of Use and Privacy Policy.",
+    "I agree to the platform Terms of Use and Privacy Policy.",
+    "I agree to the platform Terms of Use and Privacy Policy."
   ]
 }

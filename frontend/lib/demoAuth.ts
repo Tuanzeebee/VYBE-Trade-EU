@@ -1,3 +1,8 @@
+// Phiên đăng nhập THẬT qua API (A1, ADR-0002: cookie HTTP-only). Giữ tên file, tên hàm và kiểu
+// DemoUser để component cũ không phải sửa. Hồ sơ onboarding (tên, doanh nghiệp, profile) vẫn lưu
+// trên trình duyệt theo id user thật cho tới khi có bảng companies (B1).
+import { createApiClient } from './api/client';
+
 export type Role = 'buyer' | 'seller' | 'admin';
 export type DemoUser = {
   id: string;
@@ -8,100 +13,184 @@ export type DemoUser = {
   onboardingCompleted: boolean;
   onboardingVersion?: number;
   profile?: Record<string, string>;
-  salt?: string;
-  passwordHash?: string;
 };
 
 export const ROLE_LABELS: Record<Role, string> = { buyer: 'Buyer', seller: 'Seller', admin: 'Admin' };
-export const DEMO_PASSWORD = 'VybeDemo123!';
-export const DEMO_USERS: DemoUser[] = [
-  { id: 'demo-buyer', name: 'Alex Nguyen', email: 'buyer@vybe.demo', company: 'Global Foods Trading', role: 'buyer', onboardingCompleted: false },
-  { id: 'demo-seller', name: 'Nguyễn Văn Trí', email: 'seller@vybe.demo', company: 'Công ty TNHH Nông Sản Việt', role: 'seller', onboardingCompleted: false },
-  { id: 'demo-admin', name: 'VYBE Administrator', email: 'admin@vybe.demo', company: 'VYBE Trade', role: 'admin', onboardingCompleted: false },
-];
-const USERS_KEY = 'vybe_demo_users_v1';
-const SESSION_KEY = 'vybe_demo_session_v1';
+export const MIN_PASSWORD_LENGTH = 10;
 
-export function getUsers(): DemoUser[] {
-  if (typeof window === 'undefined') return DEMO_USERS;
-  const raw = localStorage.getItem(USERS_KEY);
-  let saved: DemoUser[] = [];
-  if (raw) {
-    try {
-      saved = JSON.parse(raw);
-      if (!Array.isArray(saved) || !saved.every((u) => u &&
-        (['id', 'name', 'email', 'company'] as const).every((key) => typeof u[key] === 'string') &&
-        ['buyer', 'seller', 'admin'].includes(u.role) && typeof u.onboardingCompleted === 'boolean')) {
-        throw new Error();
-      }
-    } catch {
-      return DEMO_USERS;
-    }
+type ApiRole = 'exporter' | 'buyer' | 'admin';
+type ApiUser = { id: string; email: string; role: ApiRole; preferred_language: 'vi' | 'en' };
+type LocalProfile = Partial<Pick<DemoUser, 'name' | 'company' | 'onboardingCompleted' | 'onboardingVersion' | 'profile'>>;
+
+const PROFILES_KEY = 'vybe_profiles_v2';
+const SESSION_KEY = 'vybe_session_cache_v2';
+
+const MESSAGES = {
+  invalid: 'Email hoặc mật khẩu không đúng.',
+  locked: 'Tài khoản tạm khóa 15 phút do đăng nhập sai nhiều lần.',
+  taken: 'Email này đã có tài khoản.',
+  password: 'Mật khẩu cần ít nhất 10 ký tự.',
+  consent: 'Vui lòng đồng ý Điều khoản sử dụng và Chính sách bảo mật.',
+  fields: 'Vui lòng nhập đầy đủ tên, doanh nghiệp và email hợp lệ.',
+  network: 'Không kết nối được máy chủ. Vui lòng thử lại.',
+  invalidInput: 'Thông tin chưa hợp lệ. Vui lòng kiểm tra lại.',
+};
+
+// Tạo client mỗi lần gọi để luôn dùng fetch hiện hành (test thay fetch toàn cục).
+const api = () => createApiClient();
+
+const toRole = (role: ApiRole): Role => (role === 'exporter' ? 'seller' : role);
+const toApiRole = (role: 'buyer' | 'seller'): 'buyer' | 'exporter' => (role === 'seller' ? 'exporter' : 'buyer');
+
+function storage(): Storage | null {
+  try {
+    return typeof window === 'undefined' ? null : window.localStorage;
+  } catch {
+    return null;
   }
-  return [...DEMO_USERS.map((user) => saved.find((u) => u.id === user.id) || user),
-    ...saved.filter((user) => !DEMO_USERS.some((u) => u.id === user.id))];
 }
 
-function saveUser(user: DemoUser): void {
-  if (typeof window === 'undefined') return;
-  const users = getUsers().map((u) => u.id === user.id ? user : u);
-  if (!users.some((u) => u.id === user.id)) users.push(user);
-  localStorage.setItem(USERS_KEY, JSON.stringify(users));
+function readProfiles(): Record<string, LocalProfile> {
+  try {
+    const raw = storage()?.getItem(PROFILES_KEY);
+    const parsed: unknown = raw ? JSON.parse(raw) : {};
+    return parsed && typeof parsed === 'object' ? (parsed as Record<string, LocalProfile>) : {};
+  } catch {
+    return {};
+  }
 }
 
+function writeProfile(id: string, patch: LocalProfile): void {
+  const profiles = readProfiles();
+  profiles[id] = { ...profiles[id], ...patch };
+  storage()?.setItem(PROFILES_KEY, JSON.stringify(profiles));
+}
+
+function merge(apiUser: ApiUser): DemoUser {
+  const local = readProfiles()[apiUser.id] ?? {};
+  return {
+    id: apiUser.id,
+    email: apiUser.email,
+    role: toRole(apiUser.role),
+    name: local.name ?? apiUser.email.split('@')[0],
+    company: local.company ?? '',
+    onboardingCompleted: local.onboardingCompleted ?? false,
+    onboardingVersion: local.onboardingVersion,
+    profile: local.profile,
+  };
+}
+
+function cacheSession(apiUser: ApiUser | null): void {
+  if (apiUser) storage()?.setItem(SESSION_KEY, JSON.stringify(apiUser));
+  else storage()?.removeItem(SESSION_KEY);
+}
+
+function errorMessage(status: number): string {
+  if (status === 401) return MESSAGES.invalid;
+  if (status === 423) return MESSAGES.locked;
+  if (status === 409) return MESSAGES.taken;
+  return MESSAGES.invalidInput;
+}
+
+/** Hỏi server phiên hiện tại. Hết hạn hoặc không kết nối được → coi như chưa đăng nhập. */
+export async function refreshSession(): Promise<DemoUser | null> {
+  try {
+    const { data, response } = await api().GET('/api/me');
+    if (!response.ok || !data) {
+      cacheSession(null);
+      return null;
+    }
+    cacheSession(data as ApiUser);
+    return merge(data as ApiUser);
+  } catch {
+    return null;
+  }
+}
+
+/** Phiên đã xác nhận gần nhất (đọc đồng bộ). Nguồn sự thật vẫn là cookie phía server. */
 export function getSession(): DemoUser | null {
-  if (typeof window === 'undefined') return null;
-  const id = localStorage.getItem(SESSION_KEY);
-  return id ? getUsers().find((user) => user.id === id) || null : null;
+  try {
+    const raw = storage()?.getItem(SESSION_KEY);
+    return raw ? merge(JSON.parse(raw) as ApiUser) : null;
+  } catch {
+    return null;
+  }
 }
 
-export function logout(): void {
-  if (typeof window === 'undefined') return;
-  localStorage.removeItem(SESSION_KEY);
+/** Người dùng đã đăng nhập trên trình duyệt này (màn admin cũ). Danh sách thật làm ở I5. */
+export function getUsers(): DemoUser[] {
+  const current = getSession();
+  return current ? [current] : [];
 }
 
-async function hashPassword(password: string, salt: string): Promise<string> {
-  const encoder = new TextEncoder();
-  const key = await crypto.subtle.importKey('raw', encoder.encode(password), 'PBKDF2', false, ['deriveBits']);
-  const bits = await crypto.subtle.deriveBits({ name: 'PBKDF2', salt: encoder.encode(salt), iterations: 100_000, hash: 'SHA-256' }, key, 256);
-  return Array.from(new Uint8Array(bits), (byte) => byte.toString(16).padStart(2, '0')).join('');
+async function loadMe(): Promise<DemoUser> {
+  const user = await refreshSession();
+  if (!user) throw new Error(MESSAGES.network);
+  return user;
 }
 
 export async function login(email: string, password: string): Promise<DemoUser> {
-  const user = getUsers().find((u) => u.email.toLowerCase() === email.trim().toLowerCase());
-  const valid = user && (DEMO_USERS.some((u) => u.id === user.id)
-    ? password === DEMO_PASSWORD
-    : user.salt && user.passwordHash === await hashPassword(password, user.salt));
-  if (!valid) throw new Error('Email hoặc mật khẩu không đúng.');
-  if (typeof window !== 'undefined') {
-    localStorage.setItem(SESSION_KEY, user.id);
+  let response: Response;
+  try {
+    ({ response } = await api().POST('/api/auth/login', {
+      body: { email: email.trim().toLowerCase(), password },
+    }));
+  } catch {
+    throw new Error(MESSAGES.network);
   }
-  return user;
+  if (!response.ok) throw new Error(errorMessage(response.status));
+  return loadMe();
 }
 
-export async function register(input: { name: string; email: string; company: string; role: 'buyer' | 'seller'; password: string }): Promise<DemoUser> {
+export async function register(input: {
+  name: string;
+  email: string;
+  company: string;
+  role: 'buyer' | 'seller';
+  password: string;
+  phone?: string;
+  acceptTerms: boolean;
+  language: 'vi' | 'en';
+}): Promise<DemoUser> {
   const email = input.email.trim().toLowerCase();
-  if (!['buyer', 'seller'].includes(input.role)) throw new Error('Chỉ được đăng ký tài khoản Buyer hoặc Seller.');
   if (!input.name.trim() || !input.company.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    throw new Error('Vui lòng nhập đầy đủ tên, doanh nghiệp và email hợp lệ.');
+    throw new Error(MESSAGES.fields);
   }
-  if (input.password.length < 8) throw new Error('Mật khẩu cần ít nhất 8 ký tự.');
-  if (getUsers().some((user) => user.email.toLowerCase() === email)) throw new Error('Email này đã có tài khoản.');
-  const salt = crypto.randomUUID();
-  const passwordHash = await hashPassword(input.password, salt);
-  if (getUsers().some((user) => user.email.toLowerCase() === email)) throw new Error('Email này đã có tài khoản.');
-  const user: DemoUser = { id: crypto.randomUUID(), name: input.name.trim(), email,
-    company: input.company.trim(), role: input.role, onboardingCompleted: false, salt, passwordHash };
-  saveUser(user);
-  if (typeof window !== 'undefined') {
-    localStorage.setItem(SESSION_KEY, user.id);
+  if (input.password.length < MIN_PASSWORD_LENGTH || !input.password.trim()) throw new Error(MESSAGES.password);
+  if (!input.acceptTerms) throw new Error(MESSAGES.consent);
+  let response: Response;
+  try {
+    ({ response } = await api().POST('/api/auth/register', {
+      body: {
+        email,
+        password: input.password,
+        role: toApiRole(input.role),
+        phone: input.phone?.trim() || null,
+        preferred_language: input.language,
+        accept_terms: true,
+      },
+    }));
+  } catch {
+    throw new Error(MESSAGES.network);
   }
-  return user;
+  if (!response.ok) throw new Error(errorMessage(response.status));
+  const user = await loadMe();
+  writeProfile(user.id, { name: input.name.trim(), company: input.company.trim() });
+  return merge({ id: user.id, email: user.email, role: toApiRole(input.role), preferred_language: input.language });
+}
+
+export async function logout(): Promise<void> {
+  cacheSession(null);
+  try {
+    await api().POST('/api/auth/logout');
+  } catch {
+    // Phiên phía trình duyệt đã xóa; cookie hết hạn theo thời gian nếu server không nhận được.
+  }
 }
 
 export function completeOnboarding(id: string, profile: Record<string, string>): DemoUser {
-  const user = getUsers().find((u) => u.id === id);
-  if (!user || getSession()?.id !== id) throw new Error('Phiên đăng nhập không hợp lệ. Vui lòng đăng nhập lại.');
+  const user = getSession();
+  if (!user || user.id !== id) throw new Error('Phiên đăng nhập không hợp lệ. Vui lòng đăng nhập lại.');
   if (user.role === 'admin') throw new Error('Admin không có Company Onboarding.');
   if (user.onboardingCompleted && user.onboardingVersion === 2) return user;
   const required = user.role === 'buyer'
@@ -122,10 +211,14 @@ export function completeOnboarding(id: string, profile: Record<string, string>):
       throw new Error('Doanh nghiệp cần ít nhất một sản phẩm có tên hợp lệ.');
     }
   }
-  const updated = { ...user, company: profile.companyName.trim(), name: profile.contactName?.trim() || user.name,
-    profile, onboardingCompleted: true, onboardingVersion: 2 };
-  saveUser(updated);
-  return updated;
+  writeProfile(id, {
+    company: profile.companyName.trim(),
+    name: profile.contactName?.trim() || user.name,
+    profile,
+    onboardingCompleted: true,
+    onboardingVersion: 2,
+  });
+  return getSession() ?? user;
 }
 
 export function getUserPage(user: DemoUser): 'onboarding' | 'workspace' | 'buyer-directory' | 'admin' {
