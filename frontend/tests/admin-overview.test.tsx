@@ -73,7 +73,7 @@ function serve(world: { stats?: unknown; companies?: unknown[]; products?: unkno
       calls.push({ method: req.method, path: url.pathname, search: url.search, body });
       if (req.method === 'PATCH') return json(200, {});
       if (world.fail) return json(500, {});
-      if (url.pathname === '/api/admin/stats') return json(200, world.stats ?? { verified_count: 0, pending_count: 0 });
+      if (url.pathname === '/api/admin/stats') return json(200, world.stats ?? { verified_count: 0, pending_count: 0, ai_queries_this_week: 0, avg_confidence: null });
       if (url.pathname === '/api/admin/companies') return json(200, world.companies ?? []);
       if (url.pathname === '/api/admin/products') return json(200, world.products ?? []);
       if (url.pathname === '/api/admin/audit-logs') return json(200, world.logs ?? []);
@@ -94,18 +94,21 @@ describe('Tổng quan quản trị (I5)', () => {
   afterEach(() => vi.unstubAllGlobals());
 
   it('hiện số công ty đã xác minh và hồ sơ chờ duyệt', async () => {
-    serve({ stats: { verified_count: 7, pending_count: 3 } });
+    serve({ stats: { verified_count: 7, pending_count: 3, ai_queries_this_week: 12, avg_confidence: 2.4 } });
     wrap(<AdminOverview />);
     const verified = await screen.findByRole('group', { name: 'Doanh nghiệp đã xác minh' });
     expect(verified).toHaveTextContent('7');
     expect(screen.getByRole('group', { name: 'Hồ sơ chờ duyệt' })).toHaveTextContent('3');
+    expect(screen.getByRole('group', { name: 'Câu hỏi AI trong 7 ngày' })).toHaveTextContent('12');
+    expect(screen.getByRole('group', { name: 'Độ tin cậy AI trung bình' })).toHaveTextContent('2.4');
   });
 
   it('số 0 vẫn hiện số 0 kèm hướng dẫn, không để trống', async () => {
-    serve({ stats: { verified_count: 0, pending_count: 0 } });
+    serve({ stats: { verified_count: 0, pending_count: 0, ai_queries_this_week: 0, avg_confidence: null } });
     wrap(<AdminOverview />);
     expect(await screen.findByRole('group', { name: 'Doanh nghiệp đã xác minh' })).toHaveTextContent('0');
     expect(screen.getAllByText(/Chưa có/).length).toBeGreaterThan(0);
+    expect(screen.getByRole('group', { name: 'Độ tin cậy AI trung bình' })).toHaveTextContent('—');
   });
 
   it('không tải được: báo lỗi thay vì hiện số 0', async () => {

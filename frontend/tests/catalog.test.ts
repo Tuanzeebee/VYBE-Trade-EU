@@ -311,8 +311,59 @@ const C7_STRINGS = [
   'Chờ duyệt'
 ];
 
-describe('catalog.json có bản tiếng Anh cho chuỗi A1, B1, B2, B3, B4, B5, A2, C2, C4, C6, C7', () => {
-  it.each([...A1_STRINGS, ...B1_STRINGS, ...B2_STRINGS, ...B3_STRINGS, ...B4_STRINGS, ...B5_STRINGS, ...A2_STRINGS, ...C2_STRINGS, ...C4_STRINGS, ...C6_STRINGS, ...C7_STRINGS])('%s', (vi) => {
+const D2_STRINGS = [
+  "Bạn đã hỏi quá nhiều lần. Vui lòng thử lại sau một phút.",
+  "Câu hỏi chưa hợp lệ. Vui lòng nhập ít nhất 3 ký tự.",
+  "Độ tin cậy cao",
+  "Độ tin cậy trung bình",
+  "Độ tin cậy thấp",
+  "Ngoài phạm vi",
+  "Câu trả lời",
+  "Chúng tôi chưa đủ căn cứ trong tài liệu đã duyệt để trả lời câu hỏi này.",
+  "Nguồn trích dẫn",
+  "Trợ lý chỉ trả lời từ tài liệu đã được duyệt và không thay thế tư vấn pháp lý.",
+  "Cảm ơn phản hồi của bạn.",
+  "Câu trả lời có hữu ích không?",
+  "Hữu ích",
+  "Chưa hữu ích",
+  "Không gửi được phản hồi. Vui lòng thử lại.",
+  "Đã chuyển câu hỏi cho chuyên gia. Chúng tôi sẽ liên hệ qua email của bạn.",
+  "Email nhận phản hồi từ chuyên gia",
+  "Chuyển chuyên gia",
+  "Vui lòng nhập email hợp lệ để chuyên gia liên hệ.",
+  "Không gửi được yêu cầu. Vui lòng thử lại.",
+  "Trợ lý tuân thủ EVFTA",
+  "Hỏi về thuế, quy tắc xuất xứ và thủ tục EVFTA. Mọi câu trả lời đều có trích dẫn từ tài liệu đã được duyệt.",
+  "Câu hỏi của bạn",
+  "Vui lòng không nhập thông tin cá nhân vào câu hỏi.",
+  "Mã HS liên quan (không bắt buộc)",
+  "Đang trả lời...",
+  "Hỏi trợ lý"
+];
+
+const D3_STRINGS = [
+  "Đã chuyển chuyên gia",
+  "Có lỗi",
+  "Tài liệu của trợ lý",
+  "Trợ lý chỉ dùng tài liệu đã duyệt. Nạp lại nội dung sẽ đưa tài liệu về trạng thái chưa duyệt.",
+  "Chưa có tài liệu. Nạp corpus bằng lệnh ingest rồi quay lại để duyệt.",
+  "đoạn",
+  "Đã duyệt",
+  "Mức tin cậy",
+  "Câu hỏi gần đây",
+  "Mẫu rà soát hằng tuần",
+  "Chưa có câu hỏi nào ở mức tin cậy này.",
+  "Tuần này chưa có câu hỏi nào để rà soát.",
+  "Trợ lý AI",
+  "Không tìm thấy tài liệu.",
+  "Câu hỏi AI trong 7 ngày",
+  "Chưa có câu hỏi nào gửi tới trợ lý AI trong 7 ngày qua.",
+  "Độ tin cậy AI trung bình",
+  "Thang 1 (thấp) đến 3 (cao). Chưa tính câu ngoài phạm vi."
+];
+
+describe('catalog.json có bản tiếng Anh cho chuỗi A1, B1, B2, B3, B4, B5, A2, C2, C4, C6, C7, D2, D3', () => {
+  it.each([...A1_STRINGS, ...B1_STRINGS, ...B2_STRINGS, ...B3_STRINGS, ...B4_STRINGS, ...B5_STRINGS, ...A2_STRINGS, ...C2_STRINGS, ...C4_STRINGS, ...C6_STRINGS, ...C7_STRINGS, ...D2_STRINGS, ...D3_STRINGS])('%s', (vi) => {
     const en = translateText(vi, 'en');
     expect(en).not.toBe(vi);
     expect(en.trim()).not.toBe('');

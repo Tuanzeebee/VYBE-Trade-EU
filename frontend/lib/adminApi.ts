@@ -123,3 +123,19 @@ export const setProductHidden = (id: string, hidden: boolean) =>
       }),
     HIDE_ERRORS,
   );
+
+// ── Trợ lý AI: câu hỏi, mẫu tuần, tài liệu corpus (D3, I5) ────────────────────
+export type AiQuery = components['schemas']['AiQueryOut'];
+export type CorpusDocument = components['schemas']['CorpusDocumentOut'];
+export type AiConfidence = AiQuery['confidence'];
+
+export const listAiQueries = (query: { confidence?: AiConfidence; helpful?: boolean; limit?: number; offset?: number } = {}) =>
+  read(() => createApiClient().GET('/api/admin/ai-queries', { params: { query } }));
+export const getWeeklySample = (size = 20) =>
+  read(() => createApiClient().GET('/api/admin/ai-queries/weekly-sample', { params: { query: { size } } }));
+export const listCorpusDocuments = () => read(() => createApiClient().GET('/api/admin/corpus-documents'));
+export const reviewCorpusDocument = (id: string) =>
+  act(
+    () => createApiClient().POST('/api/admin/corpus-documents/{document_id}/review', { params: { path: { document_id: id } } }),
+    { 404: 'Không tìm thấy tài liệu.' },
+  );

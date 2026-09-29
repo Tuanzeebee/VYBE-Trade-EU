@@ -503,6 +503,125 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/public/copilot/ask": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Ask */
+        post: operations["ask_api_public_copilot_ask_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/public/copilot/queries/{query_id}/feedback": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Feedback */
+        post: operations["feedback_api_public_copilot_queries__query_id__feedback_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/public/copilot/queries/{query_id}/escalate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Escalate */
+        post: operations["escalate_api_public_copilot_queries__query_id__escalate_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/ai-queries": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Ai Queries */
+        get: operations["list_ai_queries_api_admin_ai_queries_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/ai-queries/weekly-sample": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Weekly Sample */
+        get: operations["weekly_sample_api_admin_ai_queries_weekly_sample_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/corpus-documents": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Corpus Documents */
+        get: operations["list_corpus_documents_api_admin_corpus_documents_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/corpus-documents/{document_id}/review": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Review Corpus Document */
+        post: operations["review_corpus_document_api_admin_corpus_documents__document_id__review_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/exporter/evidence-types": {
         parameters: {
             query?: never;
@@ -886,6 +1005,83 @@ export interface components {
             /** Approval Status */
             approval_status?: ("approved" | "hidden") | null;
         };
+        /** AiQueryOut */
+        AiQueryOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** User Id */
+            user_id: string | null;
+            /** Company Id */
+            company_id: string | null;
+            /** Question */
+            question: string;
+            /** Language */
+            language: string;
+            /** Hs Code */
+            hs_code: string | null;
+            /** Answer */
+            answer: string | null;
+            /**
+             * Confidence
+             * @enum {string}
+             */
+            confidence: "high" | "medium" | "low" | "out_of_scope";
+            /** Self Assessment */
+            self_assessment: string | null;
+            /** Error */
+            error: string | null;
+            /** Citation Ids */
+            citation_ids: string[];
+            /** Latency Ms */
+            latency_ms: number;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Was Helpful */
+            was_helpful?: boolean | null;
+            /**
+             * Escalated
+             * @default false
+             */
+            escalated?: boolean;
+        };
+        /** AskIn */
+        AskIn: {
+            /** Question */
+            question: string;
+            /** Hs Code */
+            hs_code?: string | null;
+            /**
+             * Language
+             * @default vi
+             * @enum {string}
+             */
+            language?: "vi" | "en";
+        };
+        /** AskOut */
+        AskOut: {
+            /**
+             * Query Id
+             * Format: uuid
+             */
+            query_id: string;
+            /** Answer */
+            answer: string;
+            /**
+             * Confidence
+             * @enum {string}
+             */
+            confidence: "high" | "medium" | "low" | "out_of_scope";
+            /** Citations */
+            citations: components["schemas"]["CitationOut"][];
+            /** Can Escalate */
+            can_escalate: boolean;
+        };
         /** AuditLogOut */
         AuditLogOut: {
             /**
@@ -932,6 +1128,22 @@ export interface components {
              * @enum {string}
              */
             state: "missing" | "pending" | "approved" | "expired" | "rejected";
+        };
+        /** CitationOut */
+        CitationOut: {
+            /**
+             * Chunk Id
+             * Format: uuid
+             */
+            chunk_id: string;
+            /** Title */
+            title: string;
+            /** Source */
+            source: string;
+            /** Source Url */
+            source_url: string | null;
+            /** Heading */
+            heading: string;
         };
         /** CompanyIn */
         CompanyIn: {
@@ -1114,6 +1326,40 @@ export interface components {
             /** Missing */
             missing: components["schemas"]["MissingOut"][];
         };
+        /** CorpusDocumentOut */
+        CorpusDocumentOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Title */
+            title: string;
+            /** Source */
+            source: string;
+            /** Source Url */
+            source_url: string | null;
+            /** Doc Type */
+            doc_type: string;
+            /** Language */
+            language: string;
+            /** Hs Codes */
+            hs_codes: string[];
+            /** Reviewed By */
+            reviewed_by: string | null;
+            /** Reviewed At */
+            reviewed_at: string | null;
+            /**
+             * Ingested At
+             * Format: date-time
+             */
+            ingested_at: string;
+            /**
+             * Chunk Count
+             * @default 0
+             */
+            chunk_count?: number;
+        };
         /** CurrentUser */
         CurrentUser: {
             /**
@@ -1179,6 +1425,24 @@ export interface components {
          * @enum {string}
          */
         DutyType: "ad_valorem" | "specific" | "mixed";
+        /**
+         * EscalateIn
+         * @description Khách phải để lại email; người đã đăng nhập dùng email tài khoản.
+         */
+        EscalateIn: {
+            /** Contact Email */
+            contact_email?: string | null;
+        };
+        /** EscalationOut */
+        EscalationOut: {
+            /**
+             * Ticket Id
+             * Format: uuid
+             */
+            ticket_id: string;
+            /** Status */
+            status: string;
+        };
         /**
          * Eur1In
          * @description Dữ liệu hóa đơn để phủ lên bản nháp EUR.1. Khối lượng là CHUỖI JSON.
@@ -1364,6 +1628,11 @@ export interface components {
             group: string;
             /** Validity Months */
             validity_months: number | null;
+        };
+        /** FeedbackIn */
+        FeedbackIn: {
+            /** Was Helpful */
+            was_helpful: boolean;
         };
         /** HTTPValidationError */
         HTTPValidationError: {
@@ -1844,13 +2113,17 @@ export interface components {
         RuleType: "WO" | "CTH" | "MaxNOM" | "CTH_OR_MaxNOM";
         /**
          * StatsOut
-         * @description Số liệu dashboard nội bộ. Chỉ số AI thêm ở D3 (Task 29).
+         * @description Số liệu dashboard nội bộ.
          */
         StatsOut: {
             /** Verified Count */
             verified_count: number;
             /** Pending Count */
             pending_count: number;
+            /** Ai Queries This Week */
+            ai_queries_this_week: number;
+            /** Avg Confidence */
+            avg_confidence: number | null;
         };
         /**
          * TariffIn
@@ -3365,6 +3638,244 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["DocumentOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    ask_api_public_copilot_ask_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AskIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AskOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    feedback_api_public_copilot_queries__query_id__feedback_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                query_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FeedbackIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    escalate_api_public_copilot_queries__query_id__escalate_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                query_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EscalateIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EscalationOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_ai_queries_api_admin_ai_queries_get: {
+        parameters: {
+            query?: {
+                confidence?: string | null;
+                helpful?: boolean | null;
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AiQueryOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    weekly_sample_api_admin_ai_queries_weekly_sample_get: {
+        parameters: {
+            query?: {
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AiQueryOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_corpus_documents_api_admin_corpus_documents_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CorpusDocumentOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    review_corpus_document_api_admin_corpus_documents__document_id__review_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                document_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CorpusDocumentOut"];
                 };
             };
             /** @description Validation Error */

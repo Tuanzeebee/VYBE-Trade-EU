@@ -9518,5 +9518,225 @@
     "Log",
     "Log",
     "Log"
+  ],
+  "Bạn đã hỏi quá nhiều lần. Vui lòng thử lại sau một phút.": [
+    "You have asked too many questions. Please try again in a minute.",
+    "You have asked too many questions. Please try again in a minute.",
+    "You have asked too many questions. Please try again in a minute."
+  ],
+  "Câu hỏi chưa hợp lệ. Vui lòng nhập ít nhất 3 ký tự.": [
+    "The question is not valid. Please enter at least 3 characters.",
+    "The question is not valid. Please enter at least 3 characters.",
+    "The question is not valid. Please enter at least 3 characters."
+  ],
+  "Độ tin cậy cao": [
+    "High confidence",
+    "High confidence",
+    "High confidence"
+  ],
+  "Độ tin cậy trung bình": [
+    "Medium confidence",
+    "Medium confidence",
+    "Medium confidence"
+  ],
+  "Độ tin cậy thấp": [
+    "Low confidence",
+    "Low confidence",
+    "Low confidence"
+  ],
+  "Ngoài phạm vi": [
+    "Out of scope",
+    "Out of scope",
+    "Out of scope"
+  ],
+  "Câu trả lời": [
+    "Answer",
+    "Answer",
+    "Answer"
+  ],
+  "Chúng tôi chưa đủ căn cứ trong tài liệu đã duyệt để trả lời câu hỏi này.": [
+    "We do not have enough grounds in the reviewed documents to answer this question.",
+    "We do not have enough grounds in the reviewed documents to answer this question.",
+    "We do not have enough grounds in the reviewed documents to answer this question."
+  ],
+  "Nguồn trích dẫn": [
+    "Sources cited",
+    "Sources cited",
+    "Sources cited"
+  ],
+  "Trợ lý chỉ trả lời từ tài liệu đã được duyệt và không thay thế tư vấn pháp lý.": [
+    "The assistant only answers from reviewed documents and does not replace legal advice.",
+    "The assistant only answers from reviewed documents and does not replace legal advice.",
+    "The assistant only answers from reviewed documents and does not replace legal advice."
+  ],
+  "Cảm ơn phản hồi của bạn.": [
+    "Thank you for your feedback.",
+    "Thank you for your feedback.",
+    "Thank you for your feedback."
+  ],
+  "Câu trả lời có hữu ích không?": [
+    "Was this answer helpful?",
+    "Was this answer helpful?",
+    "Was this answer helpful?"
+  ],
+  "Hữu ích": [
+    "Helpful",
+    "Helpful",
+    "Helpful"
+  ],
+  "Chưa hữu ích": [
+    "Not helpful",
+    "Not helpful",
+    "Not helpful"
+  ],
+  "Không gửi được phản hồi. Vui lòng thử lại.": [
+    "Could not send your feedback. Please try again.",
+    "Could not send your feedback. Please try again.",
+    "Could not send your feedback. Please try again."
+  ],
+  "Đã chuyển câu hỏi cho chuyên gia. Chúng tôi sẽ liên hệ qua email của bạn.": [
+    "Your question has been passed to an expert. We will contact you by email.",
+    "Your question has been passed to an expert. We will contact you by email.",
+    "Your question has been passed to an expert. We will contact you by email."
+  ],
+  "Email nhận phản hồi từ chuyên gia": [
+    "Email for the expert's reply",
+    "Email for the expert's reply",
+    "Email for the expert's reply"
+  ],
+  "Chuyển chuyên gia": [
+    "Send to an expert",
+    "Send to an expert",
+    "Send to an expert"
+  ],
+  "Vui lòng nhập email hợp lệ để chuyên gia liên hệ.": [
+    "Please enter a valid email so the expert can contact you.",
+    "Please enter a valid email so the expert can contact you.",
+    "Please enter a valid email so the expert can contact you."
+  ],
+  "Không gửi được yêu cầu. Vui lòng thử lại.": [
+    "Could not send the request. Please try again.",
+    "Could not send the request. Please try again.",
+    "Could not send the request. Please try again."
+  ],
+  "Trợ lý tuân thủ EVFTA": [
+    "EVFTA compliance assistant",
+    "EVFTA compliance assistant",
+    "EVFTA compliance assistant"
+  ],
+  "Hỏi về thuế, quy tắc xuất xứ và thủ tục EVFTA. Mọi câu trả lời đều có trích dẫn từ tài liệu đã được duyệt.": [
+    "Ask about tariffs, rules of origin and EVFTA procedures. Every answer cites reviewed documents.",
+    "Ask about tariffs, rules of origin and EVFTA procedures. Every answer cites reviewed documents.",
+    "Ask about tariffs, rules of origin and EVFTA procedures. Every answer cites reviewed documents."
+  ],
+  "Câu hỏi của bạn": [
+    "Your question",
+    "Your question",
+    "Your question"
+  ],
+  "Vui lòng không nhập thông tin cá nhân vào câu hỏi.": [
+    "Please do not enter personal information in your question.",
+    "Please do not enter personal information in your question.",
+    "Please do not enter personal information in your question."
+  ],
+  "Mã HS liên quan (không bắt buộc)": [
+    "Related HS code (optional)",
+    "Related HS code (optional)",
+    "Related HS code (optional)"
+  ],
+  "Đang trả lời...": [
+    "Answering...",
+    "Answering...",
+    "Answering..."
+  ],
+  "Hỏi trợ lý": [
+    "Ask the assistant",
+    "Ask the assistant",
+    "Ask the assistant"
+  ],
+  "Đã chuyển chuyên gia": [
+    "Sent to an expert",
+    "Sent to an expert",
+    "Sent to an expert"
+  ],
+  "Có lỗi": [
+    "Error",
+    "Error",
+    "Error"
+  ],
+  "Tài liệu của trợ lý": [
+    "Assistant documents",
+    "Assistant documents",
+    "Assistant documents"
+  ],
+  "Trợ lý chỉ dùng tài liệu đã duyệt. Nạp lại nội dung sẽ đưa tài liệu về trạng thái chưa duyệt.": [
+    "The assistant only uses reviewed documents. Re-ingesting changed content resets a document to unreviewed.",
+    "The assistant only uses reviewed documents. Re-ingesting changed content resets a document to unreviewed.",
+    "The assistant only uses reviewed documents. Re-ingesting changed content resets a document to unreviewed."
+  ],
+  "Chưa có tài liệu. Nạp corpus bằng lệnh ingest rồi quay lại để duyệt.": [
+    "No documents yet. Load the corpus with the ingest command, then come back to review.",
+    "No documents yet. Load the corpus with the ingest command, then come back to review.",
+    "No documents yet. Load the corpus with the ingest command, then come back to review."
+  ],
+  "đoạn": [
+    "chunks",
+    "chunks",
+    "chunks"
+  ],
+  "Mức tin cậy": [
+    "Confidence level",
+    "Confidence level",
+    "Confidence level"
+  ],
+  "Câu hỏi gần đây": [
+    "Recent questions",
+    "Recent questions",
+    "Recent questions"
+  ],
+  "Mẫu rà soát hằng tuần": [
+    "Weekly review sample",
+    "Weekly review sample",
+    "Weekly review sample"
+  ],
+  "Chưa có câu hỏi nào ở mức tin cậy này.": [
+    "No questions at this confidence level yet.",
+    "No questions at this confidence level yet.",
+    "No questions at this confidence level yet."
+  ],
+  "Tuần này chưa có câu hỏi nào để rà soát.": [
+    "No questions to review this week.",
+    "No questions to review this week.",
+    "No questions to review this week."
+  ],
+  "Trợ lý AI": [
+    "AI assistant",
+    "AI assistant",
+    "AI assistant"
+  ],
+  "Không tìm thấy tài liệu.": [
+    "Document not found.",
+    "Document not found.",
+    "Document not found."
+  ],
+  "Câu hỏi AI trong 7 ngày": [
+    "AI questions in 7 days",
+    "AI questions in 7 days",
+    "AI questions in 7 days"
+  ],
+  "Chưa có câu hỏi nào gửi tới trợ lý AI trong 7 ngày qua.": [
+    "No questions were sent to the AI assistant in the last 7 days.",
+    "No questions were sent to the AI assistant in the last 7 days.",
+    "No questions were sent to the AI assistant in the last 7 days."
+  ],
+  "Độ tin cậy AI trung bình": [
+    "Average AI confidence",
+    "Average AI confidence",
+    "Average AI confidence"
+  ],
+  "Thang 1 (thấp) đến 3 (cao). Chưa tính câu ngoài phạm vi.": [
+    "Scale 1 (low) to 3 (high). Out-of-scope answers are not counted.",
+    "Scale 1 (low) to 3 (high). Out-of-scope answers are not counted.",
+    "Scale 1 (low) to 3 (high). Out-of-scope answers are not counted."
   ]
 }

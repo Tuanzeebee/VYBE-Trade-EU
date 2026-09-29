@@ -2,6 +2,7 @@
 
 // Khung quản trị: tổng quan, hàng đợi xác minh, kiểm duyệt, dữ liệu tuân thủ và nhật ký.
 import React, { useState } from 'react';
+import AdminAi from './AdminAi';
 import AdminAuditLog from './AdminAuditLog';
 import AdminComplianceData from './AdminComplianceData';
 import AdminModeration from './AdminModeration';
@@ -14,6 +15,7 @@ const TABS = [
   { key: 'queue', label: 'Chờ duyệt' },
   { key: 'moderation', label: 'Hồ sơ & sản phẩm' },
   { key: 'data', label: 'Dữ liệu tuân thủ' },
+  { key: 'ai', label: 'Trợ lý AI' },
   { key: 'audit', label: 'Nhật ký' },
 ] as const;
 
@@ -22,6 +24,7 @@ const PANELS = {
   queue: AdminVerificationQueue,
   moderation: AdminModeration,
   data: AdminComplianceData,
+  ai: AdminAi,
   audit: AdminAuditLog,
 };
 
