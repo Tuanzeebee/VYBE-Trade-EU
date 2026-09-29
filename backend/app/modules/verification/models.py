@@ -179,3 +179,4 @@ class VerificationRequest(Base):
         DateTime(timezone=True), server_default=text("clock_timestamp()")
     )
     reviewed_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
+    decision_reason: Mapped[str | None] = mapped_column(Text)  # lý do từ chối / yêu cầu bổ sung

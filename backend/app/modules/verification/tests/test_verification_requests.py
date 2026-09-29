@@ -383,3 +383,24 @@ def test_only_decide_assigns_verification_status() -> None:
 
 
 _ = Any
+
+
+async def test_exporter_sees_the_reason_of_a_rejection(
+    api_client: AsyncClient, db_session: AsyncSession
+) -> None:
+    _, request_id = await submitted(api_client, db_session)
+    await api_client.post(
+        decision_url(request_id), json={"decision": "reject", "reason": "  Sai MST  "}
+    )
+    await api_client.post("/api/auth/logout")
+    await login_as(api_client, "exporter", "a@x.vn")
+    [mine] = (await api_client.get(SUBMIT)).json()
+    assert (mine["status"], mine["decision_reason"]) == ("rejected", "Sai MST")
+
+
+async def test_approval_without_reason_has_no_reason(
+    api_client: AsyncClient, db_session: AsyncSession
+) -> None:
+    _, request_id = await submitted(api_client, db_session)
+    r = await api_client.post(decision_url(request_id), json={"decision": "approve"})
+    assert r.json()["decision_reason"] is None

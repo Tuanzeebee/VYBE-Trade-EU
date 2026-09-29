@@ -75,6 +75,7 @@ class VerificationRequestOut(BaseModel):
     evidence_ids: list[uuid.UUID]
     submitted_at: dt.datetime
     reviewed_at: dt.datetime | None
+    decision_reason: str | None  # exporter thấy lý do từ chối / yêu cầu bổ sung
 
 
 class QueueItem(BaseModel):

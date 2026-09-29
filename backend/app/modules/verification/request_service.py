@@ -41,6 +41,7 @@ def _out(row: VerificationRequest) -> VerificationRequestOut:
         evidence_ids=list(row.submitted_evidence_ids),
         submitted_at=row.submitted_at,
         reviewed_at=row.reviewed_at,
+        decision_reason=row.decision_reason,
     )
 
 
@@ -155,6 +156,7 @@ async def decide_request(
     )
     row.status = request_status
     row.reviewed_at = dt.datetime.now(dt.UTC)
+    row.decision_reason = (data.reason or "").strip() or None
     if decision is Decision.approve:
         await evidence_service.sync_level(session, row.company_id, commit=False)
     await session.commit()
