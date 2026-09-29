@@ -28,6 +28,13 @@ class DutyType(StrEnum):
     mixed = "mixed"
 
 
+class RuleType(StrEnum):
+    WO = "WO"  # xuất xứ thuần túy
+    CTH = "CTH"  # chuyển đổi nhóm HS (4 số)
+    MaxNOM = "MaxNOM"  # nguyên liệu không xuất xứ tối đa % giá xuất xưởng
+    CTH_OR_MaxNOM = "CTH_OR_MaxNOM"  # CTH hoặc MaxNOM — đạt một trong hai
+
+
 class CheckType(StrEnum):
     tariff = "tariff"
     roo = "roo"
@@ -119,6 +126,48 @@ class TariffLine(Base):
     reviewed_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
     valid_from: Mapped[dt.date] = mapped_column(Date)
     valid_until: Mapped[dt.date | None] = mapped_column(Date)  # ngày này đã hết hiệu lực
+    created_at: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=text("clock_timestamp()")
+    )
+    updated_at: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+
+class ProductSpecificRule(Base):
+    """Quy tắc xuất xứ theo mặt hàng (PSR) do luật TM nhập và duyệt. Dòng thiếu reviewed_by không
+    bao giờ được dùng: mọi truy vấn đi qua compliance.service._reviewed_rules."""
+
+    __tablename__ = "product_specific_rules"
+    __table_args__ = (
+        CheckConstraint("valid_until IS NULL OR valid_until > valid_from", name="valid_window"),
+        CheckConstraint(
+            "(reviewed_by IS NULL) = (reviewed_at IS NULL)", name="reviewed_by_and_at_together"
+        ),
+        # Ngưỡng % bắt buộc với quy tắc có nhánh MaxNOM, và chỉ với các quy tắc đó.
+        CheckConstraint(
+            "(rule_type IN ('MaxNOM', 'CTH_OR_MaxNOM')"
+            " AND threshold_pct IS NOT NULL AND threshold_pct > 0 AND threshold_pct <= 100)"
+            " OR (rule_type IN ('WO', 'CTH') AND threshold_pct IS NULL)",
+            name="threshold_matches_rule_type",
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, primary_key=True, default=uuid.uuid4, server_default=text("gen_random_uuid()")
+    )
+    hs_code: Mapped[str] = mapped_column(ForeignKey("hs_codes.code"), index=True)
+    rule_type: Mapped[RuleType] = mapped_column(Enum(RuleType, name="rule_type"))
+    threshold_pct: Mapped[Decimal | None] = mapped_column(Numeric(5, 2))
+    rule_text: Mapped[str | None] = mapped_column(Text)
+    requires_expert: Mapped[bool] = mapped_column(
+        Boolean, default=False, server_default=text("false")
+    )
+    source: Mapped[str | None] = mapped_column(String(1024))
+    reviewed_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id"))
+    reviewed_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
+    valid_from: Mapped[dt.date] = mapped_column(Date)
+    valid_until: Mapped[dt.date | None] = mapped_column(Date)
     created_at: Mapped[dt.datetime] = mapped_column(
         DateTime(timezone=True), server_default=text("clock_timestamp()")
     )

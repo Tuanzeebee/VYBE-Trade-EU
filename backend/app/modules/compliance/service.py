@@ -16,9 +16,21 @@ from app.core.errors import AppError
 from app.modules.auth.schemas import CurrentUser
 from app.modules.catalog import service as catalog
 from app.modules.companies import service as companies
-from app.modules.compliance.calculators import TariffLineData, tariff_savings
-from app.modules.compliance.models import CheckType, ComplianceCheck, TariffLine
-from app.modules.compliance.schemas import TariffIn, TariffOut
+from app.modules.compliance.calculators import (
+    Material,
+    RooResult,
+    RuleData,
+    TariffLineData,
+    roo_verdict,
+    tariff_savings,
+)
+from app.modules.compliance.models import (
+    CheckType,
+    ComplianceCheck,
+    ProductSpecificRule,
+    TariffLine,
+)
+from app.modules.compliance.schemas import RooIn, RooOut, TariffIn, TariffOut
 
 # EU là liên minh thuế quan: biểu thuế chung lưu ở destination 'EU' (một dòng/HS cho 27 nước).
 UNION_DESTINATION = "EU"
@@ -42,6 +54,23 @@ async def find_lines(
     """Dòng đã duyệt khớp mã HS + nước đến vào ngày `on_date` (C2 đếm để phát hiện mơ hồ)."""
     result = await session.scalars(_reviewed_lines(hs_code, destination, on_date))
     return list(result)
+
+
+def _reviewed_rules(hs_code: str, on_date: dt.date) -> Select[Any]:
+    """Quy tắc xuất xứ ĐÃ DUYỆT và đang hiệu lực vào `on_date`."""
+    return select(ProductSpecificRule).where(
+        ProductSpecificRule.reviewed_by.is_not(None),
+        ProductSpecificRule.hs_code == hs_code,
+        ProductSpecificRule.valid_from <= on_date,
+        or_(ProductSpecificRule.valid_until.is_(None), ProductSpecificRule.valid_until > on_date),
+    )
+
+
+async def find_rules(
+    session: AsyncSession, hs_code: str, on_date: dt.date
+) -> list[ProductSpecificRule]:
+    """Các quy tắc đã duyệt khớp mã HS (C4 dùng số lượng để phát hiện dữ liệu mơ hồ)."""
+    return list(await session.scalars(_reviewed_rules(hs_code, on_date)))
 
 
 async def log_check(
@@ -200,4 +229,65 @@ async def calculate_tariff(
         annual_savings=result.annual_savings,
         quota_note=result.quota_note,
         condition_note=result.condition_note,
+    )
+
+
+# Theo bản nháp luật TM (chưa ký): nguyên liệu xuất xứ EU được cộng gộp như xuất xứ Việt Nam
+# (Điều 3 Nghị định thư 1 EVFTA, câu hỏi Q6). Là hằng số hệ thống, không phải đầu vào người dùng.
+EU_CUMULATION = True
+ORIGIN_DESTINATION = "EU"
+
+
+async def calculate_roo(session: AsyncSession, data: RooIn, user: CurrentUser | None) -> RooOut:
+    """Máy tính quy tắc xuất xứ (C4). Mỗi lần chạy hợp lệ ghi ĐÚNG MỘT compliance_checks."""
+    code = catalog.normalize_code(data.hs_code)
+    if code is None:
+        raise AppError("invalid_hs_code", "HS code must be 6 to 8 digits", 422)
+    heading = code[:HEADING_LENGTH]
+    hs = await catalog.get_hs_code(session, heading)
+    rules: list[ProductSpecificRule] = []
+    if hs is not None and hs.supported:  # ngoài danh mục hỗ trợ → unsupported
+        rules = await find_rules(session, heading, dt.datetime.now(dt.UTC).date())
+    rule = rules[0] if len(rules) == 1 else None
+    if len(rules) > 1:
+        result = RooResult("inconclusive", reason="ambiguous_rule")
+    else:
+        result = roo_verdict(
+            None
+            if rule is None
+            else RuleData(rule.rule_type, rule.threshold_pct, rule.requires_expert),
+            code,
+            data.ex_works_value,
+            [Material(m.origin_country, m.value, m.hs_code) for m in data.materials],
+            materials_declared=data.materials_declared,
+            eu_cumulation=EU_CUMULATION,
+        )
+    company_id = await companies.get_company_id(session, user.id) if user else None
+    check = await log_check(
+        session,
+        check_type=CheckType.roo,
+        hs_code=code,
+        destination_country=ORIGIN_DESTINATION,
+        origin_country="VN",
+        status=result.status,
+        company_id=company_id,
+        product_value=data.ex_works_value,
+        regional_value_content_pct=result.rvc_pct,
+        originating_status=result.status,
+        rule_id=rule.id if rule is not None else None,
+    )
+    await session.commit()
+    return RooOut(
+        check_id=str(check.id),
+        status=result.status,
+        reason=result.reason,
+        hs_code=code,
+        hs_formatted=catalog.format_code(code),
+        ex_works_value=data.ex_works_value,
+        nom_pct=result.nom_pct,
+        rvc_pct=result.rvc_pct,
+        rule_type=rule.rule_type.value if rule is not None else None,
+        threshold_pct=rule.threshold_pct if rule is not None else None,
+        rule_text=rule.rule_text if rule is not None else None,
+        source=rule.source if rule is not None else None,
     )

@@ -8,7 +8,7 @@ from app.core.db import get_session
 from app.modules.auth.schemas import CurrentUser
 from app.modules.auth.service import get_optional_user, require_role
 from app.modules.compliance import service
-from app.modules.compliance.schemas import TariffIn, TariffOut
+from app.modules.compliance.schemas import RooIn, RooOut, TariffIn, TariffOut
 
 router = APIRouter(tags=["compliance"])
 
@@ -33,3 +33,12 @@ async def calculate_tariff(
     session: Annotated[AsyncSession, Depends(get_session)],
 ) -> TariffOut:
     return await service.calculate_tariff(session, data, user)
+
+
+@router.post("/api/public/roo")
+async def calculate_roo(
+    data: RooIn,
+    user: Annotated[CurrentUser | None, Depends(get_optional_user)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> RooOut:
+    return await service.calculate_roo(session, data, user)
