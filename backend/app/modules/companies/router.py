@@ -13,6 +13,7 @@ from app.modules.companies.schemas import (
     CompanyIn,
     CompanyOut,
     CompanyPatch,
+    CompletenessOut,
     PresignIn,
     PresignOut,
     ProductIn,
@@ -31,6 +32,11 @@ Store = Annotated[Storage, Depends(get_storage)]
 @router.get("/api/me/company")
 async def get_my_company(user: Owner, session: DB) -> CompanyOut:
     return await service.get_my_company(session, user)
+
+
+@router.get("/api/me/company/completeness")
+async def get_my_completeness(user: Owner, session: DB) -> CompletenessOut:
+    return await service.get_completeness(session, user)
 
 
 @router.post("/api/me/company", status_code=status.HTTP_201_CREATED)

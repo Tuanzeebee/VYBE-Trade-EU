@@ -66,6 +66,7 @@ class Company(Base):
     company_size: Mapped[str | None] = mapped_column(String(16))
     procurement_estimate: Mapped[str | None] = mapped_column(String(16))
     vat_number: Mapped[str | None] = mapped_column(String(32))
+    eori_number: Mapped[str | None] = mapped_column(String(20))
     verification_status: Mapped[VerificationStatus] = mapped_column(
         Enum(VerificationStatus, name="verification_status"),
         default=VerificationStatus.unverified,
@@ -200,3 +201,22 @@ class ProductImage(Base):
     )
     key: Mapped[str] = mapped_column(String(255))
     position: Mapped[int] = mapped_column(SmallInteger)
+
+
+class CompletenessWeight(Base):
+    """Trọng số điểm hoàn thiện hồ sơ (B3) — dữ liệu cấu hình, không viết cứng trong code.
+
+    field_key trùng khóa do completeness.build_facts() sinh ra; is_enabled=false cho dòng chưa có
+    tính năng (logo, bằng chứng) — dòng tắt không nằm trong mẫu số.
+    """
+
+    __tablename__ = "completeness_weights"
+    __table_args__ = (CheckConstraint("weight >= 0", name="weight_non_negative"),)
+
+    company_type: Mapped[CompanyType] = mapped_column(
+        Enum(CompanyType, name="company_type", create_type=False), primary_key=True
+    )
+    field_key: Mapped[str] = mapped_column(String(32), primary_key=True)
+    group_key: Mapped[str] = mapped_column(String(32))
+    weight: Mapped[Decimal] = mapped_column(Numeric(5, 2))
+    is_enabled: Mapped[bool] = mapped_column(Boolean, default=True, server_default=text("true"))

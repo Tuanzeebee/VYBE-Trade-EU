@@ -27,7 +27,7 @@ def company_body(**overrides: Any) -> dict[str, Any]:
         "legal_name": "Công ty TNHH Nông Sản Việt",
         "registration_number": "0314892345",
         "tax_id": "0314892345",
-        "business_type": "TNHH",
+        "business_type": "manufacturer",
         "country": "VN",
         "industry_sector": "agriculture",
         "founded_year": 2018,

@@ -12,6 +12,8 @@ from app.core.errors import AppError
 from app.core.events import publish
 from app.core.storage import Storage
 from app.modules.auth.schemas import CurrentUser
+from app.modules.companies import completeness_service
+from app.modules.companies.completeness import BUSINESS_MODELS
 from app.modules.companies.events import CompanyUpdated
 from app.modules.companies.models import (
     Company,
@@ -25,6 +27,8 @@ from app.modules.companies.schemas import (
     CompanyIn,
     CompanyOut,
     CompanyPatch,
+    CompletenessOut,
+    MissingOut,
     PresignIn,
     PresignOut,
 )
@@ -33,7 +37,13 @@ _EXTENSIONS = {"image/png": "png", "image/jpeg": "jpg", "image/webp": "webp"}
 _ALLOWED_ROLES = {"exporter": CompanyType.exporter, "buyer": CompanyType.buyer}
 # Trường chỉ một loại công ty được đặt; loại kia gửi giá trị thật → 422.
 _ONLY_EXPORTER = ("export_markets", "languages_spoken")
-_ONLY_BUYER = ("company_size", "procurement_estimate", "vat_number", "sourcing_categories")
+_ONLY_BUYER = (
+    "company_size",
+    "procurement_estimate",
+    "vat_number",
+    "eori_number",
+    "sourcing_categories",
+)
 
 
 def slugify(name: str) -> str:
@@ -88,6 +98,12 @@ def _reject_foreign_fields(company_type: CompanyType, values: dict[str, Any]) ->
             raise AppError(
                 "field_not_allowed", f"{field} is not allowed for {company_type.value}", 422
             )
+    # Exporter: mô hình kinh doanh là giá trị cố định (buyer để nhập tự do như trước).
+    model = values.get("business_type")
+    if company_type is CompanyType.exporter and model is not None and model not in BUSINESS_MODELS:
+        raise AppError(
+            "invalid_business_type", f"business_type must be one of {BUSINESS_MODELS}", 422
+        )
 
 
 def _set_lists(company: Company, values: dict[str, Any]) -> None:
@@ -101,6 +117,8 @@ def _set_lists(company: Company, values: dict[str, Any]) -> None:
 
 
 async def _save(session: AsyncSession, company: Company) -> CompanyOut:
+    await session.flush()
+    await completeness_service.refresh_score(session, company)  # cùng transaction với thay đổi
     await session.commit()
     await session.refresh(company)
     await publish(CompanyUpdated(company_id=company.id))
@@ -109,6 +127,19 @@ async def _save(session: AsyncSession, company: Company) -> CompanyOut:
 
 async def get_my_company(session: AsyncSession, user: CurrentUser) -> CompanyOut:
     return _to_out(await _own_company(session, user))
+
+
+async def get_completeness(session: AsyncSession, user: CurrentUser) -> CompletenessOut:
+    """Điểm hoàn thiện và danh sách còn thiếu (tính mới theo bảng trọng số hiện hành)."""
+    company = await _own_company(session, user)
+    result = await completeness_service.compute_for(session, company)
+    return CompletenessOut(
+        score=result.score,
+        missing=[
+            MissingOut(field=m.field_key, group=m.group_key, weight=m.weight)
+            for m in result.missing
+        ],
+    )
 
 
 async def create_company(session: AsyncSession, user: CurrentUser, data: CompanyIn) -> CompanyOut:

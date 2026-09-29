@@ -12,6 +12,7 @@ from app.core.storage import Storage
 from app.modules.auth.schemas import CurrentUser
 from app.modules.catalog.schemas import HsCodeOut
 from app.modules.catalog.service import get_hs_code
+from app.modules.companies import completeness_service
 from app.modules.companies.models import (
     ApprovalStatus,
     Company,
@@ -142,6 +143,8 @@ async def create_product(
     product = Product(company_id=company.id, hs_code=hs.code, **values)
     _set_images(product, data.image_keys)
     session.add(product)
+    await session.flush()
+    await completeness_service.refresh_score(session, company)
     await session.commit()
     await session.refresh(product)
     return await _out(session, storage, product, {hs.code: hs})
@@ -173,6 +176,8 @@ async def update_product(
         setattr(product, field, value)
     if keys is not None:
         _set_images(product, keys)
+    await session.flush()
+    await completeness_service.refresh_score(session, company)
     await session.commit()
     await session.refresh(product)
     return await _out(session, storage, product, {})
@@ -181,6 +186,8 @@ async def update_product(
 async def delete_product(session: AsyncSession, user: CurrentUser, product_id: uuid.UUID) -> None:
     company = await _owned_exporter(session, user)
     await session.delete(await _get_owned(session, company, product_id))
+    await session.flush()
+    await completeness_service.refresh_score(session, company)
     await session.commit()
 
 

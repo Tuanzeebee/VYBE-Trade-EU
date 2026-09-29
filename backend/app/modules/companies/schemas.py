@@ -58,6 +58,7 @@ class _CompanyFields(BaseModel):
     company_size: CompanySize | None = None
     procurement_estimate: ProcurementEstimate | None = None
     vat_number: Annotated[str, StringConstraints(max_length=32)] | None = None
+    eori_number: Annotated[str, StringConstraints(max_length=20)] | None = None
 
 
 class CompanyIn(_CompanyFields):
@@ -110,6 +111,7 @@ class CompanyOut(BaseModel):
     company_size: str | None
     procurement_estimate: str | None
     vat_number: str | None
+    eori_number: str | None
     sourcing_categories: list[str]
     verification_status: Literal["unverified", "pending", "verified", "rejected"]
     verification_level: Literal["basic", "evfta_verified"]
@@ -263,3 +265,17 @@ class PublicCompanyOut(BaseModel):
     verification_level: Literal["basic", "evfta_verified"]
     verified_at: datetime | None
     products: list[PublicProductOut]
+
+
+# ── Điểm hoàn thiện hồ sơ (B3) ────────────────────────────────────────────────
+class MissingOut(BaseModel):
+    field: str
+    group: str
+    weight: Decimal
+
+
+class CompletenessOut(BaseModel):
+    """Chỉ điểm và danh sách còn thiếu — cố ý KHÔNG chứa trạng thái xác minh (khái niệm khác)."""
+
+    score: Decimal
+    missing: list[MissingOut]
