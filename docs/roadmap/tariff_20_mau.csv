@@ -1,0 +1,27 @@
+# MẪU RỖNG cho luật TM điền — backlog C1/C2. Chỉ cột hs_code và name_en được điền sẵn (từ backend/data/hs_codes.csv, danh sách 20 mã đợt 1 CHƯA ký).
+# KHÔNG điền số thay luật TM. Sau khi luật TM điền và ký, đổi tên thành tariff_20.csv và đặt vào backend/tests/fixtures/compliance/.
+# duty_type: ad_valorem | specific | mixed. Thuế suất là % (vd 12.5). Ngày dạng YYYY-MM-DD. quota_required: true | false.
+# destination: mã ISO-2 nước đến (luật TM cho biết thuế chung cả EU hay khác từng nước; nếu khác thì mỗi nước một dòng).
+# expected_status: ok | needs_review | unsupported (ca gạo ST25 phải là needs_review nếu có hạn ngạch).
+# Mọi dòng phải có reviewed_by và reviewed_at; dòng thiếu hai cột này không bao giờ hiện ra API công khai.
+hs_code,name_en,destination,duty_type,mfn_rate,mfn_specific,evfta_rate_current,staging_category,zero_from,quota_required,quota_note,condition_note,source_url,valid_from,valid_until,expected_status,reviewed_by,reviewed_at
+090111,"Coffee, not roasted, not decaffeinated",,,,,,,,,,,,,,,,
+090121,"Coffee, roasted, not decaffeinated",,,,,,,,,,,,,,,,
+080132,"Cashew nuts, shelled",,,,,,,,,,,,,,,,
+090411,"Pepper of the genus Piper, neither crushed nor ground",,,,,,,,,,,,,,,,
+090619,"Cinnamon, neither crushed nor ground — other",,,,,,,,,,,,,,,,
+090240,Other black tea (fermented) and other partly fermented tea,,,,,,,,,,,,,,,,
+100630,Semi-milled or wholly milled rice,,,,,,,,,,,,,,,,
+030617,"Other shrimps and prawns, frozen",,,,,,,,,,,,,,,,
+160529,"Shrimps and prawns, prepared or preserved — other",,,,,,,,,,,,,,,,
+030462,Frozen fillets of catfish (Pangasius spp.),,,,,,,,,,,,,,,,
+160414,"Prepared or preserved tunas, skipjack and bonito, whole or in pieces",,,,,,,,,,,,,,,,
+081060,"Durians, fresh",,,,,,,,,,,,,,,,
+081090,"Other fruit, fresh",,,,,,,,,,,,,,,,
+080450,"Guavas, mangoes and mangosteens, fresh or dried",,,,,,,,,,,,,,,,
+081190,"Other fruit, frozen",,,,,,,,,,,,,,,,
+200899,Fruit otherwise prepared or preserved — other,,,,,,,,,,,,,,,,
+080111,"Coconuts, desiccated",,,,,,,,,,,,,,,,
+190219,"Uncooked pasta, not containing eggs — other",,,,,,,,,,,,,,,,
+210390,"Sauces and preparations therefor — other",,,,,,,,,,,,,,,,
+040900,Natural honey,,,,,,,,,,,,,,,,

@@ -1,0 +1,19 @@
+# MẪU RỖNG cho luật TM điền — backlog C4. Chỉ cột case_id và case_type được điền sẵn (loại ca đề xuất, luật TM có thể đổi).
+# KHÔNG điền số thay luật TM. Sau khi luật TM điền và ký, đổi tên thành roo_10.csv và đặt vào backend/tests/fixtures/compliance/.
+# rule_type: WO | CTH | MaxNOM. threshold_pct: % tối đa nguyên liệu không xuất xứ (chỉ cho MaxNOM). requires_expert: true | false.
+# ex_works_value và giá trị nguyên liệu cùng một loại tiền tệ (cột currency). Số tiền là chuỗi thập phân, không dấu phân cách hàng nghìn.
+# materials: danh sách "ISO2:giá_trị" ngăn cách bằng dấu chấm phẩy, vd VN:100.00;CN:250.00. Để trống nếu không có nguyên liệu nhập.
+# expected_status: pass | fail | inconclusive | unsupported. expected_nom_pct: % NOM luật TM tính tay (để trống nếu không áp dụng).
+# eu_cumulation: true | false — luật TM xác nhận nguyên liệu xuất xứ EU có được cộng gộp là nội địa hay không (câu hỏi mở Q6).
+# rule_source: văn bản/phụ lục PSR. Mọi ca phải có reviewed_by và reviewed_at.
+case_id,case_type,hs_code,currency,ex_works_value,rule_type,threshold_pct,requires_expert,materials,eu_cumulation,expected_status,expected_nom_pct,rule_source,reviewed_by,reviewed_at,note
+1,MaxNOM pass sát ngưỡng,,,,,,,,,,,,,,
+2,MaxNOM pass xa ngưỡng,,,,,,,,,,,,,,
+3,MaxNOM fail vừa vượt ngưỡng,,,,,,,,,,,,,,
+4,MaxNOM fail vượt nhiều,,,,,,,,,,,,,,
+5,requires_expert = true (luôn inconclusive) — ca 1,,,,,,,,,,,,,,
+6,requires_expert = true (luôn inconclusive) — ca 2,,,,,,,,,,,,,,
+7,WO hoặc CTH đủ dữ liệu,,,,,,,,,,,,,,
+8,WO hoặc CTH thiếu dữ liệu (inconclusive),,,,,,,,,,,,,,
+9,Có nguyên liệu xuất xứ EU (cộng gộp),,,,,,,,,,,,,,
+10,Mã HS không có quy tắc (unsupported),,,,,,,,,,,,,,
