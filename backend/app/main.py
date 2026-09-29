@@ -2,21 +2,33 @@ import logging
 from typing import Annotated
 
 from fastapi import Depends, FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.config import get_settings
 from app.core.db import get_session
 from app.core.errors import register_error_handlers
 from app.core.logging import RequestIdMiddleware, setup_logging
 from app.core.storage import Storage, get_storage
+from app.modules.auth.router import router as auth_router
 
 setup_logging()
 log = logging.getLogger(__name__)
 
 app = FastAPI(title="evfta.eu API")
 app.add_middleware(RequestIdMiddleware)
+# Frontend gọi API kèm cookie phiên (ADR-0002) → chỉ cho các origin khai báo trong cấu hình.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=get_settings().cors_origins,
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PATCH", "PUT", "DELETE"],
+    allow_headers=["content-type", "x-request-id"],
+)
 register_error_handlers(app)
+app.include_router(auth_router)
 
 
 @app.get("/health")

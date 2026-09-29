@@ -15,6 +15,13 @@ class Settings(BaseSettings):
     s3_access_key: str = "devkey"
     s3_secret_key: str = "devkey"  # noqa: S105 — chỉ mặc định cho S3 dev
 
+    # Phiên đăng nhập (ADR-0002)
+    session_days: int = 14
+    cookie_secure: bool = True
+    consent_version: str = "2026-09-29"
+    # Origin của frontend được gọi API kèm cookie
+    cors_origins: list[str] = ["http://localhost:3000"]
+
 
 @lru_cache
 def get_settings() -> Settings:
