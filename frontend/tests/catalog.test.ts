@@ -176,8 +176,42 @@ const C2_STRINGS = [
   'Số lô hàng mỗi năm phải là số nguyên từ 1 đến 10000.'
 ];
 
-describe('catalog.json có bản tiếng Anh cho chuỗi A1, B1, B2, B3, B4, B5, A2, C2', () => {
-  it.each([...A1_STRINGS, ...B1_STRINGS, ...B2_STRINGS, ...B3_STRINGS, ...B4_STRINGS, ...B5_STRINGS, ...A2_STRINGS, ...C2_STRINGS])('%s', (vi) => {
+const C4_STRINGS = [
+  'Bạn đã kiểm tra quá nhiều lần. Vui lòng thử lại sau một phút.',
+  'Dữ liệu chưa hợp lệ. Vui lòng kiểm tra lại mã HS, giá xuất xưởng và nguyên liệu.',
+  'Trường hợp này cần chuyên gia đánh giá nên hệ thống không tự kết luận.',
+  'Có nhiều hơn một quy tắc cho mã HS này nên cần chuyên gia đánh giá.',
+  'Bạn chưa khai nguyên liệu nên chưa thể kết luận.',
+  'Còn thiếu dữ liệu để kết luận (ví dụ giá xuất xưởng hoặc mã HS của nguyên liệu).',
+  'Đạt',
+  'Không đạt',
+  'Chưa kết luận',
+  'Chưa hỗ trợ',
+  'Mã HS này nằm ngoài phạm vi dữ liệu của hệ thống. Điều đó không có nghĩa là hàng hóa không có quy tắc xuất xứ; vui lòng liên hệ để được tư vấn.',
+  'Nguyên liệu không xuất xứ (NOM)',
+  'Ngưỡng tối đa',
+  'Kết quả chỉ mang tính tham khảo. Cơ quan cấp chứng nhận xuất xứ chính thức là Bộ Công Thương.',
+  'Vui lòng chọn mã HS.',
+  'Giá xuất xưởng phải là số dương, tối đa 2 chữ số thập phân (ví dụ 1000 hoặc 1000.50).',
+  'Máy tính quy tắc xuất xứ EVFTA',
+  'Kiểm tra hàng Việt Nam xuất sang EU có đạt quy tắc xuất xứ hay không. Mọi số tiền dùng cùng một đơn vị tiền tệ.',
+  'Giá xuất xưởng (EXW)',
+  'Nguyên liệu nhập khẩu',
+  'Chưa khai nguyên liệu',
+  'Không có nguyên liệu nhập khẩu',
+  'Có nguyên liệu nhập khẩu (khai bên dưới)',
+  'Nguyên liệu',
+  'Nước xuất xứ (mã 2 chữ cái)',
+  'Giá trị nguyên liệu',
+  'Mã HS nguyên liệu (nếu có)',
+  'Xóa nguyên liệu',
+  'Thêm nguyên liệu',
+  'Đang kiểm tra...',
+  'Kiểm tra xuất xứ'
+];
+
+describe('catalog.json có bản tiếng Anh cho chuỗi A1, B1, B2, B3, B4, B5, A2, C2, C4', () => {
+  it.each([...A1_STRINGS, ...B1_STRINGS, ...B2_STRINGS, ...B3_STRINGS, ...B4_STRINGS, ...B5_STRINGS, ...A2_STRINGS, ...C2_STRINGS, ...C4_STRINGS])('%s', (vi) => {
     const en = translateText(vi, 'en');
     expect(en).not.toBe(vi);
     expect(en.trim()).not.toBe('');

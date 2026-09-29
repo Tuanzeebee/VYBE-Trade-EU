@@ -227,6 +227,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/public/roo": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Calculate Roo */
+        post: operations["calculate_roo_api_public_roo_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -480,6 +497,15 @@ export interface components {
             email: string;
             /** Password */
             password: string;
+        };
+        /** MaterialIn */
+        MaterialIn: {
+            /** Origin Country */
+            origin_country: string;
+            /** Value */
+            value: number | string;
+            /** Hs Code */
+            hs_code?: string | null;
         };
         /** MePatch */
         MePatch: {
@@ -735,6 +761,50 @@ export interface components {
              * @constant
              */
             accept_terms: true;
+        };
+        /**
+         * RooIn
+         * @description Xuất xứ hàng Việt Nam xuất sang EU. Mọi số tiền cùng một đơn vị tiền tệ, là CHUỖI JSON.
+         */
+        RooIn: {
+            /** Hs Code */
+            hs_code: string;
+            /** Ex Works Value */
+            ex_works_value?: number | string | null;
+            /** Materials Declared */
+            materials_declared: boolean;
+            /** Materials */
+            materials?: components["schemas"]["MaterialIn"][];
+        };
+        /** RooOut */
+        RooOut: {
+            /** Check Id */
+            check_id: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "pass" | "fail" | "inconclusive" | "unsupported";
+            /** Reason */
+            reason: string | null;
+            /** Hs Code */
+            hs_code: string;
+            /** Hs Formatted */
+            hs_formatted: string;
+            /** Ex Works Value */
+            ex_works_value: string | null;
+            /** Nom Pct */
+            nom_pct: string | null;
+            /** Rvc Pct */
+            rvc_pct: string | null;
+            /** Rule Type */
+            rule_type: string | null;
+            /** Threshold Pct */
+            threshold_pct: string | null;
+            /** Rule Text */
+            rule_text: string | null;
+            /** Source */
+            source: string | null;
         };
         /**
          * TariffIn
@@ -1420,6 +1490,41 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["TariffOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    calculate_roo_api_public_roo_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RooIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RooOut"];
                 };
             };
             /** @description Validation Error */

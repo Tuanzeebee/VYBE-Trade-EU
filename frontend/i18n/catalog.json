@@ -8513,5 +8513,155 @@
     "Shipments per year must be a whole number from 1 to 10000.",
     "Shipments per year must be a whole number from 1 to 10000.",
     "Shipments per year must be a whole number from 1 to 10000."
+  ],
+  "Bạn đã kiểm tra quá nhiều lần. Vui lòng thử lại sau một phút.": [
+    "You have run too many checks. Please try again in a minute.",
+    "You have run too many checks. Please try again in a minute.",
+    "You have run too many checks. Please try again in a minute."
+  ],
+  "Dữ liệu chưa hợp lệ. Vui lòng kiểm tra lại mã HS, giá xuất xưởng và nguyên liệu.": [
+    "The data is not valid. Please check the HS code, ex-works price and materials.",
+    "The data is not valid. Please check the HS code, ex-works price and materials.",
+    "The data is not valid. Please check the HS code, ex-works price and materials."
+  ],
+  "Trường hợp này cần chuyên gia đánh giá nên hệ thống không tự kết luận.": [
+    "This case needs an expert assessment, so the system does not draw a conclusion by itself.",
+    "This case needs an expert assessment, so the system does not draw a conclusion by itself.",
+    "This case needs an expert assessment, so the system does not draw a conclusion by itself."
+  ],
+  "Có nhiều hơn một quy tắc cho mã HS này nên cần chuyên gia đánh giá.": [
+    "There is more than one rule for this HS code, so an expert assessment is needed.",
+    "There is more than one rule for this HS code, so an expert assessment is needed.",
+    "There is more than one rule for this HS code, so an expert assessment is needed."
+  ],
+  "Bạn chưa khai nguyên liệu nên chưa thể kết luận.": [
+    "You have not declared materials, so no conclusion can be drawn yet.",
+    "You have not declared materials, so no conclusion can be drawn yet.",
+    "You have not declared materials, so no conclusion can be drawn yet."
+  ],
+  "Còn thiếu dữ liệu để kết luận (ví dụ giá xuất xưởng hoặc mã HS của nguyên liệu).": [
+    "Data is still missing to reach a conclusion (for example the ex-works price or the HS code of a material).",
+    "Data is still missing to reach a conclusion (for example the ex-works price or the HS code of a material).",
+    "Data is still missing to reach a conclusion (for example the ex-works price or the HS code of a material)."
+  ],
+  "Đạt": [
+    "Pass",
+    "Pass",
+    "Pass"
+  ],
+  "Không đạt": [
+    "Fail",
+    "Fail",
+    "Fail"
+  ],
+  "Chưa kết luận": [
+    "Inconclusive",
+    "Inconclusive",
+    "Inconclusive"
+  ],
+  "Chưa hỗ trợ": [
+    "Not supported",
+    "Not supported",
+    "Not supported"
+  ],
+  "Mã HS này nằm ngoài phạm vi dữ liệu của hệ thống. Điều đó không có nghĩa là hàng hóa không có quy tắc xuất xứ; vui lòng liên hệ để được tư vấn.": [
+    "This HS code is outside the system's data scope. That does not mean the goods have no origin rule; please contact us for advice.",
+    "This HS code is outside the system's data scope. That does not mean the goods have no origin rule; please contact us for advice.",
+    "This HS code is outside the system's data scope. That does not mean the goods have no origin rule; please contact us for advice."
+  ],
+  "Nguyên liệu không xuất xứ (NOM)": [
+    "Non-originating materials (NOM)",
+    "Non-originating materials (NOM)",
+    "Non-originating materials (NOM)"
+  ],
+  "Ngưỡng tối đa": [
+    "Maximum threshold",
+    "Maximum threshold",
+    "Maximum threshold"
+  ],
+  "Kết quả chỉ mang tính tham khảo. Cơ quan cấp chứng nhận xuất xứ chính thức là Bộ Công Thương.": [
+    "Results are indicative only. The official issuing authority for certificates of origin is the Ministry of Industry and Trade (Bộ Công Thương).",
+    "Results are indicative only. The official issuing authority for certificates of origin is the Ministry of Industry and Trade (Bộ Công Thương).",
+    "Results are indicative only. The official issuing authority for certificates of origin is the Ministry of Industry and Trade (Bộ Công Thương)."
+  ],
+  "Giá xuất xưởng phải là số dương, tối đa 2 chữ số thập phân (ví dụ 1000 hoặc 1000.50).": [
+    "The ex-works price must be a positive number with at most 2 decimal places (for example 1000 or 1000.50).",
+    "The ex-works price must be a positive number with at most 2 decimal places (for example 1000 or 1000.50).",
+    "The ex-works price must be a positive number with at most 2 decimal places (for example 1000 or 1000.50)."
+  ],
+  "Máy tính quy tắc xuất xứ EVFTA": [
+    "EVFTA rules of origin calculator",
+    "EVFTA rules of origin calculator",
+    "EVFTA rules of origin calculator"
+  ],
+  "Kiểm tra hàng Việt Nam xuất sang EU có đạt quy tắc xuất xứ hay không. Mọi số tiền dùng cùng một đơn vị tiền tệ.": [
+    "Check whether goods exported from Vietnam to the EU meet the rules of origin. All amounts use the same currency.",
+    "Check whether goods exported from Vietnam to the EU meet the rules of origin. All amounts use the same currency.",
+    "Check whether goods exported from Vietnam to the EU meet the rules of origin. All amounts use the same currency."
+  ],
+  "Giá xuất xưởng (EXW)": [
+    "Ex-works price (EXW)",
+    "Ex-works price (EXW)",
+    "Ex-works price (EXW)"
+  ],
+  "Nguyên liệu nhập khẩu": [
+    "Imported materials",
+    "Imported materials",
+    "Imported materials"
+  ],
+  "Chưa khai nguyên liệu": [
+    "Materials not declared",
+    "Materials not declared",
+    "Materials not declared"
+  ],
+  "Không có nguyên liệu nhập khẩu": [
+    "No imported materials",
+    "No imported materials",
+    "No imported materials"
+  ],
+  "Có nguyên liệu nhập khẩu (khai bên dưới)": [
+    "Imported materials (declare below)",
+    "Imported materials (declare below)",
+    "Imported materials (declare below)"
+  ],
+  "Nguyên liệu": [
+    "Material",
+    "Material",
+    "Material"
+  ],
+  "Nước xuất xứ (mã 2 chữ cái)": [
+    "Country of origin (2-letter code)",
+    "Country of origin (2-letter code)",
+    "Country of origin (2-letter code)"
+  ],
+  "Giá trị nguyên liệu": [
+    "Material value",
+    "Material value",
+    "Material value"
+  ],
+  "Mã HS nguyên liệu (nếu có)": [
+    "Material HS code (if known)",
+    "Material HS code (if known)",
+    "Material HS code (if known)"
+  ],
+  "Xóa nguyên liệu": [
+    "Remove material",
+    "Remove material",
+    "Remove material"
+  ],
+  "Thêm nguyên liệu": [
+    "Add material",
+    "Add material",
+    "Add material"
+  ],
+  "Đang kiểm tra...": [
+    "Checking...",
+    "Checking...",
+    "Checking..."
+  ],
+  "Kiểm tra xuất xứ": [
+    "Check origin",
+    "Check origin",
+    "Check origin"
   ]
 }

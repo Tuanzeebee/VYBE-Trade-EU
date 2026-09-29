@@ -996,6 +996,65 @@
         }
       }
     },
+    "/api/public/roo": {
+      "post": {
+        "tags": [
+          "compliance"
+        ],
+        "summary": "Calculate Roo",
+        "operationId": "calculate_roo_api_public_roo_post",
+        "parameters": [
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RooIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RooOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/health": {
       "get": {
         "summary": "Health",
@@ -1992,6 +2051,43 @@
         ],
         "title": "LoginIn"
       },
+      "MaterialIn": {
+        "properties": {
+          "origin_country": {
+            "type": "string",
+            "title": "Origin Country"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              }
+            ],
+            "title": "Value"
+          },
+          "hs_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hs Code"
+          }
+        },
+        "type": "object",
+        "required": [
+          "origin_country",
+          "value"
+        ],
+        "title": "MaterialIn"
+      },
       "MePatch": {
         "properties": {
           "preferred_language": {
@@ -2952,6 +3048,183 @@
           "accept_terms"
         ],
         "title": "RegisterIn"
+      },
+      "RooIn": {
+        "properties": {
+          "hs_code": {
+            "type": "string",
+            "maxLength": 32,
+            "title": "Hs Code"
+          },
+          "ex_works_value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ex Works Value"
+          },
+          "materials_declared": {
+            "type": "boolean",
+            "title": "Materials Declared"
+          },
+          "materials": {
+            "items": {
+              "$ref": "#/components/schemas/MaterialIn"
+            },
+            "type": "array",
+            "maxItems": 50,
+            "title": "Materials"
+          }
+        },
+        "type": "object",
+        "required": [
+          "hs_code",
+          "materials_declared"
+        ],
+        "title": "RooIn",
+        "description": "Xuất xứ hàng Việt Nam xuất sang EU. Mọi số tiền cùng một đơn vị tiền tệ, là CHUỖI JSON."
+      },
+      "RooOut": {
+        "properties": {
+          "check_id": {
+            "type": "string",
+            "title": "Check Id"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pass",
+              "fail",
+              "inconclusive",
+              "unsupported"
+            ],
+            "title": "Status"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "hs_code": {
+            "type": "string",
+            "title": "Hs Code"
+          },
+          "hs_formatted": {
+            "type": "string",
+            "title": "Hs Formatted"
+          },
+          "ex_works_value": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ex Works Value"
+          },
+          "nom_pct": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nom Pct"
+          },
+          "rvc_pct": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rvc Pct"
+          },
+          "rule_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rule Type"
+          },
+          "threshold_pct": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Threshold Pct"
+          },
+          "rule_text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rule Text"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          }
+        },
+        "type": "object",
+        "required": [
+          "check_id",
+          "status",
+          "reason",
+          "hs_code",
+          "hs_formatted",
+          "ex_works_value",
+          "nom_pct",
+          "rvc_pct",
+          "rule_type",
+          "threshold_pct",
+          "rule_text",
+          "source"
+        ],
+        "title": "RooOut"
       },
       "TariffIn": {
         "properties": {
