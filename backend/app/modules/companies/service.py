@@ -30,6 +30,7 @@ from app.modules.companies.schemas import (
     CompanyIn,
     CompanyOut,
     CompanyPatch,
+    CompanySummary,
     CompletenessOut,
     MissingOut,
     PresignIn,
@@ -153,6 +154,19 @@ async def list_expired_verified(session: AsyncSession, now: datetime) -> list[uu
         )
     )
     return list(rows)
+
+
+async def get_company_summaries(
+    session: AsyncSession, company_ids: list[uuid.UUID]
+) -> dict[uuid.UUID, CompanySummary]:
+    """Tên, MST, quốc gia của các công ty (admin xem hàng đợi)."""
+    if not company_ids:
+        return {}
+    rows = await session.scalars(select(Company).where(Company.id.in_(company_ids)))
+    return {
+        c.id: CompanySummary(id=c.id, legal_name=c.legal_name, tax_id=c.tax_id, country=c.country)
+        for c in rows
+    }
 
 
 async def refresh_completeness(session: AsyncSession, company_id: uuid.UUID) -> None:

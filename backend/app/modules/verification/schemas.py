@@ -63,3 +63,30 @@ class ChecklistItem(BaseModel):
     required: bool  # false = chỉ nhắc (vd EUDR cho cà phê), không tính vào EVFTA-verified
     note: str | None
     state: ChecklistStateLiteral
+
+
+RequestStatusLiteral = Literal["pending", "approved", "rejected", "info_requested"]
+
+
+class VerificationRequestOut(BaseModel):
+    id: uuid.UUID
+    company_id: uuid.UUID
+    status: RequestStatusLiteral
+    evidence_ids: list[uuid.UUID]
+    submitted_at: dt.datetime
+    reviewed_at: dt.datetime | None
+
+
+class QueueItem(BaseModel):
+    request_id: uuid.UUID
+    company_id: uuid.UUID
+    legal_name: str
+    tax_id: str | None
+    country: str
+    submitted_at: dt.datetime
+    evidences: list[EvidenceOut]  # xem bằng chứng ngay trên dòng
+
+
+class DecisionIn(BaseModel):
+    decision: Literal["approve", "reject", "request_info"]
+    reason: Annotated[str | None, Field(max_length=2000)] = None

@@ -293,6 +293,15 @@ class CompletenessOut(BaseModel):
     missing: list[MissingOut]
 
 
+class CompanySummary(BaseModel):
+    """Thông tin tối thiểu về công ty cho màn hình admin (hàng đợi xác minh)."""
+
+    id: uuid.UUID
+    legal_name: str
+    tax_id: str | None
+    country: str
+
+
 class VerificationState(BaseModel):
     """Trạng thái xác minh hiện tại của công ty — module verification đọc/ghi qua service."""
 

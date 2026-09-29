@@ -9,7 +9,7 @@ from app.core.db import get_session
 from app.core.storage import Storage, get_storage
 from app.modules.auth.schemas import CurrentUser
 from app.modules.auth.service import require_role
-from app.modules.verification import admin_service, evidence_service
+from app.modules.verification import admin_service, evidence_service, request_service
 from app.modules.verification.admin_schemas import (
     EvidenceReviewIn,
     EvidenceTypeIn,
@@ -20,10 +20,13 @@ from app.modules.verification.admin_schemas import (
 )
 from app.modules.verification.schemas import (
     ChecklistItem,
+    DecisionIn,
     EvidenceIn,
     EvidenceOut,
     EvidencePatch,
     EvidenceTypePublic,
+    QueueItem,
+    VerificationRequestOut,
 )
 
 router = APIRouter(tags=["verification"])
@@ -133,3 +136,26 @@ async def review_evidence(
     evidence_id: uuid.UUID, data: EvidenceReviewIn, admin: Admin, session: DB, storage: Store
 ) -> EvidenceOut:
     return await admin_service.review_evidence(session, admin, storage, evidence_id, data)
+
+
+# ── Yêu cầu xác minh (I1, I2) ────────────────────────────────────────────────
+@router.post("/api/exporter/verification-requests", status_code=201)
+async def submit_verification_request(user: Exporter, session: DB) -> VerificationRequestOut:
+    return await request_service.submit_request(session, user)
+
+
+@router.get("/api/exporter/verification-requests")
+async def my_verification_requests(user: Exporter, session: DB) -> list[VerificationRequestOut]:
+    return await request_service.list_my_requests(session, user)
+
+
+@router.get("/api/admin/verification-queue")
+async def verification_queue(_: Admin, session: DB, storage: Store) -> list[QueueItem]:
+    return await request_service.queue(session, storage)
+
+
+@router.post("/api/admin/verification-requests/{request_id}/decision")
+async def decide_verification_request(
+    request_id: uuid.UUID, data: DecisionIn, admin: Admin, session: DB
+) -> VerificationRequestOut:
+    return await request_service.decide_request(session, admin, request_id, data)

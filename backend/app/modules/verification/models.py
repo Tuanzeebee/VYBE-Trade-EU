@@ -3,6 +3,7 @@ import uuid
 from enum import StrEnum
 
 from sqlalchemy import (
+    ARRAY,
     Boolean,
     CheckConstraint,
     Date,
@@ -29,6 +30,7 @@ class Decision(StrEnum):
     expire = "expire"  # chỉ hệ thống (job hết hạn), không có reviewer
     level_up = "level_up"  # chỉ hệ thống: đủ bằng chứng bắt buộc còn hạn → evfta_verified
     level_down = "level_down"  # chỉ hệ thống: thiếu/hết hạn bằng chứng → basic
+    submit = "submit"  # chủ công ty nộp yêu cầu xác minh (unverified/rejected → pending)
 
 
 class VerificationDecision(Base):
@@ -39,7 +41,7 @@ class VerificationDecision(Base):
     __table_args__ = (
         # Từ chối / yêu cầu bổ sung bắt buộc có lý do (AGENTS.md, spec I2).
         CheckConstraint(
-            "decision IN ('approve', 'expire')"
+            "decision NOT IN ('reject', 'request_info')"
             " OR (reason IS NOT NULL AND length(btrim(reason)) > 0)",
             name="reason_required",
         ),
@@ -145,4 +147,35 @@ class RequiredEvidenceRule(Base):
     is_required: Mapped[bool] = mapped_column(Boolean, default=True, server_default=text("true"))
     note: Mapped[str | None] = mapped_column(Text)  # lời nhắc hiển thị (vd EUDR cho cà phê)
     reviewed_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id"))
+    reviewed_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class RequestStatus(StrEnum):
+    pending = "pending"
+    approved = "approved"
+    rejected = "rejected"
+    info_requested = "info_requested"
+
+
+class VerificationRequest(Base):
+    """Yêu cầu xác minh của công ty (I1). Trạng thái xác minh vẫn chỉ đổi qua decide()."""
+
+    __tablename__ = "verification_requests"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, primary_key=True, default=uuid.uuid4, server_default=text("gen_random_uuid()")
+    )
+    company_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("companies.id"), index=True)
+    submitted_evidence_ids: Mapped[list[uuid.UUID]] = mapped_column(
+        ARRAY(Uuid), default=list, server_default=text("'{}'::uuid[]")
+    )
+    status: Mapped[RequestStatus] = mapped_column(
+        Enum(RequestStatus, name="verification_request_status"),
+        default=RequestStatus.pending,
+        server_default="pending",
+        index=True,
+    )
+    submitted_at: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=text("clock_timestamp()")
+    )
     reviewed_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
