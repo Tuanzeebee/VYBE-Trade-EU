@@ -326,6 +326,16 @@ async def anonymize_owner(session: AsyncSession, user_id: uuid.UUID) -> None:
     await session.flush()
 
 
+async def get_sourcing_categories(session: AsyncSession, company_id: uuid.UUID) -> list[str]:
+    """Nhóm hàng quan tâm của buyer (đã khai khi tạo hồ sơ)."""
+    rows = await session.scalars(
+        select(CompanySourcingCategory.category)
+        .where(CompanySourcingCategory.company_id == company_id)
+        .order_by(CompanySourcingCategory.category)
+    )
+    return list(rows)
+
+
 async def get_owner_user_id(session: AsyncSession, company_id: uuid.UUID) -> uuid.UUID | None:
     """Chủ sở hữu (người dùng) của công ty — module khác dùng để gửi thông báo."""
     owner_id: uuid.UUID | None = await session.scalar(

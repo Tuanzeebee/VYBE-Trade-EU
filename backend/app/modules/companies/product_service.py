@@ -34,6 +34,7 @@ from app.modules.companies.schemas import (
     ProductOut,
     ProductPatch,
     PublicCompanyOut,
+    PublicCompanyRef,
     PublicProductOut,
 )
 from app.modules.companies.service import _own_company
@@ -328,6 +329,62 @@ async def get_product_names(
         select(Product.id, Product.name).where(Product.id.in_(product_ids))
     )
     return {row.id: row.name for row in rows}
+
+
+async def resolve_visible_company(
+    session: AsyncSession, slug: str, now: datetime
+) -> uuid.UUID | None:
+    """Id của công ty đang hiển thị công khai theo slug (cùng điều kiện với danh bạ) hoặc None."""
+    found: uuid.UUID | None = await session.scalar(
+        select(Company.id).where(Company.slug == slug, *verified_exporter_conditions(now))
+    )
+    return found
+
+
+def _ref(company: Company) -> PublicCompanyRef:
+    return PublicCompanyRef(
+        id=company.id,
+        slug=company.slug,
+        legal_name=company.legal_name,
+        country=company.country,
+        verified_at=company.verified_at,
+    )
+
+
+async def get_visible_refs(
+    session: AsyncSession, company_ids: list[uuid.UUID], now: datetime
+) -> dict[uuid.UUID, PublicCompanyRef]:
+    """Chỉ những công ty còn hiển thị công khai; công ty bị ẩn/hết hạn/xóa thì vắng mặt."""
+    if not company_ids:
+        return {}
+    rows = await session.scalars(
+        select(Company).where(Company.id.in_(company_ids), *verified_exporter_conditions(now))
+    )
+    return {c.id: _ref(c) for c in rows}
+
+
+async def list_recently_verified(
+    session: AsyncSession,
+    *,
+    industries: list[str],
+    since: datetime,
+    now: datetime,
+    limit: int = 5,
+) -> list[PublicCompanyRef]:
+    """Công ty xác minh từ `since` thuộc các nhóm hàng (industry_sector) đã cho, mới nhất trước."""
+    if not industries:
+        return []
+    rows = await session.scalars(
+        select(Company)
+        .where(
+            Company.industry_sector.in_(industries),
+            Company.verified_at >= since,
+            *verified_exporter_conditions(now),
+        )
+        .order_by(Company.verified_at.desc(), Company.id)
+        .limit(limit)
+    )
+    return [_ref(c) for c in rows]
 
 
 async def get_orderable_product(

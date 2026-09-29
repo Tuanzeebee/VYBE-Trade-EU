@@ -81,3 +81,12 @@ class RfqOut(BaseModel):
     status: RfqStatus
     created_at: dt.datetime
     updated_at: dt.datetime
+
+
+class RfqSummary(BaseModel):
+    """Tóm tắt RFQ của một công ty cho dashboard (G1, G2)."""
+
+    counts: dict[str, int]  # số RFQ theo từng trạng thái (đủ bốn trạng thái)
+    total: int
+    created_since: int  # số RFQ tạo từ mốc `since`
+    recent: list[RfqOut]

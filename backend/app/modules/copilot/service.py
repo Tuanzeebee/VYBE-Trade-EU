@@ -202,3 +202,16 @@ async def redact_user_contacts(session: AsyncSession, user_id: uuid.UUID) -> Non
         .where(EscalationTicket.user_id == user_id)
         .values(contact_email="redacted@invalid")
     )
+
+
+async def recent_questions(
+    session: AsyncSession, user_id: uuid.UUID, limit: int = 5
+) -> list[AiQuery]:
+    """Câu hỏi trợ lý gần đây của người dùng đăng nhập (câu hỏi đã che PII khi ghi nhật ký)."""
+    rows = await session.scalars(
+        select(AiQuery)
+        .where(AiQuery.user_id == user_id)
+        .order_by(AiQuery.created_at.desc(), AiQuery.id)
+        .limit(limit)
+    )
+    return list(rows)

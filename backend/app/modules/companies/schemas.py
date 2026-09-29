@@ -411,3 +411,13 @@ class OrderableProduct(BaseModel):
     name: str
     company_id: uuid.UUID
     unit: str | None
+
+
+class PublicCompanyRef(BaseModel):
+    """Tham chiếu tối thiểu tới một công ty đang hiển thị công khai (dashboard)."""
+
+    id: uuid.UUID
+    slug: str
+    legal_name: str
+    country: str
+    verified_at: datetime | None

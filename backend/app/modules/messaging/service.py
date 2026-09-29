@@ -17,7 +17,7 @@ from app.modules.companies import service as companies
 from app.modules.messaging import conversation_service
 from app.modules.messaging.events import RfqCreated, RfqStatusChanged
 from app.modules.messaging.models import Rfq, RfqStatus
-from app.modules.messaging.schemas import RfqIn, RfqOut
+from app.modules.messaging.schemas import RfqIn, RfqOut, RfqSummary
 
 MAX_HORIZON_DAYS = 5 * 366  # ngày cần hàng không quá xa (chặn nhập nhầm năm)
 
@@ -207,3 +207,35 @@ async def set_status(
             "invalid_status_transition", f"Cannot change status from {rfq.status} to {new}", 409
         )
     return await _change_status(session, rfq, new)
+
+
+async def summarize_rfqs(
+    session: AsyncSession, user: CurrentUser, *, since: dt.datetime, limit: int = 3
+) -> RfqSummary:
+    """Buyer: RFQ đã gửi; exporter: RFQ đã nhận. Chưa có công ty → tóm tắt rỗng."""
+    empty = {status.value: 0 for status in RfqStatus}
+    company_id = await companies.get_company_id(session, user.id)
+    if company_id is None:
+        return RfqSummary(counts=empty, total=0, created_since=0, recent=[])
+    column = Rfq.buyer_company_id if user.role == "buyer" else Rfq.exporter_company_id
+    counted = await session.execute(
+        select(Rfq.status, func.count()).where(column == company_id).group_by(Rfq.status)
+    )
+    counts = {**empty, **{status.value: n for status, n in counted}}
+    created_since = await session.scalar(
+        select(func.count()).select_from(Rfq).where(column == company_id, Rfq.created_at >= since)
+    )
+    rows = (
+        await session.scalars(
+            select(Rfq)
+            .where(column == company_id)
+            .order_by(Rfq.created_at.desc(), Rfq.id)
+            .limit(limit)
+        )
+    ).all()
+    return RfqSummary(
+        counts=counts,
+        total=sum(counts.values()),
+        created_since=created_since or 0,
+        recent=await _to_out(session, list(rows)),
+    )

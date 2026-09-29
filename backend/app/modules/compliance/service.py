@@ -8,7 +8,7 @@ from collections.abc import AsyncIterator
 from decimal import Decimal
 from typing import Any
 
-from sqlalchemy import Select, or_, select
+from sqlalchemy import Select, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.audit import record
@@ -291,3 +291,18 @@ async def calculate_roo(session: AsyncSession, data: RooIn, user: CurrentUser | 
         rule_text=rule.rule_text if rule is not None else None,
         source=rule.source if rule is not None else None,
     )
+
+
+async def sum_tariff_savings(session: AsyncSession, company_id: uuid.UUID) -> tuple[Decimal, int]:
+    """(tổng tiền tiết kiệm EUR, số lần chạy) từ các lần chạy máy tính thuế THÀNH CÔNG của công ty.
+    needs_review/unsupported không có con số nên không góp vào tổng (G1)."""
+    row = (
+        await session.execute(
+            select(func.coalesce(func.sum(ComplianceCheck.savings_amount), 0), func.count()).where(
+                ComplianceCheck.company_id == company_id,
+                ComplianceCheck.check_type == CheckType.tariff,
+                ComplianceCheck.status == "ok",
+            )
+        )
+    ).one()
+    return row[0] or Decimal(0), int(row[1])
