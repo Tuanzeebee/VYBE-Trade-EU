@@ -145,8 +145,13 @@ const B3_STRINGS = [
   'Loại hình doanh nghiệp'
 ];
 
-describe('catalog.json có bản tiếng Anh cho chuỗi A1, B1, B2, B3, B4, B5', () => {
-  it.each([...A1_STRINGS, ...B1_STRINGS, ...B2_STRINGS, ...B3_STRINGS, ...B4_STRINGS, ...B5_STRINGS])('%s', (vi) => {
+const A2_STRINGS = [
+  'Giấy phép và chứng nhận chưa được lưu lên hệ thống ở phiên bản này; phần tải lên thật sẽ được bổ sung sau. Bạn vẫn có thể hoàn tất hồ sơ với công ty và sản phẩm.',
+  'Không thể lưu sản phẩm. Vui lòng thử lại.'
+];
+
+describe('catalog.json có bản tiếng Anh cho chuỗi A1, B1, B2, B3, B4, B5, A2', () => {
+  it.each([...A1_STRINGS, ...B1_STRINGS, ...B2_STRINGS, ...B3_STRINGS, ...B4_STRINGS, ...B5_STRINGS, ...A2_STRINGS])('%s', (vi) => {
     const en = translateText(vi, 'en');
     expect(en).not.toBe(vi);
     expect(en.trim()).not.toBe('');

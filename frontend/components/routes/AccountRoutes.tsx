@@ -120,6 +120,8 @@ function OnboardingContent({ user }: { user: DemoUser }) {
       initialStep={1}
       initialCompany={data.company ?? undefined}
       initialProducts={data.products}
+      onSaveCompany={async (profile) => void (await saveMyCompany(profileToCompany(profile)))}
+      onSaveProducts={async (products) => void (await syncProducts(products))}
       onComplete={onComplete}
       onLogout={handleLogout}
       onNavigateHome={() => navigate('home')}
@@ -132,11 +134,35 @@ export function OnboardingRoute() {
   return <LegacyGate page="onboarding">{(user) => user && <OnboardingContent user={user} />}</LegacyGate>;
 }
 
+/**
+ * Tài khoản exporter chưa có công ty trên server luôn được đưa tới form hồ sơ (A2).
+ * undefined = đang kiểm tra; trang hồ sơ không dùng hook này nên không tạo vòng chuyển hướng.
+ */
+function useHasCompany(): boolean | undefined {
+  const [has, setHas] = useState<boolean | undefined>(undefined);
+  useEffect(() => {
+    let active = true;
+    getMyCompany().then((company) => {
+      if (active) setHas(company !== null);
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
+  return has;
+}
+
 function WorkspaceContent({ user }: { user: DemoUser }) {
   const navigate = useLegacyNavigate(user);
   const handleLogout = useLogout();
+  const router = useRouter();
+  const hasCompany = useHasCompany();
+  useEffect(() => {
+    if (hasCompany === false && user.role === 'seller') router.replace(hrefFor('seller-profile', { user, step: 1 }));
+  }, [hasCompany, user, router]);
   const tab = useSearchParams().get('tab');
   const initialTab: WorkspaceTab = WORKSPACE_TABS.includes(tab as WorkspaceTab) ? (tab as WorkspaceTab) : 'profile';
+  if (hasCompany !== true && user.role === 'seller') return null;
   return (
     <SellerWorkspace
       key={`${user.id}-${initialTab}`}
@@ -174,6 +200,8 @@ function SellerProfileContent({ user }: { user: DemoUser }) {
       initialStep={initialStep}
       initialCompany={data.company ?? undefined}
       initialProducts={data.products}
+      onSaveCompany={async (profile) => void (await saveMyCompany(profileToCompany(profile)))}
+      onSaveProducts={async (products) => void (await syncProducts(products))}
       onComplete={onComplete}
       onLogout={handleLogout}
       onNavigateHome={() => navigate('home')}

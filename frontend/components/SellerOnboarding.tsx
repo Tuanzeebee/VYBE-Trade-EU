@@ -43,6 +43,10 @@ interface SellerOnboardingProps {
   account?: DemoUser;
   initialStep?: number;
   onComplete?: (profile: Record<string, string>, products: ProductDraft[]) => void | Promise<void>;
+  /** Lưu nháp công ty lên server khi rời bước 1 (A2). Lỗi → ở lại bước 1. */
+  onSaveCompany?: (profile: Record<string, string>) => Promise<void>;
+  /** Lưu nháp sản phẩm lên server khi rời bước 2 (A2). Lỗi → ở lại bước 2. */
+  onSaveProducts?: (products: ProductDraft[]) => Promise<void>;
   /** Giá trị ban đầu của bước 1 lấy từ server (trang sửa hồ sơ). */
   initialCompany?: Record<string, string>;
   /** Sản phẩm đã lưu trên server (B5), đổi sang bản nháp. */
@@ -64,7 +68,7 @@ interface CertificateItem {
 }
 
 
-export default function SellerOnboarding({ account, initialStep = 2, initialCompany, initialProducts, onComplete, onLogout, onNavigateHome, onNavigateWorkspace }: SellerOnboardingProps) {
+export default function SellerOnboarding({ account, initialStep = 2, initialCompany, initialProducts, onComplete, onSaveCompany, onSaveProducts, onLogout, onNavigateHome, onNavigateWorkspace }: SellerOnboardingProps) {
   const { tr, language } = useLanguage();
   const [currentStep, setCurrentStep] = useState<number>(initialStep);
   const [submitError, setSubmitError] = useState('');
@@ -209,7 +213,7 @@ export default function SellerOnboarding({ account, initialStep = 2, initialComp
     setShowAddCertForm(false);
   };
 
-  const goToLicenses = () => {
+  const goToLicenses = async () => {
     if (products.length === 0) { setProductError('Vui lòng thêm ít nhất một sản phẩm.'); return; }
     try {
       products.forEach((p) => draftToBody(p));
@@ -218,22 +222,39 @@ export default function SellerOnboarding({ account, initialStep = 2, initialComp
       return;
     }
     setProductError('');
+    try {
+      await onSaveProducts?.(products);
+    } catch (cause) {
+      setProductError(cause instanceof Error ? cause.message : 'Không thể lưu sản phẩm. Vui lòng thử lại.');
+      return;
+    }
     setCurrentStep(3);
   };
+
+  const buildProfile = (): Record<string, string> => ({ ...formData, country: 'Việt Nam',
+    interest: [...new Set(products.map((p) => p.hs?.formatted ?? ''))].filter(Boolean).join(', '),
+    products: JSON.stringify(products.map((p) => ({ name: p.name }))),
+    certificates: JSON.stringify(certificates), pucCode, phcCode, agreeCommitment: String(agreeCommitment) });
 
   const finish = async () => {
     setSubmitError('');
     if (!onComplete) { setSubmittedSuccess(true); return; }
     try {
-      await onComplete({ ...formData, country: 'Việt Nam',
-        interest: [...new Set(products.map((p) => p.hs?.formatted ?? ''))].filter(Boolean).join(', '),
-        products: JSON.stringify(products.map((p) => ({ name: p.name }))),
-        certificates: JSON.stringify(certificates), pucCode, phcCode, agreeCommitment: String(agreeCommitment) }, products);
+      await onComplete(buildProfile(), products);
     } catch (cause) { setSubmitError(cause instanceof Error ? cause.message : 'Không thể lưu hồ sơ. Vui lòng thử lại.'); }
   };
 
-  const handleNextStep = (e: React.FormEvent) => {
+  const handleNextStep = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (currentStep === 1 && onSaveCompany) {
+      setSubmitError('');
+      try {
+        await onSaveCompany(buildProfile());
+      } catch (cause) {
+        setSubmitError(cause instanceof Error ? cause.message : 'Không thể lưu hồ sơ. Vui lòng thử lại.');
+        return;
+      }
+    }
     if (currentStep < 4) {
       setCurrentStep(currentStep + 1);
     } else {
@@ -768,6 +789,7 @@ export default function SellerOnboarding({ account, initialStep = 2, initialComp
                     </div>
                   </fieldset>
 
+                  {submitError && <p role="alert" className="rounded-xl bg-rose-50 p-3 text-sm text-rose-700">{tr(submitError)}</p>}
                   {/* Submit Button Row (Aligned to Bottom Right) */}
                   <div className="pt-3 flex justify-end">
                     <button 
@@ -827,6 +849,8 @@ export default function SellerOnboarding({ account, initialStep = 2, initialComp
               {/* Step 3 Form Body (Tải lên giấy phép & chứng nhận) */}
               {currentStep === 3 && (
                 <div className="space-y-6">
+                  <p role="note" className="rounded-xl bg-amber-50 p-3 text-xs sm:text-sm text-amber-800">
+                    {tr("Giấy phép và chứng nhận chưa được lưu lên hệ thống ở phiên bản này; phần tải lên thật sẽ được bổ sung sau. Bạn vẫn có thể hoàn tất hồ sơ với công ty và sản phẩm.")}</p>
                   
                   {/* Status Banner: Estimated Verification Level */}
                   <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-[#083832]/10 via-[#0d9488]/10 to-slate-50 border border-[#0d9488]/20 flex items-start gap-3.5">

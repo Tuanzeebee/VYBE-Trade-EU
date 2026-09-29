@@ -95,11 +95,11 @@ describe('SellerOnboarding bước 2 — sản phẩm (B5)', () => {
     expect(screen.getByRole('alert')).toHaveTextContent('Giá thấp nhất không được lớn hơn giá cao nhất.');
   });
 
-  it('sản phẩm hợp lệ thì sang bước 3, lỗi cũ được xóa', () => {
+  it('sản phẩm hợp lệ thì sang bước 3, lỗi cũ được xóa', async () => {
     renderOnboarding({ initialProducts: [valid()] });
     nextFromStepTwo();
+    expect(await screen.findByRole('button', { name: /Tiếp tục \(Xem lại hồ sơ\)/ })).toBeInTheDocument();
     expect(screen.queryByRole('alert')).not.toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Tiếp tục \(Xem lại hồ sơ\)/ })).toBeInTheDocument();
   });
 });
 
@@ -122,10 +122,10 @@ describe('SellerOnboarding bước 1 — thị trường xuất khẩu cấp cô
 });
 
 describe('SellerOnboarding hoàn tất — gửi hồ sơ và danh sách sản phẩm (B5)', () => {
-  const walkToFinish = () => {
+  const walkToFinish = async () => {
     fireEvent.submit(screen.getByRole('button', { name: /^Tiếp tục$/ }).closest('form') as HTMLFormElement);
     nextFromStepTwo();
-    fireEvent.click(screen.getByRole('button', { name: /Tiếp tục \(Xem lại hồ sơ\)/ }));
+    fireEvent.click(await screen.findByRole('button', { name: /Tiếp tục \(Xem lại hồ sơ\)/ }));
   };
 
   it('onComplete nhận hồ sơ (thị trường theo mã, không còn "market" cũ) và danh sách bản nháp', async () => {
@@ -137,7 +137,7 @@ describe('SellerOnboarding hoàn tất — gửi hồ sơ và danh sách sản p
       initialProducts: products,
       onComplete,
     });
-    walkToFinish();
+    await walkToFinish();
     expect(screen.getAllByText(/Gạo thơm/).length).toBeGreaterThan(0); // trang xem lại hiện sản phẩm mới
     expect(screen.getAllByText(/1006\.30/).length).toBeGreaterThan(0);
     fireEvent.click(screen.getByRole('button', { name: /Hoàn tất & Gửi hồ sơ/ }));
@@ -153,7 +153,7 @@ describe('SellerOnboarding hoàn tất — gửi hồ sơ và danh sách sản p
   it('lỗi từ server hiện ngay trên form, người dùng không mất dữ liệu', async () => {
     const onComplete = vi.fn().mockRejectedValue(new Error('Sản phẩm "Gạo thơm" chưa hợp lệ. Vui lòng kiểm tra mã HS, giá và ảnh.'));
     renderOnboarding({ initialStep: 1, initialCompany: { taxCode: '0312345678' }, initialProducts: [valid()], onComplete });
-    walkToFinish();
+    await walkToFinish();
     fireEvent.click(screen.getByRole('button', { name: /Hoàn tất & Gửi hồ sơ/ }));
     expect(await screen.findByRole('alert')).toHaveTextContent('Sản phẩm "Gạo thơm" chưa hợp lệ');
     expect(screen.getByRole('button', { name: /Hoàn tất & Gửi hồ sơ/ })).toBeEnabled();

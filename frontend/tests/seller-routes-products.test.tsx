@@ -93,9 +93,10 @@ function renderRoute(node: React.ReactNode, path: string) {
 const finishFromStepOne = async () => {
   await screen.findByDisplayValue('Công ty B');
   fireEvent.submit(screen.getByRole('button', { name: /^Tiếp tục$/ }).closest('form') as HTMLFormElement);
-  fireEvent.click(screen.getByRole('button', { name: /Tiếp tục \(Tải lên giấy phép\)/ }));
-  fireEvent.click(screen.getByRole('button', { name: /Tiếp tục \(Xem lại hồ sơ\)/ }));
-  fireEvent.click(screen.getByRole('button', { name: /Hoàn tất & Gửi hồ sơ/ }));
+  // Mỗi bước lưu nháp lên server (A2) rồi mới sang bước sau.
+  fireEvent.click(await screen.findByRole('button', { name: /Tiếp tục \(Tải lên giấy phép\)/ }));
+  fireEvent.click(await screen.findByRole('button', { name: /Tiếp tục \(Xem lại hồ sơ\)/ }));
+  fireEvent.click(await screen.findByRole('button', { name: /Hoàn tất & Gửi hồ sơ/ }));
 };
 
 describe('route hồ sơ exporter dùng sản phẩm trên server (B5)', () => {
@@ -140,20 +141,22 @@ describe('route hồ sơ exporter dùng sản phẩm trên server (B5)', () => {
     renderRoute(<OnboardingRoute />, '/exporter/onboarding');
     await screen.findByDisplayValue('Công ty B');
     fireEvent.submit(screen.getByRole('button', { name: /^Tiếp tục$/ }).closest('form') as HTMLFormElement);
-    fireEvent.click(screen.getAllByRole('button', { name: /Xóa sản phẩm/ })[1]);
+    fireEvent.click((await screen.findAllByRole('button', { name: /Xóa sản phẩm/ }))[1]);
     fireEvent.click(screen.getByRole('button', { name: /Tiếp tục \(Tải lên giấy phép\)/ }));
-    fireEvent.click(screen.getByRole('button', { name: /Tiếp tục \(Xem lại hồ sơ\)/ }));
-    fireEvent.click(screen.getByRole('button', { name: /Hoàn tất & Gửi hồ sơ/ }));
+    fireEvent.click(await screen.findByRole('button', { name: /Tiếp tục \(Xem lại hồ sơ\)/ }));
+    fireEvent.click(await screen.findByRole('button', { name: /Hoàn tất & Gửi hồ sơ/ }));
     await waitFor(() => expect(calls).toContain('DELETE /api/exporter/products/p2'));
     expect(calls).toContain('PATCH /api/exporter/products/p1');
   });
 
-  it('server từ chối sản phẩm (422): báo lỗi có tên sản phẩm, ở lại form, không đánh dấu hoàn tất', async () => {
+  it('server từ chối sản phẩm (422): báo lỗi có tên sản phẩm ngay ở bước 2, không sang bước sau, không đánh dấu hoàn tất', async () => {
     serve({ products: [product('p1', 'Gạo thơm Jasmine')], failProduct: 422 });
     renderRoute(<OnboardingRoute />, '/exporter/onboarding');
-    await finishFromStepOne();
+    await screen.findByDisplayValue('Công ty B');
+    fireEvent.submit(screen.getByRole('button', { name: /^Tiếp tục$/ }).closest('form') as HTMLFormElement);
+    fireEvent.click(await screen.findByRole('button', { name: /Tiếp tục \(Tải lên giấy phép\)/ }));
     expect(await screen.findByRole('alert')).toHaveTextContent('Sản phẩm "Gạo thơm Jasmine" chưa hợp lệ');
-    expect(screen.getByRole('button', { name: /Hoàn tất & Gửi hồ sơ/ })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Tiếp tục \(Xem lại hồ sơ\)/ })).not.toBeInTheDocument();
     expect(localStorage.getItem('vybe_profiles_v2') ?? '').not.toContain('onboardingCompleted');
   });
 });

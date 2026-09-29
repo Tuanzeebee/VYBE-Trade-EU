@@ -8393,5 +8393,15 @@
     "Company size",
     "Company size",
     "Company size"
+  ],
+  "Giấy phép và chứng nhận chưa được lưu lên hệ thống ở phiên bản này; phần tải lên thật sẽ được bổ sung sau. Bạn vẫn có thể hoàn tất hồ sơ với công ty và sản phẩm.": [
+    "Licenses and certificates are not saved to the system in this version; real uploads will be added later. You can still complete your profile with the company and products.",
+    "Licenses and certificates are not saved to the system in this version; real uploads will be added later. You can still complete your profile with the company and products.",
+    "Licenses and certificates are not saved to the system in this version; real uploads will be added later. You can still complete your profile with the company and products."
+  ],
+  "Không thể lưu sản phẩm. Vui lòng thử lại.": [
+    "Unable to save products. Please try again.",
+    "Unable to save products. Please try again.",
+    "Unable to save products. Please try again."
   ]
 }
