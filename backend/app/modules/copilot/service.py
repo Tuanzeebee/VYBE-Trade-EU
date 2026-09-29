@@ -65,8 +65,11 @@ async def ask(
     chat: ChatModel,
     data: AskIn,
     user: CurrentUser | None,
+    persist: bool = True,
 ) -> AskOut:
-    """Trả lời một câu hỏi và ghi đúng một dòng ai_queries (kể cả ngoài phạm vi và lỗi LLM)."""
+    """Trả lời một câu hỏi và ghi đúng một dòng ai_queries (kể cả ngoài phạm vi và lỗi LLM).
+
+    persist=False chỉ dành cho chạy eval; mọi câu hỏi của người dùng luôn ghi."""
     started = time.perf_counter()
     question = redact_pii(data.question.strip())
     hs_code = catalog.normalize_code(data.hs_code) if data.hs_code else None
@@ -122,8 +125,11 @@ async def ask(
         model_name=chat.name,
         latency_ms=int((time.perf_counter() - started) * 1000),
     )
-    session.add(row)
-    await session.commit()
+    if persist:
+        session.add(row)
+        await session.commit()
+    else:
+        row.id = uuid.uuid4()  # chạy eval: không ghi nhật ký người dùng
     return AskOut(
         query_id=row.id,
         answer=answer_text,
