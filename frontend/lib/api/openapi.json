@@ -2933,6 +2933,216 @@
         }
       }
     },
+    "/api/public/companies/{slug}/view": {
+      "post": {
+        "tags": [
+          "dashboard"
+        ],
+        "summary": "Record View",
+        "operationId": "record_view_api_public_companies__slug__view_post",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Slug"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/exporter/dashboard": {
+      "get": {
+        "tags": [
+          "dashboard"
+        ],
+        "summary": "Exporter Dashboard",
+        "operationId": "exporter_dashboard_api_exporter_dashboard_get",
+        "parameters": [
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExporterDashboard"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/buyer/dashboard": {
+      "get": {
+        "tags": [
+          "dashboard"
+        ],
+        "summary": "Buyer Dashboard",
+        "operationId": "buyer_dashboard_api_buyer_dashboard_get",
+        "parameters": [
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BuyerDashboard"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/stats/return-visits": {
+      "get": {
+        "tags": [
+          "dashboard"
+        ],
+        "summary": "Return Visits",
+        "operationId": "return_visits_api_admin_stats_return_visits_get",
+        "parameters": [
+          {
+            "name": "weeks",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 52,
+              "minimum": 1,
+              "default": 8,
+              "title": "Weeks"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReturnVisitStats"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/public/suppliers": {
       "get": {
         "tags": [
@@ -5693,6 +5903,30 @@
         ],
         "title": "AuditLogOut"
       },
+      "BuyerDashboard": {
+        "properties": {
+          "saved_searches": {
+            "$ref": "#/components/schemas/SavedSearchTile"
+          },
+          "rfqs_sent": {
+            "$ref": "#/components/schemas/RfqTile"
+          },
+          "recently_viewed": {
+            "$ref": "#/components/schemas/SupplierListTile"
+          },
+          "new_verified": {
+            "$ref": "#/components/schemas/SupplierListTile"
+          }
+        },
+        "type": "object",
+        "required": [
+          "saved_searches",
+          "rfqs_sent",
+          "recently_viewed",
+          "new_verified"
+        ],
+        "title": "BuyerDashboard"
+      },
       "ChecklistItem": {
         "properties": {
           "type_code": {
@@ -6618,6 +6852,27 @@
         "title": "CompanyPatch",
         "description": "Chỉ các trường gửi lên mới được sửa; danh sách gửi lên thay thế danh sách cũ."
       },
+      "CompletenessData": {
+        "properties": {
+          "score": {
+            "type": "string",
+            "title": "Score"
+          },
+          "missing": {
+            "items": {
+              "$ref": "#/components/schemas/MissingItem"
+            },
+            "type": "array",
+            "title": "Missing"
+          }
+        },
+        "type": "object",
+        "required": [
+          "score",
+          "missing"
+        ],
+        "title": "CompletenessData"
+      },
       "CompletenessOut": {
         "properties": {
           "score": {
@@ -6640,6 +6895,36 @@
         ],
         "title": "CompletenessOut",
         "description": "Chỉ điểm và danh sách còn thiếu — cố ý KHÔNG chứa trạng thái xác minh (khái niệm khác)."
+      },
+      "CompletenessTile": {
+        "properties": {
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CompletenessData"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "empty_hint_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Empty Hint Key"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "title": "CompletenessTile"
       },
       "ConversationOut": {
         "properties": {
@@ -6693,6 +6978,33 @@
           "unread_count"
         ],
         "title": "ConversationOut"
+      },
+      "CopilotTile": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/QuestionBrief"
+            },
+            "type": "array",
+            "title": "Data"
+          },
+          "empty_hint_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Empty Hint Key"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "title": "CopilotTile"
       },
       "CorpusDocumentOut": {
         "properties": {
@@ -7611,6 +7923,38 @@
         "title": "EvidenceTypePublic",
         "description": "Loại bằng chứng exporter được nộp (đã duyệt, đang bật) — không lộ thông tin duyệt."
       },
+      "ExporterDashboard": {
+        "properties": {
+          "completeness": {
+            "$ref": "#/components/schemas/CompletenessTile"
+          },
+          "profile_views": {
+            "$ref": "#/components/schemas/ProfileViewsTile"
+          },
+          "rfqs": {
+            "$ref": "#/components/schemas/RfqTile"
+          },
+          "verification": {
+            "$ref": "#/components/schemas/VerificationTile"
+          },
+          "tariff_savings": {
+            "$ref": "#/components/schemas/SavingsTile"
+          },
+          "copilot": {
+            "$ref": "#/components/schemas/CopilotTile"
+          }
+        },
+        "type": "object",
+        "required": [
+          "completeness",
+          "profile_views",
+          "rfqs",
+          "verification",
+          "tariff_savings",
+          "copilot"
+        ],
+        "title": "ExporterDashboard"
+      },
       "FeedbackIn": {
         "properties": {
           "was_helpful": {
@@ -7917,6 +8261,24 @@
           "read_at"
         ],
         "title": "MessageOut"
+      },
+      "MissingItem": {
+        "properties": {
+          "field": {
+            "type": "string",
+            "title": "Field"
+          },
+          "group": {
+            "type": "string",
+            "title": "Group"
+          }
+        },
+        "type": "object",
+        "required": [
+          "field",
+          "group"
+        ],
+        "title": "MissingItem"
       },
       "MissingOut": {
         "properties": {
@@ -8567,6 +8929,54 @@
         "title": "ProductPatch",
         "description": "Chỉ các trường gửi lên mới được sửa; image_keys gửi lên thay thế toàn bộ ảnh."
       },
+      "ProfileViewsData": {
+        "properties": {
+          "this_week": {
+            "type": "integer",
+            "title": "This Week"
+          },
+          "previous_week": {
+            "type": "integer",
+            "title": "Previous Week"
+          }
+        },
+        "type": "object",
+        "required": [
+          "this_week",
+          "previous_week"
+        ],
+        "title": "ProfileViewsData"
+      },
+      "ProfileViewsTile": {
+        "properties": {
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ProfileViewsData"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "empty_hint_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Empty Hint Key"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "title": "ProfileViewsTile"
+      },
       "PublicCertificateOut": {
         "properties": {
           "code": {
@@ -8873,6 +9283,36 @@
         "title": "PublicProductOut",
         "description": "Sản phẩm trên hồ sơ công khai — không lộ trạng thái duyệt hay khóa ảnh. `id` cần để buyer\ngắn RFQ (F1); id sản phẩm không nhạy cảm, còn id công ty vẫn không lộ."
       },
+      "QuestionBrief": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "question": {
+            "type": "string",
+            "title": "Question"
+          },
+          "confidence": {
+            "type": "string",
+            "title": "Confidence"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "question",
+          "confidence",
+          "created_at"
+        ],
+        "title": "QuestionBrief"
+      },
       "QueueItem": {
         "properties": {
           "request_id": {
@@ -8985,6 +9425,74 @@
           "accept_terms"
         ],
         "title": "RegisterIn"
+      },
+      "ReturnVisitStats": {
+        "properties": {
+          "weeks": {
+            "items": {
+              "$ref": "#/components/schemas/WeekStat"
+            },
+            "type": "array",
+            "title": "Weeks"
+          },
+          "overall_ratio": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Overall Ratio"
+          },
+          "target_ratio": {
+            "type": "string",
+            "title": "Target Ratio"
+          }
+        },
+        "type": "object",
+        "required": [
+          "weeks",
+          "overall_ratio",
+          "target_ratio"
+        ],
+        "title": "ReturnVisitStats"
+      },
+      "RfqBrief": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "counterpart_name": {
+            "type": "string",
+            "title": "Counterpart Name"
+          },
+          "product_name": {
+            "type": "string",
+            "title": "Product Name"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "counterpart_name",
+          "product_name",
+          "status",
+          "created_at"
+        ],
+        "title": "RfqBrief"
       },
       "RfqIn": {
         "properties": {
@@ -9233,6 +9741,70 @@
           "status"
         ],
         "title": "RfqStatusIn"
+      },
+      "RfqTile": {
+        "properties": {
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RfqTileData"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "empty_hint_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Empty Hint Key"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "title": "RfqTile"
+      },
+      "RfqTileData": {
+        "properties": {
+          "counts": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Counts"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "new_this_week": {
+            "type": "integer",
+            "title": "New This Week"
+          },
+          "recent": {
+            "items": {
+              "$ref": "#/components/schemas/RfqBrief"
+            },
+            "type": "array",
+            "title": "Recent"
+          }
+        },
+        "type": "object",
+        "required": [
+          "counts",
+          "total",
+          "new_this_week",
+          "recent"
+        ],
+        "title": "RfqTileData"
       },
       "RooIn": {
         "properties": {
@@ -9816,6 +10388,82 @@
         ],
         "title": "RuleType"
       },
+      "SavedSearchTile": {
+        "properties": {
+          "data": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Data"
+          },
+          "empty_hint_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Empty Hint Key"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "title": "SavedSearchTile",
+        "description": "Tìm kiếm đã lưu là P1 (K1); chưa có thì ô hướng dẫn thay vì để trống."
+      },
+      "SavingsData": {
+        "properties": {
+          "total_eur": {
+            "type": "string",
+            "title": "Total Eur"
+          },
+          "runs": {
+            "type": "integer",
+            "title": "Runs"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total_eur",
+          "runs"
+        ],
+        "title": "SavingsData"
+      },
+      "SavingsTile": {
+        "properties": {
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SavingsData"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "empty_hint_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Empty Hint Key"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "title": "SavingsTile"
+      },
       "StatsOut": {
         "properties": {
           "verified_count": {
@@ -9851,6 +10499,42 @@
         ],
         "title": "StatsOut",
         "description": "Số liệu dashboard nội bộ."
+      },
+      "SupplierBrief": {
+        "properties": {
+          "slug": {
+            "type": "string",
+            "title": "Slug"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "country": {
+            "type": "string",
+            "title": "Country"
+          },
+          "at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "slug",
+          "name",
+          "country",
+          "at"
+        ],
+        "title": "SupplierBrief"
       },
       "SupplierCardOut": {
         "properties": {
@@ -9953,6 +10637,33 @@
         ],
         "title": "SupplierCardOut",
         "description": "Thẻ nhà cung cấp trong danh bạ (E3): tên, huy hiệu, nhóm hàng, quốc gia, mô tả ngắn."
+      },
+      "SupplierListTile": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/SupplierBrief"
+            },
+            "type": "array",
+            "title": "Data"
+          },
+          "empty_hint_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Empty Hint Key"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "title": "SupplierListTile"
       },
       "SupplierPage": {
         "properties": {
@@ -10730,6 +11441,49 @@
         ],
         "title": "ValidationError"
       },
+      "VerificationData": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "level": {
+            "type": "string",
+            "title": "Level"
+          },
+          "expires_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expires At"
+          },
+          "days_left": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Days Left"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "level",
+          "expires_at",
+          "days_left"
+        ],
+        "title": "VerificationData"
+      },
       "VerificationRequestOut": {
         "properties": {
           "id": {
@@ -10800,6 +11554,72 @@
           "decision_reason"
         ],
         "title": "VerificationRequestOut"
+      },
+      "VerificationTile": {
+        "properties": {
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/VerificationData"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "empty_hint_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Empty Hint Key"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "title": "VerificationTile"
+      },
+      "WeekStat": {
+        "properties": {
+          "week_start": {
+            "type": "string",
+            "format": "date",
+            "title": "Week Start"
+          },
+          "return_visits": {
+            "type": "integer",
+            "title": "Return Visits"
+          },
+          "with_new_info": {
+            "type": "integer",
+            "title": "With New Info"
+          },
+          "ratio": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ratio"
+          }
+        },
+        "type": "object",
+        "required": [
+          "week_start",
+          "return_visits",
+          "with_new_info",
+          "ratio"
+        ],
+        "title": "WeekStat"
       }
     }
   }

@@ -58,6 +58,7 @@ import VerificationPanel from './VerificationPanel';
 import { useLanguage } from "../context/LanguageContext";
 import RfqInbox from './RfqInbox';
 import NotificationsPanel from './NotificationsPanel';
+import ExporterDashboard from './ExporterDashboard';
 
 export interface WorkspaceCertificateItem {
   id: string;
@@ -1027,50 +1028,7 @@ export default function SellerWorkspace({
           {/* -----------------------------------------------------------------------
               TAB: TỔNG QUAN (OVERVIEW / METRICS)
              ----------------------------------------------------------------------- */}
-          {activeTab === 'overview' && (
-            <div className="space-y-6 text-left animate-in fade-in duration-200">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs">
-                  <span className="text-xs text-slate-500 font-medium">{tr("Lượt xem hồ sơ từ Buyer")}</span>
-                  <p className="text-2xl font-bold text-slate-900 mt-1">{tr("1,420")}</p>
-                  <span className="text-[11px] text-emerald-600 font-semibold">{tr("↑ +18% so với tháng trước")}</span>
-                </div>
-                <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs">
-                  <span className="text-xs text-slate-500 font-medium">{tr("Yêu cầu báo giá (RFQ)")}</span>
-                  <p className="text-2xl font-bold text-slate-900 mt-1">{tr("28")}</p>
-                  <span className="text-[11px] text-emerald-600 font-semibold">{tr("Từ EU, Mỹ, Nhật Bản")}</span>
-                </div>
-                <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs">
-                  <span className="text-xs text-slate-500 font-medium">{tr("Cấp độ tín nhiệm")}</span>
-                  <p className="text-2xl font-bold text-emerald-700 mt-1">{tr("L2 Enhanced")}</p>
-                  <span className="text-[11px] text-slate-500">{tr("Đã xác minh toàn diện")}</span>
-                </div>
-                <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs">
-                  <span className="text-xs text-slate-500 font-medium">{tr("Tỷ lệ phản hồi RFQ")}</span>
-                  <p className="text-2xl font-bold text-blue-600 mt-1">{tr("98.5%")}</p>
-                  <span className="text-[11px] text-slate-500">{tr("Thời gian phản hồi < 2h")}</span>
-                </div>
-              </div>
-
-              <div className="p-6 rounded-3xl bg-white border border-slate-200 shadow-xs">
-                <h3 className="text-sm font-bold text-slate-900 mb-3">{tr("Hành trình xuất khẩu quốc tế")}</h3>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  {tr("Hồ sơ công ty của bạn đã vượt qua vòng kiểm tra tự động OCR và đối chiếu chứng chỉ cấp độ L2. Các Buyer đã được cấp quyền truy cập để gửi yêu cầu kết nối trực tiếp.")}</p>
-                <div className="pt-4 flex gap-3">
-                  <button 
-                    onClick={() => setActiveTab('profile')}
-                    className="px-4 py-2 rounded-xl bg-[#083832] text-white text-xs font-semibold hover:bg-[#062924] transition-colors"
-                  >
-                    {tr("Xem chi tiết Profile Company")}</button>
-                  <button 
-                    onClick={() => setActiveTab('rfq')}
-                    className="px-4 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
-                  >
-                    {tr("Xem danh sách RFQ")}</button>
-                </div>
-              </div>
-            </div>
-          )}
+          {activeTab === 'overview' && <ExporterDashboard />}
 
           {/* -----------------------------------------------------------------------
               TAB: SẢN PHẨM (PRODUCTS)

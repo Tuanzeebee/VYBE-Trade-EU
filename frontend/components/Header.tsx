@@ -221,6 +221,15 @@ export default function Header({
                         {tr("Cập nhật hồ sơ xuất khẩu")}
                       </button>
                     )}
+                    {user.role === 'buyer' && (
+                      <Link
+                        href="/buyer"
+                        onClick={() => setHeaderProfileOpen(false)}
+                        className="block w-full px-4 py-3 text-left text-slate-600 hover:bg-slate-50"
+                      >
+                        {tr("Bảng điều khiển")}
+                      </Link>
+                    )}
                     <Link
                       href="/account"
                       onClick={() => setHeaderProfileOpen(false)}

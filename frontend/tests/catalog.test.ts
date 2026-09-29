@@ -487,8 +487,59 @@ const J2_STRINGS = [
   "Hủy"
 ];
 
-describe('catalog.json có bản tiếng Anh cho chuỗi A1, B1, B2, B3, B4, B5, A2, C2, C4, C6, C7, D2, D3, E2, H1, F1, F2, J2', () => {
-  it.each([...A1_STRINGS, ...B1_STRINGS, ...B2_STRINGS, ...B3_STRINGS, ...B4_STRINGS, ...B5_STRINGS, ...A2_STRINGS, ...C2_STRINGS, ...C4_STRINGS, ...C6_STRINGS, ...C7_STRINGS, ...D2_STRINGS, ...D3_STRINGS, ...E2_STRINGS, ...H1_STRINGS, ...F1_STRINGS, ...F2_STRINGS, ...J2_STRINGS])('%s', (vi) => {
+const G_STRINGS = [
+  "Hoàn thiện hồ sơ doanh nghiệp để bắt đầu.",
+  "Chưa có ai xem hồ sơ. Hoàn thiện hồ sơ và xác minh để buyer tìm thấy bạn.",
+  "Chưa có yêu cầu báo giá. Buyer sẽ gửi khi thấy sản phẩm của bạn trong danh bạ.",
+  "Doanh nghiệp chưa được xác minh. Gửi yêu cầu xác minh để xuất hiện trong danh bạ.",
+  "Chưa có lần tính thuế nào. Dùng máy tính thuế để thấy tổng tiền tiết kiệm nhờ EVFTA.",
+  "Bạn chưa hỏi trợ lý tuân thủ. Đặt câu hỏi đầu tiên để nhận trả lời có trích dẫn.",
+  "Tính năng lưu tìm kiếm sắp ra mắt. Trong lúc này hãy dùng danh bạ để tìm nhà cung cấp.",
+  "Bạn chưa gửi yêu cầu báo giá. Tìm nhà cung cấp trong danh bạ và gửi yêu cầu đầu tiên.",
+  "Chưa có nhà cung cấp nào bạn đã xem. Khám phá danh bạ để bắt đầu.",
+  "Chọn nhóm hàng quan tâm trong hồ sơ để thấy nhà cung cấp mới được xác minh.",
+  "Tuần này chưa có nhà cung cấp mới được xác minh trong nhóm hàng của bạn.",
+  "Không tải được bảng điều khiển. Vui lòng thử lại.",
+  "Chưa chọn",
+  "Hoàn thiện hồ sơ",
+  "Còn thiếu",
+  "Lượt xem hồ sơ tuần này",
+  "Tuần trước",
+  "mới",
+  "tổng",
+  "trong 7 ngày",
+  "Xác minh doanh nghiệp",
+  "Chưa xác minh",
+  "Đang chờ duyệt",
+  "Bị từ chối",
+  "Còn",
+  "ngày",
+  "hết hạn",
+  "Tiết kiệm thuế nhờ EVFTA",
+  "từ",
+  "lần tính",
+  "Mở máy tính thuế",
+  "Câu hỏi gần đây cho trợ lý",
+  "Hỏi trợ lý",
+  "Bảng điều khiển",
+  "Đăng nhập bằng tài khoản buyer để xem bảng điều khiển.",
+  "Xem tất cả",
+  "Tìm kiếm đã lưu",
+  "Yêu cầu báo giá đã gửi",
+  "Nhà cung cấp xem gần đây",
+  "Nhà cung cấp mới được xác minh tuần này",
+  "Không tải được tỷ lệ quay lại. Vui lòng thử lại.",
+  "Tỷ lệ quay lại có thông tin mới",
+  "Mục tiêu",
+  "Chưa có lượt quay lại nào. Số liệu xuất hiện khi người dùng mở lại bảng điều khiển.",
+  "Tuần bắt đầu",
+  "Lượt quay lại",
+  "Có thông tin mới",
+  "Tỷ lệ"
+];
+
+describe('catalog.json có bản tiếng Anh cho chuỗi A1, B1, B2, B3, B4, B5, A2, C2, C4, C6, C7, D2, D3, E2, H1, F1, F2, J2, G', () => {
+  it.each([...A1_STRINGS, ...B1_STRINGS, ...B2_STRINGS, ...B3_STRINGS, ...B4_STRINGS, ...B5_STRINGS, ...A2_STRINGS, ...C2_STRINGS, ...C4_STRINGS, ...C6_STRINGS, ...C7_STRINGS, ...D2_STRINGS, ...D3_STRINGS, ...E2_STRINGS, ...H1_STRINGS, ...F1_STRINGS, ...F2_STRINGS, ...J2_STRINGS, ...G_STRINGS])('%s', (vi) => {
     const en = translateText(vi, 'en');
     expect(en).not.toBe(vi);
     expect(en.trim()).not.toBe('');

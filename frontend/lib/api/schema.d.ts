@@ -639,6 +639,74 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/public/companies/{slug}/view": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Record View */
+        post: operations["record_view_api_public_companies__slug__view_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/exporter/dashboard": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Exporter Dashboard */
+        get: operations["exporter_dashboard_api_exporter_dashboard_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/buyer/dashboard": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Buyer Dashboard */
+        get: operations["buyer_dashboard_api_buyer_dashboard_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/stats/return-visits": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Return Visits */
+        get: operations["return_visits_api_admin_stats_return_visits_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/public/suppliers": {
         parameters: {
             query?: never;
@@ -1333,6 +1401,13 @@ export interface components {
              */
             created_at: string;
         };
+        /** BuyerDashboard */
+        BuyerDashboard: {
+            saved_searches: components["schemas"]["SavedSearchTile"];
+            rfqs_sent: components["schemas"]["RfqTile"];
+            recently_viewed: components["schemas"]["SupplierListTile"];
+            new_verified: components["schemas"]["SupplierListTile"];
+        };
         /** ChecklistItem */
         ChecklistItem: {
             /** Type Code */
@@ -1538,6 +1613,13 @@ export interface components {
             /** Logo Key */
             logo_key?: string | null;
         };
+        /** CompletenessData */
+        CompletenessData: {
+            /** Score */
+            score: string;
+            /** Missing */
+            missing: components["schemas"]["MissingItem"][];
+        };
         /**
          * CompletenessOut
          * @description Chỉ điểm và danh sách còn thiếu — cố ý KHÔNG chứa trạng thái xác minh (khái niệm khác).
@@ -1547,6 +1629,12 @@ export interface components {
             score: string;
             /** Missing */
             missing: components["schemas"]["MissingOut"][];
+        };
+        /** CompletenessTile */
+        CompletenessTile: {
+            data: components["schemas"]["CompletenessData"] | null;
+            /** Empty Hint Key */
+            empty_hint_key?: string | null;
         };
         /** ConversationOut */
         ConversationOut: {
@@ -1573,6 +1661,13 @@ export interface components {
             last_message_at: string;
             /** Unread Count */
             unread_count: number;
+        };
+        /** CopilotTile */
+        CopilotTile: {
+            /** Data */
+            data: components["schemas"]["QuestionBrief"][];
+            /** Empty Hint Key */
+            empty_hint_key?: string | null;
         };
         /** CorpusDocumentOut */
         CorpusDocumentOut: {
@@ -1885,6 +1980,15 @@ export interface components {
             /** Validity Months */
             validity_months: number | null;
         };
+        /** ExporterDashboard */
+        ExporterDashboard: {
+            completeness: components["schemas"]["CompletenessTile"];
+            profile_views: components["schemas"]["ProfileViewsTile"];
+            rfqs: components["schemas"]["RfqTile"];
+            verification: components["schemas"]["VerificationTile"];
+            tariff_savings: components["schemas"]["SavingsTile"];
+            copilot: components["schemas"]["CopilotTile"];
+        };
         /** FeedbackIn */
         FeedbackIn: {
             /** Was Helpful */
@@ -1992,6 +2096,13 @@ export interface components {
             sent_at: string;
             /** Read At */
             read_at: string | null;
+        };
+        /** MissingItem */
+        MissingItem: {
+            /** Field */
+            field: string;
+            /** Group */
+            group: string;
         };
         /** MissingOut */
         MissingOut: {
@@ -2169,6 +2280,19 @@ export interface components {
             /** Image Keys */
             image_keys?: string[] | null;
         };
+        /** ProfileViewsData */
+        ProfileViewsData: {
+            /** This Week */
+            this_week: number;
+            /** Previous Week */
+            previous_week: number;
+        };
+        /** ProfileViewsTile */
+        ProfileViewsTile: {
+            data: components["schemas"]["ProfileViewsData"] | null;
+            /** Empty Hint Key */
+            empty_hint_key?: string | null;
+        };
         /**
          * PublicCertificateOut
          * @description Loại chứng nhận có thể lọc công khai trong danh bạ.
@@ -2259,6 +2383,23 @@ export interface components {
             /** Images */
             images: string[];
         };
+        /** QuestionBrief */
+        QuestionBrief: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Question */
+            question: string;
+            /** Confidence */
+            confidence: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
         /** QueueItem */
         QueueItem: {
             /**
@@ -2312,6 +2453,34 @@ export interface components {
              * @constant
              */
             accept_terms: true;
+        };
+        /** ReturnVisitStats */
+        ReturnVisitStats: {
+            /** Weeks */
+            weeks: components["schemas"]["WeekStat"][];
+            /** Overall Ratio */
+            overall_ratio: string | null;
+            /** Target Ratio */
+            target_ratio: string;
+        };
+        /** RfqBrief */
+        RfqBrief: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Counterpart Name */
+            counterpart_name: string;
+            /** Product Name */
+            product_name: string;
+            /** Status */
+            status: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
         };
         /** RfqIn */
         RfqIn: {
@@ -2412,6 +2581,25 @@ export interface components {
         /** RfqStatusIn */
         RfqStatusIn: {
             status: components["schemas"]["RfqStatus"];
+        };
+        /** RfqTile */
+        RfqTile: {
+            data: components["schemas"]["RfqTileData"] | null;
+            /** Empty Hint Key */
+            empty_hint_key?: string | null;
+        };
+        /** RfqTileData */
+        RfqTileData: {
+            /** Counts */
+            counts: {
+                [key: string]: number;
+            };
+            /** Total */
+            total: number;
+            /** New This Week */
+            new_this_week: number;
+            /** Recent */
+            recent: components["schemas"]["RfqBrief"][];
         };
         /**
          * RooIn
@@ -2569,6 +2757,29 @@ export interface components {
          */
         RuleType: "WO" | "CTH" | "MaxNOM" | "CTH_OR_MaxNOM";
         /**
+         * SavedSearchTile
+         * @description Tìm kiếm đã lưu là P1 (K1); chưa có thì ô hướng dẫn thay vì để trống.
+         */
+        SavedSearchTile: {
+            /** Data */
+            data: string[];
+            /** Empty Hint Key */
+            empty_hint_key?: string | null;
+        };
+        /** SavingsData */
+        SavingsData: {
+            /** Total Eur */
+            total_eur: string;
+            /** Runs */
+            runs: number;
+        };
+        /** SavingsTile */
+        SavingsTile: {
+            data: components["schemas"]["SavingsData"] | null;
+            /** Empty Hint Key */
+            empty_hint_key?: string | null;
+        };
+        /**
          * StatsOut
          * @description Số liệu dashboard nội bộ.
          */
@@ -2581,6 +2792,17 @@ export interface components {
             ai_queries_this_week: number;
             /** Avg Confidence */
             avg_confidence: number | null;
+        };
+        /** SupplierBrief */
+        SupplierBrief: {
+            /** Slug */
+            slug: string;
+            /** Name */
+            name: string;
+            /** Country */
+            country: string;
+            /** At */
+            at: string | null;
         };
         /**
          * SupplierCardOut
@@ -2612,6 +2834,13 @@ export interface components {
             product_count: number;
             /** Categories */
             categories: string[];
+        };
+        /** SupplierListTile */
+        SupplierListTile: {
+            /** Data */
+            data: components["schemas"]["SupplierBrief"][];
+            /** Empty Hint Key */
+            empty_hint_key?: string | null;
         };
         /** SupplierPage */
         SupplierPage: {
@@ -2801,6 +3030,17 @@ export interface components {
             /** Context */
             ctx?: Record<string, never>;
         };
+        /** VerificationData */
+        VerificationData: {
+            /** Status */
+            status: string;
+            /** Level */
+            level: string;
+            /** Expires At */
+            expires_at: string | null;
+            /** Days Left */
+            days_left: number | null;
+        };
         /** VerificationRequestOut */
         VerificationRequestOut: {
             /**
@@ -2829,6 +3069,26 @@ export interface components {
             reviewed_at: string | null;
             /** Decision Reason */
             decision_reason: string | null;
+        };
+        /** VerificationTile */
+        VerificationTile: {
+            data: components["schemas"]["VerificationData"] | null;
+            /** Empty Hint Key */
+            empty_hint_key?: string | null;
+        };
+        /** WeekStat */
+        WeekStat: {
+            /**
+             * Week Start
+             * Format: date
+             */
+            week_start: string;
+            /** Return Visits */
+            return_visits: number;
+            /** With New Info */
+            with_new_info: number;
+            /** Ratio */
+            ratio: string | null;
         };
     };
     responses: never;
@@ -4413,6 +4673,132 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["CorpusDocumentOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    record_view_api_public_companies__slug__view_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    exporter_dashboard_api_exporter_dashboard_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExporterDashboard"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    buyer_dashboard_api_buyer_dashboard_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BuyerDashboard"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    return_visits_api_admin_stats_return_visits_get: {
+        parameters: {
+            query?: {
+                weeks?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReturnVisitStats"];
                 };
             };
             /** @description Validation Error */

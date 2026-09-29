@@ -10153,5 +10153,210 @@
     "Delete permanently",
     "Delete permanently",
     "Delete permanently"
+  ],
+  "Hoàn thiện hồ sơ doanh nghiệp để bắt đầu.": [
+    "Complete your company profile to get started.",
+    "Complete your company profile to get started.",
+    "Complete your company profile to get started."
+  ],
+  "Chưa có ai xem hồ sơ. Hoàn thiện hồ sơ và xác minh để buyer tìm thấy bạn.": [
+    "Nobody has viewed your profile yet. Complete it and get verified so buyers can find you.",
+    "Nobody has viewed your profile yet. Complete it and get verified so buyers can find you.",
+    "Nobody has viewed your profile yet. Complete it and get verified so buyers can find you."
+  ],
+  "Chưa có yêu cầu báo giá. Buyer sẽ gửi khi thấy sản phẩm của bạn trong danh bạ.": [
+    "No quote requests yet. Buyers will send them when they find your products in the directory.",
+    "No quote requests yet. Buyers will send them when they find your products in the directory.",
+    "No quote requests yet. Buyers will send them when they find your products in the directory."
+  ],
+  "Doanh nghiệp chưa được xác minh. Gửi yêu cầu xác minh để xuất hiện trong danh bạ.": [
+    "Your business is not verified. Submit a verification request to appear in the directory.",
+    "Your business is not verified. Submit a verification request to appear in the directory.",
+    "Your business is not verified. Submit a verification request to appear in the directory."
+  ],
+  "Chưa có lần tính thuế nào. Dùng máy tính thuế để thấy tổng tiền tiết kiệm nhờ EVFTA.": [
+    "No tariff calculations yet. Use the tariff calculator to see how much EVFTA saves you.",
+    "No tariff calculations yet. Use the tariff calculator to see how much EVFTA saves you.",
+    "No tariff calculations yet. Use the tariff calculator to see how much EVFTA saves you."
+  ],
+  "Bạn chưa hỏi trợ lý tuân thủ. Đặt câu hỏi đầu tiên để nhận trả lời có trích dẫn.": [
+    "You have not asked the compliance assistant yet. Ask your first question to get a cited answer.",
+    "You have not asked the compliance assistant yet. Ask your first question to get a cited answer.",
+    "You have not asked the compliance assistant yet. Ask your first question to get a cited answer."
+  ],
+  "Tính năng lưu tìm kiếm sắp ra mắt. Trong lúc này hãy dùng danh bạ để tìm nhà cung cấp.": [
+    "Saved searches are coming soon. Meanwhile, use the directory to find suppliers.",
+    "Saved searches are coming soon. Meanwhile, use the directory to find suppliers.",
+    "Saved searches are coming soon. Meanwhile, use the directory to find suppliers."
+  ],
+  "Bạn chưa gửi yêu cầu báo giá. Tìm nhà cung cấp trong danh bạ và gửi yêu cầu đầu tiên.": [
+    "You have not sent a quote request. Find a supplier in the directory and send your first one.",
+    "You have not sent a quote request. Find a supplier in the directory and send your first one.",
+    "You have not sent a quote request. Find a supplier in the directory and send your first one."
+  ],
+  "Chưa có nhà cung cấp nào bạn đã xem. Khám phá danh bạ để bắt đầu.": [
+    "You have not viewed any suppliers yet. Explore the directory to get started.",
+    "You have not viewed any suppliers yet. Explore the directory to get started.",
+    "You have not viewed any suppliers yet. Explore the directory to get started."
+  ],
+  "Chọn nhóm hàng quan tâm trong hồ sơ để thấy nhà cung cấp mới được xác minh.": [
+    "Choose your product groups of interest in your profile to see newly verified suppliers.",
+    "Choose your product groups of interest in your profile to see newly verified suppliers.",
+    "Choose your product groups of interest in your profile to see newly verified suppliers."
+  ],
+  "Tuần này chưa có nhà cung cấp mới được xác minh trong nhóm hàng của bạn.": [
+    "No new suppliers were verified in your product groups this week.",
+    "No new suppliers were verified in your product groups this week.",
+    "No new suppliers were verified in your product groups this week."
+  ],
+  "Không tải được bảng điều khiển. Vui lòng thử lại.": [
+    "Could not load the dashboard. Please try again.",
+    "Could not load the dashboard. Please try again.",
+    "Could not load the dashboard. Please try again."
+  ],
+  "Chưa chọn": [
+    "Not selected",
+    "Not selected",
+    "Not selected"
+  ],
+  "Hoàn thiện hồ sơ": [
+    "Profile completeness",
+    "Profile completeness",
+    "Profile completeness"
+  ],
+  "Còn thiếu": [
+    "Missing",
+    "Missing",
+    "Missing"
+  ],
+  "Lượt xem hồ sơ tuần này": [
+    "Profile views this week",
+    "Profile views this week",
+    "Profile views this week"
+  ],
+  "Tuần trước": [
+    "Last week",
+    "Last week",
+    "Last week"
+  ],
+  "mới": [
+    "new",
+    "new",
+    "new"
+  ],
+  "tổng": [
+    "total",
+    "total",
+    "total"
+  ],
+  "trong 7 ngày": [
+    "in the last 7 days",
+    "in the last 7 days",
+    "in the last 7 days"
+  ],
+  "Còn": [
+    "Left",
+    "Left",
+    "Left"
+  ],
+  "ngày": [
+    "days",
+    "days",
+    "days"
+  ],
+  "hết hạn": [
+    "expires",
+    "expires",
+    "expires"
+  ],
+  "Tiết kiệm thuế nhờ EVFTA": [
+    "Tariff savings from EVFTA",
+    "Tariff savings from EVFTA",
+    "Tariff savings from EVFTA"
+  ],
+  "từ": [
+    "from",
+    "from",
+    "from"
+  ],
+  "lần tính": [
+    "calculations",
+    "calculations",
+    "calculations"
+  ],
+  "Mở máy tính thuế": [
+    "Open the tariff calculator",
+    "Open the tariff calculator",
+    "Open the tariff calculator"
+  ],
+  "Câu hỏi gần đây cho trợ lý": [
+    "Recent questions to the assistant",
+    "Recent questions to the assistant",
+    "Recent questions to the assistant"
+  ],
+  "Bảng điều khiển": [
+    "Dashboard",
+    "Dashboard",
+    "Dashboard"
+  ],
+  "Đăng nhập bằng tài khoản buyer để xem bảng điều khiển.": [
+    "Sign in with a buyer account to see your dashboard.",
+    "Sign in with a buyer account to see your dashboard.",
+    "Sign in with a buyer account to see your dashboard."
+  ],
+  "Xem tất cả": [
+    "View all",
+    "View all",
+    "View all"
+  ],
+  "Tìm kiếm đã lưu": [
+    "Saved searches",
+    "Saved searches",
+    "Saved searches"
+  ],
+  "Nhà cung cấp xem gần đây": [
+    "Recently viewed suppliers",
+    "Recently viewed suppliers",
+    "Recently viewed suppliers"
+  ],
+  "Nhà cung cấp mới được xác minh tuần này": [
+    "Suppliers verified this week",
+    "Suppliers verified this week",
+    "Suppliers verified this week"
+  ],
+  "Không tải được tỷ lệ quay lại. Vui lòng thử lại.": [
+    "Could not load the return-visit rate. Please try again.",
+    "Could not load the return-visit rate. Please try again.",
+    "Could not load the return-visit rate. Please try again."
+  ],
+  "Tỷ lệ quay lại có thông tin mới": [
+    "Return visits with new information",
+    "Return visits with new information",
+    "Return visits with new information"
+  ],
+  "Mục tiêu": [
+    "Target",
+    "Target",
+    "Target"
+  ],
+  "Chưa có lượt quay lại nào. Số liệu xuất hiện khi người dùng mở lại bảng điều khiển.": [
+    "No return visits yet. Figures appear when users reopen the dashboard.",
+    "No return visits yet. Figures appear when users reopen the dashboard.",
+    "No return visits yet. Figures appear when users reopen the dashboard."
+  ],
+  "Tuần bắt đầu": [
+    "Week starting",
+    "Week starting",
+    "Week starting"
+  ],
+  "Lượt quay lại": [
+    "Return visits",
+    "Return visits",
+    "Return visits"
+  ],
+  "Có thông tin mới": [
+    "With new information",
+    "With new information",
+    "With new information"
   ]
 }

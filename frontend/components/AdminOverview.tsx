@@ -4,6 +4,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { getStats, type Stats } from '../lib/adminApi';
+import AdminReturnVisits from './AdminReturnVisits';
 
 export default function AdminOverview() {
   const { tr } = useLanguage();
@@ -46,6 +47,9 @@ export default function AdminOverview() {
         <p className="text-sm font-semibold text-slate-600">{tr('Độ tin cậy AI trung bình')}</p>
         <p className="mt-2 text-4xl font-extrabold text-[#083832]">{average === null ? '—' : average.toFixed(1)}</p>
         <p className="mt-2 text-xs text-slate-500">{tr('Thang 1 (thấp) đến 3 (cao). Chưa tính câu ngoài phạm vi.')}</p>
+      </div>
+      <div className="sm:col-span-2 lg:col-span-4">
+        <AdminReturnVisits />
       </div>
     </div>
   );

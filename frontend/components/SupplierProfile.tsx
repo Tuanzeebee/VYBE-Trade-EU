@@ -6,6 +6,7 @@ import RfqForm from './RfqForm';
 import { Link } from '../i18n/navigation';
 import { translateText, type Locale } from '../i18n/translate';
 import { countryName, fetchProfile, industryLabel } from '../lib/suppliersApi';
+import ProfileViewBeacon from './ProfileViewBeacon';
 
 export default async function SupplierProfile({ slug, locale }: { slug: string; locale: Locale }) {
   const t = (vi: string) => translateText(vi, locale);
@@ -48,6 +49,7 @@ export default async function SupplierProfile({ slug, locale }: { slug: string; 
         )}
       </section>
 
+      <ProfileViewBeacon slug={slug} />
       <RfqForm products={profile.products.map((p) => ({ id: p.id, name: p.name, unit: p.unit }))} supplierName={profile.legal_name} />
     </div>
   );
