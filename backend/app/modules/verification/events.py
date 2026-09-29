@@ -13,3 +13,5 @@ class VerificationStatusChanged(Event):
     new_status: str
     old_level: str
     new_level: str
+    decision: str = ""  # approve | reject | request_info | expire | submit | level_up | level_down
+    reason: str | None = None  # lý do quản trị viên nhập (từ chối / yêu cầu bổ sung)

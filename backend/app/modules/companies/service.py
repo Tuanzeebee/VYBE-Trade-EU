@@ -188,6 +188,14 @@ def register_evidence_counter(counter: completeness_service.EvidenceCounter) -> 
     completeness_service.register_evidence_counter(counter)
 
 
+async def get_owner_user_id(session: AsyncSession, company_id: uuid.UUID) -> uuid.UUID | None:
+    """Chủ sở hữu (người dùng) của công ty — module khác dùng để gửi thông báo."""
+    owner_id: uuid.UUID | None = await session.scalar(
+        select(Company.owner_user_id).where(Company.id == company_id)
+    )
+    return owner_id
+
+
 async def get_company_id(session: AsyncSession, user_id: uuid.UUID) -> uuid.UUID | None:
     """Id công ty của người dùng (None nếu chưa tạo) — module khác dùng để gắn bản ghi."""
     company_id: uuid.UUID | None = await session.scalar(

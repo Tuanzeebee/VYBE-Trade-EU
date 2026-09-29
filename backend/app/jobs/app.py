@@ -16,5 +16,5 @@ def conninfo_from_url(url: str) -> str:
 
 app = App(
     connector=PsycopgConnector(conninfo=conninfo_from_url(get_settings().database_url)),
-    import_paths=["app.jobs.verification_expiry"],
+    import_paths=["app.jobs.verification_expiry", "app.jobs.send_email"],
 )

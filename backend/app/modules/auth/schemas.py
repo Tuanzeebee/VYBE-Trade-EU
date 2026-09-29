@@ -43,3 +43,10 @@ class CurrentUser(BaseModel):
     email: str
     role: Role
     preferred_language: Language
+
+
+class Contact(BaseModel):
+    """Địa chỉ và ngôn ngữ nhận thông báo của một người dùng."""
+
+    email: str
+    preferred_language: str

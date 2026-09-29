@@ -1,4 +1,6 @@
 import logging
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
 from typing import Annotated
 
 from fastapi import Depends, FastAPI
@@ -13,16 +15,27 @@ from app.core.errors import register_error_handlers
 from app.core.logging import RequestIdMiddleware, setup_logging
 from app.core.ratelimit import enforce_public_limit
 from app.core.storage import Storage, get_storage
+from app.jobs.app import app as jobs_app
 from app.modules.auth.router import router as auth_router
 from app.modules.catalog.router import router as catalog_router
 from app.modules.companies.router import router as companies_router
 from app.modules.compliance.router import router as compliance_router
+from app.modules.notifications import handlers as notification_handlers
 from app.modules.verification.router import router as verification_router
 
 setup_logging()
 log = logging.getLogger(__name__)
+notification_handlers.register()
 
-app = FastAPI(title="evfta.eu API", dependencies=[Depends(enforce_public_limit)])
+
+@asynccontextmanager
+async def lifespan(_: FastAPI) -> AsyncIterator[None]:
+    """Mở kết nối hàng đợi job để xếp việc (gửi email…); worker là tiến trình riêng."""
+    async with jobs_app.open_async():
+        yield
+
+
+app = FastAPI(title="evfta.eu API", dependencies=[Depends(enforce_public_limit)], lifespan=lifespan)
 app.add_middleware(RequestIdMiddleware)
 # Frontend gọi API kèm cookie phiên (ADR-0002) → chỉ cho các origin khai báo trong cấu hình.
 app.add_middleware(

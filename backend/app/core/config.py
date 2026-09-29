@@ -21,6 +21,12 @@ class Settings(BaseSettings):
     consent_version: str = "2026-09-29"
     # Hiệu lực xác minh kể từ ngày duyệt (mặc định 12 tháng, cần PO xác nhận)
     verification_valid_days: int = 365
+    # Email (H2): dev dùng Mailpit; nhà cung cấp thật do Q5 chốt; link thư dựng từ public_base_url
+    email_backend: str = "smtp"  # smtp | fake
+    smtp_host: str = "localhost"
+    smtp_port: int = 1025
+    email_from: str = "noreply@evfta.eu"
+    public_base_url: str = "http://localhost:3000"
     # Origin của frontend được gọi API kèm cookie
     cors_origins: list[str] = ["http://localhost:3000"]
 

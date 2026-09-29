@@ -149,6 +149,8 @@ async def decide(
         new_status=to_status,
         old_level=current.level,
         new_level=level,
+        decision=decision.value,
+        reason=cleaned,
     )
     if commit:
         await session.commit()
