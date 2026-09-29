@@ -28,6 +28,7 @@ from app.modules.companies.schemas import (
     AdminProductPatch,
     ExporterCardOut,
     ExporterPage,
+    OrderableProduct,
     ProductImageOut,
     ProductIn,
     ProductOut,
@@ -315,6 +316,39 @@ async def search_verified_exporters(
         for c in companies
     ]
     return ExporterPage(items=items, total=total, page=page, page_size=page_size)
+
+
+async def get_product_names(
+    session: AsyncSession, product_ids: list[uuid.UUID]
+) -> dict[uuid.UUID, str]:
+    """Tên sản phẩm theo id (cho RFQ đã gửi: hiển thị kể cả khi sản phẩm sau đó bị tắt)."""
+    if not product_ids:
+        return {}
+    rows = await session.execute(
+        select(Product.id, Product.name).where(Product.id.in_(product_ids))
+    )
+    return {row.id: row.name for row in rows}
+
+
+async def get_orderable_product(
+    session: AsyncSession, product_id: uuid.UUID, now: datetime
+) -> OrderableProduct | None:
+    """Sản phẩm công khai của exporter đã xác minh (cùng điều kiện với danh bạ) hoặc None.
+    Buyer không gửi RFQ được cho sản phẩm ẩn, bị tắt, chưa duyệt hay của công ty không hiển thị."""
+    row = (
+        await session.execute(
+            select(Product.id, Product.name, Product.company_id, Product.unit)
+            .join(Company, Company.id == Product.company_id)
+            .where(
+                Product.id == product_id,
+                *_public_product_conditions(),
+                *verified_exporter_conditions(now),
+            )
+        )
+    ).one_or_none()
+    if row is None:
+        return None
+    return OrderableProduct(id=row.id, name=row.name, company_id=row.company_id, unit=row.unit)
 
 
 async def get_public_profile(

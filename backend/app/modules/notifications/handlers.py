@@ -11,6 +11,7 @@ from app.core.db import get_sessionmaker
 from app.core.events import subscribe
 from app.modules.auth import service as auth
 from app.modules.companies import service as companies
+from app.modules.messaging.events import RfqCreated, RfqStatusChanged
 from app.modules.notifications import center
 from app.modules.notifications.models import NotificationType
 from app.modules.verification.events import VerificationStatusChanged
@@ -89,5 +90,43 @@ async def on_verification_status_changed(event: VerificationStatusChanged) -> No
     )
 
 
+async def on_rfq_created(event: RfqCreated) -> None:
+    """Exporter nhận thông báo trong ứng dụng và email khi có RFQ mới."""
+    await _record_in_app(
+        NotificationType.rfq,
+        event.exporter_company_id,
+        {
+            "event": "created",
+            "rfq_id": str(event.rfq_id),
+            "buyer_name": event.buyer_name,
+            "product_name": event.product_name,
+        },
+    )
+    await _enqueue(
+        {
+            "type": "rfq",
+            "company_id": str(event.exporter_company_id),
+            "context": {"buyer_name": event.buyer_name, "product_name": event.product_name},
+        }
+    )
+
+
+async def on_rfq_status_changed(event: RfqStatusChanged) -> None:
+    """Buyer thấy exporter đã xem, báo giá hoặc đóng RFQ (chỉ thông báo trong ứng dụng)."""
+    await _record_in_app(
+        NotificationType.rfq,
+        event.buyer_company_id,
+        {
+            "event": "status",
+            "rfq_id": str(event.rfq_id),
+            "status": event.new_status,
+            "exporter_name": event.exporter_name,
+            "product_name": event.product_name,
+        },
+    )
+
+
 def register() -> None:
     subscribe(VerificationStatusChanged, on_verification_status_changed)
+    subscribe(RfqCreated, on_rfq_created)
+    subscribe(RfqStatusChanged, on_rfq_status_changed)

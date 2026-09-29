@@ -400,3 +400,12 @@ class ExporterPage(BaseModel):
     total: int
     page: int
     page_size: int
+
+
+class OrderableProduct(BaseModel):
+    """Sản phẩm mà buyer được phép gửi RFQ: đang hiển thị công khai của một exporter đã xác minh."""
+
+    id: uuid.UUID
+    name: str
+    company_id: uuid.UUID
+    unit: str | None
