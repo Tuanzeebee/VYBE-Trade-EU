@@ -7,6 +7,7 @@ from typing import Any
 from sqlalchemy import or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.audit import record
 from app.core.errors import AppError
 from app.core.storage import Storage
 from app.modules.auth.schemas import CurrentUser
@@ -22,6 +23,8 @@ from app.modules.companies.models import (
     VerificationStatus,
 )
 from app.modules.companies.schemas import (
+    AdminProductOut,
+    AdminProductPatch,
     ProductImageOut,
     ProductIn,
     ProductOut,
@@ -255,3 +258,88 @@ async def get_public_profile(
         verified_at=company.verified_at,
         products=products,
     )
+
+
+# ── Admin kiểm duyệt (I4): mỗi thao tác ghi audit before/after ─────────────────────────────
+_ADMIN_TEXT_FIELDS = ("name", "description_vi", "description_en", "is_active")
+
+
+async def _to_admin_out(session: AsyncSession, product: Product) -> AdminProductOut:
+    company = await session.get_one(Company, product.company_id)
+    return AdminProductOut(
+        id=product.id,
+        company_id=product.company_id,
+        company_name=company.legal_name,
+        name=product.name,
+        hs_code=product.hs_code,
+        description_vi=product.description_vi,
+        description_en=product.description_en,
+        is_active=product.is_active,
+        approval_status=product.approval_status.value,
+    )
+
+
+async def admin_list_products(
+    session: AsyncSession, *, company_id: uuid.UUID | None, q: str | None, limit: int, offset: int
+) -> list[AdminProductOut]:
+    query = select(Product)
+    if company_id is not None:
+        query = query.where(Product.company_id == company_id)
+    if q:
+        query = query.where(Product.name.ilike(f"%{q.strip()}%"))
+    rows = await session.scalars(
+        query.order_by(Product.created_at, Product.id).limit(limit).offset(offset)
+    )
+    return [await _to_admin_out(session, p) for p in rows]
+
+
+async def admin_update_product(
+    session: AsyncSession, actor: CurrentUser, product_id: uuid.UUID, patch: AdminProductPatch
+) -> AdminProductOut:
+    product = await session.get(Product, product_id)
+    if product is None:
+        raise AppError("product_not_found", "Product not found", 404)
+    fields = patch.model_fields_set
+    for required in ("name", "is_active", "approval_status"):
+        if required in fields and getattr(patch, required) is None:
+            raise AppError("invalid_field", f"{required} cannot be null", 422)
+
+    before: dict[str, Any] = {}
+    after: dict[str, Any] = {}
+    for name in _ADMIN_TEXT_FIELDS:
+        if name in fields and getattr(patch, name) != getattr(product, name):
+            before[name], after[name] = getattr(product, name), getattr(patch, name)
+    status_change = (
+        "approval_status" in fields and patch.approval_status != product.approval_status.value
+    )
+    status_before = product.approval_status.value
+
+    for name, value in after.items():
+        setattr(product, name, value)
+    if status_change and patch.approval_status is not None:
+        product.approval_status = ApprovalStatus(patch.approval_status)
+    if before:
+        await record(
+            session,
+            actor_id=actor.id,
+            action_type="product.update",
+            entity_type="product",
+            entity_id=str(product.id),
+            before=before,
+            after=after,
+        )
+    if status_change:
+        await record(
+            session,
+            actor_id=actor.id,
+            action_type="product.hide" if patch.approval_status == "hidden" else "product.unhide",
+            entity_type="product",
+            entity_id=str(product.id),
+            before={"approval_status": status_before},
+            after={"approval_status": patch.approval_status},
+        )
+    company = await session.get_one(Company, product.company_id)
+    await completeness_service.refresh_score(session, company)
+    await session.commit()
+    await session.refresh(product)
+    return await _to_admin_out(session, product)

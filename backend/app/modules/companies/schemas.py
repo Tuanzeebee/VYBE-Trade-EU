@@ -6,6 +6,7 @@ from typing import Annotated, Literal, Self
 from pydantic import (
     AfterValidator,
     BaseModel,
+    ConfigDict,
     EmailStr,
     Field,
     StringConstraints,
@@ -310,3 +311,68 @@ class VerificationState(BaseModel):
     level: str
     verified_at: datetime | None
     expires_at: datetime | None
+
+
+# ── Admin kiểm duyệt (I4) ─────────────────────────────────────────────────────
+class AdminCompanyOut(BaseModel):
+    id: uuid.UUID
+    slug: str
+    type: Literal["exporter", "buyer"]
+    legal_name: str
+    country: str
+    tax_id: str | None
+    website: str | None
+    address: str | None
+    contact_email: str | None
+    description_vi: str | None
+    description_en: str | None
+    verification_status: Literal["unverified", "pending", "verified", "rejected"]
+    verification_level: Literal["basic", "evfta_verified"]
+    is_hidden: bool
+    profile_completeness_score: Decimal
+    owner_email: str | None
+    created_at: datetime
+
+
+class AdminCompanyPatch(BaseModel):
+    """Chỉ nội dung và cờ ẩn. Trạng thái xác minh, chủ sở hữu, MST KHÔNG sửa được ở đây."""
+
+    model_config = ConfigDict(extra="forbid", strict=True)
+
+    legal_name: (
+        Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=255)]
+        | None
+    ) = None
+    description_vi: Text | None = None
+    description_en: Text | None = None
+    website: Website | None = None
+    address: Annotated[str, StringConstraints(max_length=500)] | None = None
+    contact_email: EmailStr | None = None
+    is_hidden: bool | None = None
+
+
+class AdminProductOut(BaseModel):
+    id: uuid.UUID
+    company_id: uuid.UUID
+    company_name: str
+    name: str
+    hs_code: str
+    description_vi: str | None
+    description_en: str | None
+    is_active: bool
+    approval_status: Literal["pending", "approved", "hidden"]
+
+
+class AdminProductPatch(BaseModel):
+    """Kiểm duyệt: sửa chữ, ẩn/hiện. Không đổi mã HS, giá hay MOQ của exporter."""
+
+    model_config = ConfigDict(extra="forbid", strict=True)
+
+    name: (
+        Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=255)]
+        | None
+    ) = None
+    description_vi: Text | None = None
+    description_en: Text | None = None
+    is_active: bool | None = None
+    approval_status: Literal["approved", "hidden"] | None = None

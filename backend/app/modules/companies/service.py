@@ -6,12 +6,14 @@ import uuid
 from datetime import datetime
 from typing import Any
 
-from sqlalchemy import Select, select
+from sqlalchemy import Select, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.audit import record
 from app.core.errors import AppError
 from app.core.events import publish
 from app.core.storage import Storage
+from app.modules.auth import service as auth
 from app.modules.auth.schemas import CurrentUser
 from app.modules.companies import completeness_service
 from app.modules.companies.completeness import BUSINESS_MODELS
@@ -26,6 +28,8 @@ from app.modules.companies.models import (
     VerificationStatus,
 )
 from app.modules.companies.schemas import (
+    AdminCompanyOut,
+    AdminCompanyPatch,
     CompanyFilters,
     CompanyIn,
     CompanyOut,
@@ -188,6 +192,119 @@ async def list_exporter_ids(session: AsyncSession) -> list[uuid.UUID]:
 def register_evidence_counter(counter: completeness_service.EvidenceCounter) -> None:
     """verification đăng ký hàm đếm bằng chứng đã nộp còn hạn cho điểm hoàn thiện."""
     completeness_service.register_evidence_counter(counter)
+
+
+# ── Admin kiểm duyệt (I4): mỗi thao tác ghi audit before/after ─────────────────────────────
+_ADMIN_CONTENT_FIELDS = (
+    "legal_name",
+    "description_vi",
+    "description_en",
+    "website",
+    "address",
+    "contact_email",
+)
+
+
+async def _to_admin_out(session: AsyncSession, company: Company) -> AdminCompanyOut:
+    contact = await auth.get_contact(session, company.owner_user_id)
+    return AdminCompanyOut(
+        id=company.id,
+        slug=company.slug,
+        type=company.type.value,
+        legal_name=company.legal_name,
+        country=company.country,
+        tax_id=company.tax_id,
+        website=company.website,
+        address=company.address,
+        contact_email=company.contact_email,
+        description_vi=company.description_vi,
+        description_en=company.description_en,
+        verification_status=company.verification_status.value,
+        verification_level=company.verification_level.value,
+        is_hidden=company.is_hidden,
+        profile_completeness_score=company.profile_completeness_score,
+        owner_email=contact.email if contact else None,
+        created_at=company.created_at,
+    )
+
+
+async def admin_list_companies(
+    session: AsyncSession,
+    *,
+    q: str | None,
+    status: str | None,
+    hidden: bool | None,
+    limit: int,
+    offset: int,
+) -> list[AdminCompanyOut]:
+    query = select(Company)
+    if q:
+        query = query.where(Company.legal_name.ilike(f"%{q.strip()}%"))
+    if status:
+        query = query.where(Company.verification_status == VerificationStatus(status))
+    if hidden is not None:
+        query = query.where(Company.is_hidden.is_(hidden))
+    rows = await session.scalars(
+        query.order_by(Company.created_at, Company.id).limit(limit).offset(offset)
+    )
+    return [await _to_admin_out(session, c) for c in rows]
+
+
+async def admin_update_company(
+    session: AsyncSession, actor: CurrentUser, company_id: uuid.UUID, patch: AdminCompanyPatch
+) -> AdminCompanyOut:
+    """Sửa nội dung hoặc ẩn/hiện hồ sơ. Không đụng trạng thái xác minh (chỉ decide() được)."""
+    company = await session.get(Company, company_id)
+    if company is None:
+        raise AppError("company_not_found", "Company not found", 404)
+    fields = patch.model_fields_set
+    if "legal_name" in fields and patch.legal_name is None:
+        raise AppError("invalid_field", "legal_name cannot be empty", 422)
+    if "is_hidden" in fields and patch.is_hidden is None:
+        raise AppError("invalid_field", "is_hidden cannot be null", 422)
+
+    before: dict[str, Any] = {}
+    after: dict[str, Any] = {}
+    for name in _ADMIN_CONTENT_FIELDS:
+        if name in fields and getattr(patch, name) != getattr(company, name):
+            before[name], after[name] = getattr(company, name), getattr(patch, name)
+    hide_change = "is_hidden" in fields and patch.is_hidden != company.is_hidden
+    hide_before, hide_after = company.is_hidden, patch.is_hidden
+
+    for name, value in after.items():
+        setattr(company, name, value)
+    if hide_change:
+        company.is_hidden = bool(patch.is_hidden)
+    if before:
+        await record(
+            session,
+            actor_id=actor.id,
+            action_type="company.update",
+            entity_type="company",
+            entity_id=str(company.id),
+            before=before,
+            after=after,
+        )
+    if hide_change:
+        await record(
+            session,
+            actor_id=actor.id,
+            action_type="company.hide" if patch.is_hidden else "company.unhide",
+            entity_type="company",
+            entity_id=str(company.id),
+            before={"is_hidden": hide_before},
+            after={"is_hidden": hide_after},
+        )
+    await _save(session, company)
+    return await _to_admin_out(session, company)
+
+
+async def count_by_verification_status(session: AsyncSession) -> dict[str, int]:
+    """Số công ty theo trạng thái xác minh (dashboard nội bộ)."""
+    rows = await session.execute(
+        select(Company.verification_status, func.count()).group_by(Company.verification_status)
+    )
+    return {status.value: count for status, count in rows.all()}
 
 
 async def get_owner_user_id(session: AsyncSession, company_id: uuid.UUID) -> uuid.UUID | None:

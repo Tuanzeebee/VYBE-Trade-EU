@@ -16,6 +16,7 @@ from app.core.logging import RequestIdMiddleware, setup_logging
 from app.core.ratelimit import enforce_public_limit
 from app.core.storage import Storage, get_storage
 from app.jobs.app import app as jobs_app
+from app.modules.admin.router import router as admin_router
 from app.modules.auth.router import router as auth_router
 from app.modules.catalog.router import router as catalog_router
 from app.modules.companies.router import router as companies_router
@@ -47,6 +48,7 @@ app.add_middleware(
 )
 register_error_handlers(app)
 app.include_router(auth_router)
+app.include_router(admin_router)
 app.include_router(companies_router)
 app.include_router(catalog_router)
 app.include_router(compliance_router)
