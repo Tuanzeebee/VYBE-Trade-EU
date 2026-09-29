@@ -300,3 +300,29 @@ async def test_eval_runs_do_not_pollute_the_ai_query_log(
         db_session, EMB, FakeChatModel(), [Case("a", "Gạo thơm hạn ngạch?", None, True, [SRC_A])]
     )
     assert await db_session.scalar(select(func.count()).select_from(AiQuery)) == 0
+
+
+# ── Định dạng do luật TM cung cấp (backend/evals/copilot_50.jsonl) ───────────
+REAL = Path(__file__).resolve().parents[4] / "evals" / "copilot_50.jsonl"
+
+
+def test_the_reviewers_50_question_file_loads() -> None:
+    cases = load_cases(REAL)
+    assert len(cases) == 50
+    refusals = [c for c in cases if not c.expect_answer]
+    assert len(refusals) == 8 and all(c.expected_sources == [] for c in refusals)
+    assert all(c.expected_sources for c in cases if c.expect_answer)
+    assert {c.language for c in cases} == {"vi", "en"}
+
+
+def test_doc_id_expectations_match_on_the_document_id_only() -> None:
+    def cited(source: str, title: str = "x") -> AskOut:
+        out = ask_out("high", [source])
+        out.citations[0].title = title
+        return out
+
+    q = case(expected_sources=["DOC01 Phụ lục II"])
+    assert score_case(q, cited("Nghị định thư", "DOC01 — Nghị định thư 1")).citation_ok is True
+    assert score_case(q, cited("DOC02")).citation_ok is False
+    named = case(expected_sources=["TT 11/2020/TT-BCT"])
+    assert score_case(named, cited("Thông tư", "TT 11/2020/TT-BCT hợp nhất")).citation_ok is True

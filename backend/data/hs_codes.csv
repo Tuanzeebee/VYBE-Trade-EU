@@ -26,3 +26,14 @@ code,name_vi,name_en,category,is_calculator_supported
 190219,"Bún, phở khô","Uncooked pasta, not containing eggs — other",food_beverage,true
 210390,"Nước mắm, nước sốt","Sauces and preparations therefor — other",food_beverage,true
 040900,Mật ong,Natural honey,agriculture,true
+# Bổ sung từ EVFTA_Legal_Data_Pack_v0.xlsx (30/9/2026, dự thảo chưa có người duyệt):
+160521,"Tôm chế biến, không đóng kín khí","Shrimps and prawns, prepared, not in airtight container",seafood,true
+030487,"Phi lê cá ngừ đông lạnh","Frozen fillets of tuna",seafood,true
+030743,"Mực đông lạnh","Frozen cuttlefish and squid",seafood,true
+210111,"Cà phê hòa tan/chiết xuất","Extracts, essences, concentrates of coffee",food_beverage,true
+190590,"Bánh, bánh tráng, sản phẩm nướng","Bread, pastry, cakes, other",food_beverage,true
+610910,"Áo phông cotton dệt kim","T-shirts, singlets, knitted, of cotton",textiles,true
+620342,"Quần nam cotton dệt thoi","Men's trousers, of cotton",textiles,true
+640399,"Giày mũ da, khác","Footwear with leather uppers, other",,true
+640411,"Giày thể thao mũ vải","Sports footwear, textile uppers",,true
+940360,"Đồ nội thất gỗ","Other wooden furniture",,true

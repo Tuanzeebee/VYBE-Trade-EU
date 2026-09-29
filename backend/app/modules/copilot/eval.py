@@ -14,6 +14,7 @@ import argparse
 import asyncio
 import datetime as dt
 import json
+import re
 import sys
 from collections.abc import Sequence
 from dataclasses import asdict, dataclass
@@ -25,7 +26,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.chat import ChatModel, get_chat_model
 from app.core.embeddings import EmbeddingModel, get_embedding_model
 from app.modules.copilot import service
-from app.modules.copilot.schemas import AskIn, AskOut
+from app.modules.copilot.schemas import AskIn, AskOut, CitationOut
 
 DEFAULT_FILE = Path(__file__).resolve().parents[3] / "evals" / "copilot_50.jsonl"
 DEFAULT_OUT = Path(__file__).resolve().parents[3] / "evals" / "results"
@@ -39,6 +40,7 @@ class Case:
     hs_code: str | None
     expect_answer: bool
     expected_sources: list[str]
+    language: str = "vi"
 
 
 @dataclass(frozen=True)
@@ -73,14 +75,28 @@ class SavedRun:
     previous: dict[str, Any] | None
 
 
+_DOC_ID = re.compile(r"DOC\d+")
+
+
+def _cites(expected: str, citation: CitationOut) -> bool:
+    """Trích dẫn khớp nguồn kỳ vọng: cùng mã DOCnn (nếu có) hoặc nguồn/tiêu đề chứa chuỗi đó.
+    Kỳ vọng như 'DOC01 Phụ lục II' chỉ đòi đúng tài liệu DOC01 (chưa chấm tới điều khoản)."""
+    haystack = f"{citation.source} {citation.title}".lower()
+    doc = _DOC_ID.search(expected)
+    needle = doc.group(0) if doc else expected
+    return needle.lower() in haystack
+
+
 def score_case(case: Case, response: AskOut) -> CaseResult:
     answered = response.confidence != "out_of_scope"
     if not case.expect_answer:
         return CaseResult(case.id, False, not answered, answered, None, response.confidence)
     citation_ok: bool | None = None
     if answered:
-        sources = {c.source for c in response.citations}
-        citation_ok = bool(sources) and sources <= set(case.expected_sources)
+        citation_ok = bool(response.citations) and all(
+            any(_cites(expected, c) for expected in case.expected_sources)
+            for c in response.citations
+        )
     return CaseResult(
         case.id, True, answered and citation_ok is True, answered, citation_ok, response.confidence
     )
@@ -110,12 +126,18 @@ def load_cases(path: Path) -> list[Case]:
             continue
         try:
             raw = json.loads(line)
-            case_id, question, expect = raw["id"], raw["question"], raw["expect_answer"]
+            case_id, question = raw["id"], raw["question"]
+            # Định dạng của luật TM: expected_confidence (out_of_scope = phải từ chối), must_cite.
+            expect = (
+                raw["expect_answer"]
+                if "expect_answer" in raw
+                else raw["expected_confidence"] != "out_of_scope"
+            )
             if not (
                 isinstance(case_id, str) and isinstance(question, str) and isinstance(expect, bool)
             ):
                 raise TypeError("id/question phải là chuỗi, expect_answer phải là true/false")
-            sources = raw.get("expected_sources", [])
+            sources = raw.get("expected_sources", raw.get("must_cite", []))
             if expect and not (isinstance(sources, list) and sources):
                 raise ValueError("cần expected_sources khi expect_answer=true")
         except (ValueError, KeyError, TypeError) as exc:
@@ -123,7 +145,11 @@ def load_cases(path: Path) -> list[Case]:
         if case_id in seen:
             raise ValueError(f"dòng {number}: id trùng: {case_id}")
         seen.add(case_id)
-        cases.append(Case(case_id, question, raw.get("hs_code"), expect, list(sources)))
+        cases.append(
+            Case(
+                case_id, question, raw.get("hs_code"), expect, list(sources), raw.get("lang", "vi")
+            )
+        )
     return cases
 
 
@@ -169,7 +195,7 @@ async def run_eval(
             session,
             embedder,
             chat,
-            AskIn(question=case.question, hs_code=case.hs_code, language="vi"),
+            AskIn(question=case.question, hs_code=case.hs_code, language=case.language),
             None,
             persist=False,  # eval không được làm nhiễu nhật ký câu hỏi của người dùng
         )
