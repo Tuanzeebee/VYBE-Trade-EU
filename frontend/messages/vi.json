@@ -1,0 +1,53 @@
+{
+  "Common": {
+    "brand": "evfta.eu",
+    "switchLanguage": "English",
+    "skipToContent": "Bỏ qua, tới nội dung chính",
+    "comingSoon": "Tính năng này đang được xây dựng."
+  },
+  "Metadata": {
+    "title": "evfta.eu — Xuất khẩu sang EU theo EVFTA",
+    "description": "Máy tính tuân thủ EVFTA, doanh nghiệp đã xác minh và trợ lý tuân thủ có trích nguồn cho nhà xuất khẩu Việt Nam và buyer EU."
+  },
+  "Layout": {
+    "public": {
+      "title": "evfta.eu",
+      "nav": { "home": "Trang chủ", "login": "Đăng nhập" }
+    },
+    "auth": {
+      "title": "Tài khoản",
+      "nav": { "home": "Về trang chủ" }
+    },
+    "exporter": {
+      "title": "Khu nhà xuất khẩu",
+      "nav": { "dashboard": "Bảng điều khiển" }
+    },
+    "buyer": {
+      "title": "Khu buyer",
+      "nav": { "dashboard": "Bảng điều khiển" }
+    },
+    "admin": {
+      "title": "Quản trị",
+      "nav": { "dashboard": "Tổng quan" }
+    }
+  },
+  "HomePage": {
+    "heading": "Xuất khẩu sang EU, đúng luật EVFTA",
+    "intro": "Tính thuế ưu đãi, kiểm quy tắc xuất xứ và tìm đối tác đã xác minh."
+  },
+  "LoginPage": {
+    "heading": "Đăng nhập"
+  },
+  "ExporterHome": {
+    "heading": "Bảng điều khiển nhà xuất khẩu",
+    "empty": "Chưa có dữ liệu. Hãy hoàn thiện hồ sơ doanh nghiệp để bắt đầu."
+  },
+  "BuyerHome": {
+    "heading": "Bảng điều khiển buyer",
+    "empty": "Chưa có dữ liệu. Hãy khai báo nhóm hàng bạn quan tâm để bắt đầu."
+  },
+  "AdminHome": {
+    "heading": "Tổng quan quản trị",
+    "empty": "Chưa có dữ liệu thống kê."
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "Common": {
+    "brand": "evfta.eu",
+    "switchLanguage": "Tiếng Việt",
+    "skipToContent": "Skip to main content",
+    "comingSoon": "This feature is being built."
+  },
+  "Metadata": {
+    "title": "evfta.eu — Export to the EU under EVFTA",
+    "description": "EVFTA compliance calculators, verified companies and a cited compliance assistant for Vietnamese exporters and EU buyers."
+  },
+  "Layout": {
+    "public": {
+      "title": "evfta.eu",
+      "nav": { "home": "Home", "login": "Log in" }
+    },
+    "auth": {
+      "title": "Account",
+      "nav": { "home": "Back to home" }
+    },
+    "exporter": {
+      "title": "Exporter area",
+      "nav": { "dashboard": "Dashboard" }
+    },
+    "buyer": {
+      "title": "Buyer area",
+      "nav": { "dashboard": "Dashboard" }
+    },
+    "admin": {
+      "title": "Admin",
+      "nav": { "dashboard": "Overview" }
+    }
+  },
+  "HomePage": {
+    "heading": "Export to the EU, the EVFTA way",
+    "intro": "Calculate preferential duties, check rules of origin and find verified partners."
+  },
+  "LoginPage": {
+    "heading": "Log in"
+  },
+  "ExporterHome": {
+    "heading": "Exporter dashboard",
+    "empty": "No data yet. Complete your company profile to get started."
+  },
+  "BuyerHome": {
+    "heading": "Buyer dashboard",
+    "empty": "No data yet. Tell us which product categories you source to get started."
+  },
+  "AdminHome": {
+    "heading": "Admin overview",
+    "empty": "No statistics yet."
+  }
+}
