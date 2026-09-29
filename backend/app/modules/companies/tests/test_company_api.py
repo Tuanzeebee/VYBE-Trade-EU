@@ -5,8 +5,9 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.events import clear_subscribers, subscribe
+from app.modules.auth.service import create_admin
 from app.modules.companies.events import CompanyUpdated
-from app.modules.companies.tests.helpers import company_body, login_as
+from app.modules.companies.tests.helpers import PASSWORD, company_body, login_as
 
 
 async def test_create_and_read_my_company(api_client: AsyncClient) -> None:
@@ -84,8 +85,12 @@ async def test_requires_session(api_client: AsyncClient, method: str, path: str)
         ("POST", "/api/uploads/presign"),
     ],
 )
-async def test_buyer_is_forbidden_until_b2(api_client: AsyncClient, method: str, path: str) -> None:
-    await login_as(api_client, "buyer", "buy@x.vn")
+async def test_admin_has_no_company_profile(
+    api_client: AsyncClient, db_session: AsyncSession, method: str, path: str
+) -> None:
+    await create_admin(db_session, "root@x.vn", PASSWORD)
+    r = await api_client.post("/api/auth/login", json={"email": "root@x.vn", "password": PASSWORD})
+    assert r.status_code == 200
     r = await api_client.request(method, path, json=company_body())
     assert r.status_code == 403
 

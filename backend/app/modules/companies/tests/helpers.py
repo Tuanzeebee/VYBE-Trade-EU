@@ -41,3 +41,20 @@ def company_body(**overrides: Any) -> dict[str, Any]:
     }
     body.update(overrides)
     return body
+
+
+def buyer_body(**overrides: Any) -> dict[str, Any]:
+    body: dict[str, Any] = {
+        "legal_name": "Global Foods Trading GmbH",
+        "country": "DE",
+        "industry_sector": "food_beverage",
+        "business_type": "Importer",
+        "website": "https://globalfoods.example.de",
+        "contact_email": "sourcing@globalfoods.example.de",
+        "vat_number": "DE123456789",
+        "company_size": "51_200",
+        "procurement_estimate": "500k_2m",
+        "sourcing_categories": ["agriculture", "spices"],
+    }
+    body.update(overrides)
+    return body

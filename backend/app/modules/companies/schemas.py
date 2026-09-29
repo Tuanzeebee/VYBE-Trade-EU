@@ -17,6 +17,9 @@ Industry = Literal["agriculture", "seafood", "food_beverage", "textiles", "handi
 CountryCode = Annotated[str, StringConstraints(pattern=r"^[A-Z]{2}$")]
 MarketCode = Annotated[str, StringConstraints(pattern=r"^(EU|ASEAN|[A-Z]{2})$")]
 LangCode = Annotated[str, StringConstraints(pattern=r"^[a-z]{2}$")]
+# Trường chỉ buyer dùng (B2). Giá trị cố định để lọc/ghép được.
+CompanySize = Literal["1_10", "11_50", "51_200", "201_500", "gt_500"]
+ProcurementEstimate = Literal["lt_100k", "100k_500k", "500k_2m", "2m_10m", "gt_10m"]  # EUR/năm
 
 
 def _check_year(year: int | None) -> int | None:
@@ -51,6 +54,9 @@ class _CompanyFields(BaseModel):
     contact_email: EmailStr | None = None
     description_vi: Text | None = None
     description_en: Text | None = None
+    company_size: CompanySize | None = None
+    procurement_estimate: ProcurementEstimate | None = None
+    vat_number: Annotated[str, StringConstraints(max_length=32)] | None = None
 
 
 class CompanyIn(_CompanyFields):
@@ -60,8 +66,9 @@ class CompanyIn(_CompanyFields):
     country: CountryCode = "VN"
     export_markets: list[MarketCode] = Field(default_factory=list, max_length=50)
     languages_spoken: list[LangCode] = Field(default_factory=list, max_length=20)
+    sourcing_categories: list[Industry] = Field(default_factory=list, max_length=20)
 
-    _uniq = field_validator("export_markets", "languages_spoken")(_unique)
+    _uniq = field_validator("export_markets", "languages_spoken", "sourcing_categories")(_unique)
 
 
 class CompanyPatch(_CompanyFields):
@@ -74,9 +81,10 @@ class CompanyPatch(_CompanyFields):
     country: CountryCode | None = None
     export_markets: list[MarketCode] | None = Field(default=None, max_length=50)
     languages_spoken: list[LangCode] | None = Field(default=None, max_length=20)
+    sourcing_categories: list[Industry] | None = Field(default=None, max_length=20)
     logo_key: Annotated[str, StringConstraints(max_length=255)] | None = None
 
-    _uniq = field_validator("export_markets", "languages_spoken")(_unique)
+    _uniq = field_validator("export_markets", "languages_spoken", "sourcing_categories")(_unique)
 
 
 class CompanyOut(BaseModel):
@@ -98,6 +106,10 @@ class CompanyOut(BaseModel):
     logo_key: str | None
     export_markets: list[str]
     languages_spoken: list[str]
+    company_size: str | None
+    procurement_estimate: str | None
+    vat_number: str | None
+    sourcing_categories: list[str]
     verification_status: Literal["unverified", "pending", "verified", "rejected"]
     verification_level: Literal["basic", "evfta_verified"]
     verified_at: datetime | None
@@ -114,6 +126,7 @@ class CompanyFilters(BaseModel):
     market: MarketCode | None = None
     industry: Industry | None = None
     language: LangCode | None = None
+    sourcing: Industry | None = None  # nhóm hàng buyer quan tâm
 
 
 class PresignIn(BaseModel):

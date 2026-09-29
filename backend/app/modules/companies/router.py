@@ -18,8 +18,7 @@ from app.modules.companies.schemas import (
 
 router = APIRouter(tags=["companies"])
 DB = Annotated[AsyncSession, Depends(get_session)]
-# B1: chỉ exporter; B2 mở thêm buyer.
-Owner = Annotated[CurrentUser, Depends(require_role("exporter"))]
+Owner = Annotated[CurrentUser, Depends(require_role("exporter", "buyer"))]
 
 
 @router.get("/api/me/company")

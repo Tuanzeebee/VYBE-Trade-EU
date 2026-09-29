@@ -60,6 +60,10 @@ class Company(Base):
     description_vi: Mapped[str | None] = mapped_column(Text)
     description_en: Mapped[str | None] = mapped_column(Text)
     logo_key: Mapped[str | None] = mapped_column(String(255))
+    # Chỉ buyer dùng (B2)
+    company_size: Mapped[str | None] = mapped_column(String(16))
+    procurement_estimate: Mapped[str | None] = mapped_column(String(16))
+    vat_number: Mapped[str | None] = mapped_column(String(32))
     verification_status: Mapped[VerificationStatus] = mapped_column(
         Enum(VerificationStatus, name="verification_status"),
         default=VerificationStatus.unverified,
@@ -88,6 +92,11 @@ class Company(Base):
     languages: Mapped[list["CompanyLanguage"]] = relationship(
         cascade="all, delete-orphan", lazy="selectin", order_by="CompanyLanguage.lang"
     )
+    sourcing_categories: Mapped[list["CompanySourcingCategory"]] = relationship(
+        cascade="all, delete-orphan",
+        lazy="selectin",
+        order_by="CompanySourcingCategory.category",
+    )
 
 
 class CompanyExportMarket(Base):
@@ -110,3 +119,14 @@ class CompanyLanguage(Base):
         ForeignKey("companies.id", ondelete="CASCADE"), primary_key=True
     )
     lang: Mapped[str] = mapped_column(String(2), primary_key=True, index=True)
+
+
+class CompanySourcingCategory(Base):
+    """Nhóm hàng buyer quan tâm (dùng cho lưu tìm kiếm K1 và dashboard G2)."""
+
+    __tablename__ = "company_sourcing_categories"
+
+    company_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("companies.id", ondelete="CASCADE"), primary_key=True
+    )
+    category: Mapped[str] = mapped_column(String(32), primary_key=True, index=True)

@@ -17,6 +17,7 @@ from app.modules.companies.models import (
     Company,
     CompanyExportMarket,
     CompanyLanguage,
+    CompanySourcingCategory,
     CompanyType,
 )
 from app.modules.companies.schemas import (
@@ -29,8 +30,10 @@ from app.modules.companies.schemas import (
 )
 
 _EXTENSIONS = {"image/png": "png", "image/jpeg": "jpg", "image/webp": "webp"}
-# B1 chỉ mở cho exporter; B2 thêm buyer.
-_ALLOWED_ROLES = {"exporter": CompanyType.exporter}
+_ALLOWED_ROLES = {"exporter": CompanyType.exporter, "buyer": CompanyType.buyer}
+# Trường chỉ một loại công ty được đặt; loại kia gửi giá trị thật → 422.
+_ONLY_EXPORTER = ("export_markets", "languages_spoken")
+_ONLY_BUYER = ("company_size", "procurement_estimate", "vat_number", "sourcing_categories")
 
 
 def slugify(name: str) -> str:
@@ -58,6 +61,7 @@ def _to_out(company: Company) -> CompanyOut:
             "verification_level": company.verification_level.value,
             "export_markets": [m.market for m in company.export_markets],
             "languages_spoken": [lang.lang for lang in company.languages],
+            "sourcing_categories": [c.category for c in company.sourcing_categories],
         }
     )
 
@@ -77,11 +81,23 @@ async def _own_company(session: AsyncSession, user: CurrentUser) -> Company:
     return company
 
 
-def _set_lists(company: Company, markets: list[str] | None, langs: list[str] | None) -> None:
-    if markets is not None:
+def _reject_foreign_fields(company_type: CompanyType, values: dict[str, Any]) -> None:
+    foreign = _ONLY_BUYER if company_type is CompanyType.exporter else _ONLY_EXPORTER
+    for field in foreign:
+        if values.get(field):
+            raise AppError(
+                "field_not_allowed", f"{field} is not allowed for {company_type.value}", 422
+            )
+
+
+def _set_lists(company: Company, values: dict[str, Any]) -> None:
+    """Lấy các trường danh sách ra khỏi values và gán vào bảng N-N tương ứng."""
+    if (markets := values.pop("export_markets", None)) is not None:
         company.export_markets = [CompanyExportMarket(market=m) for m in markets]
-    if langs is not None:
+    if (langs := values.pop("languages_spoken", None)) is not None:
         company.languages = [CompanyLanguage(lang=lang) for lang in langs]
+    if (cats := values.pop("sourcing_categories", None)) is not None:
+        company.sourcing_categories = [CompanySourcingCategory(category=c) for c in cats]
 
 
 async def _save(session: AsyncSession, company: Company) -> CompanyOut:
@@ -99,14 +115,19 @@ async def create_company(session: AsyncSession, user: CurrentUser, data: Company
     company_type = _company_type(user)
     if await session.scalar(select(Company.id).where(Company.owner_user_id == user.id)):
         raise AppError("company_exists", "Company profile already exists", 409)
-    fields: dict[str, Any] = data.model_dump(exclude={"export_markets", "languages_spoken"})
+    values: dict[str, Any] = data.model_dump()
+    _reject_foreign_fields(company_type, values)
+    lists = {
+        key: values.pop(key)
+        for key in ("export_markets", "languages_spoken", "sourcing_categories")
+    }
     company = Company(
         owner_user_id=user.id,
         type=company_type,
         slug=await _unique_slug(session, data.legal_name),
-        **fields,
+        **values,
     )
-    _set_lists(company, data.export_markets, data.languages_spoken)
+    _set_lists(company, lists)
     session.add(company)
     return await _save(session, company)
 
@@ -116,13 +137,14 @@ async def update_company(
 ) -> CompanyOut:
     company = await _own_company(session, user)
     changes = data.model_dump(exclude_unset=True)
+    _reject_foreign_fields(company.type, changes)
     logo_key = changes.get("logo_key")
     if logo_key is not None and not logo_key.startswith(f"logos/{company.id}/"):
         raise AppError("invalid_logo_key", "Logo does not belong to this company", 422)
     for field in ("legal_name", "country"):
         if field in changes and changes[field] is None:
             raise AppError("invalid_field", f"{field} cannot be empty", 422)
-    _set_lists(company, changes.pop("export_markets", None), changes.pop("languages_spoken", None))
+    _set_lists(company, changes)
     for field, value in changes.items():
         setattr(company, field, value)
     return await _save(session, company)
@@ -146,6 +168,14 @@ def _filtered(filters: CompanyFilters) -> Select[Company]:
         query = query.where(
             Company.id.in_(
                 select(CompanyLanguage.company_id).where(CompanyLanguage.lang == filters.language)
+            )
+        )
+    if filters.sourcing:
+        query = query.where(
+            Company.id.in_(
+                select(CompanySourcingCategory.company_id).where(
+                    CompanySourcingCategory.category == filters.sourcing
+                )
             )
         )
     return query.order_by(Company.legal_name)
