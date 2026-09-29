@@ -6,7 +6,7 @@
 
 import React, { useState } from 'react';
 import type { DemoUser } from '../lib/demoAuth';
-import { EXPORT_MARKETS, INDUSTRIES, STAFF_LANGUAGES } from '../lib/companyApi';
+import { BUSINESS_MODELS, EXPORT_MARKETS, INDUSTRIES, STAFF_LANGUAGES } from '../lib/companyApi';
 import { draftToBody, type ProductDraft } from '../lib/productsApi';
 import ProductsEditor from './ProductsEditor';
 import LanguageSelect from './LanguageSelect';
@@ -603,23 +603,20 @@ export default function SellerOnboarding({ account, initialStep = 2, initialComp
                   {/* Field 3 & 4: Loại hình doanh nghiệp * & Năm thành lập * (2 Cols) */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     
-                    {/* Loại hình doanh nghiệp * */}
+                    {/* Mô hình kinh doanh * */}
                     <div>
-                      <label className="block text-xs sm:text-[13px] font-semibold text-slate-800 mb-1.5">
-                        {tr("Loại hình doanh nghiệp *")}</label>
+                      <label htmlFor="company-business-model" className="block text-xs sm:text-[13px] font-semibold text-slate-800 mb-1.5">
+                        {tr("Mô hình kinh doanh *")}</label>
                       <div className="relative">
                         <select 
+                          id="company-business-model"
                           required
                           value={formData.businessType}
                           onChange={(e) => setFormData({ ...formData, businessType: e.target.value })}
                           className="w-full px-4 py-2.5 rounded-xl border border-slate-200/90 bg-white text-xs sm:text-sm text-slate-900 focus:outline-none focus:border-[#083832] focus:ring-1 focus:ring-[#083832] appearance-none cursor-pointer pr-10"
                         >
-                          <option value="">{tr("Chọn loại hình")}</option>
-                          <option value="TNHH">{tr("Công ty TNHH")}</option>
-                          <option value="CP">{tr("Công ty Cổ phần")}</option>
-                          <option value="DNTN">{tr("Doanh nghiệp tư nhân")}</option>
-                          <option value="HTX">{tr("Hợp tác xã")}</option>
-                          <option value="FDI">{tr("Doanh nghiệp có vốn đầu tư nước ngoài (FDI)")}</option>
+                          <option value="">{tr("Chọn mô hình")}</option>
+                          {BUSINESS_MODELS.map((model) => <option key={model.code} value={model.code}>{tr(model.label)}</option>)}
                         </select>
                         <ChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
                       </div>
@@ -1272,7 +1269,7 @@ export default function SellerOnboarding({ account, initialStep = 2, initialComp
                         <div><span className="text-slate-500">{tr("Tên:")}</span> <strong className="text-slate-900">{formData.companyName}</strong></div>
                         <div><span className="text-slate-500">{tr("MST:")}</span> <strong className="text-slate-900">{tr(formData.taxCode)}</strong></div>
                         <div><span className="text-slate-500">{tr("Năm thành lập:")}</span> <strong className="text-slate-900">{tr(formData.establishedYear)}</strong></div>
-                        <div><span className="text-slate-500">{tr("Loại hình:")}</span> <strong className="text-slate-900">{tr(formData.businessType)}</strong></div>
+                        <div><span className="text-slate-500">{tr("Mô hình:")}</span> <strong className="text-slate-900">{tr(BUSINESS_MODELS.find((m) => m.code === formData.businessType)?.label ?? '')}</strong></div>
                       </div>
                     </div>
 

@@ -29,7 +29,7 @@ export default function BuyerOnboarding({ user, initialCompany, onComplete, onLo
     quantity: '', unit: 'Tấn', frequency: '', market: user.profile?.market || '', incoterm: 'FOB',
     budget: '', minTrustLevel: 'L2', requiredCertificates: '', factoryAudit: 'false',
     traceability: 'false', verificationNotes: '', agreeCommitment: 'false',
-    vatNumber: '', procurementEstimate: '',
+    vatNumber: '', eoriNumber: '', procurementEstimate: '',
     ...initialCompany,
   });
   function update(field: keyof typeof profile, value: string) {
@@ -96,7 +96,10 @@ export default function BuyerOnboarding({ user, initialCompany, onComplete, onLo
               <label className={LABEL}>{tr("Loại hình doanh nghiệp")}<select className={INPUT} value={profile.businessType} onChange={(e) => update('businessType', e.target.value)}>{['Nhà nhập khẩu', 'Nhà phân phối', 'Chuỗi bán lẻ', 'Nhà sản xuất thực phẩm', 'Đại lý thương mại'].map((type) => <option value={type} key={type}>{tr(type)}</option>)}</select></label>
             </div>
             <label className={LABEL}>{tr("Website công ty")}<input type="url" maxLength={300} autoComplete="url" className={INPUT} value={profile.website} onChange={(e) => update('website', e.target.value)} placeholder={tr("https://company.com")} /></label>
-            <label className={LABEL}>{tr("Mã số VAT")}<input maxLength={32} className={INPUT} value={profile.vatNumber} onChange={(e) => update('vatNumber', e.target.value)} placeholder={tr("Ví dụ: DE123456789")} /></label>
+            <div className="grid gap-5 sm:grid-cols-2">
+              <label className={LABEL}>{tr("Mã số VAT")}<input maxLength={32} className={INPUT} value={profile.vatNumber} onChange={(e) => update('vatNumber', e.target.value)} placeholder={tr("Ví dụ: DE123456789")} /></label>
+              <label className={LABEL}>{tr("Mã EORI")}<input maxLength={20} className={INPUT} value={profile.eoriNumber} onChange={(e) => update('eoriNumber', e.target.value)} placeholder={tr("Ví dụ: DE123456789012345")} /></label>
+            </div>
             <div className="grid gap-5 sm:grid-cols-2"><label className={LABEL}>{tr("Người liên hệ *")}<input required maxLength={120} autoComplete="name" className={INPUT} value={profile.contactName} onChange={(e) => update('contactName', e.target.value)} /></label><label className={LABEL}>{tr("Email liên hệ *")}<input required type="email" autoComplete="email" className={INPUT} value={profile.contactEmail} onChange={(e) => update('contactEmail', e.target.value)} /></label></div>
             <label className={LABEL}>{tr("Điện thoại liên hệ")}<input type="tel" maxLength={40} autoComplete="tel" className={INPUT} value={profile.phone} onChange={(e) => update('phone', e.target.value)} placeholder={tr("+49…")} /></label>
           </>}
@@ -117,7 +120,7 @@ export default function BuyerOnboarding({ user, initialCompany, onComplete, onLo
           </>}
           {step === 4 && <>
             {[
-              { title: 'Thông tin công ty', target: 1, rows: [['Tên công ty', profile.companyName], ['Quốc gia / khu vực', `${profile.country} / ${profile.region}`], ['Quy mô', profile.companySize], ['Loại hình', profile.businessType], ['Người liên hệ', profile.contactName], ['Email', profile.contactEmail], ['Điện thoại', profile.phone], ['Website', profile.website], ['Mã số VAT', profile.vatNumber]] },
+              { title: 'Thông tin công ty', target: 1, rows: [['Tên công ty', profile.companyName], ['Quốc gia / khu vực', `${profile.country} / ${profile.region}`], ['Quy mô', profile.companySize], ['Loại hình', profile.businessType], ['Người liên hệ', profile.contactName], ['Email', profile.contactEmail], ['Điện thoại', profile.phone], ['Website', profile.website], ['Mã số VAT', profile.vatNumber], ['Mã EORI', profile.eoriNumber]] },
               { title: 'Nhu cầu tìm nguồn hàng', target: 2, rows: [['Nhóm hàng', profile.interest], ['Ước lượng mua hàng', profile.procurementEstimate], ['Khối lượng mỗi đợt', `${profile.quantity} ${profile.unit}`], ['Tần suất', profile.frequency], ['Điểm đến', profile.market], ['Giao hàng', profile.incoterm], ['Ngân sách', profile.budget], ['Thông số sản phẩm', profile.productDetails]] },
               { title: 'Tiêu chí xác minh', target: 3, rows: [['Cấp độ tối thiểu', profile.minTrustLevel], ['Chứng nhận', profile.requiredCertificates || 'Chưa có yêu cầu cụ thể'], ['Thẩm định thực địa', profile.factoryAudit === 'true' ? 'Có' : 'Không yêu cầu'], ['Truy xuất nguồn gốc', profile.traceability === 'true' ? 'Có' : 'Không yêu cầu'], ['Tiêu chí khác', profile.verificationNotes]] },
             ].map(({ title, target, rows }) => <section key={title} className="rounded-2xl border border-slate-200 p-4 sm:p-5"><div className="mb-4 flex items-center justify-between gap-3"><h3 className="text-sm font-bold">{tr(title)}</h3><button type="button" onClick={() => goTo(target)} className="text-xs font-semibold text-teal-700 hover:underline" aria-label={tr(`Sửa ${title.toLowerCase()}`)}>{tr("Sửa")}</button></div><dl className="space-y-3">{rows.map(([label, value]) => <div key={label} className="grid gap-1 text-xs sm:grid-cols-3 sm:gap-3"><dt className="text-slate-500">{tr(label)}</dt><dd className="break-words font-semibold sm:col-span-2">{tr(value || 'Chưa cung cấp')}</dd></div>)}</dl></section>)}

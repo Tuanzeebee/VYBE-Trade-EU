@@ -5,6 +5,18 @@ import type { components } from './api/schema';
 export type CompanyOut = components['schemas']['CompanyOut'];
 export type CompanyIn = components['schemas']['CompanyIn'];
 export type Industry = NonNullable<CompanyIn['industry_sector']>;
+export type Completeness = components['schemas']['CompletenessOut'];
+
+// Mô hình kinh doanh của exporter (B3): thông tin buyer EU quan tâm và liên quan tới quy tắc xuất xứ
+// (trader khó chứng minh xuất xứ hơn nhà sản xuất). Mã khớp backend (completeness.BUSINESS_MODELS).
+export const BUSINESS_MODELS: { code: 'manufacturer' | 'trader' | 'both'; label: string }[] = [
+  { code: 'manufacturer', label: 'Nhà sản xuất' },
+  { code: 'trader', label: 'Công ty thương mại' },
+  { code: 'both', label: 'Vừa sản xuất vừa thương mại' },
+];
+
+const businessModel = (value: string | undefined) =>
+  BUSINESS_MODELS.find((m) => m.code === value?.trim())?.code ?? null;
 
 // Nhãn tiếng Việt lấy từ CATEGORIES cũ; mã khớp backend (schemas.Industry).
 export const INDUSTRIES: { code: Industry; label: string }[] = [
@@ -84,7 +96,7 @@ export function profileToCompany(profile: Record<string, string>): CompanyIn {
     tax_id: taxId,
     // Ở Việt Nam mã số doanh nghiệp trên giấy ĐKKD trùng mã số thuế.
     registration_number: blank(profile.registrationNumber) ?? taxId,
-    business_type: blank(profile.businessType),
+    business_type: businessModel(profile.businessType),
     country: 'VN',
     founded_year: Number.isInteger(year) && profile.establishedYear?.trim() ? year : null,
     address: blank(profile.headquartersAddress),
@@ -166,6 +178,7 @@ export function buyerProfileToCompany(profile: Record<string, string>): CompanyI
     website: blank(profile.website),
     contact_email: blank(profile.contactEmail),
     vat_number: blank(profile.vatNumber),
+    eori_number: blank(profile.eoriNumber),
     procurement_estimate: codeOf(PROCUREMENT_ESTIMATES, profile.procurementEstimate) as CompanyIn['procurement_estimate'],
     sourcing_categories: [...new Set(categories)],
   };
@@ -180,6 +193,7 @@ function buyerToForm(company: CompanyOut): Record<string, string> {
     website: company.website ?? '',
     contactEmail: company.contact_email ?? '',
     vatNumber: company.vat_number ?? '',
+    eoriNumber: company.eori_number ?? '',
     procurementEstimate: labelOf(PROCUREMENT_ESTIMATES, company.procurement_estimate),
     interest: company.sourcing_categories.map((code) => INDUSTRIES.find((i) => i.code === code)?.label ?? code).join(', '),
   };
@@ -192,7 +206,8 @@ export function companyToForm(company: CompanyOut): Record<string, string> {
     companyName: company.legal_name,
     taxCode: company.tax_id ?? '',
     registrationNumber: company.registration_number ?? '',
-    businessType: company.business_type ?? '',
+    // Dữ liệu cũ (TNHH…) không còn hợp lệ: hiện như chưa chọn để người dùng chọn lại.
+    businessType: businessModel(company.business_type ?? undefined) ?? '',
     establishedYear: company.founded_year ? String(company.founded_year) : '',
     headquartersAddress: company.address ?? '',
     website: company.website ?? '',
@@ -231,4 +246,14 @@ export async function saveMyCompany(body: CompanyIn): Promise<CompanyOut> {
   }
   if (!result.response.ok || !result.data) throw new Error(INVALID);
   return result.data;
+}
+
+/** Điểm hoàn thiện hồ sơ và danh sách còn thiếu (B3). Chưa có hồ sơ hoặc lỗi → null. */
+export async function getCompleteness(): Promise<Completeness | null> {
+  try {
+    const { data, response } = await createApiClient().GET('/api/me/company/completeness');
+    return response.ok && data ? data : null;
+  } catch {
+    return null;
+  }
 }

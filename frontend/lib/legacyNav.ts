@@ -56,6 +56,8 @@ interface HrefOptions {
   rfq?: boolean;
   directory?: Partial<DirectoryQuery>;
   tab?: string;
+  /** Bước của form hồ sơ seller cần mở (1 = công ty, 2 = sản phẩm, 3 = giấy phép). */
+  step?: number;
   productService?: 'ai-trust' | 'verification';
 }
 
@@ -77,7 +79,7 @@ export function hrefFor(page: LegacyPage, options: HrefOptions = {}): string {
     case 'onboarding':
       return options.user?.role === 'buyer' ? '/buyer/onboarding' : '/exporter/onboarding';
     case 'seller-profile':
-      return '/exporter/profile';
+      return withQuery('/exporter/profile', { step: options.step ? String(options.step) : null });
     case 'workspace':
       return withQuery('/exporter', { tab: options.tab });
     case 'buyer-directory': {

@@ -8248,5 +8248,150 @@
     "{0} is invalid (a positive number, use a dot for decimals, at most 2 decimal places).",
     "{0} is invalid (a positive number, use a dot for decimals, at most 2 decimal places).",
     "{0} is invalid (a positive number, use a dot for decimals, at most 2 decimal places)."
+  ],
+  "Mô hình kinh doanh *": [
+    "Business model *",
+    "Business model *",
+    "Business model *"
+  ],
+  "Mô hình kinh doanh": [
+    "Business model",
+    "Business model",
+    "Business model"
+  ],
+  "Chọn mô hình": [
+    "Select a model",
+    "Select a model",
+    "Select a model"
+  ],
+  "Nhà sản xuất": [
+    "Manufacturer",
+    "Manufacturer",
+    "Manufacturer"
+  ],
+  "Công ty thương mại": [
+    "Trading company",
+    "Trading company",
+    "Trading company"
+  ],
+  "Vừa sản xuất vừa thương mại": [
+    "Both manufacturer and trader",
+    "Both manufacturer and trader",
+    "Both manufacturer and trader"
+  ],
+  "Mô hình:": [
+    "Model:",
+    "Model:",
+    "Model:"
+  ],
+  "Mã EORI": [
+    "EORI number",
+    "EORI number",
+    "EORI number"
+  ],
+  "Ví dụ: DE123456789012345": [
+    "Example: DE123456789012345",
+    "Example: DE123456789012345",
+    "Example: DE123456789012345"
+  ],
+  "Mức độ hoàn thiện hồ sơ": [
+    "Profile completeness",
+    "Profile completeness",
+    "Profile completeness"
+  ],
+  "Đang tính điểm hoàn thiện…": [
+    "Calculating completeness…",
+    "Calculating completeness…",
+    "Calculating completeness…"
+  ],
+  "Không tải được điểm hoàn thiện hồ sơ.": [
+    "Could not load the profile completeness score.",
+    "Could not load the profile completeness score.",
+    "Could not load the profile completeness score."
+  ],
+  "hoàn thiện": [
+    "complete",
+    "complete",
+    "complete"
+  ],
+  "Hồ sơ đã đầy đủ thông tin cần thiết.": [
+    "Your profile has all the required information.",
+    "Your profile has all the required information.",
+    "Your profile has all the required information."
+  ],
+  "Việc cần bổ sung": [
+    "Still to complete",
+    "Still to complete",
+    "Still to complete"
+  ],
+  "Điểm này chỉ đo mức đầy đủ của hồ sơ, không phải kết quả xác minh.": [
+    "This score only measures how complete your profile is; it is not a verification result.",
+    "This score only measures how complete your profile is; it is not a verification result.",
+    "This score only measures how complete your profile is; it is not a verification result."
+  ],
+  "Mã số thuế / ĐKKD": [
+    "Tax ID / business registration number",
+    "Tax ID / business registration number",
+    "Tax ID / business registration number"
+  ],
+  "Năm thành lập": [
+    "Year founded",
+    "Year founded",
+    "Year founded"
+  ],
+  "Địa chỉ": [
+    "Address",
+    "Address",
+    "Address"
+  ],
+  "Mô tả tiếng Anh (≥ 150 ký tự)": [
+    "English description (at least 150 characters)",
+    "English description (at least 150 characters)",
+    "English description (at least 150 characters)"
+  ],
+  "Mô tả tiếng Việt (≥ 150 ký tự)": [
+    "Vietnamese description (at least 150 characters)",
+    "Vietnamese description (at least 150 characters)",
+    "Vietnamese description (at least 150 characters)"
+  ],
+  "Ngoại ngữ nhân viên": [
+    "Staff foreign languages",
+    "Staff foreign languages",
+    "Staff foreign languages"
+  ],
+  "Sản phẩm kèm mã HS": [
+    "Products with HS code",
+    "Products with HS code",
+    "Products with HS code"
+  ],
+  "Mô tả sản phẩm (≥ 30 ký tự)": [
+    "Product description (at least 30 characters)",
+    "Product description (at least 30 characters)",
+    "Product description (at least 30 characters)"
+  ],
+  "Giá sản phẩm": [
+    "Product price",
+    "Product price",
+    "Product price"
+  ],
+  "Bằng chứng đã nộp": [
+    "Evidence submitted",
+    "Evidence submitted",
+    "Evidence submitted"
+  ],
+  "Nhóm hàng quan tâm": [
+    "Product groups of interest",
+    "Product groups of interest",
+    "Product groups of interest"
+  ],
+  "Mã VAT hoặc EORI": [
+    "VAT or EORI number",
+    "VAT or EORI number",
+    "VAT or EORI number"
+  ],
+  "Quy mô công ty": [
+    "Company size",
+    "Company size",
+    "Company size"
   ]
 }

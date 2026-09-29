@@ -71,3 +71,19 @@ describe('SellerOnboarding bước 1 (B1)', () => {
     expect((screen.getByRole('checkbox', { name: 'Tiếng Anh' }) as HTMLInputElement).checked).toBe(false);
   });
 });
+
+describe('SellerOnboarding — mô hình kinh doanh (B3)', () => {
+  it('ô này chọn sản xuất / thương mại / cả hai, không còn hình thức pháp lý', () => {
+    renderOnboarding();
+    const select = screen.getByRole('combobox', { name: /Mô hình kinh doanh/ }) as HTMLSelectElement;
+    expect([...select.options].map((o) => o.value)).toEqual(['', 'manufacturer', 'trader', 'both']);
+    for (const gone of [/Công ty TNHH/, /Công ty Cổ phần/, /Doanh nghiệp tư nhân/, /Hợp tác xã/, /vốn đầu tư nước ngoài/]) {
+      expect(screen.queryByText(gone)).not.toBeInTheDocument();
+    }
+  });
+
+  it('nạp giá trị đã lưu từ server', () => {
+    renderOnboarding({ businessType: 'both' });
+    expect((screen.getByRole('combobox', { name: /Mô hình kinh doanh/ }) as HTMLSelectElement).value).toBe('both');
+  });
+});

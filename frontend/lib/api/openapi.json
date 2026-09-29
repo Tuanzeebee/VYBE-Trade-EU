@@ -406,6 +406,55 @@
         }
       }
     },
+    "/api/me/company/completeness": {
+      "get": {
+        "tags": [
+          "companies"
+        ],
+        "summary": "Get My Completeness",
+        "operationId": "get_my_completeness_api_me_company_completeness_get",
+        "parameters": [
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompletenessOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/uploads/presign": {
       "post": {
         "tags": [
@@ -1036,6 +1085,18 @@
             ],
             "title": "Vat Number"
           },
+          "eori_number": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 20
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Eori Number"
+          },
           "legal_name": {
             "type": "string",
             "maxLength": 255,
@@ -1284,6 +1345,17 @@
             ],
             "title": "Vat Number"
           },
+          "eori_number": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Eori Number"
+          },
           "sourcing_categories": {
             "items": {
               "type": "string"
@@ -1372,6 +1444,7 @@
           "company_size",
           "procurement_estimate",
           "vat_number",
+          "eori_number",
           "sourcing_categories",
           "verification_status",
           "verification_level",
@@ -1559,6 +1632,18 @@
             ],
             "title": "Vat Number"
           },
+          "eori_number": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 20
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Eori Number"
+          },
           "legal_name": {
             "anyOf": [
               {
@@ -1655,6 +1740,29 @@
         "type": "object",
         "title": "CompanyPatch",
         "description": "Chỉ các trường gửi lên mới được sửa; danh sách gửi lên thay thế danh sách cũ."
+      },
+      "CompletenessOut": {
+        "properties": {
+          "score": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Score"
+          },
+          "missing": {
+            "items": {
+              "$ref": "#/components/schemas/MissingOut"
+            },
+            "type": "array",
+            "title": "Missing"
+          }
+        },
+        "type": "object",
+        "required": [
+          "score",
+          "missing"
+        ],
+        "title": "CompletenessOut",
+        "description": "Chỉ điểm và danh sách còn thiếu — cố ý KHÔNG chứa trạng thái xác minh (khái niệm khác)."
       },
       "CurrentUser": {
         "properties": {
@@ -1810,6 +1918,30 @@
         },
         "type": "object",
         "title": "MePatch"
+      },
+      "MissingOut": {
+        "properties": {
+          "field": {
+            "type": "string",
+            "title": "Field"
+          },
+          "group": {
+            "type": "string",
+            "title": "Group"
+          },
+          "weight": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Weight"
+          }
+        },
+        "type": "object",
+        "required": [
+          "field",
+          "group",
+          "weight"
+        ],
+        "title": "MissingOut"
       },
       "PresignIn": {
         "properties": {

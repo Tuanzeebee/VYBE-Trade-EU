@@ -107,8 +107,46 @@ const B5_STRINGS = [
   'Giá thấp nhất không hợp lệ (số dương, dùng dấu chấm cho phần thập phân, tối đa 2 chữ số).'
 ];
 
-describe('catalog.json có bản tiếng Anh cho chuỗi A1, B1, B2, B4, B5', () => {
-  it.each([...A1_STRINGS, ...B1_STRINGS, ...B2_STRINGS, ...B4_STRINGS, ...B5_STRINGS])('%s', (vi) => {
+// Chuỗi mới ở B3 (mô hình kinh doanh, EORI, thẻ hoàn thiện hồ sơ).
+const B3_STRINGS = [
+  'Mô hình kinh doanh *',
+  'Mô hình kinh doanh',
+  'Chọn mô hình',
+  'Nhà sản xuất',
+  'Công ty thương mại',
+  'Vừa sản xuất vừa thương mại',
+  'Mô hình:',
+  'Mã EORI',
+  'Ví dụ: DE123456789012345',
+  'Mức độ hoàn thiện hồ sơ',
+  'Đang tính điểm hoàn thiện…',
+  'Không tải được điểm hoàn thiện hồ sơ.',
+  'hoàn thiện',
+  'Hồ sơ đã đầy đủ thông tin cần thiết.',
+  'Việc cần bổ sung',
+  'Điểm này chỉ đo mức đầy đủ của hồ sơ, không phải kết quả xác minh.',
+  'Mã số thuế / ĐKKD',
+  'Năm thành lập',
+  'Địa chỉ',
+  'Mô tả tiếng Anh (≥ 150 ký tự)',
+  'Mô tả tiếng Việt (≥ 150 ký tự)',
+  'Ngành hàng',
+  'Thị trường xuất khẩu',
+  'Ngoại ngữ nhân viên',
+  'Sản phẩm kèm mã HS',
+  'Ảnh sản phẩm',
+  'Mô tả sản phẩm (≥ 30 ký tự)',
+  'Giá sản phẩm',
+  'Bằng chứng đã nộp',
+  'Nhóm hàng quan tâm',
+  'Mã VAT hoặc EORI',
+  'Quy mô công ty',
+  'Ước lượng mua hàng',
+  'Loại hình doanh nghiệp'
+];
+
+describe('catalog.json có bản tiếng Anh cho chuỗi A1, B1, B2, B3, B4, B5', () => {
+  it.each([...A1_STRINGS, ...B1_STRINGS, ...B2_STRINGS, ...B3_STRINGS, ...B4_STRINGS, ...B5_STRINGS])('%s', (vi) => {
     const en = translateText(vi, 'en');
     expect(en).not.toBe(vi);
     expect(en.trim()).not.toBe('');

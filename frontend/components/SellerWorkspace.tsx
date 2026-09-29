@@ -7,6 +7,7 @@
 import React, { useEffect, useState } from 'react';
 import type { DemoUser } from '../lib/demoAuth';
 import { formatMoq, formatPrice, getMyProducts, type ProductOut } from '../lib/productsApi';
+import CompletenessCard from './CompletenessCard';
 import LanguageSelect from './LanguageSelect';
 import { 
   Home, 
@@ -75,7 +76,8 @@ interface SellerWorkspaceProps {
   account?: DemoUser;
   onLogout: () => void;
   onNavigateHome: () => void;
-  onNavigateOnboarding: () => void;
+  /** Mở form hồ sơ; step = bước cần bổ sung (1 công ty, 2 sản phẩm, 3 giấy phép). */
+  onNavigateOnboarding: (step?: number) => void;
   onNavigateBuyerDetail?: () => void;
   initialTab?: 'verification' | 'profile' | 'overview' | 'products' | 'rfq' | 'notifications' | 'licenses';
 }
@@ -448,7 +450,7 @@ export default function SellerWorkspace({
               
               {/* Back to Onboarding */}
               <button
-                onClick={onNavigateOnboarding}
+                onClick={() => onNavigateOnboarding()}
                 className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold transition-colors cursor-pointer"
                 title={tr("Cập nhật hồ sơ xuất khẩu")}
               >
@@ -591,6 +593,9 @@ export default function SellerWorkspace({
              ----------------------------------------------------------------------- */}
           {activeTab === 'profile' && (
             <div className="space-y-8 text-left animate-in fade-in duration-200">
+
+              {/* Mức độ hoàn thiện hồ sơ (B3) — khu riêng, không phải kết quả xác minh */}
+              <CompletenessCard onNavigate={(step) => onNavigateOnboarding(step)} />
               
               {/* Header Hero Banner */}
               <div className="relative rounded-3xl bg-gradient-to-r from-[#083832] via-[#0b4d45] to-[#0a2f2a] p-6 sm:p-8 lg:p-10 text-white shadow-xl overflow-hidden">
@@ -1640,7 +1645,7 @@ export default function SellerWorkspace({
                   <p className="text-xs text-slate-500 mt-0.5">{tr("Các mặt hàng chính đã được đối soát thông số kỹ thuật và bao bì xuất khẩu")}</p>
                 </div>
                 <button 
-                  onClick={onNavigateOnboarding}
+                  onClick={() => onNavigateOnboarding()}
                   className="px-4 py-2 rounded-xl bg-[#083832] text-white text-xs font-semibold hover:bg-[#062924] transition-colors cursor-pointer"
                 >
                   {tr("+ Thêm sản phẩm mới")}</button>

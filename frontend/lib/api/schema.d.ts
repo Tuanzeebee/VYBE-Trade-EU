@@ -88,6 +88,23 @@ export interface paths {
         patch: operations["update_my_company_api_me_company_patch"];
         trace?: never;
     };
+    "/api/me/company/completeness": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get My Completeness */
+        get: operations["get_my_completeness_api_me_company_completeness_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/uploads/presign": {
         parameters: {
             query?: never;
@@ -225,6 +242,8 @@ export interface components {
             procurement_estimate?: ("lt_100k" | "100k_500k" | "500k_2m" | "2m_10m" | "gt_10m") | null;
             /** Vat Number */
             vat_number?: string | null;
+            /** Eori Number */
+            eori_number?: string | null;
             /** Legal Name */
             legal_name: string;
             /**
@@ -289,6 +308,8 @@ export interface components {
             procurement_estimate: string | null;
             /** Vat Number */
             vat_number: string | null;
+            /** Eori Number */
+            eori_number: string | null;
             /** Sourcing Categories */
             sourcing_categories: string[];
             /**
@@ -349,6 +370,8 @@ export interface components {
             procurement_estimate?: ("lt_100k" | "100k_500k" | "500k_2m" | "2m_10m" | "gt_10m") | null;
             /** Vat Number */
             vat_number?: string | null;
+            /** Eori Number */
+            eori_number?: string | null;
             /** Legal Name */
             legal_name?: string | null;
             /** Country */
@@ -361,6 +384,16 @@ export interface components {
             sourcing_categories?: ("agriculture" | "seafood" | "food_beverage" | "textiles" | "handicrafts" | "spices")[] | null;
             /** Logo Key */
             logo_key?: string | null;
+        };
+        /**
+         * CompletenessOut
+         * @description Chỉ điểm và danh sách còn thiếu — cố ý KHÔNG chứa trạng thái xác minh (khái niệm khác).
+         */
+        CompletenessOut: {
+            /** Score */
+            score: string;
+            /** Missing */
+            missing: components["schemas"]["MissingOut"][];
         };
         /** CurrentUser */
         CurrentUser: {
@@ -420,6 +453,15 @@ export interface components {
             preferred_language?: ("vi" | "en") | null;
             /** Phone */
             phone?: string | null;
+        };
+        /** MissingOut */
+        MissingOut: {
+            /** Field */
+            field: string;
+            /** Group */
+            group: string;
+            /** Weight */
+            weight: string;
         };
         /** PresignIn */
         PresignIn: {
@@ -935,6 +977,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["CompanyOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_my_completeness_api_me_company_completeness_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CompletenessOut"];
                 };
             };
             /** @description Validation Error */

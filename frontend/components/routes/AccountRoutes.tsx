@@ -143,7 +143,7 @@ function WorkspaceContent({ user }: { user: DemoUser }) {
       account={user}
       onLogout={handleLogout}
       onNavigateHome={() => navigate('home')}
-      onNavigateOnboarding={() => navigate('seller-profile')}
+      onNavigateOnboarding={(step) => navigate('seller-profile', { step: typeof step === 'number' ? step : undefined })}
       onNavigateBuyerDetail={() => navigate('buyer-seller-detail')}
       initialTab={initialTab}
     />
@@ -157,6 +157,9 @@ export function WorkspaceRoute() {
 function SellerProfileContent({ user }: { user: DemoUser }) {
   const navigate = useLegacyNavigate(user);
   const handleLogout = useLogout();
+  // ?step= mở đúng bước chứa phần còn thiếu (từ thẻ hoàn thiện hồ sơ); không hợp lệ → bước mặc định.
+  const stepParam = Number(useSearchParams().get('step'));
+  const initialStep = [1, 2, 3, 4].includes(stepParam) ? stepParam : undefined;
   const data = useProfileData(true);
   if (data === undefined) return null;
   const onComplete = async (profile: Record<string, string>, products: ProductDraft[]) => {
@@ -168,6 +171,7 @@ function SellerProfileContent({ user }: { user: DemoUser }) {
     <SellerOnboarding
       key={user.id}
       account={user}
+      initialStep={initialStep}
       initialCompany={data.company ?? undefined}
       initialProducts={data.products}
       onComplete={onComplete}

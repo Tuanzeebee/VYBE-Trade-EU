@@ -93,6 +93,12 @@ describe('hrefFor — mỗi trang cũ có một URL (chưa gắn locale)', () =>
     ).toBe('/suppliers');
   });
 
+  it('hồ sơ seller mở đúng bước cần bổ sung (?step=)', () => {
+    expect(hrefFor('seller-profile', { step: 2 })).toBe('/exporter/profile?step=2');
+    expect(hrefFor('seller-profile', { step: 1 })).toBe('/exporter/profile?step=1');
+    expect(hrefFor('seller-profile')).toBe('/exporter/profile');
+  });
+
   it('workspace giữ tab, sản phẩm chọn dịch vụ xác minh', () => {
     expect(hrefFor('workspace', { tab: 'rfq' })).toBe('/exporter?tab=rfq');
     expect(hrefFor('product', { productService: 'verification' })).toBe('/products/verification');

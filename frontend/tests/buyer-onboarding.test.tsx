@@ -99,3 +99,11 @@ describe('BuyerOnboarding (B2)', () => {
     expect(screen.getByText('Tiêu chí xác minh', { selector: 'h2' })).toBeInTheDocument();
   });
 });
+
+describe('BuyerOnboarding — mã EORI (B3)', () => {
+  it('có ô EORI cạnh mã VAT, nạp sẵn từ hồ sơ đã lưu', () => {
+    renderBuyer({ eoriNumber: 'DE123456789012' });
+    expect((screen.getByLabelText(/Mã EORI/) as HTMLInputElement).value).toBe('DE123456789012');
+    expect(screen.getByLabelText(/Mã số VAT/)).toBeInTheDocument();
+  });
+});

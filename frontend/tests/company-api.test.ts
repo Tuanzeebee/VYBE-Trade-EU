@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
+  BUSINESS_MODELS,
   companyToForm,
   EXPORT_MARKETS,
   getMyCompany,
@@ -62,7 +63,7 @@ describe('profileToCompany — form onboarding cũ → CompanyIn', () => {
       companyName: '  Công ty A ',
       taxCode: '0312345678',
       registrationNumber: '',
-      businessType: 'TNHH',
+      businessType: 'manufacturer',
       establishedYear: '2018',
       headquartersAddress: 'HCM',
       website: 'https://a.vn',
@@ -77,7 +78,7 @@ describe('profileToCompany — form onboarding cũ → CompanyIn', () => {
       legal_name: 'Công ty A',
       tax_id: '0312345678',
       registration_number: '0312345678',
-      business_type: 'TNHH',
+      business_type: 'manufacturer',
       country: 'VN',
       founded_year: 2018,
       address: 'HCM',
@@ -183,5 +184,23 @@ describe('saveMyCompany', () => {
   it('getMyCompany: 404 → null', async () => {
     vi.stubGlobal('fetch', vi.fn(async () => json(404, {})));
     expect(await getMyCompany()).toBeNull();
+  });
+});
+
+describe('BUSINESS_MODELS (B3)', () => {
+  it('khớp ba giá trị backend nhận: sản xuất, thương mại, cả hai', () => {
+    expect(BUSINESS_MODELS.map((m) => m.code)).toEqual(['manufacturer', 'trader', 'both']);
+    expect(BUSINESS_MODELS.every((m) => m.label.trim() !== '')).toBe(true);
+  });
+
+  it('profileToCompany: chỉ nhận mã hợp lệ, hình thức pháp lý cũ (TNHH…) không gửi lên', () => {
+    expect(profileToCompany({ companyName: 'A', businessType: 'trader' }).business_type).toBe('trader');
+    expect(profileToCompany({ companyName: 'A', businessType: 'TNHH' }).business_type).toBeNull();
+    expect(profileToCompany({ companyName: 'A', businessType: '' }).business_type).toBeNull();
+  });
+
+  it('companyToForm: dữ liệu cũ (TNHH) hiện như chưa chọn để người dùng chọn lại', () => {
+    expect(companyToForm({ ...COMPANY, business_type: 'both' } as never).businessType).toBe('both');
+    expect(companyToForm({ ...COMPANY, business_type: 'TNHH' } as never).businessType).toBe('');
   });
 });

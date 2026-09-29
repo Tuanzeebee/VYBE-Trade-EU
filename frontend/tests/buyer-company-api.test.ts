@@ -32,6 +32,7 @@ const BUYER = {
   company_size: '51_200',
   procurement_estimate: '500k_2m',
   vat_number: 'DE123456789',
+  eori_number: 'DE123456789012',
   sourcing_categories: ['agriculture', 'spices'],
   verification_status: 'unverified',
   verification_level: 'basic',
@@ -88,6 +89,7 @@ describe('buyerProfileToCompany — form buyer cũ → CompanyIn', () => {
         website: 'https://globalfoods.example.de',
         contactEmail: 'sourcing@globalfoods.example.de',
         vatNumber: ' DE123456789 ',
+        eoriNumber: ' DE123456789012 ',
         procurementEstimate: '500.000 – 2 triệu EUR/năm',
         interest: 'Nông sản, Gia vị & Hương liệu',
       }),
@@ -99,6 +101,7 @@ describe('buyerProfileToCompany — form buyer cũ → CompanyIn', () => {
       website: 'https://globalfoods.example.de',
       contact_email: 'sourcing@globalfoods.example.de',
       vat_number: 'DE123456789',
+      eori_number: 'DE123456789012',
       procurement_estimate: '500k_2m',
       sourcing_categories: ['agriculture', 'spices'],
     });
@@ -115,6 +118,7 @@ describe('buyerProfileToCompany — form buyer cũ → CompanyIn', () => {
     });
     expect(body.company_size).toBeNull();
     expect(body.vat_number).toBeNull();
+    expect(body.eori_number).toBeNull();
     expect(body.procurement_estimate).toBeNull();
     expect(body.sourcing_categories).toEqual(['seafood']);
     expect(body).not.toHaveProperty('export_markets');
@@ -138,6 +142,7 @@ describe('companyToForm — hồ sơ buyer từ server → form cũ', () => {
       website: 'https://globalfoods.example.de',
       contactEmail: 'sourcing@globalfoods.example.de',
       vatNumber: 'DE123456789',
+      eoriNumber: 'DE123456789012',
       procurementEstimate: '500.000 – 2 triệu EUR/năm',
       interest: 'Nông sản, Gia vị & Hương liệu',
     });
