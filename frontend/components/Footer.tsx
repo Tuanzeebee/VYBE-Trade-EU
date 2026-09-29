@@ -2,6 +2,7 @@
 import React from 'react';
 import { useLanguage } from '../context/LanguageContext.tsx';
 import { ShieldCheck, Mail, Phone, MapPin, Globe } from 'lucide-react';
+import { Link } from '../i18n/navigation';
 
 export interface FooterProps {
   onNavigate?: (page: any) => void;
@@ -108,11 +109,11 @@ export default function Footer({ onNavigate }: FooterProps) {
         <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-slate-500 text-[11px]">
           <p>© {new Date().getFullYear()} VYBE TRADE Inc. All rights reserved.</p>
           <div className="flex items-center gap-4">
-            <span className="hover:text-slate-400 cursor-pointer">{tr("Điều khoản dịch vụ")}</span>
+            <Link href="/terms" className="hover:text-slate-200 underline-offset-2 hover:underline">{tr("Điều khoản dịch vụ")}</Link>
             <span>•</span>
-            <span className="hover:text-slate-400 cursor-pointer">{tr("Chính sách bảo mật")}</span>
+            <Link href="/privacy" className="hover:text-slate-200 underline-offset-2 hover:underline">{tr("Chính sách bảo mật")}</Link>
             <span>•</span>
-            <span className="hover:text-slate-400 cursor-pointer">{tr("Bảo vệ dữ liệu Buyer & Supplier")}</span>
+            <Link href="/privacy" className="hover:text-slate-200 underline-offset-2 hover:underline">{tr("Bảo vệ dữ liệu Buyer & Supplier")}</Link>
           </div>
         </div>
       </div>
