@@ -9,6 +9,7 @@ dependencies = [
     "boto3>=1.43.104",
     "fastapi[standard]>=0.141.1",
     "jinja2>=3.1.6",
+    "pgvector>=0.5.0",
     "procrastinate>=3.10.0",
     "psycopg[binary,pool]>=3.3.6",
     "pydantic-settings>=2.15.0",
@@ -30,7 +31,7 @@ select = ["E", "F", "I", "UP", "B", "ASYNC", "S", "RUF"]
 ignore = ["RUF001", "RUF002", "RUF003"]  # cho phép chữ tiếng Việt trong chuỗi/comment
 
 [tool.ruff.lint.per-file-ignores]
-"**/tests/**" = ["S101"]
+"**/tests/**" = ["S101", "E501"]  # dữ liệu synthetic trong test có thể dài
 
 [tool.mypy]
 strict = true
@@ -38,7 +39,7 @@ python_version = "3.12"
 plugins = ["pydantic.mypy"]
 
 [[tool.mypy.overrides]]
-module = ["boto3.*", "botocore.*", "reportlab.*", "asyncpg.*"]
+module = ["boto3.*", "botocore.*", "reportlab.*", "asyncpg.*", "pgvector.*"]
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]

@@ -10,6 +10,7 @@ import app.modules.auth.models
 import app.modules.catalog.models
 import app.modules.companies.models
 import app.modules.compliance.models
+import app.modules.copilot.models
 import app.modules.verification.models  # noqa: F401
 from alembic import context
 from app.core.config import get_settings
