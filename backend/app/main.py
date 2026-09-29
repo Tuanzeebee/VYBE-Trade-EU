@@ -15,6 +15,7 @@ from app.core.errors import register_error_handlers
 from app.core.logging import RequestIdMiddleware, setup_logging
 from app.core.ratelimit import enforce_public_limit
 from app.core.storage import Storage, get_storage
+from app.core.web_security import OriginCheckMiddleware, SecurityHeadersMiddleware
 from app.jobs.app import app as jobs_app
 from app.modules.admin.router import router as admin_router
 from app.modules.auth import service as auth_service
@@ -59,6 +60,9 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PATCH", "PUT", "DELETE"],
     allow_headers=["content-type", "x-request-id"],
 )
+# Thứ tự: middleware thêm SAU nằm NGOÀI. SecurityHeaders ngoài cùng để cả 403 cũng có header.
+app.add_middleware(OriginCheckMiddleware, allowed_origins=get_settings().cors_origins)
+app.add_middleware(SecurityHeadersMiddleware, hsts=get_settings().cookie_secure)
 register_error_handlers(app)
 app.include_router(auth_router)
 app.include_router(admin_router)
