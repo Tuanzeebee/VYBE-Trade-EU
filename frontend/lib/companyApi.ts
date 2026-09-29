@@ -42,8 +42,23 @@ const MARKET_NAMES: Record<string, string> = {
   úc: 'AU',
 };
 
-/** Nhãn thị trường của giao diện cũ → mã lưu DB (ISO-2, EU, ASEAN). Không nhận ra → null. */
+// Thị trường xuất khẩu đã phục vụ (cấp công ty). Mã lưu DB: ISO-2, EU hoặc ASEAN.
+export const EXPORT_MARKETS: { code: string; label: string }[] = [
+  { code: 'EU', label: 'Châu Âu (EU)' },
+  { code: 'US', label: 'Hoa Kỳ' },
+  { code: 'JP', label: 'Nhật Bản' },
+  { code: 'KR', label: 'Hàn Quốc' },
+  { code: 'CN', label: 'Trung Quốc' },
+  { code: 'ASEAN', label: 'ASEAN' },
+  { code: 'CA', label: 'Canada' },
+  { code: 'AU', label: 'Úc' },
+  { code: 'GB', label: 'Anh (UK)' },
+  { code: 'AE', label: 'UAE' },
+];
+
+/** Nhãn hoặc mã thị trường → mã lưu DB (ISO-2, EU, ASEAN). Không nhận ra → null. */
 export function marketCode(label: string): string | null {
+  if (/^(EU|ASEAN|[A-Z]{2})$/.test(label.trim())) return label.trim();
   const inParens = label.match(/\(([A-Z]{2}|EU|ASEAN)\)/);
   if (inParens) return inParens[1];
   return MARKET_NAMES[label.trim().toLowerCase()] ?? null;
@@ -57,10 +72,11 @@ const blank = (value: string | undefined) => {
 /** Form onboarding cũ (mọi giá trị là chuỗi) → body CompanyIn. */
 export function profileToCompany(profile: Record<string, string>): CompanyIn {
   const year = Number(profile.establishedYear);
-  const markets = (profile.market ?? '')
+  // Ô chọn thị trường cấp công ty (mã, ngăn cách bằng dấu phẩy); không đọc thị trường cũ theo từng sản phẩm.
+  const markets = (profile.markets ?? '')
     .split(',')
-    .map((m) => marketCode(m))
-    .filter((m): m is string => m !== null);
+    .map((m) => m.trim())
+    .filter((m) => /^(EU|ASEAN|[A-Z]{2})$/.test(m));
   const languages = (profile.languages ?? '').split(',').map((l) => l.trim()).filter(Boolean);
   const taxId = blank(profile.taxCode);
   return {
@@ -185,6 +201,7 @@ export function companyToForm(company: CompanyOut): Record<string, string> {
     descriptionEn: company.description_en ?? '',
     industrySector: company.industry_sector ?? '',
     languages: company.languages_spoken.join(','),
+    markets: company.export_markets.join(','),
   };
 }
 

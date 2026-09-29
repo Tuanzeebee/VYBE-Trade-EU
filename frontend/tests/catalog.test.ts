@@ -60,8 +60,55 @@ const B4_STRINGS = [
   'Không tải được danh sách mã HS. Vui lòng thử lại.'
 ];
 
-describe('catalog.json có bản tiếng Anh cho chuỗi A1, B1, B2, B4', () => {
-  it.each([...A1_STRINGS, ...B1_STRINGS, ...B2_STRINGS, ...B4_STRINGS])('%s', (vi) => {
+// Chuỗi mới ở B5 (sản phẩm, thị trường xuất khẩu). Mẫu có tên sản phẩm được thay bằng ví dụ cụ thể.
+const B5_STRINGS = [
+  'Chưa có sản phẩm. Hãy thêm ít nhất một sản phẩm kèm mã HS để buyer tìm thấy bạn.',
+  'Sản phẩm',
+  'Ví dụ: Gạo thơm Jasmine xuất khẩu',
+  'Mã HS',
+  'Giá thấp nhất',
+  'Giá cao nhất',
+  'Tiền tệ',
+  'Đơn vị giá',
+  'Chọn đơn vị',
+  'MOQ (số lượng đặt tối thiểu)',
+  'Đơn vị MOQ',
+  'Mô tả (tiếng Việt)',
+  'Mô tả (tiếng Anh)',
+  'Ảnh sản phẩm',
+  'Ảnh',
+  'Xóa ảnh',
+  'Đang tải…',
+  'Thêm ảnh',
+  'Đã đủ 10 ảnh',
+  'Hiển thị công khai',
+  'Cái',
+  'Thùng',
+  'Lít',
+  'Ảnh phải là PNG, JPEG hoặc WebP.',
+  'Ảnh tối đa 5MB.',
+  'Không tải được ảnh lên. Bạn vẫn có thể lưu sản phẩm không có ảnh.',
+  'Vui lòng thêm ít nhất một sản phẩm.',
+  'Sản phẩm chưa hợp lệ. Vui lòng kiểm tra lại.',
+  'Thị trường xuất khẩu đã phục vụ',
+  'Mỗi sản phẩm cần có mã HS. Buyer tìm thấy bạn qua mã HS, giá và MOQ.',
+  'Mỗi sản phẩm cần có tên.',
+  'Giá thấp nhất không được lớn hơn giá cao nhất.',
+  'Chưa có hồ sơ doanh nghiệp. Hãy lưu thông tin doanh nghiệp trước.',
+  'Không tải được danh sách sản phẩm. Vui lòng thử lại.',
+  'Chưa có sản phẩm. Thêm sản phẩm kèm mã HS để buyer tìm thấy bạn.',
+  'Đang ẩn',
+  'Giá:',
+  'Từ',
+  'Đến',
+  'Sản phẩm "Gạo thơm" chưa chọn mã HS.',
+  'Sản phẩm "Gạo thơm" chưa hợp lệ. Vui lòng kiểm tra mã HS, giá và ảnh.',
+  'Không lưu được sản phẩm "Gạo thơm". Vui lòng thử lại.',
+  'Giá thấp nhất không hợp lệ (số dương, dùng dấu chấm cho phần thập phân, tối đa 2 chữ số).'
+];
+
+describe('catalog.json có bản tiếng Anh cho chuỗi A1, B1, B2, B4, B5', () => {
+  it.each([...A1_STRINGS, ...B1_STRINGS, ...B2_STRINGS, ...B4_STRINGS, ...B5_STRINGS])('%s', (vi) => {
     const en = translateText(vi, 'en');
     expect(en).not.toBe(vi);
     expect(en.trim()).not.toBe('');

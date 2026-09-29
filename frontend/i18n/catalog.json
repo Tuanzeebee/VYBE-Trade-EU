@@ -8033,5 +8033,220 @@
     "Could not load HS codes. Please try again.",
     "Could not load HS codes. Please try again.",
     "Could not load HS codes. Please try again."
+  ],
+  "Chưa có sản phẩm. Hãy thêm ít nhất một sản phẩm kèm mã HS để buyer tìm thấy bạn.": [
+    "No products yet. Add at least one product with an HS code so buyers can find you.",
+    "No products yet. Add at least one product with an HS code so buyers can find you.",
+    "No products yet. Add at least one product with an HS code so buyers can find you."
+  ],
+  "Sản phẩm": [
+    "Product",
+    "Product",
+    "Product"
+  ],
+  "Ví dụ: Gạo thơm Jasmine xuất khẩu": [
+    "Example: Jasmine fragrant rice for export",
+    "Example: Jasmine fragrant rice for export",
+    "Example: Jasmine fragrant rice for export"
+  ],
+  "Mã HS": [
+    "HS code",
+    "HS code",
+    "HS code"
+  ],
+  "Giá thấp nhất": [
+    "Lowest price",
+    "Lowest price",
+    "Lowest price"
+  ],
+  "Giá cao nhất": [
+    "Highest price",
+    "Highest price",
+    "Highest price"
+  ],
+  "Tiền tệ": [
+    "Currency",
+    "Currency",
+    "Currency"
+  ],
+  "Đơn vị giá": [
+    "Price unit",
+    "Price unit",
+    "Price unit"
+  ],
+  "Chọn đơn vị": [
+    "Select unit",
+    "Select unit",
+    "Select unit"
+  ],
+  "MOQ (số lượng đặt tối thiểu)": [
+    "MOQ (minimum order quantity)",
+    "MOQ (minimum order quantity)",
+    "MOQ (minimum order quantity)"
+  ],
+  "Đơn vị MOQ": [
+    "MOQ unit",
+    "MOQ unit",
+    "MOQ unit"
+  ],
+  "Mô tả (tiếng Việt)": [
+    "Description (Vietnamese)",
+    "Description (Vietnamese)",
+    "Description (Vietnamese)"
+  ],
+  "Mô tả (tiếng Anh)": [
+    "Description (English)",
+    "Description (English)",
+    "Description (English)"
+  ],
+  "Ảnh sản phẩm": [
+    "Product images",
+    "Product images",
+    "Product images"
+  ],
+  "Ảnh": [
+    "Image",
+    "Image",
+    "Image"
+  ],
+  "Xóa ảnh": [
+    "Remove image",
+    "Remove image",
+    "Remove image"
+  ],
+  "Đang tải…": [
+    "Uploading…",
+    "Uploading…",
+    "Uploading…"
+  ],
+  "Thêm ảnh": [
+    "Add image",
+    "Add image",
+    "Add image"
+  ],
+  "Đã đủ 10 ảnh": [
+    "Maximum of 10 images reached",
+    "Maximum of 10 images reached",
+    "Maximum of 10 images reached"
+  ],
+  "Hiển thị công khai": [
+    "Show publicly",
+    "Show publicly",
+    "Show publicly"
+  ],
+  "Cái": [
+    "Piece",
+    "Piece",
+    "Piece"
+  ],
+  "Thùng": [
+    "Carton",
+    "Carton",
+    "Carton"
+  ],
+  "Lít": [
+    "Litre",
+    "Litre",
+    "Litre"
+  ],
+  "Ảnh phải là PNG, JPEG hoặc WebP.": [
+    "Images must be PNG, JPEG or WebP.",
+    "Images must be PNG, JPEG or WebP.",
+    "Images must be PNG, JPEG or WebP."
+  ],
+  "Ảnh tối đa 5MB.": [
+    "Images can be at most 5MB.",
+    "Images can be at most 5MB.",
+    "Images can be at most 5MB."
+  ],
+  "Không tải được ảnh lên. Bạn vẫn có thể lưu sản phẩm không có ảnh.": [
+    "Could not upload the image. You can still save the product without images.",
+    "Could not upload the image. You can still save the product without images.",
+    "Could not upload the image. You can still save the product without images."
+  ],
+  "Vui lòng thêm ít nhất một sản phẩm.": [
+    "Please add at least one product.",
+    "Please add at least one product.",
+    "Please add at least one product."
+  ],
+  "Sản phẩm chưa hợp lệ. Vui lòng kiểm tra lại.": [
+    "The product is invalid. Please check it again.",
+    "The product is invalid. Please check it again.",
+    "The product is invalid. Please check it again."
+  ],
+  "Thị trường xuất khẩu đã phục vụ": [
+    "Export markets served",
+    "Export markets served",
+    "Export markets served"
+  ],
+  "Mỗi sản phẩm cần có mã HS. Buyer tìm thấy bạn qua mã HS, giá và MOQ.": [
+    "Each product needs an HS code. Buyers find you by HS code, price and MOQ.",
+    "Each product needs an HS code. Buyers find you by HS code, price and MOQ.",
+    "Each product needs an HS code. Buyers find you by HS code, price and MOQ."
+  ],
+  "Mỗi sản phẩm cần có tên.": [
+    "Each product needs a name.",
+    "Each product needs a name.",
+    "Each product needs a name."
+  ],
+  "Giá thấp nhất không được lớn hơn giá cao nhất.": [
+    "The lowest price must not exceed the highest price.",
+    "The lowest price must not exceed the highest price.",
+    "The lowest price must not exceed the highest price."
+  ],
+  "Chưa có hồ sơ doanh nghiệp. Hãy lưu thông tin doanh nghiệp trước.": [
+    "No company profile yet. Please save your company information first.",
+    "No company profile yet. Please save your company information first.",
+    "No company profile yet. Please save your company information first."
+  ],
+  "Không tải được danh sách sản phẩm. Vui lòng thử lại.": [
+    "Could not load products. Please try again.",
+    "Could not load products. Please try again.",
+    "Could not load products. Please try again."
+  ],
+  "Chưa có sản phẩm. Thêm sản phẩm kèm mã HS để buyer tìm thấy bạn.": [
+    "No products yet. Add products with HS codes so buyers can find you.",
+    "No products yet. Add products with HS codes so buyers can find you.",
+    "No products yet. Add products with HS codes so buyers can find you."
+  ],
+  "Đang ẩn": [
+    "Hidden",
+    "Hidden",
+    "Hidden"
+  ],
+  "Giá:": [
+    "Price:",
+    "Price:",
+    "Price:"
+  ],
+  "Từ": [
+    "From",
+    "From",
+    "From"
+  ],
+  "Đến": [
+    "Up to",
+    "Up to",
+    "Up to"
+  ],
+  "Sản phẩm \"{0}\" chưa chọn mã HS.": [
+    "Product \"{0}\" has no HS code selected.",
+    "Product \"{0}\" has no HS code selected.",
+    "Product \"{0}\" has no HS code selected."
+  ],
+  "Sản phẩm \"{0}\" chưa hợp lệ. Vui lòng kiểm tra mã HS, giá và ảnh.": [
+    "Product \"{0}\" is invalid. Please check the HS code, price and images.",
+    "Product \"{0}\" is invalid. Please check the HS code, price and images.",
+    "Product \"{0}\" is invalid. Please check the HS code, price and images."
+  ],
+  "Không lưu được sản phẩm \"{0}\". Vui lòng thử lại.": [
+    "Could not save product \"{0}\". Please try again.",
+    "Could not save product \"{0}\". Please try again.",
+    "Could not save product \"{0}\". Please try again."
+  ],
+  "{0} không hợp lệ (số dương, dùng dấu chấm cho phần thập phân, tối đa 2 chữ số).": [
+    "{0} is invalid (a positive number, use a dot for decimals, at most 2 decimal places).",
+    "{0} is invalid (a positive number, use a dot for decimals, at most 2 decimal places).",
+    "{0} is invalid (a positive number, use a dot for decimals, at most 2 decimal places)."
   ]
 }

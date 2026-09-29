@@ -105,6 +105,60 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/exporter/products": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Products */
+        get: operations["list_products_api_exporter_products_get"];
+        put?: never;
+        /** Create Product */
+        post: operations["create_product_api_exporter_products_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/exporter/products/{product_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Product */
+        get: operations["get_product_api_exporter_products__product_id__get"];
+        put?: never;
+        post?: never;
+        /** Delete Product */
+        delete: operations["delete_product_api_exporter_products__product_id__delete"];
+        options?: never;
+        head?: never;
+        /** Update Product */
+        patch: operations["update_product_api_exporter_products__product_id__patch"];
+        trace?: never;
+    };
+    "/api/public/companies/{slug}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Public Company */
+        get: operations["public_company_api_public_companies__slug__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/public/hs-codes": {
         parameters: {
             query?: never;
@@ -371,9 +425,9 @@ export interface components {
         PresignIn: {
             /**
              * Purpose
-             * @constant
+             * @enum {string}
              */
-            purpose: "logo";
+            purpose: "logo" | "product_image";
             /**
              * Content Type
              * @enum {string}
@@ -386,6 +440,197 @@ export interface components {
             upload_url: string;
             /** Key */
             key: string;
+        };
+        /** ProductImageOut */
+        ProductImageOut: {
+            /** Key */
+            key: string;
+            /** Url */
+            url: string;
+        };
+        /** ProductIn */
+        ProductIn: {
+            /** Name */
+            name: string;
+            /** Hs Code */
+            hs_code: string;
+            /** Description Vi */
+            description_vi?: string | null;
+            /** Description En */
+            description_en?: string | null;
+            /** Price Min */
+            price_min?: number | string | null;
+            /** Price Max */
+            price_max?: number | string | null;
+            /**
+             * Currency
+             * @default USD
+             * @enum {string}
+             */
+            currency?: "USD" | "EUR" | "VND";
+            /** Unit */
+            unit?: ("kg" | "tonne" | "piece" | "carton" | "liter" | "container_20ft" | "container_40ft") | null;
+            /** Moq */
+            moq?: number | string | null;
+            /** Moq Unit */
+            moq_unit?: ("kg" | "tonne" | "piece" | "carton" | "liter" | "container_20ft" | "container_40ft") | null;
+            /**
+             * Is Active
+             * @default true
+             */
+            is_active?: boolean;
+            /** Image Keys */
+            image_keys?: string[];
+        };
+        /** ProductOut */
+        ProductOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Name */
+            name: string;
+            /** Hs Code */
+            hs_code: string;
+            /** Hs Formatted */
+            hs_formatted: string;
+            /** Hs Name Vi */
+            hs_name_vi: string;
+            /** Hs Name En */
+            hs_name_en: string;
+            /** Description Vi */
+            description_vi: string | null;
+            /** Description En */
+            description_en: string | null;
+            /** Price Min */
+            price_min: string | null;
+            /** Price Max */
+            price_max: string | null;
+            /** Currency */
+            currency: string;
+            /** Unit */
+            unit: string | null;
+            /** Moq */
+            moq: string | null;
+            /** Moq Unit */
+            moq_unit: string | null;
+            /** Is Active */
+            is_active: boolean;
+            /**
+             * Approval Status
+             * @enum {string}
+             */
+            approval_status: "pending" | "approved" | "hidden";
+            /** Images */
+            images: components["schemas"]["ProductImageOut"][];
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
+        /**
+         * ProductPatch
+         * @description Chỉ các trường gửi lên mới được sửa; image_keys gửi lên thay thế toàn bộ ảnh.
+         */
+        ProductPatch: {
+            /** Name */
+            name?: string | null;
+            /** Hs Code */
+            hs_code?: string | null;
+            /** Description Vi */
+            description_vi?: string | null;
+            /** Description En */
+            description_en?: string | null;
+            /** Price Min */
+            price_min?: number | string | null;
+            /** Price Max */
+            price_max?: number | string | null;
+            /** Currency */
+            currency?: ("USD" | "EUR" | "VND") | null;
+            /** Unit */
+            unit?: ("kg" | "tonne" | "piece" | "carton" | "liter" | "container_20ft" | "container_40ft") | null;
+            /** Moq */
+            moq?: number | string | null;
+            /** Moq Unit */
+            moq_unit?: ("kg" | "tonne" | "piece" | "carton" | "liter" | "container_20ft" | "container_40ft") | null;
+            /** Is Active */
+            is_active?: boolean | null;
+            /** Image Keys */
+            image_keys?: string[] | null;
+        };
+        /**
+         * PublicCompanyOut
+         * @description Hồ sơ công khai của exporter đã xác minh. Không có email liên hệ, mã số thuế,
+         *     số đăng ký kinh doanh hay địa chỉ chi tiết.
+         */
+        PublicCompanyOut: {
+            /** Slug */
+            slug: string;
+            /** Legal Name */
+            legal_name: string;
+            /** Country */
+            country: string;
+            /** Industry Sector */
+            industry_sector: string | null;
+            /** Founded Year */
+            founded_year: number | null;
+            /** Website */
+            website: string | null;
+            /** Description Vi */
+            description_vi: string | null;
+            /** Description En */
+            description_en: string | null;
+            /** Logo Url */
+            logo_url: string | null;
+            /** Export Markets */
+            export_markets: string[];
+            /** Languages Spoken */
+            languages_spoken: string[];
+            /**
+             * Verification Level
+             * @enum {string}
+             */
+            verification_level: "basic" | "evfta_verified";
+            /** Verified At */
+            verified_at: string | null;
+            /** Products */
+            products: components["schemas"]["PublicProductOut"][];
+        };
+        /**
+         * PublicProductOut
+         * @description Sản phẩm trên hồ sơ công khai — không lộ id nội bộ, trạng thái duyệt hay khóa ảnh.
+         */
+        PublicProductOut: {
+            /** Name */
+            name: string;
+            /** Hs Code */
+            hs_code: string;
+            /** Hs Formatted */
+            hs_formatted: string;
+            /** Hs Name Vi */
+            hs_name_vi: string;
+            /** Hs Name En */
+            hs_name_en: string;
+            /** Description Vi */
+            description_vi: string | null;
+            /** Description En */
+            description_en: string | null;
+            /** Price Min */
+            price_min: string | null;
+            /** Price Max */
+            price_max: string | null;
+            /** Currency */
+            currency: string;
+            /** Unit */
+            unit: string | null;
+            /** Moq */
+            moq: string | null;
+            /** Moq Unit */
+            moq_unit: string | null;
+            /** Images */
+            images: string[];
         };
         /** RegisterIn */
         RegisterIn: {
@@ -725,6 +970,204 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PresignOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_products_api_exporter_products_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_product_api_exporter_products_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProductIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_product_api_exporter_products__product_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                product_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_product_api_exporter_products__product_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                product_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_product_api_exporter_products__product_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                product_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProductPatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    public_company_api_public_companies__slug__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicCompanyOut"];
                 };
             };
             /** @description Validation Error */

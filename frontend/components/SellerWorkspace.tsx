@@ -4,8 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import type { DemoUser } from '../lib/demoAuth';
+import { formatMoq, formatPrice, getMyProducts, type ProductOut } from '../lib/productsApi';
 import LanguageSelect from './LanguageSelect';
 import { 
   Home, 
@@ -87,7 +88,7 @@ export default function SellerWorkspace({
   onNavigateBuyerDetail,
   initialTab = 'profile'
 }: SellerWorkspaceProps) {
-  const { tr } = useLanguage();
+  const { tr, language } = useLanguage();
   const [activeTab, setActiveTab] = useState<'overview' | 'profile' | 'verification' | 'products' | 'rfq' | 'notifications' | 'licenses'>(initialTab);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [activeModal, setActiveModal] = useState<
@@ -211,44 +212,21 @@ export default function SellerWorkspace({
   ]);
 
   // Products List
-  const [productsList] = useState([
-    {
-      id: 'prod-1',
-      name: 'Cà phê nhân xanh Robusta Đắk Lắk (Grade 1 - Sàng 18)',
-      category: 'Cà phê & sản phẩm từ cà phê',
-      image: 'https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=500&auto=format&fit=crop&q=80',
-      moq: '1 container 20ft (19.2 tấn)',
-      capacity: '1,000 tấn/tháng',
-      packaging: 'Bao đay 60kg lót túi GrainPro chuẩn xuất khẩu',
-      markets: ['EU (Đức, Ý)', 'Hoa Kỳ', 'Nhật Bản'],
-      isMain: true,
-      description: 'Cà phê Robusta Đắk Lắk sơ chế ướt, hạt to đều sàng 18, độ ẩm < 12.5%, tạp chất < 0.5%, tỷ lệ đen vỡ < 0.5%.'
-    },
-    {
-      id: 'prod-2',
-      name: 'Hạt điều nhân xuất khẩu W240 & W320',
-      category: 'Hạt dinh dưỡng & Nông sản chế biến',
-      image: 'https://images.unsplash.com/photo-1509358271058-acd22cc93898?w=500&auto=format&fit=crop&q=80',
-      moq: '5 tấn',
-      capacity: '350 tấn/tháng',
-      packaging: 'Hút chân không túi thiếc 25 lbs (11.34 kg) x 2 / thùng carton',
-      markets: ['EU', 'Trung Quốc', 'Hàn Quốc'],
-      isMain: false,
-      description: 'Hạt điều nhân Bình Phước vụ mùa mới, màu trắng ngà tự nhiên, kiểm nghiệm vi sinh đạt tiêu chuẩn AFI xuất khẩu.'
-    },
-    {
-      id: 'prod-3',
-      name: 'Thanh long ruột đỏ xuất khẩu GlobalG.A.P.',
-      category: 'Trái cây tươi xuất khẩu',
-      image: 'https://images.unsplash.com/photo-1527324688151-0e627063f2b1?w=500&auto=format&fit=crop&q=80',
-      moq: '1 container lạnh 40ft (20 tấn)',
-      capacity: '800 tấn/tháng',
-      packaging: 'Thùng carton 9kg chuyên dụng bảo quản cont lạnh +3°C',
-      markets: ['EU', 'Singapore', 'Canada'],
-      isMain: false,
-      description: 'Thanh long ruột đỏ Bình Thuận & Tiền Giang đạt chứng nhận GlobalG.A.P., mã vùng trồng PUC đã được cấp phép.'
-    }
-  ]);
+  // Sản phẩm thật từ server (B5). null = đang tải; 'error' = không tải được.
+  const [productsState, setProductsState] = useState<ProductOut[] | null | 'error'>(null);
+  useEffect(() => {
+    let active = true;
+    getMyProducts().then((list) => {
+      if (active) setProductsState(list ?? 'error');
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
+  const productsList: ProductOut[] = Array.isArray(productsState) ? productsState : [];
+  const productsFailed = productsState === 'error';
+  const hsLabel = (p: ProductOut) => `${p.hs_formatted} — ${language === 'en' ? p.hs_name_en : p.hs_name_vi}`;
+  const descriptionOf = (p: ProductOut) => (language === 'en' ? p.description_en || p.description_vi : p.description_vi || p.description_en) ?? '';
 
   // Quick preset suggested certificates
   const SUGGESTED_PRESETS = [
@@ -959,30 +937,23 @@ export default function SellerWorkspace({
                     </div>
 
                     <div className="space-y-3">
+                      {productsFailed && <p role="alert" className="text-xs text-rose-700">{tr("Không tải được danh sách sản phẩm. Vui lòng thử lại.")}</p>}
+                      {productsState !== null && !productsFailed && productsList.length === 0 && (
+                        <p role="status" className="text-xs text-slate-600">{tr("Chưa có sản phẩm. Thêm sản phẩm kèm mã HS để buyer tìm thấy bạn.")}</p>
+                      )}
                       {productsList.map((product) => (
                         <div key={product.id} className="p-3 rounded-2xl bg-white border border-slate-200 shadow-2xs flex gap-3 items-center">
-                          <img 
-                            src={product.image} 
-                            alt={tr(product.name)} 
-                            className="w-16 h-16 rounded-xl object-cover shrink-0 border border-slate-200" 
-                          />
+                          {product.images[0] ? (
+                            <img src={product.images[0].url} alt={product.name} className="w-16 h-16 rounded-xl object-cover shrink-0 border border-slate-200" />
+                          ) : (
+                            <div className="w-16 h-16 rounded-xl bg-slate-100 shrink-0 border border-slate-200" aria-hidden="true" />
+                          )}
                           <div className="min-w-0 flex-1">
-                            <div className="flex items-center gap-1.5 flex-wrap">
-                              <h4 className="text-xs font-bold text-slate-900 truncate">
-                                {tr(product.name)}
-                              </h4>
-                              {product.isMain && (
-                                <span className="text-[9px] font-bold text-teal-800 bg-teal-50 px-1.5 py-0.5 rounded border border-teal-200">
-                                  {tr("Chính")}</span>
-                              )}
-                            </div>
+                            <h4 className="text-xs font-bold text-slate-900 truncate">{product.name}</h4>
+                            <p className="text-[11px] text-slate-500 mt-0.5">{hsLabel(product)}</p>
                             <p className="text-[11px] text-slate-500 mt-0.5">
-                              {tr("Năng lực: ")}{tr(product.capacity)} {tr(" • MOQ: ")}{tr(product.moq)}
+                              {formatPrice(product, tr) || '—'}{formatMoq(product, tr) ? ` • MOQ: ${formatMoq(product, tr)}` : ''}
                             </p>
-                            <div className="flex items-center gap-1 mt-1 text-[10px] text-slate-400">
-                              <span>{tr("Thị trường:")}</span>
-                              <span className="font-medium text-slate-600 truncate">{product.markets.map(tr).join(', ')}</span>
-                            </div>
                           </div>
                         </div>
                       ))}
@@ -1675,37 +1646,38 @@ export default function SellerWorkspace({
                   {tr("+ Thêm sản phẩm mới")}</button>
               </div>
 
+              {productsFailed && <p role="alert" className="rounded-2xl bg-rose-50 p-4 text-sm text-rose-700">{tr("Không tải được danh sách sản phẩm. Vui lòng thử lại.")}</p>}
+              {productsState !== null && !productsFailed && productsList.length === 0 && (
+                <p role="status" className="rounded-2xl border border-dashed border-slate-300 bg-white p-6 text-sm text-slate-700">
+                  {tr("Chưa có sản phẩm. Thêm sản phẩm kèm mã HS để buyer tìm thấy bạn.")}</p>
+              )}
+
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                 {productsList.map((product) => (
                   <div key={product.id} className="p-5 rounded-3xl bg-white border border-slate-200 shadow-xs flex flex-col justify-between">
                     <div>
-                      <div className="w-full h-44 rounded-2xl overflow-hidden bg-slate-100 mb-4 border border-slate-200">
-                        <img src={product.image} alt={tr(product.name)} className="w-full h-full object-cover" />
-                      </div>
+                      {product.images[0] && (
+                        <div className="w-full h-44 rounded-2xl overflow-hidden bg-slate-100 mb-4 border border-slate-200">
+                          <img src={product.images[0].url} alt={product.name} className="w-full h-full object-cover" />
+                        </div>
+                      )}
                       <div className="flex items-center gap-2 mb-1.5">
-                        {product.isMain && (
-                          <span className="text-[10px] font-bold text-teal-800 bg-teal-50 px-2 py-0.5 rounded-md border border-teal-200">
-                            {tr("Sản phẩm chủ lực")}</span>
+                        <span className="text-[10px] text-slate-500 font-medium">{hsLabel(product)}</span>
+                        {!product.is_active && (
+                          <span className="text-[10px] font-bold text-amber-900 bg-amber-100 px-2 py-0.5 rounded-md">{tr("Đang ẩn")}</span>
                         )}
-                        <span className="text-[10px] text-slate-500 font-medium">
-                          {tr(product.category)}
-                        </span>
                       </div>
-                      <h4 className="text-sm font-bold text-slate-900 leading-snug">{tr(product.name)}</h4>
-                      <p className="text-xs text-slate-600 mt-2 line-clamp-2">{tr(product.description)}</p>
-                      
+                      <h4 className="text-sm font-bold text-slate-900 leading-snug">{product.name}</h4>
+                      <p className="text-xs text-slate-600 mt-2 line-clamp-2">{descriptionOf(product)}</p>
+
                       <div className="mt-4 pt-3 border-t border-slate-100 space-y-1.5 text-xs text-slate-600">
-                        <div className="flex justify-between">
-                          <span className="text-slate-400">{tr("Năng lực:")}</span>
-                          <span className="font-semibold text-slate-800">{tr(product.capacity)}</span>
+                        <div className="flex justify-between gap-3">
+                          <span className="text-slate-500">{tr("Giá:")}</span>
+                          <span className="font-semibold text-slate-800 text-right">{formatPrice(product, tr) || '—'}</span>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="text-slate-400">{tr("MOQ:")}</span>
-                          <span className="font-semibold text-slate-800">{tr(product.moq)}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-slate-400">{tr("Thị trường:")}</span>
-                          <span className="font-medium text-slate-800 truncate max-w-[140px]">{product.markets.map(tr).join(', ')}</span>
+                        <div className="flex justify-between gap-3">
+                          <span className="text-slate-500">{tr("MOQ:")}</span>
+                          <span className="font-semibold text-slate-800 text-right">{formatMoq(product, tr) || '—'}</span>
                         </div>
                       </div>
                     </div>

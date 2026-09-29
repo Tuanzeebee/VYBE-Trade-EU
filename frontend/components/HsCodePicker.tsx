@@ -4,6 +4,7 @@
 import React, { useEffect, useId, useState } from 'react';
 import { createApiClient } from '../lib/api/client';
 import type { components } from '../lib/api/schema';
+import type { HsSelection } from '../lib/productsApi';
 import { useLanguage } from '../context/LanguageContext';
 
 export type HsCodeOption = components['schemas']['HsCodeOut'];
@@ -14,7 +15,8 @@ type Status = 'idle' | 'loading' | 'ready' | 'error';
 interface HsCodePickerProps {
   /** Nhãn hiển thị (đã dịch bởi nơi gọi). */
   label: string;
-  value: HsCodeOption | null;
+  /** Mã đang chọn — chỉ cần các trường hiển thị (sản phẩm đã lưu không có đủ HsCodeOption). */
+  value: HsSelection | null;
   onChange: (value: HsCodeOption | null) => void;
   required?: boolean;
   disabled?: boolean;
@@ -25,8 +27,8 @@ export default function HsCodePicker({ label, value, onChange, required, disable
   const { tr, language } = useLanguage();
   const uid = useId();
   const listId = `${uid}-list`;
-  const nameOf = (hs: HsCodeOption) => (language === 'en' ? hs.name_en : hs.name_vi);
-  const display = (hs: HsCodeOption) => `${hs.formatted} — ${nameOf(hs)}`;
+  const nameOf = (hs: HsSelection) => (language === 'en' ? hs.name_en : hs.name_vi);
+  const display = (hs: HsSelection) => `${hs.formatted} — ${nameOf(hs)}`;
 
   const [text, setText] = useState(value ? display(value) : '');
   const [query, setQuery] = useState('');

@@ -465,6 +465,334 @@
         }
       }
     },
+    "/api/exporter/products": {
+      "get": {
+        "tags": [
+          "companies"
+        ],
+        "summary": "List Products",
+        "operationId": "list_products_api_exporter_products_get",
+        "parameters": [
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProductOut"
+                  },
+                  "title": "Response List Products Api Exporter Products Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "companies"
+        ],
+        "summary": "Create Product",
+        "operationId": "create_product_api_exporter_products_post",
+        "parameters": [
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProductIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/exporter/products/{product_id}": {
+      "get": {
+        "tags": [
+          "companies"
+        ],
+        "summary": "Get Product",
+        "operationId": "get_product_api_exporter_products__product_id__get",
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Product Id"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "companies"
+        ],
+        "summary": "Update Product",
+        "operationId": "update_product_api_exporter_products__product_id__patch",
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Product Id"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProductPatch"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "companies"
+        ],
+        "summary": "Delete Product",
+        "operationId": "delete_product_api_exporter_products__product_id__delete",
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Product Id"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/public/companies/{slug}": {
+      "get": {
+        "tags": [
+          "companies"
+        ],
+        "summary": "Public Company",
+        "operationId": "public_company_api_public_companies__slug__get",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Slug"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicCompanyOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/public/hs-codes": {
       "get": {
         "tags": [
@@ -1487,7 +1815,10 @@
         "properties": {
           "purpose": {
             "type": "string",
-            "const": "logo",
+            "enum": [
+              "logo",
+              "product_image"
+            ],
             "title": "Purpose"
           },
           "content_type": {
@@ -1524,6 +1855,808 @@
           "key"
         ],
         "title": "PresignOut"
+      },
+      "ProductImageOut": {
+        "properties": {
+          "key": {
+            "type": "string",
+            "title": "Key"
+          },
+          "url": {
+            "type": "string",
+            "title": "Url"
+          }
+        },
+        "type": "object",
+        "required": [
+          "key",
+          "url"
+        ],
+        "title": "ProductImageOut"
+      },
+      "ProductIn": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Name"
+          },
+          "hs_code": {
+            "type": "string",
+            "maxLength": 16,
+            "minLength": 1,
+            "title": "Hs Code"
+          },
+          "description_vi": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 5000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description Vi"
+          },
+          "description_en": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 5000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description En"
+          },
+          "price_min": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,12}|(?=[\\d.]{1,15}0*$)\\d{0,12}\\.\\d{0,2}0*$)"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price Min"
+          },
+          "price_max": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,12}|(?=[\\d.]{1,15}0*$)\\d{0,12}\\.\\d{0,2}0*$)"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price Max"
+          },
+          "currency": {
+            "type": "string",
+            "enum": [
+              "USD",
+              "EUR",
+              "VND"
+            ],
+            "title": "Currency",
+            "default": "USD"
+          },
+          "unit": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "kg",
+                  "tonne",
+                  "piece",
+                  "carton",
+                  "liter",
+                  "container_20ft",
+                  "container_40ft"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit"
+          },
+          "moq": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,12}|(?=[\\d.]{1,15}0*$)\\d{0,12}\\.\\d{0,2}0*$)"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Moq"
+          },
+          "moq_unit": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "kg",
+                  "tonne",
+                  "piece",
+                  "carton",
+                  "liter",
+                  "container_20ft",
+                  "container_40ft"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Moq Unit"
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active",
+            "default": true
+          },
+          "image_keys": {
+            "items": {
+              "type": "string",
+              "maxLength": 255,
+              "minLength": 1
+            },
+            "type": "array",
+            "maxItems": 10,
+            "title": "Image Keys"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "hs_code"
+        ],
+        "title": "ProductIn"
+      },
+      "ProductOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "hs_code": {
+            "type": "string",
+            "title": "Hs Code"
+          },
+          "hs_formatted": {
+            "type": "string",
+            "title": "Hs Formatted"
+          },
+          "hs_name_vi": {
+            "type": "string",
+            "title": "Hs Name Vi"
+          },
+          "hs_name_en": {
+            "type": "string",
+            "title": "Hs Name En"
+          },
+          "description_vi": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description Vi"
+          },
+          "description_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description En"
+          },
+          "price_min": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price Min"
+          },
+          "price_max": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price Max"
+          },
+          "currency": {
+            "type": "string",
+            "title": "Currency"
+          },
+          "unit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit"
+          },
+          "moq": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Moq"
+          },
+          "moq_unit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Moq Unit"
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active"
+          },
+          "approval_status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "approved",
+              "hidden"
+            ],
+            "title": "Approval Status"
+          },
+          "images": {
+            "items": {
+              "$ref": "#/components/schemas/ProductImageOut"
+            },
+            "type": "array",
+            "title": "Images"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "hs_code",
+          "hs_formatted",
+          "hs_name_vi",
+          "hs_name_en",
+          "description_vi",
+          "description_en",
+          "price_min",
+          "price_max",
+          "currency",
+          "unit",
+          "moq",
+          "moq_unit",
+          "is_active",
+          "approval_status",
+          "images",
+          "created_at"
+        ],
+        "title": "ProductOut"
+      },
+      "ProductPatch": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "hs_code": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 16,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hs Code"
+          },
+          "description_vi": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 5000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description Vi"
+          },
+          "description_en": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 5000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description En"
+          },
+          "price_min": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,12}|(?=[\\d.]{1,15}0*$)\\d{0,12}\\.\\d{0,2}0*$)"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price Min"
+          },
+          "price_max": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,12}|(?=[\\d.]{1,15}0*$)\\d{0,12}\\.\\d{0,2}0*$)"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price Max"
+          },
+          "currency": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "USD",
+                  "EUR",
+                  "VND"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Currency"
+          },
+          "unit": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "kg",
+                  "tonne",
+                  "piece",
+                  "carton",
+                  "liter",
+                  "container_20ft",
+                  "container_40ft"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit"
+          },
+          "moq": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,12}|(?=[\\d.]{1,15}0*$)\\d{0,12}\\.\\d{0,2}0*$)"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Moq"
+          },
+          "moq_unit": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "kg",
+                  "tonne",
+                  "piece",
+                  "carton",
+                  "liter",
+                  "container_20ft",
+                  "container_40ft"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Moq Unit"
+          },
+          "is_active": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Active"
+          },
+          "image_keys": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string",
+                  "maxLength": 255,
+                  "minLength": 1
+                },
+                "type": "array",
+                "maxItems": 10
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Image Keys"
+          }
+        },
+        "type": "object",
+        "title": "ProductPatch",
+        "description": "Chỉ các trường gửi lên mới được sửa; image_keys gửi lên thay thế toàn bộ ảnh."
+      },
+      "PublicCompanyOut": {
+        "properties": {
+          "slug": {
+            "type": "string",
+            "title": "Slug"
+          },
+          "legal_name": {
+            "type": "string",
+            "title": "Legal Name"
+          },
+          "country": {
+            "type": "string",
+            "title": "Country"
+          },
+          "industry_sector": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Industry Sector"
+          },
+          "founded_year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Founded Year"
+          },
+          "website": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Website"
+          },
+          "description_vi": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description Vi"
+          },
+          "description_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description En"
+          },
+          "logo_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Logo Url"
+          },
+          "export_markets": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Export Markets"
+          },
+          "languages_spoken": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Languages Spoken"
+          },
+          "verification_level": {
+            "type": "string",
+            "enum": [
+              "basic",
+              "evfta_verified"
+            ],
+            "title": "Verification Level"
+          },
+          "verified_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Verified At"
+          },
+          "products": {
+            "items": {
+              "$ref": "#/components/schemas/PublicProductOut"
+            },
+            "type": "array",
+            "title": "Products"
+          }
+        },
+        "type": "object",
+        "required": [
+          "slug",
+          "legal_name",
+          "country",
+          "industry_sector",
+          "founded_year",
+          "website",
+          "description_vi",
+          "description_en",
+          "logo_url",
+          "export_markets",
+          "languages_spoken",
+          "verification_level",
+          "verified_at",
+          "products"
+        ],
+        "title": "PublicCompanyOut",
+        "description": "Hồ sơ công khai của exporter đã xác minh. Không có email liên hệ, mã số thuế,\nsố đăng ký kinh doanh hay địa chỉ chi tiết."
+      },
+      "PublicProductOut": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "hs_code": {
+            "type": "string",
+            "title": "Hs Code"
+          },
+          "hs_formatted": {
+            "type": "string",
+            "title": "Hs Formatted"
+          },
+          "hs_name_vi": {
+            "type": "string",
+            "title": "Hs Name Vi"
+          },
+          "hs_name_en": {
+            "type": "string",
+            "title": "Hs Name En"
+          },
+          "description_vi": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description Vi"
+          },
+          "description_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description En"
+          },
+          "price_min": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price Min"
+          },
+          "price_max": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price Max"
+          },
+          "currency": {
+            "type": "string",
+            "title": "Currency"
+          },
+          "unit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit"
+          },
+          "moq": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Moq"
+          },
+          "moq_unit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Moq Unit"
+          },
+          "images": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Images"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "hs_code",
+          "hs_formatted",
+          "hs_name_vi",
+          "hs_name_en",
+          "description_vi",
+          "description_en",
+          "price_min",
+          "price_max",
+          "currency",
+          "unit",
+          "moq",
+          "moq_unit",
+          "images"
+        ],
+        "title": "PublicProductOut",
+        "description": "Sản phẩm trên hồ sơ công khai — không lộ id nội bộ, trạng thái duyệt hay khóa ảnh."
       },
       "RegisterIn": {
         "properties": {

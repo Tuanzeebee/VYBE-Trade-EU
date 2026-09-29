@@ -6,7 +6,9 @@
 
 import React, { useState } from 'react';
 import type { DemoUser } from '../lib/demoAuth';
-import { INDUSTRIES, STAFF_LANGUAGES } from '../lib/companyApi';
+import { EXPORT_MARKETS, INDUSTRIES, STAFF_LANGUAGES } from '../lib/companyApi';
+import { draftToBody, type ProductDraft } from '../lib/productsApi';
+import ProductsEditor from './ProductsEditor';
 import LanguageSelect from './LanguageSelect';
 import { 
   ArrowRight, 
@@ -40,9 +42,11 @@ import { useLanguage } from "../context/LanguageContext";
 interface SellerOnboardingProps {
   account?: DemoUser;
   initialStep?: number;
-  onComplete?: (profile: Record<string, string>) => void | Promise<void>;
+  onComplete?: (profile: Record<string, string>, products: ProductDraft[]) => void | Promise<void>;
   /** Giá trị ban đầu của bước 1 lấy từ server (trang sửa hồ sơ). */
   initialCompany?: Record<string, string>;
+  /** Sản phẩm đã lưu trên server (B5), đổi sang bản nháp. */
+  initialProducts?: ProductDraft[];
   onLogout: () => void;
   onNavigateHome: () => void;
   onNavigateWorkspace?: (tab?: 'profile' | 'verification') => void;
@@ -59,186 +63,18 @@ interface CertificateItem {
   verified: boolean;
 }
 
-export interface ExportProductItem {
-  id: string;
-  name: string;
-  isMain: boolean;
-  image: string;
-  category: string;
-  exportMarkets: string[];
-  packaging: string;
-  moq: string;
-  supplyCapacity: string;
-  description: string;
-}
 
-export default function SellerOnboarding({ account, initialStep = 2, initialCompany, onComplete, onLogout, onNavigateHome, onNavigateWorkspace }: SellerOnboardingProps) {
-  const { tr } = useLanguage();
+export default function SellerOnboarding({ account, initialStep = 2, initialCompany, initialProducts, onComplete, onLogout, onNavigateHome, onNavigateWorkspace }: SellerOnboardingProps) {
+  const { tr, language } = useLanguage();
   const [currentStep, setCurrentStep] = useState<number>(initialStep);
   const [submitError, setSubmitError] = useState('');
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [submittedSuccess, setSubmittedSuccess] = useState(false);
   const [previewDoc, setPreviewDoc] = useState<{ title: string; type: string; date: string; issuer: string } | null>(null);
 
-  // Step 2 State: Export Products list
-  const [products, setProducts] = useState<ExportProductItem[]>([
-    {
-      id: 'prod-1',
-      name: 'Cà phê nhân xanh Robusta',
-      isMain: true,
-      image: 'https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=500&auto=format&fit=crop&q=80',
-      category: 'Cà phê & sản phẩm từ cà phê',
-      exportMarkets: ['EU', 'Hoa Kỳ', 'Nhật Bản'],
-      packaging: '60kg/bao hoặc theo yêu cầu',
-      moq: '1',
-      supplyCapacity: '500',
-      description: 'Cà phê Robusta chất lượng cao, độ ẩm < 12.5%, sàng 16+, phù hợp xuất khẩu sang EU, Hoa Kỳ.'
-    },
-    {
-      id: 'prod-2',
-      name: 'Hạt điều nhân',
-      isMain: false,
-      image: 'https://images.unsplash.com/photo-1509358271058-acd22cc93898?w=500&auto=format&fit=crop&q=80',
-      category: 'Hạt điều & sản phẩm từ điều',
-      exportMarkets: ['EU', 'Trung Quốc', 'Hàn Quốc'],
-      packaging: 'Thùng thiếc 10kg/20kg hút chân không',
-      moq: '2',
-      supplyCapacity: '200',
-      description: 'Hạt điều nhân trắng W240, W320 tiêu chuẩn AFI, độ ẩm < 5%, kiểm soát aflatoxin nghiêm ngặt.'
-    }
-  ]);
-
-  // Market picker active product ID
-  const [marketPickerFor, setMarketPickerFor] = useState<string | null>(null);
-
-  // Add Product Modal State
-  const [showAddProductModal, setShowAddProductModal] = useState(false);
-  const [newProductForm, setNewProductForm] = useState({
-    name: '',
-    isMain: false,
-    image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=500&auto=format&fit=crop&q=80',
-    category: 'Gạo & ngũ cốc xuất khẩu',
-    exportMarkets: ['EU', 'Bắc Mỹ'],
-    packaging: 'Bao PP 25kg/50kg',
-    moq: '2',
-    supplyCapacity: '300',
-    description: ''
-  });
-
-  const handleUpdateProduct = (id: string, field: keyof ExportProductItem, value: any) => {
-    setProducts(prev => prev.map(p => p.id === id ? { ...p, [field]: value } : p));
-  };
-
-  const handleToggleMainProduct = (id: string) => {
-    setProducts(prev => prev.map(p => ({
-      ...p,
-      isMain: p.id === id ? !p.isMain : p.isMain
-    })));
-  };
-
-  const handleRemoveProduct = (id: string) => {
-    if (products.length <= 1) {
-      alert(tr('Doanh nghiệp cần ít nhất 1 sản phẩm xuất khẩu.'));
-      return;
-    }
-    setProducts(prev => prev.filter(p => p.id !== id));
-  };
-
-  const handleRemoveMarketTag = (productId: string, marketToRemove: string) => {
-    setProducts(prev => prev.map(p => {
-      if (p.id === productId) {
-        return {
-          ...p,
-          exportMarkets: p.exportMarkets.filter(m => m !== marketToRemove)
-        };
-      }
-      return p;
-    }));
-  };
-
-  const handleAddMarketTag = (productId: string, newMarket: string) => {
-    setProducts(prev => prev.map(p => {
-      if (p.id === productId && !p.exportMarkets.includes(newMarket)) {
-        return {
-          ...p,
-          exportMarkets: [...p.exportMarkets, newMarket]
-        };
-      }
-      return p;
-    }));
-  };
-
-  const handleProductImageUpload = (productId: string, e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      handleUpdateProduct(productId, 'image', imageUrl);
-    }
-  };
-
-  const handleSaveNewProduct = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newProductForm.name) return;
-    const newId = `prod-${Date.now()}`;
-    setProducts(prev => [
-      ...prev,
-      {
-        id: newId,
-        name: newProductForm.name,
-        isMain: newProductForm.isMain,
-        image: newProductForm.image,
-        category: newProductForm.category,
-        exportMarkets: newProductForm.exportMarkets,
-        packaging: newProductForm.packaging || 'Theo yêu cầu của khách hàng',
-        moq: newProductForm.moq || '1',
-        supplyCapacity: newProductForm.supplyCapacity || '100',
-        description: newProductForm.description || 'Sản phẩm đạt chuẩn xuất khẩu quốc tế.'
-      }
-    ]);
-    setShowAddProductModal(false);
-    // Reset form
-    setNewProductForm({
-      name: '',
-      isMain: false,
-      image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=500&auto=format&fit=crop&q=80',
-      category: 'Gạo & ngũ cốc xuất khẩu',
-      exportMarkets: ['EU', 'Bắc Mỹ'],
-      packaging: 'Bao PP 25kg/50kg',
-      moq: '2',
-      supplyCapacity: '300',
-      description: ''
-    });
-  };
-
-  const PRESET_PRODUCTS = [
-    {
-      name: 'Gạo ST25 Hữu Cơ',
-      category: 'Gạo & ngũ cốc xuất khẩu',
-      image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=500&auto=format&fit=crop&q=80',
-      packaging: 'Bao 5kg, 25kg, 50kg hút chân không',
-      moq: '5',
-      supplyCapacity: '1000',
-      description: 'Gạo ST25 chuẩn ngon nhất thế giới, hạt thon dài, thơm lá dứa tự nhiên, không tồn dư thuốc BVTV.'
-    },
-    {
-      name: 'Hồ tiêu đen Chư Sê',
-      category: 'Hồ tiêu & gia vị xuất khẩu',
-      image: 'https://images.unsplash.com/photo-1599940824399-b87987ceb72a?w=500&auto=format&fit=crop&q=80',
-      packaging: 'Bao đay 50kg / 60kg theo tiêu chuẩn quốc tế',
-      moq: '2',
-      supplyCapacity: '150',
-      description: 'Tiêu đen sấy khô tự nhiên, dung trọng 550g/l - 580g/l, độ ẩm < 12.5%, tạp chất < 0.2%.'
-    },
-    {
-      name: 'Thanh long ruột đỏ GlobalG.A.P.',
-      category: 'Trái cây tươi & chế biến (Thanh long, Sầu riêng)',
-      image: 'https://images.unsplash.com/photo-1527325678964-54921661f888?w=500&auto=format&fit=crop&q=80',
-      packaging: 'Thùng carton 9kg / 18kg có túi hút khí ethylene',
-      moq: '3',
-      supplyCapacity: '400',
-      description: 'Thanh long ruột đỏ Bình Thuận đạt chuẩn GlobalG.A.P., mã vùng trồng PUC VN-BT-012, tai xanh dày.'
-    }
-  ];
+  // Step 2: sản phẩm (B5) — bản nháp trong form, lưu lên server khi hoàn tất.
+  const [products, setProducts] = useState<ProductDraft[]>(initialProducts ?? []);
+  const [productError, setProductError] = useState('');
 
   // Form State for Step 1: Thông tin doanh nghiệp
   // Hồ sơ lưu lên server (B1) — không điền sẵn dữ liệu demo.
@@ -254,9 +90,15 @@ export default function SellerOnboarding({ account, initialStep = 2, initialComp
     languages: 'vi',
     descriptionVi: '',
     descriptionEn: '',
+    markets: '',
     ...initialCompany
   });
   const staffLanguages = formData.languages.split(',').filter(Boolean);
+  const exportMarkets = formData.markets.split(',').filter(Boolean);
+  const toggleMarket = (code: string) => setFormData({
+    ...formData,
+    markets: (exportMarkets.includes(code) ? exportMarkets.filter((m) => m !== code) : [...exportMarkets, code]).join(',')
+  });
   const toggleStaffLanguage = (code: string) => setFormData({
     ...formData,
     languages: (staffLanguages.includes(code) ? staffLanguages.filter((l) => l !== code) : [...staffLanguages, code]).join(',')
@@ -367,14 +209,26 @@ export default function SellerOnboarding({ account, initialStep = 2, initialComp
     setShowAddCertForm(false);
   };
 
+  const goToLicenses = () => {
+    if (products.length === 0) { setProductError('Vui lòng thêm ít nhất một sản phẩm.'); return; }
+    try {
+      products.forEach((p) => draftToBody(p));
+    } catch (cause) {
+      setProductError(cause instanceof Error ? cause.message : 'Sản phẩm chưa hợp lệ. Vui lòng kiểm tra lại.');
+      return;
+    }
+    setProductError('');
+    setCurrentStep(3);
+  };
+
   const finish = async () => {
     setSubmitError('');
     if (!onComplete) { setSubmittedSuccess(true); return; }
     try {
-      await onComplete({ ...formData, country: 'Việt Nam', interest: products.map((p) => p.category).join(', '),
-        market: [...new Set(products.flatMap((p) => p.exportMarkets))].join(', '),
-        products: JSON.stringify(products.map((p) => ({ ...p, image: p.image.startsWith('blob:') ? '' : p.image }))),
-        certificates: JSON.stringify(certificates), pucCode, phcCode, agreeCommitment: String(agreeCommitment) });
+      await onComplete({ ...formData, country: 'Việt Nam',
+        interest: [...new Set(products.map((p) => p.hs?.formatted ?? ''))].filter(Boolean).join(', '),
+        products: JSON.stringify(products.map((p) => ({ name: p.name }))),
+        certificates: JSON.stringify(certificates), pucCode, phcCode, agreeCommitment: String(agreeCommitment) }, products);
     } catch (cause) { setSubmitError(cause instanceof Error ? cause.message : 'Không thể lưu hồ sơ. Vui lòng thử lại.'); }
   };
 
@@ -899,6 +753,24 @@ export default function SellerOnboarding({ account, initialStep = 2, initialComp
                     </div>
                   </div>
 
+                  <fieldset>
+                    <legend className="block text-xs sm:text-[13px] font-semibold text-slate-800 mb-1.5">
+                      {tr("Thị trường xuất khẩu đã phục vụ")}</legend>
+                    <div className="flex flex-wrap gap-x-4 gap-y-2 pt-1">
+                      {EXPORT_MARKETS.map((market) => (
+                        <label key={market.code} className="inline-flex items-center gap-1.5 text-xs sm:text-sm text-slate-700 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={exportMarkets.includes(market.code)}
+                            onChange={() => toggleMarket(market.code)}
+                            className="accent-[#083832]"
+                          />
+                          {tr(market.label)}
+                        </label>
+                      ))}
+                    </div>
+                  </fieldset>
+
                   {/* Submit Button Row (Aligned to Bottom Right) */}
                   <div className="pt-3 flex justify-end">
                     <button 
@@ -923,238 +795,16 @@ export default function SellerOnboarding({ account, initialStep = 2, initialComp
                       <h3 className="text-lg sm:text-xl font-bold text-slate-900">
                         {tr("Sản phẩm xuất khẩu")}</h3>
                       <p className="text-xs sm:text-[13px] text-slate-500 mt-0.5 font-normal">
-                        {tr("Thêm sản phẩm chính mà doanh nghiệp cung cấp. Bạn có thể thêm nhiều sản phẩm.")}</p>
+                        {tr("Mỗi sản phẩm cần có mã HS. Buyer tìm thấy bạn qua mã HS, giá và MOQ.")}</p>
                     </div>
 
-                    <button
-                      type="button"
-                      onClick={() => setShowAddProductModal(true)}
-                      className="px-4 py-2 rounded-xl bg-[#0b1e2e] hover:bg-[#081622] text-white text-xs sm:text-[13px] font-semibold flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer active:scale-95"
-                    >
-                      <Plus className="w-4 h-4 stroke-[2.5]" />
-                      <span>{tr("Thêm sản phẩm")}</span>
-                    </button>
                   </div>
 
-                  {/* List of Product Cards */}
-                  <div className="space-y-4">
-                    {products.map((product) => (
-                      <div 
-                        key={product.id}
-                        className="rounded-2xl border border-slate-200/90 bg-white p-4 sm:p-5 shadow-xs space-y-3.5 transition-all text-left"
-                      >
-                        <div className="flex flex-col sm:flex-row items-start gap-4">
-                          
-                          {/* Left: Product Image Thumbnail with Hover to Change */}
-                          <div className="relative group shrink-0 w-28 h-28 sm:w-32 sm:h-32 rounded-xl overflow-hidden bg-slate-100 border border-slate-200 shadow-2xs">
-                            <img 
-                              src={product.image} 
-                              alt={tr(product.name)}
-                              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" 
-                            />
-                            {/* Hover overlay with upload button */}
-                            <label className="absolute inset-0 bg-black/50 text-white flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer text-[10px] font-semibold gap-1 p-2 text-center backdrop-blur-2xs">
-                              <Camera className="w-5 h-5 text-teal-300" />
-                              <span>{tr("Đổi hình ảnh")}</span>
-                              <input 
-                                type="file" 
-                                accept="image/*" 
-                                className="hidden" 
-                                onChange={(e) => handleProductImageUpload(product.id, e)} 
-                              />
-                            </label>
-                          </div>
-
-                          {/* Right: Product Details Form Fields */}
-                          <div className="flex-1 min-w-0 w-full space-y-3">
-                            
-                            {/* Title & Actions Bar */}
-                            <div className="flex items-center justify-between gap-2">
-                              <div className="flex items-center gap-2.5 flex-wrap min-w-0">
-                                <input
-                                  type="text"
-                                  value={product.name}
-                                  onChange={(e) => handleUpdateProduct(product.id, 'name', e.target.value)}
-                                  className="text-base sm:text-lg font-bold text-slate-900 bg-transparent border-b border-transparent hover:border-slate-300 focus:border-[#083832] focus:outline-none px-0 py-0.5"
-                                  placeholder={tr("Tên sản phẩm")}
-                                />
-                                {product.isMain && (
-                                  <span className="px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-[#e6f4f2] text-[#0d766e] border border-[#99f6e4]/60 whitespace-nowrap">
-                                    {tr("Sản phẩm chính")}</span>
-                                )}
-                              </div>
-
-                              <div className="flex items-center gap-1 shrink-0">
-                                {/* More Menu / Toggle Main */}
-                                <button 
-                                  type="button"
-                                  onClick={() => handleToggleMainProduct(product.id)}
-                                  title={tr(product.isMain ? "Bỏ đánh dấu sản phẩm chính" : "Đặt làm sản phẩm chính")}
-                                  className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
-                                >
-                                  <MoreVertical className="w-4 h-4" />
-                                </button>
-                                {/* Remove Product */}
-                                <button 
-                                  type="button"
-                                  onClick={() => handleRemoveProduct(product.id)}
-                                  title={tr("Xóa sản phẩm")}
-                                  className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
-                                >
-                                  <X className="w-4 h-4" />
-                                </button>
-                              </div>
-                            </div>
-
-                            {/* Row 1: Danh mục & Thị trường xuất khẩu */}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                              
-                              {/* Danh mục */}
-                              <div>
-                                <label className="block text-[11px] font-medium text-slate-500 mb-1">
-                                  {tr("Danh mục")}</label>
-                                <div className="relative">
-                                  <select
-                                    value={product.category}
-                                    onChange={(e) => handleUpdateProduct(product.id, 'category', e.target.value)}
-                                    className="w-full appearance-none px-3.5 py-2 pr-8 rounded-xl border border-slate-200 bg-white text-xs sm:text-[13px] text-slate-800 font-normal focus:outline-none focus:border-[#083832] transition-colors"
-                                  >
-                                    <option value="Cà phê & sản phẩm từ cà phê">{tr("Cà phê & sản phẩm từ cà phê")}</option>
-                                    <option value="Hạt điều & sản phẩm từ điều">{tr("Hạt điều & sản phẩm từ điều")}</option>
-                                    <option value="Gạo & ngũ cốc xuất khẩu">{tr("Gạo & ngũ cốc xuất khẩu")}</option>
-                                    <option value="Hồ tiêu & gia vị xuất khẩu">{tr("Hồ tiêu & gia vị xuất khẩu")}</option>
-                                    <option value="Thủy hải sản (Tôm, Cá tra, Mực)">{tr("Thủy hải sản (Tôm, Cá tra, Mực)")}</option>
-                                    <option value="Trái cây tươi & chế biến (Thanh long, Sầu riêng)">{tr("Trái cây tươi & chế biến (Thanh long, Sầu riêng)")}</option>
-                                    <option value="Trà & thảo mộc xuất khẩu">{tr("Trà & thảo mộc xuất khẩu")}</option>
-                                    <option value="Thực phẩm chế biến đóng gói">{tr("Thực phẩm chế biến đóng gói")}</option>
-                                  </select>
-                                  <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-                                </div>
-                              </div>
-
-                              {/* Thị trường xuất khẩu */}
-                              <div>
-                                <label className="block text-[11px] font-medium text-slate-500 mb-1">
-                                  {tr("Thị trường xuất khẩu")}</label>
-                                <div className="flex items-center flex-wrap gap-1.5 p-1 rounded-xl border border-slate-200 bg-white min-h-[38px]">
-                                  {product.exportMarkets.map((market) => (
-                                    <span 
-                                      key={market}
-                                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#f1f5f9] text-slate-700 text-xs font-normal border border-slate-200/60"
-                                    >
-                                      <span>{tr(market)}</span>
-                                      <button
-                                        type="button"
-                                        onClick={() => handleRemoveMarketTag(product.id, market)}
-                                        className="text-slate-400 hover:text-slate-700 cursor-pointer"
-                                      >
-                                        <X className="w-3 h-3 stroke-[2.5]" />
-                                      </button>
-                                    </span>
-                                  ))}
-                                  
-                                  {/* Add Market tag button */}
-                                  <div className="relative inline-block">
-                                    <button
-                                      type="button"
-                                      onClick={() => setMarketPickerFor(marketPickerFor === product.id ? null : product.id)}
-                                      className="w-6 h-6 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition-colors cursor-pointer text-xs"
-                                      title={tr("Thêm thị trường")}
-                                    >
-                                      <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
-                                    </button>
-                                    
-                                    {/* Market Picker Dropdown */}
-                                    {marketPickerFor === product.id && (
-                                      <div className="absolute left-0 mt-1 z-30 bg-white border border-slate-200 rounded-xl shadow-lg p-2 w-52 text-left space-y-1">
-                                        <div className="text-[10px] font-bold text-slate-400 uppercase px-2 py-1">
-                                          {tr("Chọn thị trường")}</div>
-                                        {['EU', 'Hoa Kỳ', 'Nhật Bản', 'Trung Quốc', 'Hàn Quốc', 'Úc', 'Trung Đông', 'Canada', 'Anh (UK)'].filter(m => !product.exportMarkets.includes(m)).map(m => (
-                                          <button
-                                            key={m}
-                                            type="button"
-                                            onClick={() => {
-                                              handleAddMarketTag(product.id, m);
-                                              setMarketPickerFor(null);
-                                            }}
-                                            className="w-full text-left px-2.5 py-1 rounded-lg text-xs hover:bg-slate-100 text-slate-700 cursor-pointer flex items-center justify-between"
-                                          >
-                                            <span>{tr(m)}</span>
-                                            <Plus className="w-3 h-3 text-slate-400" />
-                                          </button>
-                                        ))}
-                                      </div>
-                                    )}
-                                  </div>
-                                </div>
-                              </div>
-
-                            </div>
-
-                            {/* Row 2: 3 Columns (Quy cách đóng gói | MOQ (tấn) | Năng lực cung ứng (tấn/tháng)) */}
-                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                              
-                              <div>
-                                <label className="block text-[11px] font-medium text-slate-500 mb-1">
-                                  {tr("Quy cách đóng gói")}</label>
-                                <input
-                                  type="text"
-                                  value={product.packaging}
-                                  onChange={(e) => handleUpdateProduct(product.id, 'packaging', e.target.value)}
-                                  className="w-full px-3.5 py-2 rounded-xl border border-slate-200 bg-white text-xs sm:text-[13px] text-slate-800 focus:outline-none focus:border-[#083832]"
-                                  placeholder={tr("60kg/bao hoặc theo yêu cầu")}
-                                />
-                              </div>
-
-                              <div>
-                                <label className="block text-[11px] font-medium text-slate-500 mb-1">
-                                  {tr("MOQ (tấn)")}</label>
-                                <input
-                                  type="text"
-                                  value={product.moq}
-                                  onChange={(e) => handleUpdateProduct(product.id, 'moq', e.target.value)}
-                                  className="w-full px-3.5 py-2 rounded-xl border border-slate-200 bg-white text-xs sm:text-[13px] text-slate-800 focus:outline-none focus:border-[#083832]"
-                                  placeholder={tr("1")}
-                                />
-                              </div>
-
-                              <div>
-                                <label className="block text-[11px] font-medium text-slate-500 mb-1">
-                                  {tr("Năng lực cung ứng (tấn/tháng)")}</label>
-                                <input
-                                  type="text"
-                                  value={product.supplyCapacity}
-                                  onChange={(e) => handleUpdateProduct(product.id, 'supplyCapacity', e.target.value)}
-                                  className="w-full px-3.5 py-2 rounded-xl border border-slate-200 bg-white text-xs sm:text-[13px] text-slate-800 focus:outline-none focus:border-[#083832]"
-                                  placeholder={tr("500")}
-                                />
-                              </div>
-
-                            </div>
-
-                            {/* Row 3: Mô tả sản phẩm with Character Counter (106/500) */}
-                            <div>
-                              <div className="flex items-center justify-between mb-1">
-                                <label className="text-[11px] font-medium text-slate-500">
-                                  {tr("Mô tả sản phẩm")}</label>
-                                <span className="text-[11px] text-slate-400 font-mono">
-                                  {tr(product.description.length)}{tr("/500")}</span>
-                              </div>
-                              <textarea
-                                rows={2}
-                                maxLength={500}
-                                value={product.description}
-                                onChange={(e) => handleUpdateProduct(product.id, 'description', e.target.value)}
-                                className="w-full px-3.5 py-2 rounded-xl border border-slate-200 bg-white text-xs sm:text-[13px] text-slate-800 focus:outline-none focus:border-[#083832] resize-none leading-relaxed"
-                                placeholder={tr("Mô tả chất lượng, tiêu chuẩn kiểm nghiệm, độ ẩm...")}
-                              />
-                            </div>
-
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                  <ProductsEditor
+                    products={products}
+                    onChange={(next) => { setProducts(next); setProductError(''); }}
+                  />
+                  {productError && <p role="alert" className="rounded-xl bg-rose-50 p-3 text-sm text-rose-700">{tr(productError)}</p>}
 
                   {/* Navigation Buttons: Quay lại & Tiếp tục */}
                   <div className="pt-4 flex justify-between border-t border-slate-100">
@@ -1166,7 +816,7 @@ export default function SellerOnboarding({ account, initialStep = 2, initialComp
                       {tr("Quay lại")}</button>
                     <button 
                       type="button"
-                      onClick={() => setCurrentStep(3)}
+                      onClick={goToLicenses}
                       className="px-7 py-2.5 rounded-xl bg-[#083832] hover:bg-[#062924] text-white text-xs sm:text-sm font-semibold flex items-center gap-2 transition-all shadow-xs cursor-pointer active:scale-95"
                     >
                       <span>{tr("Tiếp tục (Tải lên giấy phép)")}</span>
@@ -1639,25 +1289,17 @@ export default function SellerOnboarding({ account, initialStep = 2, initialComp
                       </div>
                       <div className="space-y-2 text-[11px] text-slate-700">
                         {products.map(p => (
-                          <div key={p.id} className="flex items-center justify-between flex-wrap gap-1 p-2 rounded-xl bg-white border border-slate-200/60">
+                          <div key={p.key} className="flex items-center justify-between flex-wrap gap-1 p-2 rounded-xl bg-white border border-slate-200/60">
                             <div className="flex items-center gap-2">
-                              <img src={p.image} alt={tr(p.name)} className="w-8 h-8 rounded-lg object-cover border border-slate-200" />
+                              {p.images[0] && <img src={p.images[0].url} alt={p.name} className="w-8 h-8 rounded-lg object-cover border border-slate-200" />}
                               <div>
-                                <div className="font-bold text-slate-900 flex items-center gap-1.5">
-                                  <span>{tr(p.name)}</span>
-                                  {p.isMain && (
-                                    <span className="text-[10px] text-teal-800 bg-teal-50 px-1.5 py-0.5 rounded-full font-semibold border border-teal-200">
-                                      {tr("Chính")}</span>
-                                  )}
-                                </div>
-                                <div className="text-[10px] text-slate-400">
-                                  {tr(p.category)} {tr(" • Thị trường: ")}{p.exportMarkets.map(tr).join(', ')}
-                                </div>
+                                <div className="font-bold text-slate-900">{p.name}</div>
+                                <div className="text-[10px] text-slate-500">{p.hs ? `${p.hs.formatted} — ${language === 'en' ? p.hs.name_en : p.hs.name_vi}` : ''}</div>
                               </div>
                             </div>
                             <div className="text-right">
-                              <span className="font-semibold text-slate-800">{tr(p.supplyCapacity)} {tr(" tấn/tháng")}</span>
-                              <span className="text-[10px] text-slate-400 block">{tr("MOQ: ")}{tr(p.moq)} {tr(" tấn")}</span>
+                              {(p.priceMin || p.priceMax) && <span className="font-semibold text-slate-800">{[p.priceMin, p.priceMax].filter(Boolean).join(' – ')} {p.currency}</span>}
+                              {p.moq && <span className="text-[10px] text-slate-500 block">{tr("MOQ: ")}{p.moq}</span>}
                             </div>
                           </div>
                         ))}
@@ -1722,252 +1364,6 @@ export default function SellerOnboarding({ account, initialStep = 2, initialComp
         </div>
 
       </main>
-
-      {/* Add Product Modal */}
-      {showAddProductModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden flex flex-col max-h-[92vh]">
-            
-            {/* Modal Header */}
-            <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-[#0b1e2e] text-teal-300 flex items-center justify-center">
-                  <Plus className="w-4 h-4 stroke-[2.5]" />
-                </div>
-                <div>
-                  <h3 className="text-sm font-bold text-slate-900 leading-tight">
-                    {tr("Thêm sản phẩm xuất khẩu mới")}</h3>
-                  <p className="text-[11px] text-slate-500 mt-0.5">
-                    {tr("Khai báo thông số kỹ thuật, hình ảnh và năng lực cung ứng")}</p>
-                </div>
-              </div>
-              <button 
-                type="button"
-                onClick={() => setShowAddProductModal(false)}
-                className="w-8 h-8 rounded-full hover:bg-slate-200/70 flex items-center justify-center text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* Modal Body */}
-            <form onSubmit={handleSaveNewProduct} className="p-6 overflow-y-auto flex-1 space-y-4 text-left">
-              
-              {/* Quick Presets Bar */}
-              <div className="p-3 rounded-2xl bg-teal-50/50 border border-teal-200/60">
-                <span className="text-[11px] font-bold text-teal-900 block mb-1.5">
-                  {tr("Gợi ý thêm nhanh nông sản xuất khẩu chủ lực:")}</span>
-                <div className="flex flex-wrap gap-2">
-                  {PRESET_PRODUCTS.map((preset) => (
-                    <button
-                      key={preset.name}
-                      type="button"
-                      onClick={() => setNewProductForm({
-                        ...newProductForm,
-                        name: preset.name,
-                        category: preset.category,
-                        image: preset.image,
-                        packaging: preset.packaging,
-                        moq: preset.moq,
-                        supplyCapacity: preset.supplyCapacity,
-                        description: preset.description
-                      })}
-                      className="px-2.5 py-1 rounded-lg text-xs font-medium bg-white hover:bg-[#083832] text-slate-700 hover:text-white border border-slate-200 hover:border-[#083832] transition-colors cursor-pointer flex items-center gap-1 shadow-2xs"
-                    >
-                      <Plus className="w-3 h-3" />
-                      <span>{tr(preset.name)}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Product Image & Main Checkbox */}
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-3.5 rounded-2xl bg-slate-50 border border-slate-200/70">
-                <div className="relative group w-20 h-20 rounded-xl overflow-hidden bg-slate-200 shrink-0 border border-slate-300">
-                  <img src={newProductForm.image} alt={tr("Preview")} className="w-full h-full object-cover" />
-                  <label className="absolute inset-0 bg-black/50 text-white flex flex-col items-center justify-center text-[9px] font-semibold cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity">
-                    <Camera className="w-4 h-4" />
-                    <span>{tr("Đổi ảnh")}</span>
-                    <input 
-                      type="file" 
-                      accept="image/*" 
-                      className="hidden" 
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if (file) {
-                          setNewProductForm({ ...newProductForm, image: URL.createObjectURL(file) });
-                        }
-                      }} 
-                    />
-                  </label>
-                </div>
-
-                <div className="flex-1 space-y-1.5">
-                  <div className="text-xs font-semibold text-slate-800">{tr("Hình ảnh sản phẩm")}</div>
-                  <p className="text-[11px] text-slate-500 leading-snug">
-                    {tr("Tải lên hình ảnh sản phẩm thực tế hoặc chọn mẫu nông sản đạt chuẩn ở trên.")}</p>
-                  <label className="flex items-center gap-2 pt-1 cursor-pointer">
-                    <input 
-                      type="checkbox"
-                      checked={newProductForm.isMain}
-                      onChange={(e) => setNewProductForm({ ...newProductForm, isMain: e.target.checked })}
-                      className="rounded text-teal-800 focus:ring-teal-700 cursor-pointer"
-                    />
-                    <span className="text-xs font-medium text-slate-700">
-                      {tr("Đặt làm ")}<strong>{tr("Sản phẩm chính")}</strong> {tr(" của doanh nghiệp")}</span>
-                  </label>
-                </div>
-              </div>
-
-              {/* Product Name */}
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  {tr("Tên sản phẩm *")}</label>
-                <input 
-                  type="text"
-                  required
-                  value={newProductForm.name}
-                  onChange={(e) => setNewProductForm({ ...newProductForm, name: e.target.value })}
-                  placeholder={tr("VD: Cà phê Robusta Đắk Lắk, Gạo ST25...")}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-xs sm:text-sm text-slate-900 focus:outline-none focus:border-[#083832]"
-                />
-              </div>
-
-              {/* Category & Markets */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    {tr("Danh mục ngành hàng *")}</label>
-                  <select
-                    value={newProductForm.category}
-                    onChange={(e) => setNewProductForm({ ...newProductForm, category: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-xs text-slate-900 focus:outline-none focus:border-[#083832]"
-                  >
-                    <option value="Cà phê & sản phẩm từ cà phê">{tr("Cà phê & sản phẩm từ cà phê")}</option>
-                    <option value="Hạt điều & sản phẩm từ điều">{tr("Hạt điều & sản phẩm từ điều")}</option>
-                    <option value="Gạo & ngũ cốc xuất khẩu">{tr("Gạo & ngũ cốc xuất khẩu")}</option>
-                    <option value="Hồ tiêu & gia vị xuất khẩu">{tr("Hồ tiêu & gia vị xuất khẩu")}</option>
-                    <option value="Thủy hải sản (Tôm, Cá tra, Mực)">{tr("Thủy hải sản (Tôm, Cá tra, Mực)")}</option>
-                    <option value="Trái cây tươi & chế biến (Thanh long, Sầu riêng)">{tr("Trái cây tươi & chế biến (Thanh long, Sầu riêng)")}</option>
-                    <option value="Trà & thảo mộc xuất khẩu">{tr("Trà & thảo mộc xuất khẩu")}</option>
-                    <option value="Thực phẩm chế biến đóng gói">{tr("Thực phẩm chế biến đóng gói")}</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    {tr("Thị trường xuất khẩu mục tiêu")}</label>
-                  <div className="flex flex-wrap gap-1.5 p-1 rounded-xl border border-slate-200 bg-white min-h-[42px] items-center">
-                    {newProductForm.exportMarkets.map((market) => (
-                      <span 
-                        key={market}
-                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 text-xs"
-                      >
-                        <span>{tr(market)}</span>
-                        <button
-                          type="button"
-                          onClick={() => setNewProductForm({
-                            ...newProductForm,
-                            exportMarkets: newProductForm.exportMarkets.filter(m => m !== market)
-                          })}
-                          className="hover:text-rose-600"
-                        >
-                          <X className="w-3 h-3" />
-                        </button>
-                      </span>
-                    ))}
-                    {['EU', 'Hoa Kỳ', 'Nhật Bản', 'Trung Quốc', 'Hàn Quốc', 'Úc'].filter(m => !newProductForm.exportMarkets.includes(m)).map((m) => (
-                      <button
-                        key={m}
-                        type="button"
-                        onClick={() => setNewProductForm({
-                          ...newProductForm,
-                          exportMarkets: [...newProductForm.exportMarkets, m]
-                        })}
-                        className="text-[11px] text-teal-800 hover:bg-teal-50 px-2 py-0.5 rounded-md border border-dashed border-teal-200"
-                      >
-                        {tr("+ ")}{tr(m)}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Packaging, MOQ, Capacity */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    {tr("Quy cách đóng gói")}</label>
-                  <input 
-                    type="text"
-                    value={newProductForm.packaging}
-                    onChange={(e) => setNewProductForm({ ...newProductForm, packaging: e.target.value })}
-                    placeholder={tr("VD: Bao 25kg, thùng 10kg...")}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-[#083832]"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    {tr("MOQ (tấn)")}</label>
-                  <input 
-                    type="text"
-                    value={newProductForm.moq}
-                    onChange={(e) => setNewProductForm({ ...newProductForm, moq: e.target.value })}
-                    placeholder={tr("VD: 1")}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-[#083832]"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    {tr("Năng lực cung ứng (tấn/tháng)")}</label>
-                  <input 
-                    type="text"
-                    value={newProductForm.supplyCapacity}
-                    onChange={(e) => setNewProductForm({ ...newProductForm, supplyCapacity: e.target.value })}
-                    placeholder={tr("VD: 500")}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-[#083832]"
-                  />
-                </div>
-              </div>
-
-              {/* Description with Character Counter */}
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <label className="text-xs font-semibold text-slate-700">
-                    {tr("Mô tả sản phẩm")}</label>
-                  <span className="text-[11px] text-slate-400 font-mono">
-                    {tr(newProductForm.description.length)}{tr("/500")}</span>
-                </div>
-                <textarea
-                  rows={2}
-                  maxLength={500}
-                  value={newProductForm.description}
-                  onChange={(e) => setNewProductForm({ ...newProductForm, description: e.target.value })}
-                  placeholder={tr("Mô tả chất lượng, tiêu chuẩn kiểm nghiệm, độ ẩm...")}
-                  className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-[#083832] resize-none"
-                />
-              </div>
-
-              {/* Footer Buttons */}
-              <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-2.5">
-                <button
-                  type="button"
-                  onClick={() => setShowAddProductModal(false)}
-                  className="px-4 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-colors cursor-pointer"
-                >
-                  {tr("Hủy")}</button>
-                <button
-                  type="submit"
-                  className="px-6 py-2 rounded-xl bg-[#083832] hover:bg-[#062924] text-white text-xs font-semibold transition-all shadow-xs cursor-pointer active:scale-95"
-                >
-                  {tr("Lưu sản phẩm")}</button>
-              </div>
-
-            </form>
-
-          </div>
-        </div>
-      )}
 
       {/* Document Preview Modal */}
       {previewDoc && (

@@ -15,6 +15,7 @@ import { useLegacyNavigate } from '../app-shell/useLegacyNavigate';
 import { useRouter } from '../../i18n/navigation';
 import { completeOnboarding, getUserPage, logout, type DemoUser } from '../../lib/demoAuth';
 import { buyerProfileToCompany, companyToForm, getMyCompany, profileToCompany, saveMyCompany } from '../../lib/companyApi';
+import { draftFromProduct, getMyProducts, syncProducts, type ProductDraft } from '../../lib/productsApi';
 import { hrefFor, roleFromType } from '../../lib/legacyNav';
 
 const WORKSPACE_TABS = ['verification', 'profile', 'overview', 'products', 'rfq', 'notifications', 'licenses'] as const;
@@ -57,28 +58,39 @@ export function AuthRoute({ mode }: { mode: 'login' | 'register' }) {
   return <LegacyGate page={mode}>{(user) => <AuthContent mode={mode} user={user} />}</LegacyGate>;
 }
 
-/** Hồ sơ doanh nghiệp đã lưu trên server, đổi sang giá trị ban đầu của form cũ. undefined = đang tải. */
-function useCompanyForm(enabled: boolean) {
-  const [initial, setInitial] = useState<Record<string, string> | null | undefined>(enabled ? undefined : null);
+interface ProfileData {
+  company: Record<string, string> | null;
+  products: ProductDraft[];
+}
+
+/**
+ * Hồ sơ doanh nghiệp (và sản phẩm nếu là exporter) đã lưu trên server, đổi sang giá trị ban đầu của form.
+ * undefined = đang tải. Chưa có gì trên server → company null, products [].
+ */
+function useProfileData(withProducts: boolean): ProfileData | undefined {
+  const [data, setData] = useState<ProfileData | undefined>(undefined);
   useEffect(() => {
-    if (!enabled) return;
     let active = true;
-    getMyCompany().then((company) => {
-      if (active) setInitial(company ? companyToForm(company) : null);
+    Promise.all([getMyCompany(), withProducts ? getMyProducts() : Promise.resolve(null)]).then(([company, products]) => {
+      if (!active) return;
+      setData({
+        company: company ? companyToForm(company) : null,
+        products: (products ?? []).map(draftFromProduct),
+      });
     });
     return () => {
       active = false;
     };
-  }, [enabled]);
-  return initial;
+  }, [withProducts]);
+  return data;
 }
 
 function OnboardingContent({ user }: { user: DemoUser }) {
   const navigate = useLegacyNavigate(user);
   const goHome = useGoHome();
   const handleLogout = useLogout();
-  const initialCompany = useCompanyForm(true);
-  if (initialCompany === undefined) return null;
+  const data = useProfileData(user.role === 'seller');
+  if (data === undefined) return null;
   if (user.role === 'buyer') {
     // Hồ sơ buyer lên server trước; nhu cầu từng đơn hàng vẫn lưu trình duyệt tới F1 (RFQ).
     const onBuyerComplete = async (profile: Record<string, string>) => {
@@ -89,15 +101,16 @@ function OnboardingContent({ user }: { user: DemoUser }) {
       <BuyerOnboarding
         key={user.id}
         user={user}
-        initialCompany={initialCompany ?? undefined}
+        initialCompany={data.company ?? undefined}
         onComplete={onBuyerComplete}
         onLogout={handleLogout}
       />
     );
   }
-  // Lưu hồ sơ lên server trước; sản phẩm/chứng nhận vẫn lưu trình duyệt tới B5/C6.
-  const onComplete = async (profile: Record<string, string>) => {
+  // Lưu công ty trước (sản phẩm cần có công ty), rồi đồng bộ sản phẩm. Chứng nhận vẫn lưu trình duyệt tới C6.
+  const onComplete = async (profile: Record<string, string>, products: ProductDraft[]) => {
     await saveMyCompany(profileToCompany(profile));
+    await syncProducts(products);
     goHome(completeOnboarding(user.id, profile));
   };
   return (
@@ -105,7 +118,8 @@ function OnboardingContent({ user }: { user: DemoUser }) {
       key={user.id}
       account={user}
       initialStep={1}
-      initialCompany={initialCompany ?? undefined}
+      initialCompany={data.company ?? undefined}
+      initialProducts={data.products}
       onComplete={onComplete}
       onLogout={handleLogout}
       onNavigateHome={() => navigate('home')}
@@ -143,17 +157,19 @@ export function WorkspaceRoute() {
 function SellerProfileContent({ user }: { user: DemoUser }) {
   const navigate = useLegacyNavigate(user);
   const handleLogout = useLogout();
-  const initialCompany = useCompanyForm(true);
-  if (initialCompany === undefined) return null;
-  const onComplete = async (profile: Record<string, string>) => {
+  const data = useProfileData(true);
+  if (data === undefined) return null;
+  const onComplete = async (profile: Record<string, string>, products: ProductDraft[]) => {
     await saveMyCompany(profileToCompany(profile));
+    await syncProducts(products);
     navigate('workspace', { tab: 'profile' });
   };
   return (
     <SellerOnboarding
       key={user.id}
       account={user}
-      initialCompany={initialCompany ?? undefined}
+      initialCompany={data.company ?? undefined}
+      initialProducts={data.products}
       onComplete={onComplete}
       onLogout={handleLogout}
       onNavigateHome={() => navigate('home')}
