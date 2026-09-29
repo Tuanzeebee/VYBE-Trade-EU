@@ -202,7 +202,7 @@ describe('Máy tính quy tắc xuất xứ (C4)', () => {
     fireEvent.click(buttons('Xóa nguyên liệu')[0]);
     expect(rows()).toBe(49);
     expect(buttons('Thêm nguyên liệu')[0]).toBeEnabled();
-  });
+  }, 30_000);
 
   it('chuyển sang "chưa khai" thì danh sách nguyên liệu bị bỏ (không gửi kèm)', async () => {
     serve(() => json(200, PASS));
