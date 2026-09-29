@@ -3,7 +3,11 @@ import React from 'react';
 import { translateText, type Locale } from '../i18n/translate';
 import { parseLegal, readLegalSource, type LegalPage } from '../lib/legalContent';
 
-const TITLES: Record<LegalPage, string> = { terms: 'Điều khoản dịch vụ', privacy: 'Chính sách bảo mật' };
+const TITLES: Record<LegalPage, string> = {
+  'terms-buyer': 'Điều khoản sử dụng dành cho Người mua',
+  'terms-enterprise': 'Điều khoản sử dụng dành cho Doanh nghiệp',
+  privacy: 'Chính sách bảo mật',
+};
 
 export default function LegalPageView({ page, locale, dir }: { page: LegalPage; locale: Locale; dir?: string }) {
   const t = (vi: string) => translateText(vi, locale);

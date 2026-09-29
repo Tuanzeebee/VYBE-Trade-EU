@@ -18,7 +18,7 @@ const wrap = (ui: React.ReactElement) => render(<NextIntlClientProvider locale="
 describe('Trang pháp lý (E4)', () => {
   it('thiếu nội dung: hiện thông báo đang hoàn thiện, không bịa điều khoản', () => {
     const dir = mkdtempSync(join(tmpdir(), 'legal-'));
-    wrap(<LegalPageView page="terms" locale="vi" dir={dir} />);
+    wrap(<LegalPageView page="terms-buyer" locale="vi" dir={dir} />);
     expect(screen.getByRole('status')).toHaveTextContent('đang được đội pháp lý hoàn thiện');
   });
 
@@ -34,7 +34,7 @@ describe('Trang pháp lý (E4)', () => {
 
   it('parseLegal không diễn giải HTML và bỏ dòng trống', () => {
     expect(parseLegal('\n\n<script>x</script>\n\n\n')).toEqual([{ kind: 'p', text: '<script>x</script>' }]);
-    const { container } = wrap(<LegalPageView page="terms" locale="vi" dir="/không-có" />);
+    const { container } = wrap(<LegalPageView page="terms-buyer" locale="vi" dir="/không-có" />);
     expect(container.querySelector('script')).toBeNull();
   });
 });
@@ -45,5 +45,14 @@ describe('Không còn liên kết trỏ #', () => {
   it('không có href="#" trong components và app', () => {
     const bad = ['components', 'app'].flatMap(files).filter((f) => /href=(["'{`]+)#\1?\s*[}"'`]/.test(readFileSync(f, 'utf8')) || /href=["']#["']/.test(readFileSync(f, 'utf8')));
     expect(bad).toEqual([]);
+  });
+});
+
+describe('Nội dung pháp lý thật do PO cung cấp', () => {
+  it.each(['privacy', 'terms-buyer', 'terms-enterprise'] as const)('%s có bản vi và en, có mục và không rỗng', (page) => {
+    for (const locale of ['vi', 'en']) {
+      const blocks = parseLegal(readLegalSource(page, locale) ?? '');
+      expect(blocks.filter((b) => b.kind === 'h2').length).toBeGreaterThan(5);
+    }
   });
 });

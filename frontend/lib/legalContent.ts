@@ -3,7 +3,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-export type LegalPage = 'terms' | 'privacy';
+export type LegalPage = 'terms-buyer' | 'terms-enterprise' | 'privacy';
 export type LegalBlock = { kind: 'h1' | 'h2' | 'p'; text: string };
 
 const DEFAULT_DIR = join(process.cwd(), 'content', 'legal');
