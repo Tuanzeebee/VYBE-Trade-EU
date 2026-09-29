@@ -279,3 +279,12 @@ class CompletenessOut(BaseModel):
 
     score: Decimal
     missing: list[MissingOut]
+
+
+class VerificationState(BaseModel):
+    """Trạng thái xác minh hiện tại của công ty — module verification đọc/ghi qua service."""
+
+    status: str
+    level: str
+    verified_at: datetime | None
+    expires_at: datetime | None

@@ -19,6 +19,8 @@ class Settings(BaseSettings):
     session_days: int = 14
     cookie_secure: bool = True
     consent_version: str = "2026-09-29"
+    # Hiệu lực xác minh kể từ ngày duyệt (mặc định 12 tháng, cần PO xác nhận)
+    verification_valid_days: int = 365
     # Origin của frontend được gọi API kèm cookie
     cors_origins: list[str] = ["http://localhost:3000"]
 

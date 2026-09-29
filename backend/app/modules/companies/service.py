@@ -3,6 +3,7 @@
 import re
 import unicodedata
 import uuid
+from datetime import datetime
 from typing import Any
 
 from sqlalchemy import Select, select
@@ -21,6 +22,8 @@ from app.modules.companies.models import (
     CompanyLanguage,
     CompanySourcingCategory,
     CompanyType,
+    VerificationLevel,
+    VerificationStatus,
 )
 from app.modules.companies.schemas import (
     CompanyFilters,
@@ -31,6 +34,7 @@ from app.modules.companies.schemas import (
     MissingOut,
     PresignIn,
     PresignOut,
+    VerificationState,
 )
 
 _EXTENSIONS = {"image/png": "png", "image/jpeg": "jpg", "image/webp": "webp"}
@@ -89,6 +93,60 @@ async def _own_company(session: AsyncSession, user: CurrentUser) -> Company:
     if company is None:
         raise AppError("company_not_found", "Company profile not created yet", 404)
     return company
+
+
+def _verification_state(company: Company) -> VerificationState:
+    return VerificationState(
+        status=company.verification_status.value,
+        level=company.verification_level.value,
+        verified_at=company.verified_at,
+        expires_at=company.expires_at,
+    )
+
+
+async def get_verification_state(session: AsyncSession, company_id: uuid.UUID) -> VerificationState:
+    company = await session.get(Company, company_id)
+    if company is None:
+        raise AppError("company_not_found", "Company not found", 404)
+    await session.refresh(company)  # đọc trạng thái mới nhất từ DB
+    return _verification_state(company)
+
+
+async def set_verification_state(
+    session: AsyncSession,
+    company_id: uuid.UUID,
+    *,
+    status: str,
+    level: str,
+    verified_at: datetime | None,
+    expires_at: datetime | None,
+) -> VerificationState:
+    """Ghi trạng thái xác minh; trả về trạng thái TRƯỚC khi đổi.
+
+    Chỉ verification.service được gọi hàm này (test khóa) — nơi duy nhất đổi trạng thái xác minh.
+    """
+    company = await session.get(Company, company_id)
+    if company is None:
+        raise AppError("company_not_found", "Company not found", 404)
+    previous = _verification_state(company)
+    company.verification_status = VerificationStatus(status)
+    company.verification_level = VerificationLevel(level)
+    company.verified_at = verified_at
+    company.expires_at = expires_at
+    await session.flush()
+    return previous
+
+
+async def list_expired_verified(session: AsyncSession, now: datetime) -> list[uuid.UUID]:
+    """Công ty đang verified và đã tới hạn (expires_at <= now) — cho job hết hạn."""
+    rows = await session.scalars(
+        select(Company.id).where(
+            Company.verification_status == VerificationStatus.verified,
+            Company.expires_at.is_not(None),
+            Company.expires_at <= now,
+        )
+    )
+    return list(rows)
 
 
 async def get_company_id(session: AsyncSession, user_id: uuid.UUID) -> uuid.UUID | None:
