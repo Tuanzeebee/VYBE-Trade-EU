@@ -111,6 +111,16 @@ async def _get_owned(session: AsyncSession, company: Company, product_id: uuid.U
     return product
 
 
+async def list_active_hs_codes(session: AsyncSession, company_id: uuid.UUID) -> list[str]:
+    """Mã HS (không trùng) của các sản phẩm đang bật — module khác dùng để suy ra nhóm hàng."""
+    rows = await session.scalars(
+        select(Product.hs_code)
+        .where(Product.company_id == company_id, Product.is_active.is_(True))
+        .distinct()
+    )
+    return sorted(rows)
+
+
 async def list_products(
     session: AsyncSession, user: CurrentUser, storage: Storage
 ) -> list[ProductOut]:

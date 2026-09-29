@@ -37,7 +37,13 @@ from app.modules.companies.schemas import (
     VerificationState,
 )
 
-_EXTENSIONS = {"image/png": "png", "image/jpeg": "jpg", "image/webp": "webp"}
+_EXTENSIONS = {
+    "image/png": "png",
+    "image/jpeg": "jpg",
+    "image/webp": "webp",
+    "application/pdf": "pdf",
+}
+_UPLOAD_FOLDERS = {"logo": "logos", "product_image": "products", "evidence": "evidence"}
 _ALLOWED_ROLES = {"exporter": CompanyType.exporter, "buyer": CompanyType.buyer}
 # Trường chỉ một loại công ty được đặt; loại kia gửi giá trị thật → 422.
 _ONLY_EXPORTER = ("export_markets", "languages_spoken")
@@ -289,9 +295,9 @@ async def presign_upload(
     session: AsyncSession, user: CurrentUser, storage: Storage, data: PresignIn
 ) -> PresignOut:
     """URL tải lên có hạn ngắn; khóa file luôn nằm dưới thư mục của công ty mình."""
-    if data.purpose == "product_image" and user.role != "exporter":
+    if data.purpose in ("product_image", "evidence") and user.role != "exporter":
         raise AppError("forbidden", "Not allowed for this role", 403)
     company = await _own_company(session, user)
-    folder = "products" if data.purpose == "product_image" else "logos"
+    folder = _UPLOAD_FOLDERS[data.purpose]
     key = f"{folder}/{company.id}/{uuid.uuid4().hex}.{_EXTENSIONS[data.content_type]}"
     return PresignOut(upload_url=await storage.presign_put(key, data.content_type), key=key)

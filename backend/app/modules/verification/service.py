@@ -19,12 +19,21 @@ from app.modules.verification.events import VerificationStatusChanged
 from app.modules.verification.models import Decision, VerificationDecision
 
 BASIC = "basic"
+EVFTA_VERIFIED = "evfta_verified"
 # decision → (trạng thái đầu bắt buộc, trạng thái đích)
 _TRANSITIONS = {
     Decision.approve: ("pending", "verified"),
     Decision.reject: ("pending", "rejected"),
     Decision.request_info: ("pending", "unverified"),
     Decision.expire: ("verified", "unverified"),
+    Decision.level_up: ("verified", "verified"),
+    Decision.level_down: ("verified", "verified"),
+}
+_SYSTEM = (Decision.expire, Decision.level_up, Decision.level_down)
+_SYSTEM_REASON = {
+    Decision.expire: "expired",
+    Decision.level_up: "evidence_complete",
+    Decision.level_down: "evidence_missing_or_expired",
 }
 _REASON_REQUIRED = (Decision.reject, Decision.request_info)
 
@@ -43,8 +52,9 @@ async def decide(
 
     - approve, reject, request_info: chỉ admin, chỉ từ `pending`; hai loại sau bắt buộc có lý do.
     - expire: chỉ hệ thống (reviewer None), chỉ từ `verified` → `unverified` + mức `basic`.
+    - level_up / level_down: chỉ hệ thống, công ty `verified`, đổi mức basic ↔ evfta_verified (C6).
     """
-    is_system = decision is Decision.expire
+    is_system = decision in _SYSTEM
     if is_system != (reviewer is None) or (reviewer is not None and reviewer.role != "admin"):
         raise AppError("forbidden", "Not allowed", 403)
     cleaned = (reason or "").strip() or None
@@ -59,6 +69,11 @@ async def decide(
             "invalid_transition", f"Cannot {decision.value} a company that is {current.status}", 409
         )
 
+    if decision is Decision.level_up and current.level != BASIC:
+        raise AppError("invalid_transition", "Company is already evfta_verified", 409)
+    if decision is Decision.level_down and current.level != EVFTA_VERIFIED:
+        raise AppError("invalid_transition", "Company is not evfta_verified", 409)
+
     if decision is Decision.approve:
         # Mức evfta_verified do C6 nâng sau khi đủ bằng chứng bắt buộc còn hạn; ở đây luôn là basic.
         level = BASIC
@@ -66,8 +81,9 @@ async def decide(
         expires_at: dt.datetime | None = now + dt.timedelta(
             days=get_settings().verification_valid_days
         )
-    elif decision is Decision.expire:
-        level, verified_at, expires_at = BASIC, current.verified_at, current.expires_at
+    elif decision in _SYSTEM:
+        level = EVFTA_VERIFIED if decision is Decision.level_up else BASIC
+        verified_at, expires_at = current.verified_at, current.expires_at
     else:
         level, verified_at, expires_at = BASIC, None, None
 
@@ -84,7 +100,7 @@ async def decide(
             company_id=company_id,
             reviewer_id=reviewer.id if reviewer else None,
             decision=decision,
-            reason="expired" if decision is Decision.expire else cleaned,
+            reason=_SYSTEM_REASON.get(decision, cleaned),
             from_status=current.status,
             to_status=to_status,
             from_level=current.level,

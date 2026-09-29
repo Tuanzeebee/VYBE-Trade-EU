@@ -1,7 +1,7 @@
 import uuid
 from datetime import UTC, datetime
 from decimal import Decimal
-from typing import Annotated, Literal
+from typing import Annotated, Literal, Self
 
 from pydantic import (
     AfterValidator,
@@ -133,8 +133,20 @@ class CompanyFilters(BaseModel):
 
 
 class PresignIn(BaseModel):
-    purpose: Literal["logo", "product_image"]
-    content_type: Literal["image/png", "image/jpeg", "image/webp"]
+    purpose: Literal["logo", "product_image", "evidence"]
+    content_type: Literal["image/png", "image/jpeg", "image/webp", "application/pdf"]
+
+    @model_validator(mode="after")
+    def _content_type_matches_purpose(self) -> Self:
+        """Logo/ảnh sản phẩm chỉ nhận ảnh; bằng chứng nhận PDF hoặc ảnh chụp (png/jpeg)."""
+        allowed = {
+            "logo": ("image/png", "image/jpeg", "image/webp"),
+            "product_image": ("image/png", "image/jpeg", "image/webp"),
+            "evidence": ("application/pdf", "image/png", "image/jpeg"),
+        }[self.purpose]
+        if self.content_type not in allowed:
+            raise ValueError(f"content_type {self.content_type} is not allowed for {self.purpose}")
+        return self
 
 
 class PresignOut(BaseModel):

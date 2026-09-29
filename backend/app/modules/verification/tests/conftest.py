@@ -29,3 +29,19 @@ async def company_id(api_client: AsyncClient, exporter_user: CurrentUser) -> uui
     r = await api_client.post("/api/me/company", json=company_body())
     assert r.status_code == 201, r.text
     return uuid.UUID(r.json()["id"])
+
+
+@pytest.fixture
+async def hs_seeded(db_session: AsyncSession) -> AsyncSession:
+    """20 mã HS đợt 1 (B4) để sản phẩm có mã HS hợp lệ; mỗi test rollback."""
+    from app.modules.catalog.service import upsert_hs_codes
+    from scripts.seed_hs_codes import DEFAULT_CSV, load_csv
+
+    await upsert_hs_codes(db_session, load_csv(DEFAULT_CSV))
+    return db_session
+
+
+@pytest.fixture
+async def reviewer_id(db_session: AsyncSession) -> uuid.UUID:
+    """Người duyệt luật TM (một admin) — dùng làm reviewed_by cho dữ liệu synthetic."""
+    return await create_admin(db_session, "luat-tm@evfta.eu", PASSWORD)
