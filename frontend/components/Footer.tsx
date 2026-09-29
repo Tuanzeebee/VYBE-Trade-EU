@@ -1,10 +1,11 @@
 'use client';
+import type { Page } from '../lib/navigation';
 import React from 'react';
 import { useLanguage } from '../context/LanguageContext.tsx';
-import { ShieldCheck, Mail, Phone, MapPin, Globe } from 'lucide-react';
+import { ShieldCheck, Mail,  MapPin, Globe } from 'lucide-react';
 
 export interface FooterProps {
-  onNavigate?: (page: any) => void;
+  onNavigate?: (page: Page) => void;
 }
 
 export default function Footer({ onNavigate }: FooterProps) {

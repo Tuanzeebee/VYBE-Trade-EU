@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import Image from 'next/image';
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   Search, 
@@ -13,16 +14,12 @@ import {
   ShieldCheck, 
   MapPin, 
   ArrowRight, 
-  Sparkles, 
   X, 
   Clock, 
-  CheckCircle2, 
-  Star,
-  ExternalLink,
   ChevronRight,
   TrendingUp
 } from 'lucide-react';
-import { SupplierData, DEFAULT_SELLER_DETAIL } from './BuyerSellerDetail.tsx';
+import { SupplierData } from './BuyerSellerDetail.tsx';
 import { DIRECTORY_SUPPLIERS } from '../lib/suppliers';
 import { filterSuppliers, matchSearch, removeVietnameseTones, searchableText, type SupplierFilters } from '../lib/supplierSearch';
 import { useLanguage } from "../context/LanguageContext";
@@ -270,7 +267,7 @@ export default function LiveSearchDropdown({
                     onClick={() => onSelectSupplier(supp)}
                     className="p-3 rounded-xl border border-slate-200/70 hover:border-emerald-300 bg-white hover:bg-emerald-50/30 transition-all cursor-pointer flex items-center gap-3 group"
                   >
-                    <img 
+                    <Image width={44} height={44} unoptimized
                       src={supp.logo} 
                       alt={tr(supp.name)} 
                       className="w-11 h-11 rounded-lg object-cover border border-slate-100 shrink-0" 
@@ -320,7 +317,7 @@ export default function LiveSearchDropdown({
                       className="p-2.5 sm:p-3 rounded-xl hover:bg-blue-50/60 border border-transparent hover:border-blue-200/80 transition-all cursor-pointer flex items-center justify-between gap-3 group"
                     >
                       <div className="flex items-center gap-3 min-w-0">
-                        <img 
+                        <Image width={40} height={40} unoptimized
                           src={supp.logo} 
                           alt={tr(supp.name)} 
                           className="w-10 h-10 rounded-lg object-cover border border-slate-200 shrink-0" 
@@ -382,7 +379,7 @@ export default function LiveSearchDropdown({
                       className="p-2.5 sm:p-3 rounded-xl hover:bg-emerald-50/50 border border-transparent hover:border-emerald-200/80 transition-all cursor-pointer flex items-center justify-between gap-3 group"
                     >
                       <div className="flex items-center gap-3 min-w-0">
-                        <img 
+                        <Image width={40} height={40} unoptimized
                           src={prod.image} 
                           alt={tr(prod.name)} 
                           className="w-10 h-10 rounded-lg object-cover border border-slate-200 shrink-0" 

@@ -1,4 +1,5 @@
 'use client';
+import type { Page } from '../lib/navigation';
 import React, { useState } from 'react';
 import { ChevronDown, Globe, Sparkles } from 'lucide-react';
 import { useLanguage, LANGUAGES } from '../context/LanguageContext.tsx';
@@ -10,7 +11,7 @@ export interface HeaderProps {
   currentPage: string;
   directoryNav: 'suppliers' | 'buyer';
   user: DemoUser | null;
-  onNavigate: (page: any) => void;
+  onNavigate: (page: Page) => void;
   onSetDirectoryNav: (nav: 'suppliers' | 'buyer') => void;
   onLogout: () => void;
   onOpenNavModal?: (label: string) => void;

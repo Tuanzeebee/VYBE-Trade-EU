@@ -15,10 +15,7 @@ import {
   ShieldCheck, 
   Sparkles, 
   X, 
-  AlertTriangle, 
   RefreshCw, 
-  ExternalLink,
-  ChevronRight
 } from 'lucide-react';
 import { useLanguage } from "../context/LanguageContext";
 
@@ -29,14 +26,12 @@ interface ProductAiTrustProps {
 }
 
 export default function ProductAiTrust({ 
-  onNavigateHome, 
-  onNavigateNav,
   onSwitchToVerification 
 }: ProductAiTrustProps) {
   const { tr } = useLanguage();
   const [activeModal, setActiveModal] = useState<'demo' | 'learn-more' | 'process-detail' | 'step-detail' | null>(null);
   const [activeStepModal, setActiveStepModal] = useState<number | null>(null);
-  const [demoAnalyzing, setDemoAnalyzing] = useState(false);
+  const [, setDemoAnalyzing] = useState(false);
   const [demoStep, setDemoStep] = useState(4); // 4 = completed analysis
 
   const triggerLiveDemo = () => {

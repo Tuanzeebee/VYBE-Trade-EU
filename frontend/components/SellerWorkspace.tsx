@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import Image from 'next/image';
 import React, { useState } from 'react';
 import type { DemoUser } from '../lib/demoAuth';
 import LanguageSelect from './LanguageSelect';
@@ -14,7 +15,6 @@ import {
   Package, 
   Handshake, 
   Bell, 
-  Globe, 
   ChevronDown, 
   ChevronRight, 
   ArrowRight, 
@@ -22,15 +22,9 @@ import {
   FileCheck, 
   Clock, 
   Award, 
-  MapPin, 
-  Mail, 
-  Phone, 
-  ExternalLink, 
-  Layers, 
-  TrendingUp, 
+  ExternalLink,
   Edit3, 
   X, 
-  Upload, 
   Lock,
   Sparkles,
   Search,
@@ -39,12 +33,7 @@ import {
   FileText,
   Calendar,
   User,
-  Share2,
-  Printer,
   Factory,
-  Scale,
-  Box,
-  Download,
   AlertCircle,
   Plus,
   Trash2,
@@ -116,7 +105,7 @@ export default function SellerWorkspace({
   });
 
   // Verification Step simulation state
-  const [currentLevel, setCurrentLevel] = useState<'L0' | 'L1' | 'L2' | 'L3'>('L2');
+  const [, setCurrentLevel] = useState<'L0' | 'L1' | 'L2' | 'L3'>('L2');
 
   // Company Profile Data
   const [companyProfile, setCompanyProfile] = useState({
@@ -325,7 +314,7 @@ export default function SellerWorkspace({
   };
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] text-slate-900 font-['Plus_Jakarta_Sans',sans-serif] selection:bg-blue-600 selection:text-white flex">
+    <div className="min-h-screen bg-[#f8fafc] text-slate-900 font-sans selection:bg-blue-600 selection:text-white flex">
       
       {/* =========================================================================
           1. LEFT SIDEBAR NAVIGATION
@@ -371,7 +360,7 @@ export default function SellerWorkspace({
               return (
                 <button
                   key={item.id}
-                  onClick={() => setActiveTab(item.id as any)}
+                  onClick={() => setActiveTab(item.id as typeof activeTab)}
                   className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs sm:text-[13px] font-semibold transition-all cursor-pointer text-left ${
                     isActive
                       ? 'bg-[#e6f4f2] text-[#0d766e]'
@@ -961,7 +950,7 @@ export default function SellerWorkspace({
                     <div className="space-y-3">
                       {productsList.map((product) => (
                         <div key={product.id} className="p-3 rounded-2xl bg-white border border-slate-200 shadow-2xs flex gap-3 items-center">
-                          <img 
+                          <Image width={64} height={64} unoptimized
                             src={product.image} 
                             alt={tr(product.name)} 
                             className="w-16 h-16 rounded-xl object-cover shrink-0 border border-slate-200" 
@@ -1150,7 +1139,7 @@ export default function SellerWorkspace({
                     return (
                       <button
                         key={tab.id}
-                        onClick={() => setCertCategoryFilter(tab.id as any)}
+                        onClick={() => setCertCategoryFilter(tab.id as typeof certCategoryFilter)}
                         className={`px-3 py-1.5 rounded-xl font-semibold transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 text-xs ${
                           isSelected
                             ? 'bg-[#083832] text-white shadow-2xs'
@@ -1680,7 +1669,7 @@ export default function SellerWorkspace({
                   <div key={product.id} className="p-5 rounded-3xl bg-white border border-slate-200 shadow-xs flex flex-col justify-between">
                     <div>
                       <div className="w-full h-44 rounded-2xl overflow-hidden bg-slate-100 mb-4 border border-slate-200">
-                        <img src={product.image} alt={tr(product.name)} className="w-full h-full object-cover" />
+                        <Image width={1200} height={800} unoptimized src={product.image} alt={tr(product.name)} className="w-full h-full object-cover" />
                       </div>
                       <div className="flex items-center gap-2 mb-1.5">
                         {product.isMain && (
@@ -2228,7 +2217,7 @@ export default function SellerWorkspace({
                       </label>
                       <select 
                         value={newCertForm.category}
-                        onChange={(e) => setNewCertForm({ ...newCertForm, category: e.target.value as any })}
+                        onChange={(e) => setNewCertForm({ ...newCertForm, category: e.target.value as WorkspaceCertificateItem['category'] })}
                         className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-teal-700 bg-white"
                       >
                         <option value="food_safety">{tr("An toàn thực phẩm (HACCP, ISO 22000, BRCGS, FDA)")}</option>
@@ -2392,7 +2381,7 @@ export default function SellerWorkspace({
                         {tr("Nhóm phân loại")}</label>
                       <select 
                         value={editingCert.category}
-                        onChange={(e) => setEditingCert({ ...editingCert, category: e.target.value as any })}
+                        onChange={(e) => setEditingCert({ ...editingCert, category: e.target.value as WorkspaceCertificateItem['category'] })}
                         className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-teal-700 bg-white"
                       >
                         <option value="legal">{tr("Pháp lý doanh nghiệp (ERC)")}</option>

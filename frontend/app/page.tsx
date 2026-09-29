@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import type { Page as NavigationPage } from '../lib/navigation';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import HomePage from '../components/HomePage';
@@ -20,27 +21,10 @@ import { getSession, getUserPage, logout, completeOnboarding, refreshSession, ty
 import { useLanguage } from '../context/LanguageContext';
 import { X } from 'lucide-react';
 
-type Page = 
-  | 'home' 
-  | 'product' 
-  | 'onboarding' 
-  | 'seller-profile' 
-  | 'workspace' 
-  | 'buyer-directory' 
-  | 'buyer-seller-detail' 
-  | 'pricing' 
-  | 'solutions' 
-  | 'about' 
-  | 'login' 
-  | 'register' 
-  | 'admin';
-
 export default function Page() {
   const { tr } = useLanguage();
-  const [user, setUser] = useState<DemoUser | null>(() => {
-    try { return getSession(); } catch { return null; }
-  });
-  const [currentPage, setPage] = useState<Page>(() => user ? getUserPage(user) : 'home');
+  const [user, setUser] = useState<DemoUser | null>(null);
+  const [currentPage, setPage] = useState<NavigationPage>('home');
   const [directoryNav, setDirectoryNav] = useState<'suppliers' | 'buyer'>('suppliers');
   const [selectedSupplier, setSelectedSupplier] = useState<SupplierData>(DEFAULT_SELLER_DETAIL);
   const [openSupplierRfq, setOpenSupplierRfq] = useState(false);
@@ -54,6 +38,12 @@ export default function Page() {
   const [signupRole, setSignupRole] = useState<'buyer' | 'seller' | undefined>(undefined);
 
   useEffect(() => {
+    // Restore browser state only after the first render matches the server.
+    try {
+      const saved = getSession();
+      setUser(saved);
+      if (saved) setPage(getUserPage(saved));
+    } catch { /* Continue as a guest when storage is unavailable. */ }
     // Link /?type=buyer|exporter mở thẳng form đăng ký với vai trò chọn sẵn (A1).
     const type = new URLSearchParams(window.location.search).get('type');
     if (type === 'buyer' || type === 'exporter') {
@@ -69,7 +59,7 @@ export default function Page() {
     });
   }, []);
 
-  function setCurrentPage(page: Page) {
+  function setCurrentPage(page: NavigationPage) {
     const protectedPage = ['workspace', 'onboarding', 'seller-profile', 'admin'].includes(page);
     if (protectedPage && !user) { 
       setPage('login'); 
@@ -192,7 +182,7 @@ export default function Page() {
   }
 
   const renderLayout = (content: React.ReactNode) => (
-    <div className="min-h-screen bg-[#f8fafc] text-slate-900 font-['Plus_Jakarta_Sans',sans-serif] selection:bg-blue-600 selection:text-white flex flex-col justify-between">
+    <div className="min-h-screen bg-[#f8fafc] text-slate-900 font-sans selection:bg-blue-600 selection:text-white flex flex-col justify-between">
       <div>
         <Header 
           currentPage={currentPage}

@@ -15,18 +15,9 @@ import {
   Check, 
   ArrowRight, 
   ChevronRight, 
-  Globe, 
-  MapPin, 
-  Phone, 
   Mail, 
-  ShieldCheck, 
-  Award, 
-  Sparkles, 
   X, 
   CheckCircle2, 
-  Calendar,
-  Send,
-  ExternalLink,
   Sprout
 } from 'lucide-react';
 import { useLanguage } from "../context/LanguageContext";
@@ -40,16 +31,13 @@ interface AboutUsPageProps {
 }
 
 export default function AboutUsPage({
-  onNavigateHome,
   onNavigateDirectory,
   onNavigateSolutions,
-  onNavigatePricing,
-  onNavigateOnboarding
 }: AboutUsPageProps) {
   const { tr } = useLanguage();
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [contactSubmitted, setContactSubmitted] = useState(false);
-  const [activeAudienceDetail, setActiveAudienceDetail] = useState<string | null>(null);
+
 
   const [contactForm, setContactForm] = useState({
     fullName: 'Nguyễn Văn Trí',
@@ -66,7 +54,7 @@ export default function AboutUsPage({
   };
 
   return (
-    <div className="w-full bg-[#f8fafc] text-slate-900 pb-20 font-['Plus_Jakarta_Sans',sans-serif]">
+    <div className="w-full bg-[#f8fafc] text-slate-900 pb-20 font-sans">
       
       {/* =========================================================================
           1. HERO BANNER: KIẾN TẠO NIỀM TIN CHO THƯƠNG MẠI NÔNG SẢN VIỆT NAM

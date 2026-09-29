@@ -9,13 +9,11 @@ import {
   ArrowRight, 
   ShieldCheck, 
   CheckCircle2, 
-  FileText, 
   Award, 
   Database, 
   UserCheck, 
   X, 
   Clock, 
-  HelpCircle,
   Building,
   Check,
   Sparkles
@@ -29,8 +27,6 @@ interface ProductVerificationProps {
 }
 
 export default function ProductVerification({ 
-  onNavigateHome, 
-  onNavigateNav,
   onSwitchToAiTrust 
 }: ProductVerificationProps) {
   const { tr } = useLanguage();

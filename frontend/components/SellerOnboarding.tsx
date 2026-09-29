@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import Image from 'next/image';
 import React, { useState } from 'react';
 import type { DemoUser } from '../lib/demoAuth';
 import LanguageSelect from './LanguageSelect';
@@ -19,7 +20,6 @@ import {
   X, 
   Building2,
   CheckCircle2,
-  Briefcase,
   UploadCloud,
   FileText,
   Award,
@@ -27,12 +27,8 @@ import {
   Eye,
   Plus,
   Lock,
-  AlertCircle,
-  Sparkles,
-  ExternalLink,
   MoreVertical,
-  Camera,
-  Image as ImageIcon
+  Camera
 } from 'lucide-react';
 import { useLanguage } from "../context/LanguageContext";
 
@@ -122,7 +118,7 @@ export default function SellerOnboarding({ account, initialStep = 2, onComplete,
     description: ''
   });
 
-  const handleUpdateProduct = (id: string, field: keyof ExportProductItem, value: any) => {
+  const handleUpdateProduct = <K extends keyof ExportProductItem>(id: string, field: K, value: ExportProductItem[K]) => {
     setProducts(prev => prev.map(p => p.id === id ? { ...p, [field]: value } : p));
   };
 
@@ -250,7 +246,7 @@ export default function SellerOnboarding({ account, initialStep = 2, onComplete,
 
   // Step 3 State: Giấy phép & Chứng nhận
   const [hasUploadedDkkd, setHasUploadedDkkd] = useState(true);
-  const [dkkdData, setDkkdData] = useState({
+  const [dkkdData] = useState({
     docNumber: '0314892345',
     issueDate: '15/03/2018',
     issuePlace: 'Sở Kế hoạch và Đầu tư TP. Hồ Chí Minh',
@@ -294,7 +290,7 @@ export default function SellerOnboarding({ account, initialStep = 2, onComplete,
   });
 
   // Export license / PUC / PHC code
-  const [hasExportLicense, setHasExportLicense] = useState(true);
+
   const [pucCode, setPucCode] = useState('VN-DL-0489 (Mã vùng trồng sầu riêng & thanh long)');
   const [phcCode, setPhcCode] = useState('PHC-VN-102 (Mã cơ sở sơ chế, đóng gói đạt chuẩn EU)');
 
@@ -374,7 +370,7 @@ export default function SellerOnboarding({ account, initialStep = 2, onComplete,
   };
 
   return (
-    <div className="min-h-screen bg-[#f3f7f8] text-slate-900 font-['Plus_Jakarta_Sans',sans-serif] selection:bg-blue-600 selection:text-white flex flex-col justify-between">
+    <div className="min-h-screen bg-[#f3f7f8] text-slate-900 font-sans selection:bg-blue-600 selection:text-white flex flex-col justify-between">
       
       {/* =========================================================================
           1. HEADER (SELLER LOGGED IN STATE)
@@ -872,7 +868,7 @@ export default function SellerOnboarding({ account, initialStep = 2, onComplete,
                           
                           {/* Left: Product Image Thumbnail with Hover to Change */}
                           <div className="relative group shrink-0 w-28 h-28 sm:w-32 sm:h-32 rounded-xl overflow-hidden bg-slate-100 border border-slate-200 shadow-2xs">
-                            <img 
+                            <Image width={1200} height={800} unoptimized
                               src={product.image} 
                               alt={tr(product.name)}
                               className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" 
@@ -1566,7 +1562,7 @@ export default function SellerOnboarding({ account, initialStep = 2, onComplete,
                         {products.map(p => (
                           <div key={p.id} className="flex items-center justify-between flex-wrap gap-1 p-2 rounded-xl bg-white border border-slate-200/60">
                             <div className="flex items-center gap-2">
-                              <img src={p.image} alt={tr(p.name)} className="w-8 h-8 rounded-lg object-cover border border-slate-200" />
+                              <Image width={32} height={32} unoptimized src={p.image} alt={tr(p.name)} className="w-8 h-8 rounded-lg object-cover border border-slate-200" />
                               <div>
                                 <div className="font-bold text-slate-900 flex items-center gap-1.5">
                                   <span>{tr(p.name)}</span>
@@ -1709,7 +1705,7 @@ export default function SellerOnboarding({ account, initialStep = 2, onComplete,
               {/* Product Image & Main Checkbox */}
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-3.5 rounded-2xl bg-slate-50 border border-slate-200/70">
                 <div className="relative group w-20 h-20 rounded-xl overflow-hidden bg-slate-200 shrink-0 border border-slate-300">
-                  <img src={newProductForm.image} alt={tr("Preview")} className="w-full h-full object-cover" />
+                  <Image width={1200} height={800} unoptimized src={newProductForm.image} alt={tr("Preview")} className="w-full h-full object-cover" />
                   <label className="absolute inset-0 bg-black/50 text-white flex flex-col items-center justify-center text-[9px] font-semibold cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity">
                     <Camera className="w-4 h-4" />
                     <span>{tr("Đổi ảnh")}</span>

@@ -1,4 +1,5 @@
 'use client';
+import type { Page } from '../lib/navigation';
 import React, { useState } from 'react';
 import { 
   Search, 
@@ -30,7 +31,7 @@ export interface HomePageProps {
   setSelectedMarket: (m: string) => void;
   selectedTrust: string;
   setSelectedTrust: (t: string) => void;
-  onNavigate: (page: any) => void;
+  onNavigate: (page: Page) => void;
   onSelectSupplier: (supp: SupplierData) => void;
   onOpenRfqModal: (supp: SupplierData) => void;
 }

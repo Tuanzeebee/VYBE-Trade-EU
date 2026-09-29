@@ -1,12 +1,13 @@
 'use client';
-import React, { useState } from 'react';
-import { ArrowLeft, ArrowRight, Building2, Check, Globe, LogOut, PackageSearch, ShieldCheck, Sprout } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { ArrowLeft, ArrowRight, Building2, Check, ChevronDown, Globe, LogOut, PackageSearch, ShieldCheck, Sprout } from 'lucide-react';
 import type { DemoUser } from '../lib/demoAuth';
 import LanguageSelect from './LanguageSelect';
 import { useLanguage } from "../context/LanguageContext";
 
 const STEPS = ['Thông tin công ty', 'Nhu cầu tìm nguồn hàng', 'Tiêu chí xác minh', 'Xem lại & hoàn tất'];
 const CERTIFICATES = ['ISO 22000', 'HACCP', 'GlobalG.A.P.', 'USDA Organic', 'EU Organic', 'Halal', 'BRCGS', 'ASC / BAP'];
+const COUNTRIES = ['United States', 'Canada', 'Germany', 'France', 'United Kingdom', 'Netherlands', 'Japan', 'South Korea', 'Australia', 'Singapore', 'United Arab Emirates'];
 const INPUT = 'mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 outline-none focus:border-[#083832] focus:ring-1 focus:ring-[#083832]';
 const LABEL = 'block text-sm font-semibold text-slate-700';
 
@@ -27,6 +28,33 @@ export default function BuyerOnboarding({ user, onComplete, onLogout }: {
     budget: '', minTrustLevel: 'L2', requiredCertificates: '', factoryAudit: 'false',
     traceability: 'false', verificationNotes: '', agreeCommitment: 'false',
   });
+  const [countryOpen, setCountryOpen] = useState(false);
+  const [countryIndex, setCountryIndex] = useState(-1);
+  const countryList = useRef<HTMLUListElement>(null);
+  const countrySuggestions = COUNTRIES.filter((country) => country.toLowerCase().includes(profile.country.trim().toLowerCase()));
+  const showCountries = countryOpen && countrySuggestions.length > 0;
+  useEffect(() => {
+    countryList.current?.children[countryIndex]?.scrollIntoView({ block: 'nearest' });
+  }, [countryIndex]);
+  function selectCountry(country: string) {
+    update('country', country);
+    setCountryOpen(false);
+    setCountryIndex(-1);
+  }
+  function countryKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
+    if ((event.key === 'ArrowDown' || event.key === 'ArrowUp') && countrySuggestions.length) {
+      event.preventDefault();
+      setCountryOpen(true);
+      setCountryIndex(countryIndex < 0 ? event.key === 'ArrowDown' ? 0 : countrySuggestions.length - 1
+        : (countryIndex + (event.key === 'ArrowDown' ? 1 : -1) + countrySuggestions.length) % countrySuggestions.length);
+    } else if (event.key === 'Enter' && showCountries && countryIndex >= 0) {
+      event.preventDefault();
+      selectCountry(countrySuggestions[countryIndex]);
+    } else if (event.key === 'Escape') {
+      setCountryOpen(false);
+      setCountryIndex(-1);
+    }
+  }
   function update(field: keyof typeof profile, value: string) {
     setProfile((current) => ({ ...current, [field]: value }));
     setError('');
@@ -78,7 +106,31 @@ export default function BuyerOnboarding({ user, onComplete, onLogout }: {
           {step === 1 && <>
             <label className={LABEL}>{tr("Tên công ty *")}<input required maxLength={200} autoComplete="organization" className={INPUT} value={profile.companyName} onChange={(e) => update('companyName', e.target.value)} placeholder={tr("Ví dụ: Global Foods Trading Ltd.")} /></label>
             <div className="grid gap-5 sm:grid-cols-2">
-              <label className={LABEL}>{tr("Quốc gia *")}<input required maxLength={100} list="buyer-countries" autoComplete="country-name" className={INPUT} value={profile.country} onChange={(e) => update('country', e.target.value)} placeholder={tr("Ví dụ: Germany")} /><datalist id="buyer-countries">{['United States', 'Canada', 'Germany', 'France', 'United Kingdom', 'Netherlands', 'Japan', 'South Korea', 'Australia', 'Singapore', 'United Arab Emirates'].map((country) => <option key={country} value={country} />)}</datalist></label>
+              <div className="relative min-w-0" onBlur={(event) => {
+                if (!event.currentTarget.contains(event.relatedTarget)) { setCountryOpen(false); setCountryIndex(-1); }
+              }}>
+                <label htmlFor="buyer-country" className={LABEL}>{tr("Quốc gia *")}</label>
+                <div className="relative">
+                <input id="buyer-country" required maxLength={100} autoComplete="country-name" className={`${INPUT} pr-10`}
+                  role="combobox" aria-autocomplete="list" aria-expanded={showCountries} aria-controls={showCountries ? 'buyer-countries' : undefined}
+                  aria-activedescendant={showCountries && countryIndex >= 0 ? `buyer-country-${countryIndex}` : undefined}
+                  value={profile.country} placeholder={tr("Ví dụ: Germany")}
+                  onFocus={() => { setCountryOpen(true); setCountryIndex(-1); }}
+                  onChange={(event) => { update('country', event.target.value); setCountryOpen(true); setCountryIndex(-1); }}
+                  onKeyDown={countryKeyDown} />
+                <ChevronDown aria-hidden="true" className="pointer-events-none absolute right-3 top-1/2 mt-1 h-4 w-4 -translate-y-1/2 text-slate-500" />
+                </div>
+                {showCountries && <ul id="buyer-countries" ref={countryList} role="listbox" aria-label={tr("Quốc gia *")}
+                  className="absolute inset-x-0 top-full z-30 mt-2 max-h-60 overflow-y-auto overscroll-contain rounded-xl border border-slate-200 bg-white p-1.5 shadow-lg">
+                  {countrySuggestions.map((country, index) => <li key={country} role="presentation">
+                    <button type="button" id={`buyer-country-${index}`} role="option" tabIndex={-1}
+                      aria-selected={countryIndex === index} onMouseDown={(event) => event.preventDefault()} onClick={() => selectCountry(country)}
+                      className={`w-full rounded-lg px-3 py-2.5 text-left text-sm font-medium text-slate-900 hover:bg-teal-50 focus:bg-teal-50 focus:outline-none ${countryIndex === index ? 'bg-teal-50' : ''}`}>
+                      {tr(country)}
+                    </button>
+                  </li>)}
+                </ul>}
+              </div>
               <label className={LABEL}>{tr("Khu vực *")}<select required className={INPUT} value={profile.region} onChange={(e) => update('region', e.target.value)}><option value="">{tr("Chọn khu vực")}</option>{['Bắc Mỹ', 'Châu Âu', 'Châu Á – Thái Bình Dương', 'Trung Đông', 'Châu Phi', 'Mỹ Latinh'].map((region) => <option value={region} key={region}>{tr(region)}</option>)}</select></label>
             </div>
             <div className="grid gap-5 sm:grid-cols-2">

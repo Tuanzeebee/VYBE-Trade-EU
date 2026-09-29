@@ -418,16 +418,19 @@ interface LanguageContextType {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguageState] = useState<LanguageCode>(() => {
+  const [language, setLanguageState] = useState<LanguageCode>('vi');
+
+  useEffect(() => {
     try {
       const saved = localStorage.getItem('vybe_language') as LanguageCode;
-      return LANGUAGES.some((option) => option.code === saved) ? saved : 'vi';
-    } catch { return 'vi'; }
-  });
+      if (LANGUAGES.some((option) => option.code === saved)) setLanguageState(saved);
+    } catch { /* Keep the default language when storage is unavailable. */ }
+  }, []);
 
   const setLanguage = (lang: LanguageCode) => {
     setLanguageState(lang);
-    localStorage.setItem('vybe_language', lang);
+    try { localStorage.setItem('vybe_language', lang); }
+    catch { /* Language selection still works when storage is unavailable. */ }
   };
 
   const currentLanguageOption = LANGUAGES.find(l => l.code === language) || LANGUAGES[0];

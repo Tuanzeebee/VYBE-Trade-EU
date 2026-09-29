@@ -15,31 +15,10 @@ import {
   ArrowRight, 
   CheckCircle2, 
   Check, 
-  ChevronRight, 
-  Globe, 
-  Building2, 
-  Search, 
-  FileText, 
-  Layers, 
-  Zap, 
-  Calendar, 
+  Search,
+  Zap,
   X, 
-  ExternalLink, 
-  Eye, 
-  Download, 
   RefreshCw, 
-  SlidersHorizontal, 
-  Phone, 
-  Mail, 
-  MessageSquare, 
-  BadgeCheck, 
-  Lock, 
-  Fingerprint, 
-  Clock, 
-  TrendingUp, 
-  Bot,
-  HelpCircle,
-  Briefcase,
   PlayCircle
 } from 'lucide-react';
 import { useLanguage } from "../context/LanguageContext";
@@ -76,11 +55,9 @@ interface SolutionItem {
 }
 
 export default function SolutionsPage({
-  onNavigateHome,
   onNavigateDirectory,
   onNavigatePricing,
   onNavigateOnboarding,
-  onNavigateWorkspace
 }: SolutionsPageProps) {
   const { tr } = useLanguage();
   const [selectedRole, setSelectedRole] = useState<'all' | 'seller' | 'buyer' | 'partner'>('all');
@@ -316,7 +293,7 @@ export default function SolutionsPage({
           ].map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setSelectedRole(tab.id as any)}
+              onClick={() => setSelectedRole(tab.id as typeof selectedRole)}
               className={`px-4 sm:px-5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
                 selectedRole === tab.id
                   ? 'bg-white text-slate-900 shadow-sm'

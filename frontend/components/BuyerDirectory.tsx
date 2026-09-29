@@ -4,26 +4,23 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import Image from 'next/image';
 import React, { useState } from 'react';
 import { 
   Search, 
   ChevronDown, 
   MapPin, 
   ShieldCheck, 
-  Award, 
   Package, 
   Mail, 
   LayoutGrid, 
   List, 
   SlidersHorizontal, 
   X, 
-  Check, 
   Globe, 
-  ArrowRight,
-  Filter
 } from 'lucide-react';
 import { SupplierData, DEFAULT_SELLER_DETAIL } from './BuyerSellerDetail.tsx';
-import LiveSearchDropdown, { matchSearch } from './LiveSearchDropdown.tsx';
+import LiveSearchDropdown from './LiveSearchDropdown.tsx';
 import { useLanguage } from '../context/LanguageContext.tsx';
 import { DIRECTORY_SUPPLIERS } from '../lib/suppliers';
 import { filterSuppliers } from '../lib/supplierSearch';
@@ -54,16 +51,8 @@ export default function BuyerDirectory({
   const [isLiveSearchOpen, setIsLiveSearchOpen] = useState(false);
   const [activeView, setActiveView] = useState<'list' | 'grid'>('list');
   const [sortBy, setSortBy] = useState<'trust' | 'capacity' | 'rating'>('trust');
-  const [activeFilterTags, setActiveFilterTags] = useState<string[]>([
-    'Nông sản & Thực phẩm',
-    'Cà phê',
-    'Hạt điều',
-    'Hạt tiêu',
-    'Gạo',
-    'Trái cây tươi',
-    'Thủy sản'
-  ]);
-  const [selectedCategoryTag, setSelectedCategoryTag] = useState<string>('Nông sản & Thực phẩm');
+
+
   const [selectedLevelFilter, setSelectedLevelFilter] = useState<string>(initialLevel);
   const [categoryFilter, setCategoryFilter] = useState(initialCategory);
   const [marketFilter, setMarketFilter] = useState(initialMarket);
@@ -74,7 +63,7 @@ export default function BuyerDirectory({
       : Number(b.badgeLevel.slice(1)) - Number(a.badgeLevel.slice(1)));
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] text-slate-900 font-['Plus_Jakarta_Sans',sans-serif] selection:bg-blue-600 selection:text-white">
+    <div className="min-h-screen bg-[#f8fafc] text-slate-900 font-sans selection:bg-blue-600 selection:text-white">
       
       {/* Top Breadcrumb header */}
       <div className="bg-white border-b border-slate-100 py-3 px-4 sm:px-6 lg:px-8">
@@ -352,7 +341,7 @@ export default function BuyerDirectory({
                 <div className="relative">
                   <select 
                     value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value as any)}
+                    onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
                     className="appearance-none bg-white border border-slate-200 rounded-2xl px-3.5 py-2.5 pr-8 text-xs font-semibold text-slate-800 cursor-pointer shadow-2xs focus:outline-none"
                   >
                     <option value="trust">{tr(t.directory.sortTrust)}</option>
@@ -458,7 +447,7 @@ export default function BuyerDirectory({
                       
                       {/* Product Thumbnail (e.g. coffee berries, cashews) */}
                       <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden shrink-0 bg-slate-100 shadow-2xs">
-                        <img 
+                        <Image width={1200} height={800} unoptimized
                           src={supplier.products[0]?.image || supplier.coverImage} 
                           alt={tr(supplier.name)} 
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"

@@ -12,23 +12,14 @@ import {
   Crown, 
   Gem, 
   Check, 
-  Sparkles, 
   Search, 
   Layers, 
   BarChart3, 
   Headphones, 
   ShieldCheck, 
-  ArrowRight, 
   CheckCircle2, 
-  HelpCircle, 
   ChevronDown, 
   X,
-  CreditCard,
-  Building2,
-  Phone,
-  Mail,
-  Zap,
-  Globe
 } from 'lucide-react';
 import { useLanguage } from "../context/LanguageContext";
 
@@ -39,8 +30,6 @@ interface PricingPlansProps {
 }
 
 export default function PricingPlans({
-  onNavigateHome,
-  onNavigateOnboarding,
   onNavigateWorkspace
 }: PricingPlansProps) {
   const { tr, language } = useLanguage();
@@ -87,7 +76,7 @@ export default function PricingPlans({
   ];
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] text-slate-900 font-['Plus_Jakarta_Sans',sans-serif] selection:bg-blue-600 selection:text-white">
+    <div className="min-h-screen bg-[#f8fafc] text-slate-900 font-sans selection:bg-blue-600 selection:text-white">
       
       {/* =========================================================================
           1. HERO HEADER WITH GRAPHIC ILLUSTRATION (MATCHES SCREENSHOT)

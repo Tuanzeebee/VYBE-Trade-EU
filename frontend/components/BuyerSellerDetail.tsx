@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import Image from 'next/image';
 import React, { useState } from 'react';
 import { 
   Building2, 
@@ -12,31 +13,20 @@ import {
   Award, 
   Package, 
   Mail, 
-  Phone, 
   Globe, 
-  ExternalLink, 
   CheckCircle2, 
   Star, 
-  Download, 
-  Share2, 
   Heart, 
   MessageSquare, 
   Send, 
-  Clock, 
-  Calendar, 
   Check, 
   X, 
   ChevronRight, 
   FileText, 
   Lock, 
   Eye, 
-  Sparkles, 
   ArrowLeft,
   Factory,
-  Boxes,
-  Truck,
-  FileCheck,
-  Scale
 } from 'lucide-react';
 import { useLanguage } from "../context/LanguageContext";
 
@@ -328,15 +318,14 @@ export default function BuyerSellerDetail({
   openRfq = false,
   supplier = DEFAULT_SELLER_DETAIL,
   onBackToDirectory,
-  onNavigateHome,
-  onNavigateWorkspace
+  onNavigateHome
 }: BuyerSellerDetailProps) {
   const { tr } = useLanguage();
   const [activeTab, setActiveTab] = useState<'overview' | 'products' | 'factory' | 'certificates' | 'reviews'>('overview');
   const [isSaved, setIsSaved] = useState(false);
   const [activeModal, setActiveModal] = useState<'rfq' | 'chat' | 'doc-preview' | 'success' | null>(openRfq ? 'rfq' : null);
   const [selectedProductForRfq, setSelectedProductForRfq] = useState<string>(supplier.products[0]?.name || '');
-  const [selectedDoc, setSelectedDoc] = useState<any | null>(null);
+  const [selectedDoc, setSelectedDoc] = useState<SupplierData['certificates'][number] | null>(null);
 
   // RFQ Form state
   const [rfqForm, setRfqForm] = useState({
@@ -390,7 +379,7 @@ export default function BuyerSellerDetail({
   };
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] text-slate-900 font-['Plus_Jakarta_Sans',sans-serif] selection:bg-blue-600 selection:text-white">
+    <div className="min-h-screen bg-[#f8fafc] text-slate-900 font-sans selection:bg-blue-600 selection:text-white">
       
       {/* =========================================================================
           1. TOP NAVIGATION / BREADCRUMB BAR
@@ -477,7 +466,7 @@ export default function BuyerSellerDetail({
           
           {/* Cover Photo */}
           <div className="relative h-48 sm:h-64 lg:h-72 w-full bg-slate-900 overflow-hidden">
-            <img 
+            <Image width={1200} height={800} unoptimized
               src={supplier.coverImage} 
               alt={tr(supplier.name)} 
               className="w-full h-full object-cover opacity-85 brightness-95"
@@ -620,7 +609,7 @@ export default function BuyerSellerDetail({
             return (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
+                onClick={() => setActiveTab(tab.id as typeof activeTab)}
                 className={`py-3.5 px-3.5 sm:px-5 text-xs sm:text-sm font-semibold transition-all border-b-2 whitespace-nowrap cursor-pointer flex items-center gap-2 ${
                   isActive
                     ? 'border-[#083832] text-[#083832]'
@@ -728,7 +717,7 @@ export default function BuyerSellerDetail({
                       key={product.id}
                       className="p-4 rounded-2xl bg-slate-50 border border-slate-200/70 flex gap-3.5 group hover:border-teal-700 transition-colors"
                     >
-                      <img 
+                      <Image width={80} height={80} unoptimized
                         src={product.image} 
                         alt={tr(product.name)} 
                         className="w-20 h-20 rounded-xl object-cover shrink-0"
@@ -885,7 +874,7 @@ export default function BuyerSellerDetail({
                   <div>
                     {/* Product Image */}
                     <div className="relative h-56 w-full bg-slate-100 overflow-hidden">
-                      <img 
+                      <Image width={1200} height={800} unoptimized
                         src={product.image} 
                         alt={tr(product.name)} 
                         className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
@@ -977,7 +966,7 @@ export default function BuyerSellerDetail({
               {supplier.factoryPhotos.map((photo, idx) => (
                 <div key={idx} className="rounded-3xl bg-white border border-slate-200/90 shadow-xs overflow-hidden">
                   <div className="h-60 w-full bg-slate-900 overflow-hidden">
-                    <img 
+                    <Image width={1200} height={800} unoptimized
                       src={photo.image} 
                       alt={tr(photo.title)} 
                       className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
