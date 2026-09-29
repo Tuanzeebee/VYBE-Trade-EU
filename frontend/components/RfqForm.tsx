@@ -16,6 +16,7 @@ export interface RfqProduct {
 }
 
 const ERRORS: Record<RfqError, string> = {
+  not_verified: 'Doanh nghiệp của bạn cần được xác minh trước khi gửi yêu cầu báo giá.',
   rate_limited: 'Bạn đã gửi quá nhiều yêu cầu báo giá hôm nay. Vui lòng thử lại vào ngày mai.',
   company_required: 'Vui lòng hoàn thiện hồ sơ doanh nghiệp của bạn trước khi gửi yêu cầu báo giá.',
   product_not_found: 'Sản phẩm này hiện không còn nhận yêu cầu báo giá.',

@@ -68,7 +68,7 @@ async def _to_out(session: AsyncSession, rows: list[Rfq]) -> list[RfqOut]:
 
 
 async def daily_limit_for(session: AsyncSession, company_id: uuid.UUID) -> int:
-    """Buyer chưa xác minh bị giới hạn thấp hơn. Con số do PO chốt (cấu hình rfq_daily_limit_*)."""
+    """PO chốt: buyer đã xác minh 5 RFQ/24h, chưa xác minh 0 (cấu hình rfq_daily_limit_*)."""
     settings = get_settings()
     state = await companies.get_verification_state(session, company_id)
     verified = state.status == "verified"
@@ -90,6 +90,8 @@ async def create_rfq(
         raise AppError("product_not_found", "Product not found", 404)
 
     limit = await daily_limit_for(session, buyer_company_id)
+    if limit == 0:
+        raise AppError("buyer_not_verified", "Verify your company to send quote requests", 403)
     sent = await session.scalar(
         select(func.count())
         .select_from(Rfq)

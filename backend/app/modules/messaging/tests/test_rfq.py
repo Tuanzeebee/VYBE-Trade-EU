@@ -337,3 +337,31 @@ async def test_buyer_is_notified_when_the_exporter_changes_status(
     assert items[0]["payload"]["status"] == "quoted" and items[0]["link"] == "/buyer/rfqs"
     # Đổi trạng thái không gửi email (chỉ thông báo trong ứng dụng).
     assert [e["type"] for e in notifications_on] == ["rfq"]
+
+
+async def test_po_policy_defaults_and_unverified_buyers_cannot_send(
+    api_client: AsyncClient, db_session: AsyncSession, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """PO chốt: đã xác minh 5 RFQ/24h, chưa xác minh 0."""
+    settings = get_settings()
+    from app.core.config import Settings
+
+    fresh = Settings(_env_file=None)
+    assert (fresh.rfq_daily_limit_verified, fresh.rfq_daily_limit_unverified) == (5, 0)
+    monkeypatch.setattr(settings, "rfq_daily_limit_verified", 5)
+    monkeypatch.setattr(settings, "rfq_daily_limit_unverified", 0)
+    _, product_id = await make_exporter(api_client, db_session)
+    buyer_id = await make_buyer(api_client)
+    r = await send(api_client, product_id)
+    assert r.status_code == 403 and r.json()["error"]["code"] == "buyer_not_verified"
+    count = await db_session.execute(text("SELECT count(*) FROM rfqs"))
+    assert count.scalar_one() == 0
+
+    await db_session.execute(
+        text("UPDATE companies SET verification_status = 'verified' WHERE id = CAST(:id AS uuid)"),
+        {"id": buyer_id},
+    )
+    for _ in range(5):
+        assert (await send(api_client, product_id)).status_code == 201
+    r = await send(api_client, product_id)
+    assert r.status_code == 429 and r.json()["error"]["code"] == "rfq_daily_limit"

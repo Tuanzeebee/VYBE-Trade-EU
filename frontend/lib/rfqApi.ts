@@ -24,7 +24,7 @@ export const NEXT_STATUSES: Record<RfqStatus, RfqStatus[]> = {
   closed: [],
 };
 
-export type RfqError = 'rate_limited' | 'company_required' | 'product_not_found' | 'invalid' | 'unauthorized' | 'network';
+export type RfqError = 'rate_limited' | 'not_verified' | 'company_required' | 'product_not_found' | 'invalid' | 'unauthorized' | 'network';
 export type CreateOutcome = { ok: true; data: Rfq } | { ok: false; error: RfqError };
 
 const codeOf = (error: unknown): string | undefined => (error as { error?: { code?: string } } | undefined)?.error?.code;
@@ -33,6 +33,7 @@ export async function createRfq(input: RfqInput): Promise<CreateOutcome> {
   try {
     const { data, error, response } = await createApiClient().POST('/api/buyer/rfqs', { body: input });
     if (response.ok && data) return { ok: true, data };
+    if (response.status === 403 && codeOf(error) === 'buyer_not_verified') return { ok: false, error: 'not_verified' };
     if (response.status === 401 || response.status === 403) return { ok: false, error: 'unauthorized' };
     if (response.status === 429) return { ok: false, error: 'rate_limited' };
     if (response.status === 404) return { ok: false, error: 'product_not_found' };

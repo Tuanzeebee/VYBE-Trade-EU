@@ -24,8 +24,8 @@ class Settings(BaseSettings):
     verification_valid_days: int = 365
     # RFQ (F1): giới hạn số RFQ một công ty buyer được gửi trong 24 giờ. Con số do PO chốt —
     # đây là mặc định tạm; buyer chưa xác minh thấp hơn.
-    rfq_daily_limit_verified: int = 20
-    rfq_daily_limit_unverified: int = 5
+    rfq_daily_limit_verified: int = 5
+    rfq_daily_limit_unverified: int = 0
     # Email (H2): dev dùng Mailpit; nhà cung cấp thật do Q5 chốt; link thư dựng từ public_base_url
     email_backend: str = "smtp"  # smtp | fake
     smtp_host: str = "localhost"

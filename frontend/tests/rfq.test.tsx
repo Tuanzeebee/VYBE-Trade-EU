@@ -146,6 +146,7 @@ describe('Form yêu cầu báo giá (F1)', () => {
 
   it.each([
     [429, {}, 'quá nhiều yêu cầu báo giá'],
+    [403, { error: { code: 'buyer_not_verified' } }, 'cần được xác minh'],
     [409, { error: { code: 'company_required' } }, 'hoàn thiện hồ sơ doanh nghiệp'],
     [404, {}, 'không còn nhận yêu cầu'],
     [422, {}, 'Thông tin chưa hợp lệ'],
