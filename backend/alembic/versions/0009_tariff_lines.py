@@ -58,7 +58,8 @@ def upgrade() -> None:
             "destination ~ '^[A-Z]{2}$'", name=op.f("ck_tariff_lines_destination_iso2")
         ),
         sa.CheckConstraint(
-            "(mfn_rate IS NULL OR mfn_rate BETWEEN 0 AND 100) AND (evfta_rate_current IS NULL OR evfta_rate_current BETWEEN 0 AND 100)",
+            "(mfn_rate IS NULL OR mfn_rate BETWEEN 0 AND 100)"
+            " AND (evfta_rate_current IS NULL OR evfta_rate_current BETWEEN 0 AND 100)",
             name=op.f("ck_tariff_lines_rates_are_percentages"),
         ),
         sa.CheckConstraint(
