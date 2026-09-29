@@ -379,9 +379,7 @@ async def get_public_profile(
         full = await _out(session, storage, row, cache)
         products.append(
             PublicProductOut(
-                **full.model_dump(
-                    exclude={"id", "is_active", "approval_status", "images", "created_at"}
-                ),
+                **full.model_dump(exclude={"is_active", "approval_status", "images", "created_at"}),
                 images=[image.url for image in full.images],
             )
         )

@@ -93,7 +93,8 @@ async def test_public_profile_leaks_no_private_fields(
     body = (await api_client.get(f"/api/public/companies/{company['slug']}")).json()
     assert PRIVATE_FIELDS.isdisjoint(body), PRIVATE_FIELDS & set(body)
     for product in body["products"]:
-        assert {"id", "company_id", "approval_status", "is_active"}.isdisjoint(product)
+        assert product["id"]  # buyer cần id sản phẩm để gửi RFQ (F1)
+        assert {"company_id", "approval_status", "is_active"}.isdisjoint(product)
     raw = str(body)
     for secret in ("0314892345", "contact@vietagri-export.vn", "Điện Biên Phủ"):
         assert secret not in raw

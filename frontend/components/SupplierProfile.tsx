@@ -1,7 +1,8 @@
 // Hồ sơ công khai của nhà xuất khẩu đã xác minh (B5, E3), render phía server.
-// Không có email, mã số thuế hay địa chỉ chi tiết (backend không trả). RFQ (F1) sẽ gắn vào nút bên dưới.
+// Không có email, mã số thuế hay địa chỉ chi tiết (backend không trả). Form RFQ (F1) ở cuối trang.
 import React from 'react';
 import { notFound } from 'next/navigation';
+import RfqForm from './RfqForm';
 import { Link } from '../i18n/navigation';
 import { translateText, type Locale } from '../i18n/translate';
 import { countryName, fetchProfile, industryLabel } from '../lib/suppliersApi';
@@ -46,6 +47,8 @@ export default async function SupplierProfile({ slug, locale }: { slug: string; 
           </ul>
         )}
       </section>
+
+      <RfqForm products={profile.products.map((p) => ({ id: p.id, name: p.name, unit: p.unit }))} supplierName={profile.legal_name} />
     </div>
   );
 }

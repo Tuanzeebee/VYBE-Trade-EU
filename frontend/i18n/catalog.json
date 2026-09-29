@@ -9868,5 +9868,170 @@
     "A new supplier matches your search.",
     "A new supplier matches your search.",
     "A new supplier matches your search."
+  ],
+  "Bạn đã gửi quá nhiều yêu cầu báo giá hôm nay. Vui lòng thử lại vào ngày mai.": [
+    "You have sent too many quote requests today. Please try again tomorrow.",
+    "You have sent too many quote requests today. Please try again tomorrow.",
+    "You have sent too many quote requests today. Please try again tomorrow."
+  ],
+  "Vui lòng hoàn thiện hồ sơ doanh nghiệp của bạn trước khi gửi yêu cầu báo giá.": [
+    "Please complete your company profile before sending a quote request.",
+    "Please complete your company profile before sending a quote request.",
+    "Please complete your company profile before sending a quote request."
+  ],
+  "Sản phẩm này hiện không còn nhận yêu cầu báo giá.": [
+    "This product no longer accepts quote requests.",
+    "This product no longer accepts quote requests.",
+    "This product no longer accepts quote requests."
+  ],
+  "Thông tin chưa hợp lệ. Vui lòng kiểm tra lại số lượng, giá, ngày cần hàng và điểm đến.": [
+    "The information is not valid. Please check the quantity, price, required date and destination.",
+    "The information is not valid. Please check the quantity, price, required date and destination.",
+    "The information is not valid. Please check the quantity, price, required date and destination."
+  ],
+  "Chỉ tài khoản buyer đã đăng nhập mới gửi được yêu cầu báo giá.": [
+    "Only signed-in buyer accounts can send quote requests.",
+    "Only signed-in buyer accounts can send quote requests.",
+    "Only signed-in buyer accounts can send quote requests."
+  ],
+  "Đăng nhập bằng tài khoản buyer để gửi yêu cầu báo giá cho nhà cung cấp này.": [
+    "Sign in with a buyer account to send a quote request to this supplier.",
+    "Sign in with a buyer account to send a quote request to this supplier.",
+    "Sign in with a buyer account to send a quote request to this supplier."
+  ],
+  "Đăng ký buyer": [
+    "Register as a buyer",
+    "Register as a buyer",
+    "Register as a buyer"
+  ],
+  "Chỉ tài khoản buyer mới gửi được yêu cầu báo giá.": [
+    "Only buyer accounts can send quote requests.",
+    "Only buyer accounts can send quote requests.",
+    "Only buyer accounts can send quote requests."
+  ],
+  "Đã gửi yêu cầu báo giá tới": [
+    "Quote request sent to",
+    "Quote request sent to",
+    "Quote request sent to"
+  ],
+  "Xem các yêu cầu đã gửi": [
+    "View sent requests",
+    "View sent requests",
+    "View sent requests"
+  ],
+  "Số lượng phải là số dương, tối đa 2 chữ số thập phân.": [
+    "The quantity must be a positive number with at most 2 decimal places.",
+    "The quantity must be a positive number with at most 2 decimal places.",
+    "The quantity must be a positive number with at most 2 decimal places."
+  ],
+  "Giá mục tiêu phải là số dương, tối đa 2 chữ số thập phân.": [
+    "The target price must be a positive number with at most 2 decimal places.",
+    "The target price must be a positive number with at most 2 decimal places.",
+    "The target price must be a positive number with at most 2 decimal places."
+  ],
+  "Vui lòng nhập đơn vị tính.": [
+    "Please enter the unit.",
+    "Please enter the unit.",
+    "Please enter the unit."
+  ],
+  "Vui lòng chọn ngày cần hàng.": [
+    "Please choose the required date.",
+    "Please choose the required date.",
+    "Please choose the required date."
+  ],
+  "Số lượng": [
+    "Quantity",
+    "Quantity",
+    "Quantity"
+  ],
+  "Đơn vị": [
+    "Unit",
+    "Unit",
+    "Unit"
+  ],
+  "Giá mục tiêu (không bắt buộc)": [
+    "Target price (optional)",
+    "Target price (optional)",
+    "Target price (optional)"
+  ],
+  "Ngày cần hàng": [
+    "Required date",
+    "Required date",
+    "Required date"
+  ],
+  "Quốc gia nhận hàng": [
+    "Destination country",
+    "Destination country",
+    "Destination country"
+  ],
+  "Cảng nhận hàng (không bắt buộc)": [
+    "Destination port (optional)",
+    "Destination port (optional)",
+    "Destination port (optional)"
+  ],
+  "Lời nhắn (không bắt buộc)": [
+    "Message (optional)",
+    "Message (optional)",
+    "Message (optional)"
+  ],
+  "Đang gửi...": [
+    "Sending...",
+    "Sending...",
+    "Sending..."
+  ],
+  "Mới": [
+    "New",
+    "New",
+    "New"
+  ],
+  "Đã xem": [
+    "Viewed",
+    "Viewed",
+    "Viewed"
+  ],
+  "Đã báo giá": [
+    "Quoted",
+    "Quoted",
+    "Quoted"
+  ],
+  "Không đổi được trạng thái. Vui lòng thử lại.": [
+    "Could not change the status. Please try again.",
+    "Could not change the status. Please try again.",
+    "Could not change the status. Please try again."
+  ],
+  "Không tải được danh sách yêu cầu báo giá. Vui lòng thử lại.": [
+    "Could not load the quote requests. Please try again.",
+    "Could not load the quote requests. Please try again.",
+    "Could not load the quote requests. Please try again."
+  ],
+  "Bạn chưa gửi yêu cầu báo giá nào. Tìm nhà cung cấp trong danh bạ và bấm \"Yêu cầu báo giá\".": [
+    "You have not sent any quote requests yet. Find a supplier in the directory and click \"Request for quotation\".",
+    "You have not sent any quote requests yet. Find a supplier in the directory and click \"Request for quotation\".",
+    "You have not sent any quote requests yet. Find a supplier in the directory and click \"Request for quotation\"."
+  ],
+  "Chưa có yêu cầu báo giá nào. Hoàn thiện hồ sơ và xác minh doanh nghiệp để buyer tìm thấy bạn.": [
+    "No quote requests yet. Complete your profile and get verified so buyers can find you.",
+    "No quote requests yet. Complete your profile and get verified so buyers can find you.",
+    "No quote requests yet. Complete your profile and get verified so buyers can find you."
+  ],
+  "Giá mục tiêu": [
+    "Target price",
+    "Target price",
+    "Target price"
+  ],
+  "Đánh dấu": [
+    "Mark as",
+    "Mark as",
+    "Mark as"
+  ],
+  "Yêu cầu báo giá đã gửi": [
+    "Sent quote requests",
+    "Sent quote requests",
+    "Sent quote requests"
+  ],
+  "Đăng nhập bằng tài khoản buyer để xem các yêu cầu báo giá.": [
+    "Sign in with a buyer account to see your quote requests.",
+    "Sign in with a buyer account to see your quote requests.",
+    "Sign in with a buyer account to see your quote requests."
   ]
 }

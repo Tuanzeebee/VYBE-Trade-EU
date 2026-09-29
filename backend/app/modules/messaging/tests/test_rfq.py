@@ -334,6 +334,6 @@ async def test_buyer_is_notified_when_the_exporter_changes_status(
     await as_user(api_client, "buyer", "buyer@x.de")
     items = (await api_client.get("/api/me/notifications")).json()
     assert len(items) == 1
-    assert items[0]["payload"]["status"] == "quoted" and items[0]["link"] == "/buyer?tab=rfq"
+    assert items[0]["payload"]["status"] == "quoted" and items[0]["link"] == "/buyer/rfqs"
     # Đổi trạng thái không gửi email (chỉ thông báo trong ứng dụng).
     assert [e["type"] for e in notifications_on] == ["rfq"]

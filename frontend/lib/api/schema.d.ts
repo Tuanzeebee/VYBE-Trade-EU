@@ -724,6 +724,74 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/buyer/rfqs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create Rfq */
+        post: operations["create_rfq_api_buyer_rfqs_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/me/rfqs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List My Rfqs */
+        get: operations["list_my_rfqs_api_me_rfqs_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/me/rfqs/{rfq_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Rfq */
+        get: operations["get_rfq_api_me_rfqs__rfq_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/exporter/rfqs/{rfq_id}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Set Rfq Status */
+        patch: operations["set_rfq_status_api_exporter_rfqs__rfq_id__status_patch"];
+        trace?: never;
+    };
     "/api/exporter/evidence-types": {
         parameters: {
             query?: never;
@@ -1765,6 +1833,12 @@ export interface components {
             /** Supported */
             supported: boolean;
         };
+        /**
+         * Incoterm
+         * @description Incoterms 2020 (11 điều kiện của ICC). Danh sách áp dụng do PO chốt.
+         * @enum {string}
+         */
+        Incoterm: "EXW" | "FCA" | "FAS" | "FOB" | "CFR" | "CIF" | "CPT" | "CIP" | "DAP" | "DPU" | "DDP";
         /** LoginIn */
         LoginIn: {
             /**
@@ -2019,9 +2093,15 @@ export interface components {
         };
         /**
          * PublicProductOut
-         * @description Sản phẩm trên hồ sơ công khai — không lộ id nội bộ, trạng thái duyệt hay khóa ảnh.
+         * @description Sản phẩm trên hồ sơ công khai — không lộ trạng thái duyệt hay khóa ảnh. `id` cần để buyer
+         *     gắn RFQ (F1); id sản phẩm không nhạy cảm, còn id công ty vẫn không lộ.
          */
         PublicProductOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
             /** Name */
             name: string;
             /** Hs Code */
@@ -2104,6 +2184,106 @@ export interface components {
              * @constant
              */
             accept_terms: true;
+        };
+        /** RfqIn */
+        RfqIn: {
+            /**
+             * Product Id
+             * Format: uuid
+             */
+            product_id: string;
+            /** Quantity */
+            quantity: number | string;
+            /** Unit */
+            unit: string;
+            /** Target Price */
+            target_price?: number | string | null;
+            /**
+             * Currency
+             * @default EUR
+             */
+            currency?: string;
+            incoterms: components["schemas"]["Incoterm"];
+            /** Destination Country */
+            destination_country: string;
+            /** Destination Port */
+            destination_port?: string | null;
+            /**
+             * Required Date
+             * Format: date
+             */
+            required_date: string;
+            /** Message */
+            message?: string | null;
+        };
+        /** RfqOut */
+        RfqOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Product Id
+             * Format: uuid
+             */
+            product_id: string;
+            /** Product Name */
+            product_name: string;
+            /**
+             * Buyer Company Id
+             * Format: uuid
+             */
+            buyer_company_id: string;
+            /** Buyer Name */
+            buyer_name: string;
+            /**
+             * Exporter Company Id
+             * Format: uuid
+             */
+            exporter_company_id: string;
+            /** Exporter Name */
+            exporter_name: string;
+            /** Quantity */
+            quantity: string;
+            /** Unit */
+            unit: string;
+            /** Target Price */
+            target_price: string | null;
+            /** Currency */
+            currency: string;
+            incoterms: components["schemas"]["Incoterm"];
+            /** Destination Country */
+            destination_country: string;
+            /** Destination Port */
+            destination_port: string | null;
+            /**
+             * Required Date
+             * Format: date
+             */
+            required_date: string;
+            /** Message */
+            message: string | null;
+            status: components["schemas"]["RfqStatus"];
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /**
+         * RfqStatus
+         * @enum {string}
+         */
+        RfqStatus: "new" | "viewed" | "quoted" | "closed";
+        /** RfqStatusIn */
+        RfqStatusIn: {
+            status: components["schemas"]["RfqStatus"];
         };
         /**
          * RooIn
@@ -4259,6 +4439,146 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["NotificationOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_rfq_api_buyer_rfqs_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RfqIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RfqOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_my_rfqs_api_me_rfqs_get: {
+        parameters: {
+            query?: {
+                status?: components["schemas"]["RfqStatus"] | null;
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RfqOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_rfq_api_me_rfqs__rfq_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                rfq_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RfqOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    set_rfq_status_api_exporter_rfqs__rfq_id__status_patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                rfq_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RfqStatusIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RfqOut"];
                 };
             };
             /** @description Validation Error */

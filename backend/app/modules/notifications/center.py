@@ -25,7 +25,7 @@ _EXPORTER_LINKS: dict[NotificationType, str] = {
 _BUYER_LINKS: dict[NotificationType, str] = {
     NotificationType.verification_status: "/buyer",
     NotificationType.expiry_alert: "/buyer",
-    NotificationType.rfq: "/buyer?tab=rfq",
+    NotificationType.rfq: "/buyer/rfqs",
     NotificationType.message: "/buyer?tab=messages",
     NotificationType.new_match: "/suppliers",
 }

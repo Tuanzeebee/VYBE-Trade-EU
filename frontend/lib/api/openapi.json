@@ -3281,6 +3281,285 @@
         }
       }
     },
+    "/api/buyer/rfqs": {
+      "post": {
+        "tags": [
+          "messaging"
+        ],
+        "summary": "Create Rfq",
+        "operationId": "create_rfq_api_buyer_rfqs_post",
+        "parameters": [
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RfqIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RfqOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/me/rfqs": {
+      "get": {
+        "tags": [
+          "messaging"
+        ],
+        "summary": "List My Rfqs",
+        "operationId": "list_my_rfqs_api_me_rfqs_get",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/RfqStatus"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 50,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RfqOut"
+                  },
+                  "title": "Response List My Rfqs Api Me Rfqs Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/me/rfqs/{rfq_id}": {
+      "get": {
+        "tags": [
+          "messaging"
+        ],
+        "summary": "Get Rfq",
+        "operationId": "get_rfq_api_me_rfqs__rfq_id__get",
+        "parameters": [
+          {
+            "name": "rfq_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Rfq Id"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RfqOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/exporter/rfqs/{rfq_id}/status": {
+      "patch": {
+        "tags": [
+          "messaging"
+        ],
+        "summary": "Set Rfq Status",
+        "operationId": "set_rfq_status_api_exporter_rfqs__rfq_id__status_patch",
+        "parameters": [
+          {
+            "name": "rfq_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Rfq Id"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RfqStatusIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RfqOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/exporter/evidence-types": {
       "get": {
         "tags": [
@@ -7099,6 +7378,24 @@
         ],
         "title": "HsCodeOut"
       },
+      "Incoterm": {
+        "type": "string",
+        "enum": [
+          "EXW",
+          "FCA",
+          "FAS",
+          "FOB",
+          "CFR",
+          "CIF",
+          "CPT",
+          "CIP",
+          "DAP",
+          "DPU",
+          "DDP"
+        ],
+        "title": "Incoterm",
+        "description": "Incoterms 2020 (11 điều kiện của ICC). Danh sách áp dụng do PO chốt."
+      },
       "LoginIn": {
         "properties": {
           "email": {
@@ -8007,6 +8304,11 @@
       },
       "PublicProductOut": {
         "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
           "name": {
             "type": "string",
             "title": "Name"
@@ -8121,6 +8423,7 @@
         },
         "type": "object",
         "required": [
+          "id",
           "name",
           "hs_code",
           "hs_formatted",
@@ -8137,7 +8440,7 @@
           "images"
         ],
         "title": "PublicProductOut",
-        "description": "Sản phẩm trên hồ sơ công khai — không lộ id nội bộ, trạng thái duyệt hay khóa ảnh."
+        "description": "Sản phẩm trên hồ sơ công khai — không lộ trạng thái duyệt hay khóa ảnh. `id` cần để buyer\ngắn RFQ (F1); id sản phẩm không nhạy cảm, còn id công ty vẫn không lộ."
       },
       "QueueItem": {
         "properties": {
@@ -8251,6 +8554,254 @@
           "accept_terms"
         ],
         "title": "RegisterIn"
+      },
+      "RfqIn": {
+        "properties": {
+          "product_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Product Id"
+          },
+          "quantity": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              }
+            ],
+            "title": "Quantity"
+          },
+          "unit": {
+            "type": "string",
+            "maxLength": 32,
+            "minLength": 1,
+            "title": "Unit"
+          },
+          "target_price": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Price"
+          },
+          "currency": {
+            "type": "string",
+            "pattern": "^[A-Z]{3}$",
+            "title": "Currency",
+            "default": "EUR"
+          },
+          "incoterms": {
+            "$ref": "#/components/schemas/Incoterm"
+          },
+          "destination_country": {
+            "type": "string",
+            "pattern": "^[A-Z]{2}$",
+            "title": "Destination Country"
+          },
+          "destination_port": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 100
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Destination Port"
+          },
+          "required_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Required Date"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "product_id",
+          "quantity",
+          "unit",
+          "incoterms",
+          "destination_country",
+          "required_date"
+        ],
+        "title": "RfqIn"
+      },
+      "RfqOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "product_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Product Id"
+          },
+          "product_name": {
+            "type": "string",
+            "title": "Product Name"
+          },
+          "buyer_company_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Buyer Company Id"
+          },
+          "buyer_name": {
+            "type": "string",
+            "title": "Buyer Name"
+          },
+          "exporter_company_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Exporter Company Id"
+          },
+          "exporter_name": {
+            "type": "string",
+            "title": "Exporter Name"
+          },
+          "quantity": {
+            "type": "string",
+            "title": "Quantity"
+          },
+          "unit": {
+            "type": "string",
+            "title": "Unit"
+          },
+          "target_price": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Price"
+          },
+          "currency": {
+            "type": "string",
+            "title": "Currency"
+          },
+          "incoterms": {
+            "$ref": "#/components/schemas/Incoterm"
+          },
+          "destination_country": {
+            "type": "string",
+            "title": "Destination Country"
+          },
+          "destination_port": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Destination Port"
+          },
+          "required_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Required Date"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message"
+          },
+          "status": {
+            "$ref": "#/components/schemas/RfqStatus"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "product_id",
+          "product_name",
+          "buyer_company_id",
+          "buyer_name",
+          "exporter_company_id",
+          "exporter_name",
+          "quantity",
+          "unit",
+          "target_price",
+          "currency",
+          "incoterms",
+          "destination_country",
+          "destination_port",
+          "required_date",
+          "message",
+          "status",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "RfqOut"
+      },
+      "RfqStatus": {
+        "type": "string",
+        "enum": [
+          "new",
+          "viewed",
+          "quoted",
+          "closed"
+        ],
+        "title": "RfqStatus"
+      },
+      "RfqStatusIn": {
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/RfqStatus"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "status"
+        ],
+        "title": "RfqStatusIn"
       },
       "RooIn": {
         "properties": {

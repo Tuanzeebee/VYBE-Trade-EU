@@ -242,8 +242,10 @@ class ProductOut(BaseModel):
 
 
 class PublicProductOut(BaseModel):
-    """Sản phẩm trên hồ sơ công khai — không lộ id nội bộ, trạng thái duyệt hay khóa ảnh."""
+    """Sản phẩm trên hồ sơ công khai — không lộ trạng thái duyệt hay khóa ảnh. `id` cần để buyer
+    gắn RFQ (F1); id sản phẩm không nhạy cảm, còn id công ty vẫn không lộ."""
 
+    id: uuid.UUID
     name: str
     hs_code: str
     hs_formatted: str

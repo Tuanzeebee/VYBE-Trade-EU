@@ -56,6 +56,8 @@ import {
 import EvidenceManager from './EvidenceManager';
 import VerificationPanel from './VerificationPanel';
 import { useLanguage } from "../context/LanguageContext";
+import RfqInbox from './RfqInbox';
+import NotificationsPanel from './NotificationsPanel';
 
 export interface WorkspaceCertificateItem {
   id: string;
@@ -1139,69 +1141,12 @@ export default function SellerWorkspace({
           {/* -----------------------------------------------------------------------
               TAB: CƠ HỘI KẾT NỐI (RFQ / OPPORTUNITIES)
              ----------------------------------------------------------------------- */}
-          {activeTab === 'rfq' && (
-            <div className="space-y-4 text-left animate-in fade-in duration-200">
-              <div>
-                <h3 className="text-lg font-bold text-slate-900">{tr("Cơ hội kết nối & Đơn hỏi hàng B2B (RFQ)")}</h3>
-                <p className="text-xs text-slate-500 mt-0.5">{tr("Buyer đã xác thực hồ sơ và gửi yêu cầu chào giá trực tiếp cho doanh nghiệp của bạn")}</p>
-              </div>
-
-              <div className="space-y-3">
-                {[
-                  { buyer: 'AgriGlobal Trading B.V.', country: 'Hà Lan (EU)', product: 'Cà phê Robusta Đắk Lắk sàng 18', volume: '120 tấn/tháng', date: 'Vừa gửi 2 giờ trước' },
-                  { buyer: 'Tokyo Organic Food Corp', country: 'Nhật Bản', product: 'Hạt điều nhân W320 chuẩn Organic', volume: '40 tấn/quý', date: 'Hôm qua' },
-                  { buyer: 'Pacific Spices LLC', country: 'Hoa Kỳ', product: 'Hồ tiêu đen Chư Sê 550g/l', volume: '60 tấn/tháng', date: '3 ngày trước' }
-                ].map((item, idx) => (
-                  <div key={idx} className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <h4 className="text-sm font-bold text-slate-900">{tr(item.buyer)}</h4>
-                        <span className="text-[11px] font-semibold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md">{tr(item.country)}</span>
-                      </div>
-                      <p className="text-xs text-slate-700 mt-1">
-                        {tr("Yêu cầu chào giá: ")}<strong className="text-slate-900 font-semibold">{tr(item.product)}</strong> {tr(" • Số lượng dự kiến: ")}<strong>{tr(item.volume)}</strong>
-                      </p>
-                      <span className="text-[11px] text-slate-400 mt-1 block">{tr(item.date)}</span>
-                    </div>
-                    <button className="px-5 py-2.5 rounded-xl bg-[#083832] hover:bg-[#062924] text-white text-xs font-semibold transition-colors cursor-pointer shrink-0 shadow-xs">
-                      {tr("Gửi phản hồi báo giá")}</button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+          {activeTab === 'rfq' && <RfqInbox role="exporter" />}
 
           {/* -----------------------------------------------------------------------
               TAB: THÔNG BÁO (NOTIFICATIONS)
              ----------------------------------------------------------------------- */}
-          {activeTab === 'notifications' && (
-            <div className="space-y-4 text-left animate-in fade-in duration-200">
-              <h3 className="text-lg font-bold text-slate-900">{tr("Thông báo hệ thống & Tiến trình")}</h3>
-              <div className="space-y-3">
-                <div className="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-200 flex items-start gap-3">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
-                  <div>
-                    <h4 className="text-xs font-bold text-emerald-950">{tr("Chứng chỉ ISO 22000 & HACCP đã được đối soát thành công")}</h4>
-                    <p className="text-xs text-emerald-800 mt-0.5">{tr("Tài liệu đã được ghi nhận vào Evidence Record bất biến và hệ thống đã kích hoạt cấp độ L2 Enhanced Verified cho hồ sơ công ty.")}</p>
-                  </div>
-                </div>
-                <div className="p-4 rounded-2xl bg-white border border-slate-200 flex items-start gap-3">
-                  <Bell className="w-5 h-5 text-teal-700 shrink-0 mt-0.5" />
-                  <div>
-                    <h4 className="text-xs font-bold text-slate-900">{tr("Buyer từ Đức vừa xem danh mục Cà phê Robusta")}</h4>
-                    <p className="text-xs text-slate-500 mt-0.5">{tr("Hồ sơ công ty của bạn đã xuất hiện trong top tìm kiếm nhà cung ứng nông sản Việt Nam uy tín.")}</p>
-                  </div>
-                </div>
-                <div className="p-4 rounded-2xl bg-white border border-slate-200 flex items-start gap-3">
-                  <ShieldCheck className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
-                  <div>
-                    <h4 className="text-xs font-bold text-slate-900">{tr("Đối chiếu mã số thuế ERC hoàn tất")}</h4>
-                    <p className="text-xs text-slate-500 mt-0.5">{tr("Thông tin pháp lý với Sở KH&ĐT TP.HCM đã khớp 100% không phát hiện sai lệch.")}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
+          {activeTab === 'notifications' && <NotificationsPanel />}
 
         </main>
 

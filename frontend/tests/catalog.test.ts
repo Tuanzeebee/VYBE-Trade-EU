@@ -410,8 +410,52 @@ const H1_STRINGS = [
   "Có nhà cung cấp mới phù hợp với tìm kiếm của bạn."
 ];
 
-describe('catalog.json có bản tiếng Anh cho chuỗi A1, B1, B2, B3, B4, B5, A2, C2, C4, C6, C7, D2, D3, E2, H1', () => {
-  it.each([...A1_STRINGS, ...B1_STRINGS, ...B2_STRINGS, ...B3_STRINGS, ...B4_STRINGS, ...B5_STRINGS, ...A2_STRINGS, ...C2_STRINGS, ...C4_STRINGS, ...C6_STRINGS, ...C7_STRINGS, ...D2_STRINGS, ...D3_STRINGS, ...E2_STRINGS, ...H1_STRINGS])('%s', (vi) => {
+const F1_STRINGS = [
+  "Yêu cầu báo giá",
+  "Bạn đã gửi quá nhiều yêu cầu báo giá hôm nay. Vui lòng thử lại vào ngày mai.",
+  "Vui lòng hoàn thiện hồ sơ doanh nghiệp của bạn trước khi gửi yêu cầu báo giá.",
+  "Sản phẩm này hiện không còn nhận yêu cầu báo giá.",
+  "Thông tin chưa hợp lệ. Vui lòng kiểm tra lại số lượng, giá, ngày cần hàng và điểm đến.",
+  "Chỉ tài khoản buyer đã đăng nhập mới gửi được yêu cầu báo giá.",
+  "Đăng nhập bằng tài khoản buyer để gửi yêu cầu báo giá cho nhà cung cấp này.",
+  "Đăng nhập",
+  "Đăng ký buyer",
+  "Chỉ tài khoản buyer mới gửi được yêu cầu báo giá.",
+  "Đã gửi yêu cầu báo giá tới",
+  "Xem các yêu cầu đã gửi",
+  "Số lượng phải là số dương, tối đa 2 chữ số thập phân.",
+  "Giá mục tiêu phải là số dương, tối đa 2 chữ số thập phân.",
+  "Vui lòng nhập đơn vị tính.",
+  "Vui lòng chọn ngày cần hàng.",
+  "Sản phẩm",
+  "Số lượng",
+  "Đơn vị",
+  "Giá mục tiêu (không bắt buộc)",
+  "Tiền tệ",
+  "Điều kiện giao hàng (Incoterms)",
+  "Ngày cần hàng",
+  "Quốc gia nhận hàng",
+  "Cảng nhận hàng (không bắt buộc)",
+  "Lời nhắn (không bắt buộc)",
+  "Đang gửi...",
+  "Gửi yêu cầu báo giá",
+  "Mới",
+  "Đã xem",
+  "Đã báo giá",
+  "Đóng",
+  "Không đổi được trạng thái. Vui lòng thử lại.",
+  "Không tải được danh sách yêu cầu báo giá. Vui lòng thử lại.",
+  "Bạn chưa gửi yêu cầu báo giá nào. Tìm nhà cung cấp trong danh bạ và bấm \"Yêu cầu báo giá\".",
+  "Chưa có yêu cầu báo giá nào. Hoàn thiện hồ sơ và xác minh doanh nghiệp để buyer tìm thấy bạn.",
+  "Giá mục tiêu",
+  "Điểm đến",
+  "Đánh dấu",
+  "Yêu cầu báo giá đã gửi",
+  "Đăng nhập bằng tài khoản buyer để xem các yêu cầu báo giá."
+];
+
+describe('catalog.json có bản tiếng Anh cho chuỗi A1, B1, B2, B3, B4, B5, A2, C2, C4, C6, C7, D2, D3, E2, H1, F1', () => {
+  it.each([...A1_STRINGS, ...B1_STRINGS, ...B2_STRINGS, ...B3_STRINGS, ...B4_STRINGS, ...B5_STRINGS, ...A2_STRINGS, ...C2_STRINGS, ...C4_STRINGS, ...C6_STRINGS, ...C7_STRINGS, ...D2_STRINGS, ...D3_STRINGS, ...E2_STRINGS, ...H1_STRINGS, ...F1_STRINGS])('%s', (vi) => {
     const en = translateText(vi, 'en');
     expect(en).not.toBe(vi);
     expect(en.trim()).not.toBe('');
