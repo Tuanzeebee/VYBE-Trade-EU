@@ -1,0 +1,22 @@
+# BẢN NHÁP loại bằng chứng (backlog C6 và bổ sung 29/09/2026 theo nghiên cứu của PO) — CHƯA duyệt.
+# Nạp bằng: uv run python -m scripts.seed_evidence_types  (mọi dòng vào DB ở trạng thái CHƯA duyệt).
+# Loại chưa duyệt không nộp được và không vào danh sách kiểm; luật TM duyệt từng loại qua
+# POST /api/admin/evidence-types/{code}/review. Danh sách, tên gọi và hạn dùng do luật TM quyết.
+# validity_months: chỉ bằng chứng xuất xứ (backlog: +12 tháng kể từ ngày cấp); loại khác để trống —
+# người dùng khai ngày hết hạn ghi trên chứng chỉ.
+code,name_vi,name_en,group,validity_months,source
+eur1_issued,"EUR.1 đã cấp (che giá)","Issued EUR.1 movement certificate (prices masked)",origin,12,Backlog C6
+origin_self_declaration,"Tự chứng nhận xuất xứ lô hàng ≤ 6.000 EUR","Origin self-declaration for consignments up to EUR 6,000",origin,12,Backlog C6
+aromatic_rice_nd103,"Chứng nhận gạo thơm theo NĐ 103/2020","Aromatic rice certificate under Decree 103/2020",regulatory,,Backlog C6
+eudr_file,"Hồ sơ EUDR","EUDR due-diligence file",regulatory,,Backlog C6
+iuu_catch_certificate,"Giấy khai thác IUU","IUU catch certificate",regulatory,,Backlog C6
+iso_9001,"ISO 9001 (quản lý chất lượng)","ISO 9001 quality management",quality,,Nghiên cứu PO 29/09/2026
+iso_14001,"ISO 14001 (quản lý môi trường)","ISO 14001 environmental management",quality,,Nghiên cứu PO 29/09/2026
+haccp,"HACCP","HACCP",quality,,Nghiên cứu PO 29/09/2026
+brcgs,"BRCGS","BRCGS",quality,,Nghiên cứu PO 29/09/2026
+ifs,"IFS","IFS",quality,,Nghiên cứu PO 29/09/2026
+bsci,"BSCI (trách nhiệm xã hội)","BSCI social compliance",social,,Nghiên cứu PO 29/09/2026
+wrap,"WRAP (trách nhiệm xã hội)","WRAP social compliance",social,,Nghiên cứu PO 29/09/2026
+smeta,"SMETA (trách nhiệm xã hội)","SMETA social compliance",social,,Nghiên cứu PO 29/09/2026
+ce_marking,"Dấu CE","CE marking",technical,,Nghiên cứu PO 29/09/2026
+lab_test_report,"Kết quả kiểm nghiệm của phòng lab","Laboratory test report",lab,,Nghiên cứu PO 29/09/2026

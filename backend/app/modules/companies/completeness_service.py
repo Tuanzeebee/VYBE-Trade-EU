@@ -1,5 +1,8 @@
 """Nối hàm thuần completeness.py với DB: đọc bảng trọng số, gom dữ kiện, ghi điểm vào companies."""
 
+import uuid
+from collections.abc import Awaitable, Callable
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -13,6 +16,16 @@ from app.modules.companies.completeness import (
 )
 from app.modules.companies.models import Company, CompletenessWeight, Product
 
+# Số bằng chứng đã nộp và còn hạn do module verification cung cấp (đảo phụ thuộc: companies không
+# import verification). verification đăng ký ở lúc import; chưa đăng ký thì coi như 0.
+EvidenceCounter = Callable[[AsyncSession, uuid.UUID], Awaitable[int]]
+_evidence_counter: EvidenceCounter | None = None
+
+
+def register_evidence_counter(counter: EvidenceCounter) -> None:
+    global _evidence_counter
+    _evidence_counter = counter
+
 
 async def _weight_rows(session: AsyncSession, company: Company) -> list[WeightRow]:
     # Đọc mới (populate_existing): đổi trọng số có hiệu lực ngay, kể cả trong cùng phiên.
@@ -24,7 +37,7 @@ async def _weight_rows(session: AsyncSession, company: Company) -> list[WeightRo
     return [WeightRow(r.field_key, r.group_key, r.weight, r.is_enabled) for r in rows]
 
 
-def _company_facts(company: Company) -> CompanyFacts:
+def _company_facts(company: Company, evidence_count: int) -> CompanyFacts:
     return CompanyFacts(
         type=company.type.value,
         country=company.country,
@@ -44,7 +57,7 @@ def _company_facts(company: Company) -> CompanyFacts:
         export_markets=[m.market for m in company.export_markets],
         languages=[lang.lang for lang in company.languages],
         sourcing_categories=[c.category for c in company.sourcing_categories],
-        evidence_count=0,  # C6 sẽ đếm bằng chứng đã nộp và còn hạn; dòng "evidence" đang tắt
+        evidence_count=evidence_count,
     )
 
 
@@ -66,7 +79,10 @@ async def _product_facts(session: AsyncSession, company: Company) -> list[Produc
 
 
 async def compute_for(session: AsyncSession, company: Company) -> CompletenessResult:
-    facts = build_facts(_company_facts(company), await _product_facts(session, company))
+    evidence_count = await _evidence_counter(session, company.id) if _evidence_counter else 0
+    facts = build_facts(
+        _company_facts(company, evidence_count), await _product_facts(session, company)
+    )
     return compute_score(facts, await _weight_rows(session, company))
 
 

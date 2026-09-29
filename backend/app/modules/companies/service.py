@@ -155,6 +155,25 @@ async def list_expired_verified(session: AsyncSession, now: datetime) -> list[uu
     return list(rows)
 
 
+async def refresh_completeness(session: AsyncSession, company_id: uuid.UUID) -> None:
+    """Tính lại điểm hoàn thiện (vd khi bằng chứng đổi hoặc hết hạn). Chỉ flush, không commit."""
+    company = await session.get(Company, company_id)
+    if company is not None:
+        await completeness_service.refresh_score(session, company)
+        await session.flush()
+
+
+async def list_exporter_ids(session: AsyncSession) -> list[uuid.UUID]:
+    """Mọi công ty exporter — job hằng ngày tính lại điểm hoàn thiện."""
+    rows = await session.scalars(select(Company.id).where(Company.type == CompanyType.exporter))
+    return list(rows)
+
+
+def register_evidence_counter(counter: completeness_service.EvidenceCounter) -> None:
+    """verification đăng ký hàm đếm bằng chứng đã nộp còn hạn cho điểm hoàn thiện."""
+    completeness_service.register_evidence_counter(counter)
+
+
 async def get_company_id(session: AsyncSession, user_id: uuid.UUID) -> uuid.UUID | None:
     """Id công ty của người dùng (None nếu chưa tạo) — module khác dùng để gắn bản ghi."""
     company_id: uuid.UUID | None = await session.scalar(

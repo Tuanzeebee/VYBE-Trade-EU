@@ -7,14 +7,19 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import get_sessionmaker
 from app.jobs.app import app
+from app.modules.verification.evidence_service import daily_refresh
 from app.modules.verification.service import expire_due
 
 log = logging.getLogger(__name__)
 
 
 async def run_verification_expiry(session: AsyncSession, now: dt.datetime) -> int:
-    """Thân job (nhận session và giờ để test được). Trả số công ty bị hạ."""
-    return await expire_due(session, now)
+    """Thân job (nhận session và giờ để test được). Trả số công ty hết hạn bị hạ về unverified.
+
+    Sau đó đồng bộ mức EVFTA-verified theo bằng chứng và tính lại điểm hoàn thiện (C6)."""
+    expired = await expire_due(session, now)
+    await daily_refresh(session, now)
+    return expired
 
 
 @app.periodic(cron="15 2 * * *")  # 02:15 mỗi ngày (UTC)

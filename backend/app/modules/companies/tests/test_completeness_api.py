@@ -32,7 +32,7 @@ EXPORTER_WEIGHTS = {
     "product_image": ("products", "5", True),
     "product_description": ("products", "3", True),
     "product_price": ("products", "2", True),
-    "evidence": ("evidence", "15", False),
+    "evidence": ("evidence", "15", True),  # bật ở C6 (migration 0015)
 }
 BUYER_WEIGHTS = {
     "sourcing_categories": ("needs", "30", True),
@@ -104,6 +104,16 @@ async def _stored_score(client: AsyncClient) -> str:
     return str((await client.get("/api/me/company")).json()["profile_completeness_score"])
 
 
+@pytest.fixture
+async def evidence_row_disabled(db_session: AsyncSession) -> None:
+    """Các phép tính dưới đây kiểm CƠ CHẾ trên nền 80 điểm (trước C6). Dòng 'evidence' được bật từ
+    migration 0015 nên tắt lại trong test; hành vi khi bật có test riêng ở module verification."""
+    await db_session.execute(
+        text("UPDATE completeness_weights SET is_enabled = false WHERE field_key = 'evidence'")
+    )
+
+
+@pytest.mark.usefixtures("evidence_row_disabled")
 async def test_default_exporter_scores_44_of_80(api_client: AsyncClient) -> None:
     """MST 10 + mô hình 5 + năm 3 + địa chỉ 7 + web 4 + năng lực 15 = 44/80."""
     await _create_exporter(api_client)
@@ -120,6 +130,7 @@ async def test_default_exporter_scores_44_of_80(api_client: AsyncClient) -> None
     assert await _stored_score(api_client) == "55.00"
 
 
+@pytest.mark.usefixtures("evidence_row_disabled")
 async def test_new_company_with_only_a_name_starts_at_zero(api_client: AsyncClient) -> None:
     """Trường tự điền/bắt buộc khi tạo không được tặng điểm."""
     await login_as(api_client, "exporter", "exp@x.vn")
@@ -132,6 +143,7 @@ async def test_new_company_with_only_a_name_starts_at_zero(api_client: AsyncClie
     assert await _stored_score(api_client) == "0.00"
 
 
+@pytest.mark.usefixtures("evidence_row_disabled")
 async def test_missing_items_carry_group_and_weight(api_client: AsyncClient) -> None:
     await _create_exporter(api_client)
     first = (await _completeness(api_client))["missing"][0]  # type: ignore[index]
@@ -154,6 +166,7 @@ async def test_padding_with_spaces_does_not_count(api_client: AsyncClient) -> No
     assert "description_en" in _missing(await _completeness(api_client))
 
 
+@pytest.mark.usefixtures("evidence_row_disabled")
 async def test_products_raise_the_score_step_by_step_and_it_is_stored(
     api_client: AsyncClient,
 ) -> None:
@@ -198,6 +211,7 @@ async def test_short_product_description_and_no_price_do_not_count(api_client: A
     assert "product_hs" not in missing
 
 
+@pytest.mark.usefixtures("evidence_row_disabled")
 async def test_only_active_products_count_and_deleting_lowers_the_score(
     api_client: AsyncClient,
 ) -> None:
@@ -215,6 +229,7 @@ async def test_only_active_products_count_and_deleting_lowers_the_score(
     assert await _stored_score(api_client) == "55.00"
 
 
+@pytest.mark.usefixtures("evidence_row_disabled")
 async def test_removing_a_field_lowers_the_score(api_client: AsyncClient) -> None:
     await _create_exporter(api_client)
     await api_client.patch("/api/me/company", json={"export_markets": []})
@@ -309,6 +324,7 @@ async def test_response_has_no_verification_signal(
     assert await _completeness(api_client) == before
 
 
+@pytest.mark.usefixtures("evidence_row_disabled")
 async def test_weights_are_data_not_code(api_client: AsyncClient, db_session: AsyncSession) -> None:
     await _create_exporter(api_client)
     assert (await _completeness(api_client))["score"] == "55.00"

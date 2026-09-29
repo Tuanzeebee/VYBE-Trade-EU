@@ -102,3 +102,11 @@ async def upsert_hs_codes(session: AsyncSession, rows: Sequence[HsCodeIn]) -> in
         )
     await session.commit()
     return len(rows)
+
+
+async def list_categories(session: AsyncSession) -> set[str]:
+    """Các nhóm hàng đang có trong danh mục HS (dùng để kiểm tra luật theo nhóm hàng)."""
+    rows = await session.scalars(
+        select(HsCode.category).where(HsCode.category.is_not(None)).distinct()
+    )
+    return {c for c in rows if c}

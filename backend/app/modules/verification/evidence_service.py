@@ -46,7 +46,7 @@ def _today() -> dt.date:
     return dt.datetime.now(dt.UTC).date()
 
 
-def _snapshot(row: Evidence) -> dict[str, Any]:
+def snapshot(row: Evidence) -> dict[str, Any]:
     return {
         "type_code": row.type_code,
         "file_key": row.file_key,
@@ -88,7 +88,7 @@ def _check_dates(issued_at: dt.date, expires_at: dt.date | None) -> None:
         raise AppError("invalid_dates", "expires_at must be after issued_at", 422)
 
 
-async def _out(session: AsyncSession, storage: Storage, row: Evidence) -> EvidenceOut:
+async def to_out(session: AsyncSession, storage: Storage, row: Evidence) -> EvidenceOut:
     type_row = await session.get_one(EvidenceType, row.type_code)
     return EvidenceOut(
         id=row.id,
@@ -121,14 +121,14 @@ async def list_evidence(
     rows = await session.scalars(
         select(Evidence).where(Evidence.company_id == company_id).order_by(Evidence.created_at)
     )
-    return [await _out(session, storage, r) for r in rows]
+    return [await to_out(session, storage, r) for r in rows]
 
 
 async def get_evidence(
     session: AsyncSession, user: CurrentUser, storage: Storage, evidence_id: uuid.UUID
 ) -> EvidenceOut:
     company_id = await _exporter_company_id(session, user)
-    return await _out(session, storage, await _get_owned(session, company_id, evidence_id))
+    return await to_out(session, storage, await _get_owned(session, company_id, evidence_id))
 
 
 async def create_evidence(
@@ -158,11 +158,11 @@ async def create_evidence(
         entity_type=ENTITY,
         entity_id=str(row.id),
         before=None,
-        after=_snapshot(row),
+        after=snapshot(row),
     )
     await after_change(session, company_id)
     await session.refresh(row)
-    return await _out(session, storage, row)
+    return await to_out(session, storage, row)
 
 
 async def update_evidence(
@@ -174,7 +174,7 @@ async def update_evidence(
 ) -> EvidenceOut:
     company_id = await _exporter_company_id(session, user)
     row = await _get_owned(session, company_id, evidence_id)
-    before = _snapshot(row)
+    before = snapshot(row)
     fields = patch.model_fields_set
     for required in ("type_code", "file_key", "issued_at"):
         if required in fields and getattr(patch, required) is None:
@@ -211,17 +211,17 @@ async def update_evidence(
         entity_type=ENTITY,
         entity_id=str(row.id),
         before=before,
-        after=_snapshot(row),
+        after=snapshot(row),
     )
     await after_change(session, company_id)
     await session.refresh(row)
-    return await _out(session, storage, row)
+    return await to_out(session, storage, row)
 
 
 async def delete_evidence(session: AsyncSession, user: CurrentUser, evidence_id: uuid.UUID) -> None:
     company_id = await _exporter_company_id(session, user)
     row = await _get_owned(session, company_id, evidence_id)
-    before = _snapshot(row)
+    before = snapshot(row)
     await session.delete(row)
     await record(
         session,
@@ -325,8 +325,38 @@ async def sync_level(
     return decision.value
 
 
+async def count_submitted_valid(
+    session: AsyncSession, company_id: uuid.UUID, today: dt.date | None = None
+) -> int:
+    """Bằng chứng ĐÃ NỘP và còn hạn (chưa cần duyệt, không tính bị từ chối)."""
+    today = today or _today()
+    rows = await session.scalars(
+        select(Evidence).where(
+            Evidence.company_id == company_id,
+            Evidence.approval_status != ApprovalStatus.rejected,
+        )
+    )
+    return sum(1 for r in rows if r.expires_at is None or today < r.expires_at)
+
+
+companies.register_evidence_counter(count_submitted_valid)
+
+
 async def after_change(session: AsyncSession, company_id: uuid.UUID) -> None:
-    """Sau khi bằng chứng đổi: đồng bộ mức xác minh rồi commit một lần."""
+    """Sau khi bằng chứng đổi: đồng bộ mức xác minh, tính lại điểm hoàn thiện, commit một lần."""
     await session.flush()
     await sync_level(session, company_id, commit=False)
+    await companies.refresh_completeness(session, company_id)
     await session.commit()
+
+
+async def daily_refresh(session: AsyncSession, now: dt.datetime) -> int:
+    """Job hằng ngày: bằng chứng hết hạn không phát sự kiện nào, nên quét lại mọi exporter — hạ mức
+    EVFTA-verified nếu thiếu bằng chứng còn hạn và tính lại điểm hoàn thiện. Trả số mức bị đổi."""
+    changed = 0
+    for company_id in await companies.list_exporter_ids(session):
+        if await sync_level(session, company_id, now.date(), commit=False) is not None:
+            changed += 1
+        await companies.refresh_completeness(session, company_id)
+    await session.commit()
+    return changed

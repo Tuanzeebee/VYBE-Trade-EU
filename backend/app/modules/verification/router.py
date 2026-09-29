@@ -9,7 +9,15 @@ from app.core.db import get_session
 from app.core.storage import Storage, get_storage
 from app.modules.auth.schemas import CurrentUser
 from app.modules.auth.service import require_role
-from app.modules.verification import evidence_service
+from app.modules.verification import admin_service, evidence_service
+from app.modules.verification.admin_schemas import (
+    EvidenceReviewIn,
+    EvidenceTypeIn,
+    EvidenceTypeOut,
+    EvidenceTypePatch,
+    RuleIn,
+    RuleOut,
+)
 from app.modules.verification.schemas import ChecklistItem, EvidenceIn, EvidenceOut, EvidencePatch
 
 router = APIRouter(tags=["verification"])
@@ -55,3 +63,59 @@ async def update_evidence(
 async def delete_evidence(evidence_id: uuid.UUID, user: Exporter, session: DB) -> Response:
     await evidence_service.delete_evidence(session, user, evidence_id)
     return Response(status_code=204)
+
+
+# ── Admin: loại bằng chứng, luật bắt buộc, duyệt bằng chứng ───────────────────
+Admin = Annotated[CurrentUser, Depends(require_role("admin"))]
+
+
+@router.get("/api/admin/evidence-types")
+async def list_evidence_types(_: Admin, session: DB) -> list[EvidenceTypeOut]:
+    return [EvidenceTypeOut.model_validate(r) for r in await admin_service.list_types(session)]
+
+
+@router.post("/api/admin/evidence-types", status_code=201)
+async def create_evidence_type(data: EvidenceTypeIn, admin: Admin, session: DB) -> EvidenceTypeOut:
+    return EvidenceTypeOut.model_validate(await admin_service.create_type(session, admin, data))
+
+
+@router.patch("/api/admin/evidence-types/{code}")
+async def update_evidence_type(
+    code: str, data: EvidenceTypePatch, admin: Admin, session: DB
+) -> EvidenceTypeOut:
+    return EvidenceTypeOut.model_validate(
+        await admin_service.update_type(session, admin, code, data)
+    )
+
+
+@router.post("/api/admin/evidence-types/{code}/review")
+async def review_evidence_type(code: str, admin: Admin, session: DB) -> EvidenceTypeOut:
+    return EvidenceTypeOut.model_validate(await admin_service.review_type(session, admin, code))
+
+
+@router.get("/api/admin/evidence-rules")
+async def list_evidence_rules(_: Admin, session: DB, category: str | None = None) -> list[RuleOut]:
+    return [RuleOut.model_validate(r) for r in await admin_service.list_rules(session, category)]
+
+
+@router.post("/api/admin/evidence-rules", status_code=201)
+async def create_evidence_rule(data: RuleIn, admin: Admin, session: DB) -> RuleOut:
+    return RuleOut.model_validate(await admin_service.create_rule(session, admin, data))
+
+
+@router.post("/api/admin/evidence-rules/{rule_id}/review")
+async def review_evidence_rule(rule_id: uuid.UUID, admin: Admin, session: DB) -> RuleOut:
+    return RuleOut.model_validate(await admin_service.review_rule(session, admin, rule_id))
+
+
+@router.delete("/api/admin/evidence-rules/{rule_id}", status_code=204)
+async def delete_evidence_rule(rule_id: uuid.UUID, admin: Admin, session: DB) -> Response:
+    await admin_service.delete_rule(session, admin, rule_id)
+    return Response(status_code=204)
+
+
+@router.post("/api/admin/evidences/{evidence_id}/review")
+async def review_evidence(
+    evidence_id: uuid.UUID, data: EvidenceReviewIn, admin: Admin, session: DB, storage: Store
+) -> EvidenceOut:
+    return await admin_service.review_evidence(session, admin, storage, evidence_id, data)
