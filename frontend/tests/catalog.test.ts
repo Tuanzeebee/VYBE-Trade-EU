@@ -13,8 +13,26 @@ const A1_STRINGS = [
   'Tôi đồng ý với Điều khoản sử dụng và Chính sách bảo mật của nền tảng.',
 ];
 
-describe('catalog.json có bản tiếng Anh cho chuỗi A1', () => {
-  it.each(A1_STRINGS)('%s', (vi) => {
+// Chuỗi mới ở B1 (form hồ sơ doanh nghiệp).
+const B1_STRINGS = [
+  'Ngôn ngữ nhân viên sử dụng',
+  'Mô tả doanh nghiệp (tiếng Việt)',
+  'Mô tả doanh nghiệp (tiếng Anh)',
+  'Tiếng Việt',
+  'Tiếng Anh',
+  'Tiếng Trung',
+  'Tiếng Nhật',
+  'Tiếng Hàn',
+  'Tiếng Pháp',
+  'Tiếng Đức',
+  'Thực phẩm & Đồ uống',
+  'Dệt may',
+  'Thủ công mỹ nghệ',
+  'Thông tin doanh nghiệp chưa hợp lệ. Vui lòng kiểm tra lại.',
+];
+
+describe('catalog.json có bản tiếng Anh cho chuỗi A1, B1', () => {
+  it.each([...A1_STRINGS, ...B1_STRINGS])('%s', (vi) => {
     const en = translateText(vi, 'en');
     expect(en).not.toBe(vi);
     expect(en.trim()).not.toBe('');

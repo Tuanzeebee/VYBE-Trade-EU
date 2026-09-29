@@ -6,6 +6,7 @@
 
 import React, { useState } from 'react';
 import type { DemoUser } from '../lib/demoAuth';
+import { INDUSTRIES, STAFF_LANGUAGES } from '../lib/companyApi';
 import LanguageSelect from './LanguageSelect';
 import { 
   ArrowRight, 
@@ -39,7 +40,9 @@ import { useLanguage } from "../context/LanguageContext";
 interface SellerOnboardingProps {
   account?: DemoUser;
   initialStep?: number;
-  onComplete?: (profile: Record<string, string>) => void;
+  onComplete?: (profile: Record<string, string>) => void | Promise<void>;
+  /** Giá trị ban đầu của bước 1 lấy từ server (trang sửa hồ sơ). */
+  initialCompany?: Record<string, string>;
   onLogout: () => void;
   onNavigateHome: () => void;
   onNavigateWorkspace?: (tab?: 'profile' | 'verification') => void;
@@ -69,7 +72,7 @@ export interface ExportProductItem {
   description: string;
 }
 
-export default function SellerOnboarding({ account, initialStep = 2, onComplete, onLogout, onNavigateHome, onNavigateWorkspace }: SellerOnboardingProps) {
+export default function SellerOnboarding({ account, initialStep = 2, initialCompany, onComplete, onLogout, onNavigateHome, onNavigateWorkspace }: SellerOnboardingProps) {
   const { tr } = useLanguage();
   const [currentStep, setCurrentStep] = useState<number>(initialStep);
   const [submitError, setSubmitError] = useState('');
@@ -238,14 +241,25 @@ export default function SellerOnboarding({ account, initialStep = 2, onComplete,
   ];
 
   // Form State for Step 1: Thông tin doanh nghiệp
+  // Hồ sơ lưu lên server (B1) — không điền sẵn dữ liệu demo.
   const [formData, setFormData] = useState({
-    companyName: account?.company || 'Công ty TNHH Nông sản Việt Trí',
-    taxCode: '0314892345',
-    businessType: 'TNHH',
-    establishedYear: '2018',
-    headquartersAddress: 'Tòa nhà Landmark 81, 720A Điện Biên Phủ, Phường 22, Quận Bình Thạnh, TP. Hồ Chí Minh',
-    website: 'https://vietagri-export.vn',
-    contactEmail: account?.email || 'contact@vietagri-export.vn'
+    companyName: account?.company || '',
+    taxCode: '',
+    businessType: '',
+    establishedYear: '',
+    headquartersAddress: '',
+    website: '',
+    contactEmail: account?.email || '',
+    industrySector: '',
+    languages: 'vi',
+    descriptionVi: '',
+    descriptionEn: '',
+    ...initialCompany
+  });
+  const staffLanguages = formData.languages.split(',').filter(Boolean);
+  const toggleStaffLanguage = (code: string) => setFormData({
+    ...formData,
+    languages: (staffLanguages.includes(code) ? staffLanguages.filter((l) => l !== code) : [...staffLanguages, code]).join(',')
   });
 
   // Step 3 State: Giấy phép & Chứng nhận
@@ -353,11 +367,11 @@ export default function SellerOnboarding({ account, initialStep = 2, onComplete,
     setShowAddCertForm(false);
   };
 
-  const finish = () => {
+  const finish = async () => {
     setSubmitError('');
     if (!onComplete) { setSubmittedSuccess(true); return; }
     try {
-      onComplete({ ...formData, country: 'Việt Nam', interest: products.map((p) => p.category).join(', '),
+      await onComplete({ ...formData, country: 'Việt Nam', interest: products.map((p) => p.category).join(', '),
         market: [...new Set(products.flatMap((p) => p.exportMarkets))].join(', '),
         products: JSON.stringify(products.map((p) => ({ ...p, image: p.image.startsWith('blob:') ? '' : p.image }))),
         certificates: JSON.stringify(certificates), pucCode, phcCode, agreeCommitment: String(agreeCommitment) });
@@ -369,7 +383,7 @@ export default function SellerOnboarding({ account, initialStep = 2, onComplete,
     if (currentStep < 4) {
       setCurrentStep(currentStep + 1);
     } else {
-      finish();
+      void finish();
     }
   };
 
@@ -822,6 +836,67 @@ export default function SellerOnboarding({ account, initialStep = 2, onComplete,
                       />
                     </div>
 
+                  </div>
+
+                  {/* B1: ngành hàng, ngôn ngữ nhân viên, mô tả song ngữ — trường có cấu trúc để lọc/ghép */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor="company-industry" className="block text-xs sm:text-[13px] font-semibold text-slate-800 mb-1.5">
+                        {tr("Ngành hàng")}</label>
+                      <select
+                        id="company-industry"
+                        value={formData.industrySector}
+                        onChange={(e) => setFormData({ ...formData, industrySector: e.target.value })}
+                        className="w-full px-4 py-2.5 rounded-xl border border-slate-200/90 bg-white text-xs sm:text-sm text-slate-900 focus:outline-none focus:border-[#083832] focus:ring-1 focus:ring-[#083832] transition-colors"
+                      >
+                        <option value="">{tr("Chọn ngành hàng")}</option>
+                        {INDUSTRIES.map((industry) => <option key={industry.code} value={industry.code}>{tr(industry.label)}</option>)}
+                      </select>
+                    </div>
+                    <fieldset>
+                      <legend className="block text-xs sm:text-[13px] font-semibold text-slate-800 mb-1.5">
+                        {tr("Ngôn ngữ nhân viên sử dụng")}</legend>
+                      <div className="flex flex-wrap gap-x-4 gap-y-2 pt-1">
+                        {STAFF_LANGUAGES.map((lang) => (
+                          <label key={lang.code} className="inline-flex items-center gap-1.5 text-xs sm:text-sm text-slate-700 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={staffLanguages.includes(lang.code)}
+                              onChange={() => toggleStaffLanguage(lang.code)}
+                              className="accent-[#083832]"
+                            />
+                            {tr(lang.label)}
+                          </label>
+                        ))}
+                      </div>
+                    </fieldset>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor="company-description-vi" className="block text-xs sm:text-[13px] font-semibold text-slate-800 mb-1.5">
+                        {tr("Mô tả doanh nghiệp (tiếng Việt)")}</label>
+                      <textarea
+                        id="company-description-vi"
+                        rows={4}
+                        maxLength={5000}
+                        value={formData.descriptionVi}
+                        onChange={(e) => setFormData({ ...formData, descriptionVi: e.target.value })}
+                        className="w-full px-4 py-2.5 rounded-xl border border-slate-200/90 bg-white text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#083832] focus:ring-1 focus:ring-[#083832] transition-colors"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="company-description-en" className="block text-xs sm:text-[13px] font-semibold text-slate-800 mb-1.5">
+                        {tr("Mô tả doanh nghiệp (tiếng Anh)")}</label>
+                      <textarea
+                        id="company-description-en"
+                        rows={4}
+                        maxLength={5000}
+                        value={formData.descriptionEn}
+                        onChange={(e) => setFormData({ ...formData, descriptionEn: e.target.value })}
+                        className="w-full px-4 py-2.5 rounded-xl border border-slate-200/90 bg-white text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#083832] focus:ring-1 focus:ring-[#083832] transition-colors"
+                      />
+                    </div>
                   </div>
 
                   {/* Submit Button Row (Aligned to Bottom Right) */}
