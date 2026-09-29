@@ -6,11 +6,18 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 
 
 class AppError(Exception):
-    def __init__(self, code: str, message: str, status_code: int = 400) -> None:
+    def __init__(
+        self,
+        code: str,
+        message: str,
+        status_code: int = 400,
+        headers: dict[str, str] | None = None,
+    ) -> None:
         super().__init__(message)
         self.code = code
         self.message = message
         self.status_code = status_code
+        self.headers = headers
 
 
 def _body(code: str, message: str) -> dict[str, dict[str, str]]:
@@ -18,7 +25,9 @@ def _body(code: str, message: str) -> dict[str, dict[str, str]]:
 
 
 async def _app_error(_: Request, exc: AppError) -> JSONResponse:
-    return JSONResponse(_body(exc.code, exc.message), status_code=exc.status_code)
+    return JSONResponse(
+        _body(exc.code, exc.message), status_code=exc.status_code, headers=exc.headers
+    )
 
 
 async def _http_error(_: Request, exc: StarletteHTTPException) -> JSONResponse:

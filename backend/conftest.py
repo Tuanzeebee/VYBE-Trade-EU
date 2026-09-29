@@ -48,6 +48,14 @@ class FakeStorage:
         return f"https://fake/{key}"
 
 
+@pytest.fixture(autouse=True)
+async def _reset_rate_limit() -> None:
+    """Bộ đếm rate limit nằm trong bộ nhớ tiến trình — mỗi test bắt đầu từ 0."""
+    from app.core.ratelimit import reset
+
+    await reset()
+
+
 @pytest.fixture
 async def db_session() -> AsyncIterator[AsyncSession]:
     """Mỗi test chạy trong một transaction rồi rollback — bảng append-only không cần DELETE."""

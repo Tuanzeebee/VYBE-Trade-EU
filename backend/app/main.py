@@ -11,6 +11,7 @@ from app.core.config import get_settings
 from app.core.db import get_session
 from app.core.errors import register_error_handlers
 from app.core.logging import RequestIdMiddleware, setup_logging
+from app.core.ratelimit import enforce_public_limit
 from app.core.storage import Storage, get_storage
 from app.modules.auth.router import router as auth_router
 from app.modules.catalog.router import router as catalog_router
@@ -20,7 +21,7 @@ from app.modules.compliance.router import router as compliance_router
 setup_logging()
 log = logging.getLogger(__name__)
 
-app = FastAPI(title="evfta.eu API")
+app = FastAPI(title="evfta.eu API", dependencies=[Depends(enforce_public_limit)])
 app.add_middleware(RequestIdMiddleware)
 # Frontend gọi API kèm cookie phiên (ADR-0002) → chỉ cho các origin khai báo trong cấu hình.
 app.add_middleware(

@@ -9,6 +9,7 @@ dependencies = [
     "boto3>=1.43.104",
     "fastapi[standard]>=0.141.1",
     "pydantic-settings>=2.15.0",
+    "slowapi>=0.1.10",
     "sqlalchemy[asyncio]>=2.1.1",
 ]
 
