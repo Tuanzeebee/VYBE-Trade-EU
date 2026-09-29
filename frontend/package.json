@@ -9,7 +9,8 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "node --test tests/dev-config.test.mjs && vitest run",
-    "generate:api": "node scripts/generate-api.mjs"
+    "generate:api": "node scripts/generate-api.mjs",
+    "i18n:check": "node scripts/check-i18n.mjs"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.104.0",

@@ -8,6 +8,7 @@ import React, { createContext, useContext, useEffect } from 'react';
 import { useLocale } from 'next-intl';
 import { usePathname, useRouter } from '../i18n/navigation';
 import { translateText } from '../i18n/translate';
+import { createApiClient } from '../lib/api/client';
 
 export type LanguageCode = 'vi' | 'en' | 'fr' | 'ja';
 
@@ -433,6 +434,11 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     if (!LANGUAGES.some((option) => option.code === lang)) return;
     const search = typeof window === 'undefined' ? '' : window.location.search;
     router.replace(`${pathname}${search}`, { locale: lang });
+    // Người đã đăng nhập: lưu ngôn ngữ ưa dùng để email, thông báo và dịch tin nhắn theo đúng ngôn ngữ (A3, F3).
+    // Khách nhận 401 và bị bỏ qua; ngôn ngữ trên URL vẫn là nguồn sự thật cho giao diện.
+    void createApiClient()
+      .PATCH('/api/me', { body: { preferred_language: lang as 'vi' | 'en' } })
+      .catch(() => undefined);
   };
 
   const currentLanguageOption = LANGUAGES.find(l => l.code === language) || LANGUAGES[0];

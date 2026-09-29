@@ -44,6 +44,30 @@ describe('LanguageContext nối với next-intl', () => {
     expect(screen.getByText('All markets')).toBeInTheDocument();
   });
 
+  it('người đã đăng nhập: đổi ngôn ngữ lưu preferred_language lên server', async () => {
+    const fetchMock = vi.fn(async () => new Response('{}', { status: 200, headers: { 'content-type': 'application/json' } }));
+    vi.stubGlobal('fetch', fetchMock);
+    window.history.replaceState(null, '', '/en/suppliers');
+    renderWith('en');
+    act(() => api?.setLanguage('vi'));
+    await vi.waitFor(() => expect(fetchMock).toHaveBeenCalled());
+    const request = fetchMock.mock.calls[0] as unknown as [Request];
+    expect(request[0].method).toBe('PATCH');
+    expect(new URL(request[0].url).pathname).toBe('/api/me');
+    expect(await request[0].json()).toEqual({ preferred_language: 'vi' });
+    vi.unstubAllGlobals();
+  });
+
+  it('khách (401) hoặc lỗi mạng khi lưu ngôn ngữ không làm hỏng việc đổi ngôn ngữ', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => Promise.reject(new Error('offline'))));
+    window.history.replaceState(null, '', '/en/suppliers');
+    renderWith('en');
+    act(() => api?.setLanguage('vi'));
+    expect(replace).toHaveBeenCalled();
+    await Promise.resolve();
+    vi.unstubAllGlobals();
+  });
+
   it('đổi ngôn ngữ chuyển sang route của locale kia, giữ đường dẫn và query', () => {
     window.history.replaceState(null, '', '/en/suppliers?q=rice');
     renderWith('en');

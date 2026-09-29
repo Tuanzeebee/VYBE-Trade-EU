@@ -89,7 +89,7 @@ export default function Footer({ onNavigate }: FooterProps) {
             <ul className="space-y-2 text-slate-400">
               <li className="flex items-center gap-2">
                 <MapPin className="w-3.5 h-3.5 text-slate-500 shrink-0" />
-                <span>Hà Nội & TP. Hồ Chí Minh, Việt Nam</span>
+                <span>{tr("Hà Nội & TP. Hồ Chí Minh, Việt Nam")}</span>
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="w-3.5 h-3.5 text-slate-500 shrink-0" />
