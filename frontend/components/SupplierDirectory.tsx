@@ -5,7 +5,7 @@ import SupplierCard from './SupplierCard';
 import { Link } from '../i18n/navigation';
 import { translateText, type Locale } from '../i18n/translate';
 import { INDUSTRIES } from '../lib/companyApi';
-import { fetchFilterOptions, fetchSuppliers, SUPPLIER_COUNTRIES, toSearch, type SupplierQuery } from '../lib/suppliersApi';
+import { fetchFilterOptions, fetchSuppliers, serviceCategoryLabel, SUPPLIER_COUNTRIES, toSearch, type SupplierQuery } from '../lib/suppliersApi';
 
 const field =
   'mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-[#083832] focus:ring-1 focus:ring-[#083832]';
@@ -18,19 +18,57 @@ export default async function SupplierDirectory({ query, locale }: { query: Supp
   const pages = result ? Math.max(1, Math.ceil(result.total / result.page_size)) : 1;
   const categories = options?.categories ?? INDUSTRIES.map((i) => i.code);
   const certificates = options?.certificates ?? [];
+  const serviceCategories = options?.service_categories ?? [];
+  const services = query.kind === 'services';
+  const tab = (active: boolean) =>
+    `rounded-xl px-4 py-2 text-sm font-semibold ${active ? 'bg-[#083832] text-white' : 'border border-slate-300 bg-white text-slate-700 hover:bg-slate-50'}`;
 
   return (
     <div className="mx-auto max-w-6xl px-5 py-10 sm:px-8">
-      <h1 className="text-2xl font-extrabold text-slate-900 sm:text-3xl">{t('Nhà cung cấp Việt Nam đã xác minh')}</h1>
+      <h1 className="text-2xl font-extrabold text-slate-900 sm:text-3xl">
+        {t(services ? 'Nhà cung cấp dịch vụ xuất khẩu đã xác minh' : 'Nhà cung cấp Việt Nam đã xác minh')}
+      </h1>
       <p className="mt-2 text-sm text-slate-600">{t('Chỉ những doanh nghiệp đã được xác minh mới xuất hiện trong danh bạ.')}</p>
+      <nav aria-label={t('Loại nhà cung cấp')} className="mt-5 flex flex-wrap gap-2">
+        <Link href="/suppliers" aria-current={services ? undefined : 'page'} className={tab(!services)}>
+          {t('Sản phẩm')}
+        </Link>
+        <Link href="/suppliers?kind=services" aria-current={services ? 'page' : undefined} className={tab(services)}>
+          {t('Nhà cung cấp dịch vụ')}
+        </Link>
+      </nav>
 
       <form method="get" className="mt-6 grid gap-4 rounded-2xl border border-slate-200 bg-white p-5 sm:grid-cols-2 lg:grid-cols-3">
+        {services && <input type="hidden" name="kind" value="services" />}
         <div className="sm:col-span-2 lg:col-span-3">
           <label htmlFor="sup-q" className={label}>
-            {t('Tìm theo tên công ty, sản phẩm, mã HS hoặc chứng nhận')}
+            {t(services ? 'Tìm dịch vụ' : 'Tìm theo tên sản phẩm')}
           </label>
-          <input id="sup-q" name="q" defaultValue={query.q ?? ''} maxLength={100} className={field} />
+          <input
+            id="sup-q"
+            name="q"
+            defaultValue={query.q ?? ''}
+            maxLength={100}
+            placeholder={t(services ? 'vận chuyển lạnh, khai báo hải quan, kiểm nghiệm…' : 'hạt điều, tiêu, cá tra…')}
+            className={field}
+          />
         </div>
+        {services ? (
+          <div>
+            <label htmlFor="sup-service-category" className={label}>
+              {t('Loại dịch vụ')}
+            </label>
+            <select id="sup-service-category" name="service_category" defaultValue={query.service_category ?? ''} className={field}>
+              <option value="">{t('Tất cả')}</option>
+              {serviceCategories.map((code) => (
+                <option key={code} value={code}>
+                  {t(serviceCategoryLabel(code))}
+                </option>
+              ))}
+            </select>
+          </div>
+        ) : (
+        <>
         <div>
           <label htmlFor="sup-hs" className={label}>
             {t('Mã HS')}
@@ -77,6 +115,8 @@ export default async function SupplierDirectory({ query, locale }: { query: Supp
               ))}
             </select>
           </div>
+        )}
+        </>
         )}
         <div className="flex items-end">
           <button type="submit" className="w-full rounded-xl bg-[#083832] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#062924] sm:w-auto">

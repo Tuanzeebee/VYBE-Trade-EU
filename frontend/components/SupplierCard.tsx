@@ -1,9 +1,10 @@
-// Thẻ nhà cung cấp (E3): tên, huy hiệu xác minh, nhóm hàng, quốc gia, mô tả ngắn theo ngôn ngữ và nút yêu cầu báo giá.
-// Không dùng hook để render được phía server. Chuỗi hiển thị qua translateText (catalog vi/en).
+// Thẻ nhà cung cấp (E3, U10): tên, MỘT huy hiệu "Đã xác minh", tỉnh/thành, nhóm hàng, mô tả ngắn, sản phẩm
+// (sản phẩm khớp từ khóa được làm nổi bật) hoặc dịch vụ. Không dùng hook để render được phía server.
 import React from 'react';
+import { BadgeCheck } from 'lucide-react';
 import { Link } from '../i18n/navigation';
 import { translateText, type Locale } from '../i18n/translate';
-import { countryName, industryLabel, type SupplierCardData } from '../lib/suppliersApi';
+import { countryName, industryLabel, serviceCategoryLabel, type SupplierCardData } from '../lib/suppliersApi';
 
 const DESCRIPTION_LIMIT = 160;
 
@@ -17,7 +18,10 @@ export default function SupplierCard({ supplier, locale }: { supplier: SupplierC
   const t = (vi: string) => translateText(vi, locale);
   const description = shortDescription(supplier, locale);
   const categories = supplier.categories.map((c) => t(industryLabel(c) ?? c));
-  const verifiedLabel = supplier.verification_level === 'evfta_verified' ? 'EVFTA-verified' : t('Đã xác minh');
+  const matched = new Set(supplier.matched_product_names ?? []);
+  const services = supplier.service_titles ?? [];
+  const serviceCategories = (supplier.service_categories ?? []).map((c) => t(serviceCategoryLabel(c)));
+  const place = [supplier.city, countryName(supplier.country)].filter(Boolean).join(', ');
 
   return (
     <li className="flex flex-col rounded-2xl border border-slate-200 bg-white p-5" aria-label={supplier.legal_name}>
@@ -27,15 +31,13 @@ export default function SupplierCard({ supplier, locale }: { supplier: SupplierC
             {supplier.legal_name}
           </Link>
         </h2>
-        <span
-          data-testid="verified-badge"
-          className={`shrink-0 rounded-full px-3 py-1 text-xs font-bold ${supplier.verification_level === 'evfta_verified' ? 'bg-emerald-100 text-emerald-900' : 'bg-teal-50 text-teal-900'}`}
-        >
-          {verifiedLabel}
+        <span data-testid="verified-badge" className="inline-flex shrink-0 items-center gap-1 rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-900">
+          <BadgeCheck className="h-3.5 w-3.5" aria-hidden="true" />
+          {t('Đã xác minh')}
         </span>
       </div>
       <p className="mt-1 text-sm text-slate-600">
-        <span data-testid="country">{countryName(supplier.country)}</span>
+        <span data-testid="country">{place}</span>
         {categories.length > 0 && (
           <>
             {' · '}
@@ -45,18 +47,29 @@ export default function SupplierCard({ supplier, locale }: { supplier: SupplierC
       </p>
       {description && <p className="mt-3 text-sm leading-relaxed text-slate-700">{description}</p>}
       {supplier.product_names.length > 0 && (
-        <p className="mt-3 text-xs text-slate-600">
-          {t('Sản phẩm')}: {supplier.product_names.join(', ')}
+        <p className="mt-3 text-xs text-slate-600" data-testid="products">
+          {t('Sản phẩm')}:{' '}
+          {supplier.product_names.map((name, i) => (
+            <React.Fragment key={name + i}>
+              {i > 0 && ', '}
+              {matched.has(name) ? <mark className="rounded bg-amber-100 px-0.5 font-semibold text-slate-900">{name}</mark> : name}
+            </React.Fragment>
+          ))}
           {supplier.product_count > supplier.product_names.length && ` (+${supplier.product_count - supplier.product_names.length})`}
         </p>
       )}
+      {services.length > 0 && (
+        <p className="mt-3 text-xs text-slate-600" data-testid="services">
+          {t('Dịch vụ')}: {services.join(', ')}
+          {serviceCategories.length > 0 && <span className="block text-slate-500">{serviceCategories.join(' · ')}</span>}
+        </p>
+      )}
       <div className="mt-4 flex flex-wrap gap-3">
-        <Link
-          href={`/suppliers/${supplier.slug}?rfq=1`}
-          className="rounded-xl bg-[#083832] px-4 py-2 text-sm font-semibold text-white hover:bg-[#062924]"
-        >
-          {t('Yêu cầu báo giá')}
-        </Link>
+        {supplier.product_count > 0 && (
+          <Link href={`/suppliers/${supplier.slug}#rfq`} className="rounded-xl bg-[#083832] px-4 py-2 text-sm font-semibold text-white hover:bg-[#062924]">
+            {t('Yêu cầu báo giá')}
+          </Link>
+        )}
         <Link href={`/suppliers/${supplier.slug}`} className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-800 hover:bg-slate-50">
           {t('Xem hồ sơ')}
         </Link>

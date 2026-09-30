@@ -97,6 +97,8 @@ export default function SellerOnboarding({ account, initialStep = 2, initialComp
     businessType: '',
     establishedYear: '',
     headquartersAddress: '',
+    city: '',
+    locationPublic: 'false',
     website: '',
     contactEmail: account?.email || '',
     industrySector: '',
@@ -686,6 +688,21 @@ export default function SellerOnboarding({ account, initialStep = 2, initialComp
                     />
                   </div>
 
+                  {/* U10: tỉnh/thành hiển thị trên hồ sơ công khai và bản đồ (mặc định không lộ địa chỉ chi tiết) */}
+                  <div>
+                    <label htmlFor="company-city" className="block text-xs sm:text-[13px] font-semibold text-slate-800 mb-1.5">{tr("Tỉnh / thành phố")}</label>
+                    <input
+                      id="company-city"
+                      type="text"
+                      maxLength={120}
+                      value={formData.city}
+                      onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                      placeholder={tr("Ví dụ: Cần Thơ")}
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200/90 bg-white text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#083832] focus:ring-1 focus:ring-[#083832] transition-colors"
+                    />
+                    <p className="text-[11px] text-slate-500 mt-1">{tr("Hồ sơ công khai và bản đồ chỉ hiển thị ở mức tỉnh/thành phố.")}</p>
+                  </div>
+
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label htmlFor="company-country" className="block text-xs sm:text-[13px] font-semibold text-slate-800 mb-1.5">{tr("Quốc gia *")}</label>
@@ -909,6 +926,15 @@ export default function SellerOnboarding({ account, initialStep = 2, initialComp
                             onChange={(e) => setFormData({ ...formData, factoryAddress: e.target.value })}
                             className="w-full px-4 py-2.5 rounded-xl border border-slate-200/90 bg-white text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#083832] focus:ring-1 focus:ring-[#083832] transition-colors"
                           />
+                          <label className="mt-2 flex items-start gap-2 text-[11px] sm:text-xs text-slate-600">
+                            <input
+                              type="checkbox"
+                              className="mt-0.5"
+                              checked={formData.locationPublic === 'true'}
+                              onChange={(e) => setFormData({ ...formData, locationPublic: String(e.target.checked) })}
+                            />
+                            {tr("Cho phép hiển thị địa chỉ nhà máy chính xác trên bản đồ hồ sơ công khai")}
+                          </label>
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
                           <div className="sm:col-span-2">

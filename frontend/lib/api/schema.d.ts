@@ -1035,6 +1035,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/public/suppliers/{slug}/credentials": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Supplier Credentials */
+        get: operations["supplier_credentials_api_public_suppliers__slug__credentials_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/me/notifications": {
         parameters: {
             query?: never;
@@ -2758,6 +2775,8 @@ export interface components {
             categories: string[];
             /** Certificates */
             certificates: components["schemas"]["PublicCertificateOut"][];
+            /** Service Categories */
+            service_categories?: string[];
         };
         /** HTTPValidationError */
         HTTPValidationError: {
@@ -3294,6 +3313,37 @@ export interface components {
             verified_at: string | null;
             /** Products */
             products: components["schemas"]["PublicProductOut"][];
+            /**
+             * Offering Type
+             * @default products
+             * @enum {string}
+             */
+            offering_type?: "products" | "services" | "both";
+            /** City */
+            city?: string | null;
+            /** Company Size */
+            company_size?: string | null;
+            /** Capacity Value */
+            capacity_value?: string | null;
+            /** Capacity Unit */
+            capacity_unit?: string | null;
+            /** Capacity Period */
+            capacity_period?: string | null;
+            /** Facility Codes */
+            facility_codes?: components["schemas"]["FacilityCodeOut"][];
+            /**
+             * Location Public
+             * @default false
+             */
+            location_public?: boolean;
+            /** Factory Address */
+            factory_address?: string | null;
+            /** Latitude */
+            latitude?: string | null;
+            /** Longitude */
+            longitude?: string | null;
+            /** Services */
+            services?: components["schemas"]["ServiceOfferingOut"][];
         };
         /**
          * PublicProductOut
@@ -4097,6 +4147,39 @@ export interface components {
             product_count: number;
             /** Categories */
             categories: string[];
+            /** Matched Product Names */
+            matched_product_names?: string[];
+            /**
+             * Offering Type
+             * @default products
+             * @enum {string}
+             */
+            offering_type?: "products" | "services" | "both";
+            /** City */
+            city?: string | null;
+            /** Service Titles */
+            service_titles?: string[];
+            /** Service Categories */
+            service_categories?: string[];
+        };
+        /**
+         * SupplierCredentialsOut
+         * @description U10 "Dữ liệu đã kiểm" trên hồ sơ công khai: ai kiểm, lúc nào, còn hiệu lực đến bao giờ.
+         */
+        SupplierCredentialsOut: {
+            /** Verified At */
+            verified_at: string | null;
+            /** Expires At */
+            expires_at: string | null;
+            /**
+             * Verified By
+             * @default VYBE Trade
+             */
+            verified_by?: string;
+            /** Origin Evidence Complete */
+            origin_evidence_complete: boolean;
+            /** Certificates */
+            certificates: components["schemas"]["VerifiedCertificateOut"][];
         };
         /** SupplierListTile */
         SupplierListTile: {
@@ -4387,6 +4470,24 @@ export interface components {
             data: components["schemas"]["VerificationData"] | null;
             /** Empty Hint Key */
             empty_hint_key?: string | null;
+        };
+        /**
+         * VerifiedCertificateOut
+         * @description Chứng nhận đã duyệt, còn hạn, loại được phép công khai (không lộ file hay số chứng nhận).
+         */
+        VerifiedCertificateOut: {
+            /** Type Code */
+            type_code: string;
+            /** Name Vi */
+            name_vi: string;
+            /** Name En */
+            name_en: string;
+            /** Issuer */
+            issuer: string | null;
+            /** Expires At */
+            expires_at: string | null;
+            /** Reviewed At */
+            reviewed_at: string | null;
         };
         /** WeekStat */
         WeekStat: {
@@ -6844,6 +6945,8 @@ export interface operations {
                 cert?: string | null;
                 page?: number;
                 page_size?: number;
+                kind?: "products" | "services";
+                service_category?: string | null;
             };
             header?: never;
             path?: never;
@@ -6887,6 +6990,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["FilterOptions"];
+                };
+            };
+        };
+    };
+    supplier_credentials_api_public_suppliers__slug__credentials_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SupplierCredentialsOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

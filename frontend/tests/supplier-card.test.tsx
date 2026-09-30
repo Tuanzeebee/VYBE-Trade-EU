@@ -47,7 +47,7 @@ describe('Thẻ nhà cung cấp (E3)', () => {
     expect(within(card).getByTestId('country')).toHaveTextContent('Vietnam');
     expect(within(card).getByText('Gạo và cà phê xuất khẩu sang EU.')).toBeInTheDocument();
     const rfq = within(card).getByRole('link', { name: 'Yêu cầu báo giá' });
-    expect(rfq.getAttribute('href')).toContain('/suppliers/nong-san-lua-vang?rfq=1');
+    expect(rfq.getAttribute('href')).toContain('/suppliers/nong-san-lua-vang#rfq');
   });
 
   it('chọn mô tả theo ngôn ngữ và rơi về ngôn ngữ còn lại khi thiếu', () => {
@@ -62,14 +62,48 @@ describe('Thẻ nhà cung cấp (E3)', () => {
     expect(screen.getByText('Gạo và cà phê xuất khẩu sang EU.')).toBeInTheDocument();
   });
 
-  it('huy hiệu EVFTA-verified cho mức cao và cắt mô tả dài', () => {
+  it('U10: một huy hiệu duy nhất "Đã xác minh" (không còn nhãn EVFTA-verified) và cắt mô tả dài', () => {
     wrap(
       <ul>
         <SupplierCard supplier={supplier({ verification_level: 'evfta_verified', description_vi: 'a'.repeat(400) })} locale="vi" />
       </ul>,
     );
-    expect(screen.getByTestId('verified-badge')).toHaveTextContent('EVFTA-verified');
+    expect(screen.getByTestId('verified-badge')).toHaveTextContent('Đã xác minh');
+    expect(screen.queryByText(/EVFTA-verified/)).toBeNull();
     expect(screen.getByText(/^a+…$/).textContent!.length).toBeLessThanOrEqual(161);
+  });
+
+  it('U10: sản phẩm khớp từ khóa được làm nổi bật; thẻ ghi tỉnh/thành', () => {
+    wrap(
+      <ul>
+        <SupplierCard supplier={supplier({ city: 'Cần Thơ', matched_product_names: ['Gạo thơm Jasmine'] })} locale="vi" />
+      </ul>,
+    );
+    const products = screen.getByTestId('products');
+    expect(products.querySelector('mark')).toHaveTextContent('Gạo thơm Jasmine');
+    expect(products).toHaveTextContent('Cà phê nhân');
+    expect(screen.getByTestId('country')).toHaveTextContent('Cần Thơ, Vietnam');
+  });
+
+  it('U10: nhà cung cấp dịch vụ hiện dịch vụ và không có nút báo giá sản phẩm', () => {
+    wrap(
+      <ul>
+        <SupplierCard
+          supplier={supplier({
+            product_names: [],
+            product_count: 0,
+            categories: [],
+            offering_type: 'services',
+            service_titles: ['Vận chuyển container lạnh đi EU'],
+            service_categories: ['logistics_freight'],
+          })}
+          locale="vi"
+        />
+      </ul>,
+    );
+    expect(screen.getByTestId('services')).toHaveTextContent('Vận chuyển container lạnh đi EU');
+    expect(screen.getByTestId('services')).toHaveTextContent('Vận tải & giao nhận');
+    expect(screen.queryByRole('link', { name: 'Yêu cầu báo giá' })).toBeNull();
   });
 });
 
@@ -97,12 +131,26 @@ describe('Danh bạ nhà cung cấp (E2)', () => {
     const calls = serve({ items: [supplier()], total: 1, page: 1, page_size: 12 });
     wrap(await SupplierDirectory({ query: { q: 'gạo', country: 'VN' }, locale: 'vi' }));
     expect(screen.getByRole('listitem', { name: 'Nông Sản Lúa Vàng' })).toBeInTheDocument();
-    expect(screen.getByLabelText(/Tìm theo tên công ty/)).toHaveValue('gạo');
+    expect(screen.getByLabelText('Tìm theo tên sản phẩm')).toHaveValue('gạo');
+    expect(screen.getByLabelText('Tìm theo tên sản phẩm')).toHaveAttribute('placeholder', 'hạt điều, tiêu, cá tra…');
     expect(screen.getByLabelText('Quốc gia')).toHaveValue('VN');
     expect(screen.getByLabelText('Chứng nhận')).toBeInTheDocument();
     const listing = calls.find((c) => c.startsWith('/api/public/suppliers?'));
     expect(listing).toContain('q=g%E1%BA%A1o');
     expect(listing).toContain('country=VN');
+  });
+
+  it('U10: tab nhà cung cấp dịch vụ gửi kind=services và lọc theo loại dịch vụ', async () => {
+    const calls = serve({ items: [], total: 0, page: 1, page_size: 12 });
+    wrap(await SupplierDirectory({ query: { kind: 'services', service_category: 'customs_brokerage' }, locale: 'vi' }));
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Nhà cung cấp dịch vụ xuất khẩu đã xác minh');
+    const tabs = screen.getByRole('navigation', { name: 'Loại nhà cung cấp' });
+    expect(within(tabs).getByRole('link', { name: 'Nhà cung cấp dịch vụ' })).toHaveAttribute('aria-current', 'page');
+    expect(screen.getByLabelText('Loại dịch vụ')).toBeInTheDocument();
+    expect(screen.queryByLabelText('Mã HS')).toBeNull();
+    const listing = calls.find((c) => c.startsWith('/api/public/suppliers?'));
+    expect(listing).toContain('kind=services');
+    expect(listing).toContain('service_category=customs_brokerage');
   });
 
   it('không có kết quả: hướng dẫn thay vì để trống', async () => {
@@ -131,6 +179,8 @@ describe('readQuery / toSearch', () => {
   it('bỏ giá trị sai định dạng và chuẩn hóa', () => {
     expect(readQuery({ q: ['a', 'b'], hs: 'abc', country: 'vn', page: '0' })).toMatchObject({ q: 'a', hs: undefined, country: 'VN', page: undefined });
     expect(readQuery({ hs: '1006.30', page: '3' })).toMatchObject({ hs: '1006.30', page: 3 });
+    expect(readQuery({ kind: 'services' }).kind).toBe('services');
+    expect(readQuery({ kind: 'buyers' }).kind).toBeUndefined();
   });
   it('toSearch bỏ trang 1 và giá trị rỗng', () => {
     expect(toSearch({ q: 'gạo', page: 1, hs: '' })).toBe('?q=g%E1%BA%A1o');

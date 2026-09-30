@@ -441,3 +441,32 @@ async def public_certificate_types(session: AsyncSession) -> list[PublicCertific
         )
     ).all()
     return [PublicCertificateOut(code=r.code, name_vi=r.name_vi, name_en=r.name_en) for r in rows]
+
+
+async def public_certificates_for(
+    session: AsyncSession, company_id: uuid.UUID, today: dt.date
+) -> list[dict[str, Any]]:
+    """U10: chứng nhận ĐÃ DUYỆT, CÒN HẠN, loại được phép công khai của một công ty — cho mục
+    "Dữ liệu đã kiểm" trên hồ sơ công khai. Không trả file, số chứng nhận hay người duyệt."""
+    rows = await session.execute(
+        select(Evidence, EvidenceType)
+        .join(EvidenceType, EvidenceType.code == Evidence.type_code)
+        .where(
+            Evidence.company_id == company_id,
+            Evidence.approval_status == ApprovalStatus.approved,
+            or_(Evidence.expires_at.is_(None), Evidence.expires_at > today),
+            Evidence.type_code.in_(_public_types()),
+        )
+        .order_by(EvidenceType.name_en, Evidence.id)
+    )
+    return [
+        {
+            "type_code": evidence.type_code,
+            "name_vi": evidence.custom_type_name or kind.name_vi,
+            "name_en": evidence.custom_type_name or kind.name_en,
+            "issuer": evidence.issuer,
+            "expires_at": evidence.expires_at,
+            "reviewed_at": evidence.reviewed_at,
+        }
+        for evidence, kind in rows
+    ]

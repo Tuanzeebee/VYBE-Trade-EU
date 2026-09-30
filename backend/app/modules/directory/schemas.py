@@ -1,6 +1,7 @@
+import datetime as dt
 from typing import Literal
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from app.modules.verification.schemas import PublicCertificateOut
 
@@ -19,6 +20,12 @@ class SupplierCardOut(BaseModel):
     product_names: list[str]
     product_count: int
     categories: list[str]  # nhóm hàng (theo mã HS của sản phẩm), không trùng
+    # U10
+    matched_product_names: list[str] = Field(default_factory=list)
+    offering_type: Literal["products", "services", "both"] = "products"
+    city: str | None = None
+    service_titles: list[str] = Field(default_factory=list)
+    service_categories: list[str] = Field(default_factory=list)
 
 
 class SupplierPage(BaseModel):
@@ -31,3 +38,25 @@ class SupplierPage(BaseModel):
 class FilterOptions(BaseModel):
     categories: list[str]
     certificates: list[PublicCertificateOut]
+    service_categories: list[str] = Field(default_factory=list)  # U10
+
+
+class VerifiedCertificateOut(BaseModel):
+    """Chứng nhận đã duyệt, còn hạn, loại được phép công khai (không lộ file hay số chứng nhận)."""
+
+    type_code: str
+    name_vi: str
+    name_en: str
+    issuer: str | None
+    expires_at: dt.date | None
+    reviewed_at: dt.datetime | None
+
+
+class SupplierCredentialsOut(BaseModel):
+    """U10 "Dữ liệu đã kiểm" trên hồ sơ công khai: ai kiểm, lúc nào, còn hiệu lực đến bao giờ."""
+
+    verified_at: dt.datetime | None
+    expires_at: dt.datetime | None
+    verified_by: str = "VYBE Trade"
+    origin_evidence_complete: bool  # đủ bằng chứng xuất xứ bắt buộc (verification_level nội bộ)
+    certificates: list[VerifiedCertificateOut]

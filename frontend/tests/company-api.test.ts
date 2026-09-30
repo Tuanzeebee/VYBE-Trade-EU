@@ -109,6 +109,8 @@ describe('profileToCompany — form onboarding cũ → CompanyIn', () => {
       issuing_authority: null,
       offering_type: 'products',
       factory_address: null,
+      city: null,
+      location_public: false,
       capacity_value: null,
       capacity_unit: null,
       capacity_period: null,

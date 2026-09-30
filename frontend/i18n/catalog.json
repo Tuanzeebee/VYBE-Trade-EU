@@ -12833,5 +12833,195 @@
     "Your order has been updated.",
     "Votre commande a été mise à jour.",
     "ご注文が更新されました。"
+  ],
+  "Nhà cung cấp dịch vụ xuất khẩu đã xác minh": [
+    "Verified export service providers",
+    "Prestataires de services à l'export vérifiés",
+    "認証済みの輸出サービス事業者"
+  ],
+  "Loại nhà cung cấp": [
+    "Supplier type",
+    "Type de fournisseur",
+    "サプライヤーの種類"
+  ],
+  "Nhà cung cấp dịch vụ": [
+    "Service providers",
+    "Prestataires de services",
+    "サービス事業者"
+  ],
+  "Tìm dịch vụ": [
+    "Search services",
+    "Rechercher un service",
+    "サービスを検索"
+  ],
+  "Tìm theo tên sản phẩm": [
+    "Search by product name",
+    "Rechercher par nom de produit",
+    "製品名で検索"
+  ],
+  "vận chuyển lạnh, khai báo hải quan, kiểm nghiệm…": [
+    "cold-chain shipping, customs clearance, testing…",
+    "transport frigorifique, dédouanement, analyses…",
+    "冷蔵輸送、通関、検査…"
+  ],
+  "hạt điều, tiêu, cá tra…": [
+    "cashew, pepper, pangasius…",
+    "noix de cajou, poivre, pangasius…",
+    "カシューナッツ、胡椒、パンガシウス…"
+  ],
+  "Loại dịch vụ": [
+    "Service type",
+    "Type de service",
+    "サービスの種類"
+  ],
+  "Vận tải & giao nhận": [
+    "Freight forwarding & logistics",
+    "Transit et logistique",
+    "フォワーディング・物流"
+  ],
+  "Đại lý hải quan": [
+    "Customs brokerage",
+    "Commissionnaire en douane",
+    "通関代理"
+  ],
+  "Kho bãi & kho lạnh": [
+    "Warehousing & cold storage",
+    "Entreposage et froid",
+    "倉庫・冷蔵保管"
+  ],
+  "Kế toán & thuế": [
+    "Accounting & tax",
+    "Comptabilité et fiscalité",
+    "会計・税務"
+  ],
+  "Pháp lý & luật": [
+    "Legal services",
+    "Services juridiques",
+    "法務サービス"
+  ],
+  "Chứng nhận & kiểm nghiệm": [
+    "Certification & testing",
+    "Certification et analyses",
+    "認証・検査"
+  ],
+  "Bảo hiểm hàng hóa": [
+    "Cargo insurance",
+    "Assurance marchandises",
+    "貨物保険"
+  ],
+  "Khác": [
+    "Other",
+    "Autre",
+    "その他"
+  ],
+  "Xác minh bởi VYBE Trade": [
+    "Verified by VYBE Trade",
+    "Vérifié par VYBE Trade",
+    "VYBE Tradeが認証"
+  ],
+  "Giới thiệu": [
+    "About",
+    "Présentation",
+    "会社紹介"
+  ],
+  "Vị trí": [
+    "Location",
+    "Localisation",
+    "所在地"
+  ],
+  "Địa chỉ nhà máy (doanh nghiệp đồng ý công khai)": [
+    "Factory address (published with the company's consent)",
+    "Adresse de l'usine (publiée avec l'accord de l'entreprise)",
+    "工場住所（企業の同意により公開）"
+  ],
+  "Hiển thị ở mức tỉnh/thành phố": [
+    "Shown at province/city level",
+    "Affiché au niveau de la province/ville",
+    "省・市レベルで表示"
+  ],
+  "Bản đồ vị trí nhà cung cấp": [
+    "Supplier location map",
+    "Carte de localisation du fournisseur",
+    "サプライヤー所在地の地図"
+  ],
+  "Dữ liệu đã kiểm": [
+    "Verified data",
+    "Données vérifiées",
+    "確認済みデータ"
+  ],
+  "Pháp lý doanh nghiệp được VYBE Trade đối chiếu": [
+    "Company legal status checked by VYBE Trade",
+    "Statut juridique vérifié par VYBE Trade",
+    "法的地位をVYBE Tradeが照合"
+  ],
+  "Đủ bằng chứng xuất xứ bắt buộc": [
+    "All required origin evidence on file",
+    "Toutes les preuves d'origine requises fournies",
+    "必要な原産地証拠がすべて揃っています"
+  ],
+  "Chứng nhận còn hạn": [
+    "Valid certificates",
+    "Certificats en cours de validité",
+    "有効な認証"
+  ],
+  "Còn hạn đến": [
+    "Valid until",
+    "Valable jusqu'au",
+    "有効期限"
+  ],
+  "Không ghi thời hạn": [
+    "No expiry stated",
+    "Sans date d'expiration",
+    "有効期限の記載なし"
+  ],
+  "Chưa có chứng nhận được duyệt để công khai.": [
+    "No approved certificates published yet.",
+    "Aucun certificat approuvé publié pour l'instant.",
+    "公開できる承認済み認証はまだありません。"
+  ],
+  "Ngôn ngữ giao dịch": [
+    "Business languages",
+    "Langues de travail",
+    "取引言語"
+  ],
+  "Mã cơ sở": [
+    "Facility code",
+    "Code d'établissement",
+    "施設コード"
+  ],
+  "Doanh nghiệp chưa công bố thông tin năng lực.": [
+    "The company has not published capacity information yet.",
+    "L'entreprise n'a pas encore publié ses capacités.",
+    "企業はまだ供給能力を公開していません。"
+  ],
+  "Quy cách": [
+    "Packaging",
+    "Conditionnement",
+    "包装"
+  ],
+  "Phạm vi": [
+    "Coverage",
+    "Couverture",
+    "対応範囲"
+  ],
+  "Tỉnh / thành phố": [
+    "Province / city",
+    "Province / ville",
+    "省・市"
+  ],
+  "Ví dụ: Cần Thơ": [
+    "e.g. Can Tho",
+    "ex. Cân Tho",
+    "例: カントー"
+  ],
+  "Hồ sơ công khai và bản đồ chỉ hiển thị ở mức tỉnh/thành phố.": [
+    "Your public profile and map only show the province/city.",
+    "Le profil public et la carte n'affichent que la province/ville.",
+    "公開プロフィールと地図には省・市のみ表示されます。"
+  ],
+  "Cho phép hiển thị địa chỉ nhà máy chính xác trên bản đồ hồ sơ công khai": [
+    "Show the exact factory address on the public profile map",
+    "Afficher l'adresse exacte de l'usine sur la carte du profil public",
+    "公開プロフィールの地図に工場の正確な住所を表示する"
   ]
 }

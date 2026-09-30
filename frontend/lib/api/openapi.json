@@ -4481,6 +4481,37 @@
               "default": 12,
               "title": "Page Size"
             }
+          },
+          {
+            "name": "kind",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "products",
+                "services"
+              ],
+              "type": "string",
+              "default": "products",
+              "title": "Kind"
+            }
+          },
+          {
+            "name": "service_category",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 32
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Service Category"
+            }
           }
         ],
         "responses": {
@@ -4521,6 +4552,48 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/FilterOptions"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/public/suppliers/{slug}/credentials": {
+      "get": {
+        "tags": [
+          "directory"
+        ],
+        "summary": "Supplier Credentials",
+        "operationId": "supplier_credentials_api_public_suppliers__slug__credentials_get",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Slug"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SupplierCredentialsOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
                 }
               }
             }
@@ -11279,6 +11352,13 @@
             },
             "type": "array",
             "title": "Certificates"
+          },
+          "service_categories": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Service Categories"
           }
         },
         "type": "object",
@@ -13084,6 +13164,126 @@
             },
             "type": "array",
             "title": "Products"
+          },
+          "offering_type": {
+            "type": "string",
+            "enum": [
+              "products",
+              "services",
+              "both"
+            ],
+            "title": "Offering Type",
+            "default": "products"
+          },
+          "city": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "City"
+          },
+          "company_size": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Company Size"
+          },
+          "capacity_value": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Capacity Value"
+          },
+          "capacity_unit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Capacity Unit"
+          },
+          "capacity_period": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Capacity Period"
+          },
+          "facility_codes": {
+            "items": {
+              "$ref": "#/components/schemas/FacilityCodeOut"
+            },
+            "type": "array",
+            "title": "Facility Codes"
+          },
+          "location_public": {
+            "type": "boolean",
+            "title": "Location Public",
+            "default": false
+          },
+          "factory_address": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Factory Address"
+          },
+          "latitude": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latitude"
+          },
+          "longitude": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Longitude"
+          },
+          "services": {
+            "items": {
+              "$ref": "#/components/schemas/ServiceOfferingOut"
+            },
+            "type": "array",
+            "title": "Services"
           }
         },
         "type": "object",
@@ -15713,6 +15913,48 @@
             },
             "type": "array",
             "title": "Categories"
+          },
+          "matched_product_names": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Matched Product Names"
+          },
+          "offering_type": {
+            "type": "string",
+            "enum": [
+              "products",
+              "services",
+              "both"
+            ],
+            "title": "Offering Type",
+            "default": "products"
+          },
+          "city": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "City"
+          },
+          "service_titles": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Service Titles"
+          },
+          "service_categories": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Service Categories"
           }
         },
         "type": "object",
@@ -15731,6 +15973,59 @@
         ],
         "title": "SupplierCardOut",
         "description": "Thẻ nhà cung cấp trong danh bạ (E3): tên, huy hiệu, nhóm hàng, quốc gia, mô tả ngắn."
+      },
+      "SupplierCredentialsOut": {
+        "properties": {
+          "verified_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Verified At"
+          },
+          "expires_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expires At"
+          },
+          "verified_by": {
+            "type": "string",
+            "title": "Verified By",
+            "default": "VYBE Trade"
+          },
+          "origin_evidence_complete": {
+            "type": "boolean",
+            "title": "Origin Evidence Complete"
+          },
+          "certificates": {
+            "items": {
+              "$ref": "#/components/schemas/VerifiedCertificateOut"
+            },
+            "type": "array",
+            "title": "Certificates"
+          }
+        },
+        "type": "object",
+        "required": [
+          "verified_at",
+          "expires_at",
+          "origin_evidence_complete",
+          "certificates"
+        ],
+        "title": "SupplierCredentialsOut",
+        "description": "U10 \"Dữ liệu đã kiểm\" trên hồ sơ công khai: ai kiểm, lúc nào, còn hiệu lực đến bao giờ."
       },
       "SupplierListTile": {
         "properties": {
@@ -16914,6 +17209,68 @@
           "data"
         ],
         "title": "VerificationTile"
+      },
+      "VerifiedCertificateOut": {
+        "properties": {
+          "type_code": {
+            "type": "string",
+            "title": "Type Code"
+          },
+          "name_vi": {
+            "type": "string",
+            "title": "Name Vi"
+          },
+          "name_en": {
+            "type": "string",
+            "title": "Name En"
+          },
+          "issuer": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Issuer"
+          },
+          "expires_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expires At"
+          },
+          "reviewed_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reviewed At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "type_code",
+          "name_vi",
+          "name_en",
+          "issuer",
+          "expires_at",
+          "reviewed_at"
+        ],
+        "title": "VerifiedCertificateOut",
+        "description": "Chứng nhận đã duyệt, còn hạn, loại được phép công khai (không lộ file hay số chứng nhận)."
       },
       "WeekStat": {
         "properties": {

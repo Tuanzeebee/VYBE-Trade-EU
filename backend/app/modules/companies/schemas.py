@@ -449,6 +449,20 @@ class PublicCompanyOut(BaseModel):
     verification_level: Literal["basic", "evfta_verified"]
     verified_at: datetime | None
     products: list[PublicProductOut]
+    # U10: hồ sơ công khai đầy đủ hơn. Địa chỉ nhà máy / toạ độ chỉ có khi chủ hồ sơ đồng ý
+    # (location_public); mặc định bản đồ chỉ ở mức tỉnh/thành (city).
+    offering_type: Literal["products", "services", "both"] = "products"
+    city: str | None = None
+    company_size: str | None = None
+    capacity_value: Decimal | None = None
+    capacity_unit: str | None = None
+    capacity_period: str | None = None
+    facility_codes: list[FacilityCodeOut] = Field(default_factory=list)
+    location_public: bool = False
+    factory_address: str | None = None
+    latitude: Decimal | None = None
+    longitude: Decimal | None = None
+    services: list["ServiceOfferingOut"] = Field(default_factory=list)
 
 
 # ── Điểm hoàn thiện hồ sơ (B3) ────────────────────────────────────────────────
@@ -576,9 +590,15 @@ class ExporterCardOut(BaseModel):
     description_vi: str | None
     description_en: str | None
     logo_url: str | None
-    product_names: list[str]  # tối đa 3 sản phẩm đầu
+    product_names: list[str]  # tối đa 3 sản phẩm, sản phẩm khớp từ khóa trước
     product_count: int
     hs_codes: list[str]  # mã HS của các sản phẩm đang hiển thị (không trùng)
+    # U10: sản phẩm khớp từ khóa (để giao diện làm nổi bật), loại hình cung cấp và dịch vụ.
+    matched_product_names: list[str] = Field(default_factory=list)
+    offering_type: Literal["products", "services", "both"] = "products"
+    city: str | None = None
+    service_titles: list[str] = Field(default_factory=list)  # tối đa 3
+    service_categories: list[str] = Field(default_factory=list)
 
 
 class ExporterPage(BaseModel):
@@ -686,3 +706,6 @@ class SourcingNeedsIn(BaseModel):
 
 class SourcingNeedsOut(SourcingNeedsIn):
     updated_at: datetime | None = None
+
+
+PublicCompanyOut.model_rebuild()

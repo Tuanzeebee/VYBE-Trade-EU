@@ -1,13 +1,14 @@
 """Sản phẩm của exporter (B5) và hồ sơ công khai. Một phần API công khai của module companies."""
 
 import logging
+import unicodedata
 import uuid
 from collections.abc import Awaitable, Callable
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from typing import Any
 
-from sqlalchemy import Select, and_, exists, func, or_, select
+from sqlalchemy import Select, and_, exists, func, literal, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.audit import record
@@ -21,6 +22,7 @@ from app.modules.companies import completeness_service
 from app.modules.companies.models import (
     ApprovalStatus,
     Company,
+    CompanyServiceOffering,
     CompanySourcingCategory,
     CompanyType,
     Product,
@@ -29,11 +31,13 @@ from app.modules.companies.models import (
     ProductPriceTier,
     VerificationStatus,
 )
+from app.modules.companies.offering_service import list_public_services
 from app.modules.companies.schemas import (
     AdminProductOut,
     AdminProductPatch,
     ExporterCardOut,
     ExporterPage,
+    FacilityCodeOut,
     OrderableProduct,
     PackagingIn,
     PackagingOut,
@@ -411,6 +415,16 @@ class SearchTerm:
     company_ids: Select[uuid.UUID]
 
 
+def _fold(text: str) -> str:
+    """Chữ thường, bỏ dấu (khớp immutable_unaccent(lower()) phía DB) để so từ khóa trong Python."""
+    decomposed = unicodedata.normalize("NFD", text.lower().replace("đ", "d"))
+    return "".join(ch for ch in decomposed if not unicodedata.combining(ch))
+
+
+def _norm(expr: Any) -> Any:
+    return func.immutable_unaccent(func.lower(expr))
+
+
 async def search_verified_exporters(
     session: AsyncSession,
     storage: Storage,
@@ -423,25 +437,50 @@ async def search_verified_exporters(
     page: int,
     page_size: int,
     now: datetime,
+    kind: str = "products",
+    service_category: str | None = None,
 ) -> ExporterPage:
     """Hàm truy vấn danh bạ DUY NHẤT. Mọi từ khóa phải khớp (AND); mỗi từ khớp nếu có ở tên công ty,
-    tên sản phẩm đang hiển thị, mã HS (kể cả theo tên HS) hoặc chứng nhận còn hạn."""
+    tên sản phẩm đang hiển thị, mã HS (kể cả theo tên HS), chứng nhận còn hạn — hoặc tên/mô tả dịch
+    vụ khi tìm nhà cung cấp dịch vụ (kind="services").
+
+    U10: có từ khóa thì xếp theo độ giống (trigram) của tên sản phẩm/dịch vụ và tên công ty; danh bạ
+    sản phẩm không có công ty chỉ cung cấp dịch vụ và ngược lại.
+    """
     live_product = and_(Product.company_id == Company.id, *_public_product_conditions())
+    live_service = and_(
+        CompanyServiceOffering.company_id == Company.id,
+        CompanyServiceOffering.is_active.is_(True),
+    )
     conditions: list[Any] = verified_exporter_conditions(now)
+    services_mode = kind == "services"
+    allowed = ("services", "both") if services_mode else ("products", "both")
+    conditions.append(Company.offering_type.in_(allowed))
     for term in terms:
-        pattern = _literal_like(term.token)
-        name_like = func.immutable_unaccent(func.lower(Company.legal_name)).like(
-            func.immutable_unaccent(func.lower(pattern)), escape="\\"
-        )
-        product_like = func.immutable_unaccent(func.lower(Product.name)).like(
-            func.immutable_unaccent(func.lower(pattern)), escape="\\"
-        )
-        conditions.append(
-            or_(
-                name_like,
-                exists().where(live_product, or_(product_like, Product.hs_code.in_(term.hs_codes))),
-                Company.id.in_(term.company_ids),
+        pattern = _norm(_literal_like(term.token))
+        name_like = _norm(Company.legal_name).like(pattern, escape="\\")
+        if services_mode:
+            offering_match = exists().where(
+                live_service,
+                or_(
+                    _norm(CompanyServiceOffering.title).like(pattern, escape="\\"),
+                    _norm(func.coalesce(CompanyServiceOffering.description_vi, "")).like(
+                        pattern, escape="\\"
+                    ),
+                    _norm(func.coalesce(CompanyServiceOffering.description_en, "")).like(
+                        pattern, escape="\\"
+                    ),
+                ),
             )
+        else:
+            product_like = _norm(Product.name).like(pattern, escape="\\")
+            offering_match = exists().where(
+                live_product, or_(product_like, Product.hs_code.in_(term.hs_codes))
+            )
+        conditions.append(or_(name_like, offering_match, Company.id.in_(term.company_ids)))
+    if service_category and services_mode:
+        conditions.append(
+            exists().where(live_service, CompanyServiceOffering.category_code == service_category)
         )
     if hs_prefix:
         conditions.append(exists().where(live_product, Product.hs_code.like(f"{hs_prefix}%")))
@@ -453,11 +492,28 @@ async def search_verified_exporters(
         conditions.append(Company.id.in_(certified_ids))
 
     total = await session.scalar(select(func.count()).select_from(Company).where(*conditions)) or 0
+    order: list[Any] = [Company.legal_name, Company.id]
+    if terms:
+        query_text = _norm(literal(" ".join(t.token for t in terms)))
+        best_offering = (
+            select(
+                func.max(func.similarity(_norm(CompanyServiceOffering.title), query_text))
+            ).where(live_service)
+            if services_mode
+            else select(func.max(func.similarity(_norm(Product.name), query_text))).where(
+                live_product
+            )
+        ).scalar_subquery()
+        rank = func.greatest(
+            func.similarity(_norm(Company.legal_name), query_text),
+            func.coalesce(best_offering, 0),
+        )
+        order = [rank.desc(), *order]
     companies = (
         await session.scalars(
             select(Company)
             .where(*conditions)
-            .order_by(Company.legal_name, Company.id)
+            .order_by(*order)
             .limit(page_size)
             .offset((page - 1) * page_size)
         )
@@ -471,6 +527,27 @@ async def search_verified_exporters(
         )
         for row in rows:
             products[row.company_id].append(row)
+    services: dict[uuid.UUID, list[CompanyServiceOffering]] = {c.id: [] for c in companies}
+    if companies:
+        service_rows = await session.scalars(
+            select(CompanyServiceOffering)
+            .where(
+                CompanyServiceOffering.company_id.in_(services),
+                CompanyServiceOffering.is_active.is_(True),
+            )
+            .order_by(CompanyServiceOffering.created_at, CompanyServiceOffering.id)
+        )
+        for service in service_rows:
+            services[service.company_id].append(service)
+    tokens = [_fold(t.token) for t in terms]
+
+    def matches(name: str) -> bool:
+        folded = _fold(name)
+        return any(token in folded for token in tokens)
+
+    def ordered(names: list[str]) -> list[str]:
+        return sorted(names, key=lambda n: not matches(n)) if tokens else names
+
     items = [
         ExporterCardOut(
             slug=c.slug,
@@ -482,9 +559,14 @@ async def search_verified_exporters(
             description_vi=c.description_vi,
             description_en=c.description_en,
             logo_url=await storage.presign_get(c.logo_key) if c.logo_key else None,
-            product_names=[p.name for p in products[c.id][:3]],
+            product_names=ordered([p.name for p in products[c.id]])[:3],
             product_count=len(products[c.id]),
             hs_codes=list(dict.fromkeys(p.hs_code for p in products[c.id])),
+            matched_product_names=[p.name for p in products[c.id] if tokens and matches(p.name)],
+            offering_type=c.offering_type or "products",
+            city=c.city,
+            service_titles=ordered([s.title for s in services[c.id]])[:3],
+            service_categories=list(dict.fromkeys(s.category_code for s in services[c.id])),
         )
         for c in companies
     ]
@@ -636,7 +718,22 @@ async def get_public_profile(
                 images=[image.url for image in full.images],
             )
         )
+    location = company.location_public
     return PublicCompanyOut(
+        offering_type=company.offering_type or "products",
+        city=company.city,
+        company_size=company.company_size,
+        capacity_value=company.capacity_value,
+        capacity_unit=company.capacity_unit,
+        capacity_period=company.capacity_period,
+        facility_codes=[
+            FacilityCodeOut(code_type=f.code_type, code=f.code) for f in company.facility_codes
+        ],
+        location_public=location,
+        factory_address=company.factory_address if location else None,
+        latitude=company.latitude if location else None,
+        longitude=company.longitude if location else None,
+        services=await list_public_services(session, company.id),
         slug=company.slug,
         legal_name=company.legal_name,
         country=company.country,
