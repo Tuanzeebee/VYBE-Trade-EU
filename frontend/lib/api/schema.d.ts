@@ -1171,6 +1171,74 @@ export interface paths {
         patch: operations["set_rfq_status_api_exporter_rfqs__rfq_id__status_patch"];
         trace?: never;
     };
+    "/api/exporter/rfqs/{rfq_id}/quotes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create Quote */
+        post: operations["create_quote_api_exporter_rfqs__rfq_id__quotes_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/me/rfqs/{rfq_id}/quotes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Quotes */
+        get: operations["list_quotes_api_me_rfqs__rfq_id__quotes_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/buyer/quotes/{quote_id}/decision": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Decide Quote */
+        post: operations["decide_quote_api_buyer_quotes__quote_id__decision_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/exporter/quotes/{quote_id}/withdraw": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Withdraw Quote */
+        post: operations["withdraw_quote_api_exporter_quotes__quote_id__withdraw_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/me/conversations": {
         parameters: {
             query?: never;
@@ -1827,6 +1895,12 @@ export interface components {
              */
             created_at: string;
         };
+        /**
+         * BalanceTerms
+         * @description Điều khoản cho phần còn lại sau đặt cọc.
+         * @enum {string}
+         */
+        BalanceTerms: "tt_before_shipment" | "against_bl_copy" | "lc_at_sight" | "none";
         /** Body_evidence_rules_import_api_admin_evidence_rules_import_post */
         Body_evidence_rules_import_api_admin_evidence_rules_import_post: {
             /** File */
@@ -3263,6 +3337,100 @@ export interface components {
             company: components["schemas"]["CompanyOut"];
             /** Products */
             products: components["schemas"]["ReviewProductOut"][];
+        };
+        /** QuoteDecisionIn */
+        QuoteDecisionIn: {
+            /**
+             * Decision
+             * @enum {string}
+             */
+            decision: "accept" | "decline";
+            /** Reason */
+            reason?: string | null;
+        };
+        /**
+         * QuoteIn
+         * @description Seller báo giá: đơn giá, Incoterm, đặt cọc %, điều khoản phần còn lại, thời gian giao và
+         *     hiệu lực. quantity / unit bỏ trống thì lấy theo RFQ.
+         */
+        QuoteIn: {
+            /** Unit Price */
+            unit_price: number | string;
+            /**
+             * Currency
+             * @default EUR
+             */
+            currency?: string;
+            /** Quantity */
+            quantity?: number | string | null;
+            /** Unit */
+            unit?: string | null;
+            incoterm: components["schemas"]["Incoterm"];
+            /** Named Place */
+            named_place?: string | null;
+            /** Deposit Percent */
+            deposit_percent: number;
+            balance_terms: components["schemas"]["BalanceTerms"];
+            /** Lead Time Days */
+            lead_time_days: number;
+            /**
+             * Valid Until
+             * Format: date
+             */
+            valid_until: string;
+            /** Notes */
+            notes?: string | null;
+        };
+        /** QuoteOut */
+        QuoteOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Rfq Id
+             * Format: uuid
+             */
+            rfq_id: string;
+            /** Unit Price */
+            unit_price: string;
+            /** Currency */
+            currency: string;
+            /** Quantity */
+            quantity: string;
+            /** Unit */
+            unit: string;
+            /** Total Amount */
+            total_amount: string;
+            /** Deposit Percent */
+            deposit_percent: number;
+            /** Deposit Amount */
+            deposit_amount: string;
+            balance_terms: components["schemas"]["BalanceTerms"];
+            incoterm: components["schemas"]["Incoterm"];
+            /** Named Place */
+            named_place: string | null;
+            /** Lead Time Days */
+            lead_time_days: number;
+            /**
+             * Valid Until
+             * Format: date
+             */
+            valid_until: string;
+            /** Notes */
+            notes: string | null;
+            /** Status */
+            status: string;
+            /** Decision Reason */
+            decision_reason: string | null;
+            /** Decided At */
+            decided_at: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
         };
         /** RegisterIn */
         RegisterIn: {
@@ -6919,6 +7087,146 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["RfqOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_quote_api_exporter_rfqs__rfq_id__quotes_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                rfq_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["QuoteIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QuoteOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_quotes_api_me_rfqs__rfq_id__quotes_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                rfq_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QuoteOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    decide_quote_api_buyer_quotes__quote_id__decision_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                quote_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["QuoteDecisionIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QuoteOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    withdraw_quote_api_exporter_quotes__quote_id__withdraw_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                quote_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QuoteOut"];
                 };
             };
             /** @description Validation Error */

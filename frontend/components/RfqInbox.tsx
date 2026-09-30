@@ -5,6 +5,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { Link } from '../i18n/navigation';
+import QuotePanel from './QuotePanel';
 import { changeRfqStatus, listRfqs, NEXT_STATUSES, openRfq, SAFE_TERMS_ADVICE, STATUS_LABELS, type Rfq, type RfqStatus } from '../lib/rfqApi';
 
 const BADGE: Record<RfqStatus, string> = {
@@ -137,6 +138,7 @@ export default function RfqInbox({ role }: { role: 'buyer' | 'exporter' }) {
                       <p className="mt-1 text-amber-900/80">{tr('Đây là khuyến nghị chung, không phải tư vấn pháp lý.')}</p>
                     </div>
                   )}
+                  <QuotePanel rfq={r} role={role} onChanged={() => void load()} />
                   <Link href={`${role === 'buyer' ? '/buyer/messages' : '/exporter/messages'}?rfq=${r.id}`} className="inline-block text-sm font-semibold text-teal-800 underline">
                     {tr('Mở hội thoại')}
                   </Link>

@@ -11,6 +11,7 @@ from sqlalchemy import (
     ForeignKey,
     Index,
     Numeric,
+    SmallInteger,
     String,
     Text,
     Uuid,
@@ -20,6 +21,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.db import Base
+from app.modules.messaging.quote_logic import BalanceTerms, QuoteStatus
 
 
 class Incoterm(StrEnum):
@@ -82,6 +84,70 @@ class Rfq(Base):
         DateTime(timezone=True),
         server_default=text("clock_timestamp()"),
         onupdate=text("clock_timestamp()"),
+    )
+
+
+class RfqQuote(Base):
+    """Báo giá có cấu trúc của seller cho một RFQ (U8). Trạng thái đổi theo quote_logic."""
+
+    __tablename__ = "rfq_quotes"
+    __table_args__ = (
+        CheckConstraint("unit_price > 0", name="positive_price"),
+        CheckConstraint("quantity > 0", name="positive_quantity"),
+        CheckConstraint("deposit_percent BETWEEN 0 AND 100", name="deposit_range"),
+        CheckConstraint(
+            "balance_terms IN ('tt_before_shipment', 'against_bl_copy', 'lc_at_sight', 'none')",
+            name="balance",
+        ),
+        CheckConstraint(
+            "(deposit_percent = 100) = (balance_terms = 'none')", name="balance_matches_deposit"
+        ),
+        CheckConstraint("lead_time_days BETWEEN 1 AND 365", name="lead_time_range"),
+        CheckConstraint(
+            "status IN ('sent', 'accepted', 'declined', 'withdrawn', 'superseded')", name="status"
+        ),
+        Index("ix_rfq_quotes_rfq_created", "rfq_id", "created_at"),
+        Index(
+            "uq_rfq_quotes_one_open",
+            "rfq_id",
+            unique=True,
+            postgresql_where=text("status = 'sent'"),
+        ),
+        Index(
+            "uq_rfq_quotes_one_accepted",
+            "rfq_id",
+            unique=True,
+            postgresql_where=text("status = 'accepted'"),
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, primary_key=True, default=uuid.uuid4, server_default=text("gen_random_uuid()")
+    )
+    rfq_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("rfqs.id"))
+    exporter_company_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("companies.id"))
+    unit_price: Mapped[Decimal] = mapped_column(Numeric(14, 2))
+    currency: Mapped[str] = mapped_column(String(3))
+    quantity: Mapped[Decimal] = mapped_column(Numeric(14, 2))
+    unit: Mapped[str] = mapped_column(String(32))
+    incoterm: Mapped[Incoterm] = mapped_column(Enum(Incoterm, name="incoterm"))
+    named_place: Mapped[str | None] = mapped_column(String(100))
+    deposit_percent: Mapped[int] = mapped_column(SmallInteger)
+    balance_terms: Mapped[BalanceTerms] = mapped_column(
+        Enum(BalanceTerms, native_enum=False, length=32, create_constraint=False)
+    )
+    lead_time_days: Mapped[int] = mapped_column(SmallInteger)
+    valid_until: Mapped[dt.date] = mapped_column(Date)
+    notes: Mapped[str | None] = mapped_column(Text)
+    status: Mapped[QuoteStatus] = mapped_column(
+        Enum(QuoteStatus, native_enum=False, length=16, create_constraint=False),
+        default=QuoteStatus.sent,
+        server_default="sent",
+    )
+    decision_reason: Mapped[str | None] = mapped_column(Text)
+    decided_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=text("clock_timestamp()")
     )
 
 

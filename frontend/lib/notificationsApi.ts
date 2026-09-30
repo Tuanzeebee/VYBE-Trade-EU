@@ -57,8 +57,15 @@ export function describe(notification: Pick<AppNotification, 'type' | 'payload'>
       return 'Trạng thái xác minh của bạn đã thay đổi.';
     case 'expiry_alert':
       return 'Xác minh của bạn sắp hết hạn.';
-    case 'rfq':
+    case 'rfq': {
+      // U8: cùng loại "rfq" cho yêu cầu mới, đổi trạng thái và báo giá (phân biệt bằng payload.event).
+      const event = notification.payload.event;
+      if (event === 'quote_sent') return 'Bạn nhận được báo giá mới cho yêu cầu báo giá.';
+      if (event === 'quote_accepted') return 'Buyer đã chấp nhận báo giá của bạn.';
+      if (event === 'quote_declined') return 'Buyer đã từ chối báo giá của bạn.';
+      if (event === 'status') return 'Nhà cung cấp đã cập nhật yêu cầu báo giá của bạn.';
       return 'Bạn có yêu cầu báo giá mới.';
+    }
     case 'message':
       return 'Bạn có tin nhắn mới.';
     case 'new_match': {

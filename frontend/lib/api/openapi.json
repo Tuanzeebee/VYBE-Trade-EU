@@ -5038,6 +5038,266 @@
         }
       }
     },
+    "/api/exporter/rfqs/{rfq_id}/quotes": {
+      "post": {
+        "tags": [
+          "messaging"
+        ],
+        "summary": "Create Quote",
+        "operationId": "create_quote_api_exporter_rfqs__rfq_id__quotes_post",
+        "parameters": [
+          {
+            "name": "rfq_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Rfq Id"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuoteIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuoteOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/me/rfqs/{rfq_id}/quotes": {
+      "get": {
+        "tags": [
+          "messaging"
+        ],
+        "summary": "List Quotes",
+        "operationId": "list_quotes_api_me_rfqs__rfq_id__quotes_get",
+        "parameters": [
+          {
+            "name": "rfq_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Rfq Id"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/QuoteOut"
+                  },
+                  "title": "Response List Quotes Api Me Rfqs  Rfq Id  Quotes Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/buyer/quotes/{quote_id}/decision": {
+      "post": {
+        "tags": [
+          "messaging"
+        ],
+        "summary": "Decide Quote",
+        "operationId": "decide_quote_api_buyer_quotes__quote_id__decision_post",
+        "parameters": [
+          {
+            "name": "quote_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Quote Id"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuoteDecisionIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuoteOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/exporter/quotes/{quote_id}/withdraw": {
+      "post": {
+        "tags": [
+          "messaging"
+        ],
+        "summary": "Withdraw Quote",
+        "operationId": "withdraw_quote_api_exporter_quotes__quote_id__withdraw_post",
+        "parameters": [
+          {
+            "name": "quote_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Quote Id"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuoteOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/me/conversations": {
       "get": {
         "tags": [
@@ -7686,6 +7946,17 @@
           "created_at"
         ],
         "title": "AuditLogOut"
+      },
+      "BalanceTerms": {
+        "type": "string",
+        "enum": [
+          "tt_before_shipment",
+          "against_bl_copy",
+          "lc_at_sight",
+          "none"
+        ],
+        "title": "BalanceTerms",
+        "description": "Điều khoản cho phần còn lại sau đặt cọc."
       },
       "Body_evidence_rules_import_api_admin_evidence_rules_import_post": {
         "properties": {
@@ -12937,6 +13208,278 @@
           "products"
         ],
         "title": "QueueItem"
+      },
+      "QuoteDecisionIn": {
+        "properties": {
+          "decision": {
+            "type": "string",
+            "enum": [
+              "accept",
+              "decline"
+            ],
+            "title": "Decision"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "decision"
+        ],
+        "title": "QuoteDecisionIn"
+      },
+      "QuoteIn": {
+        "properties": {
+          "unit_price": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              }
+            ],
+            "title": "Unit Price"
+          },
+          "currency": {
+            "type": "string",
+            "pattern": "^[A-Z]{3}$",
+            "title": "Currency",
+            "default": "EUR"
+          },
+          "quantity": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quantity"
+          },
+          "unit": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 32
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit"
+          },
+          "incoterm": {
+            "$ref": "#/components/schemas/Incoterm"
+          },
+          "named_place": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 100
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Named Place"
+          },
+          "deposit_percent": {
+            "type": "integer",
+            "maximum": 100,
+            "minimum": 0,
+            "title": "Deposit Percent"
+          },
+          "balance_terms": {
+            "$ref": "#/components/schemas/BalanceTerms"
+          },
+          "lead_time_days": {
+            "type": "integer",
+            "maximum": 365,
+            "minimum": 1,
+            "title": "Lead Time Days"
+          },
+          "valid_until": {
+            "type": "string",
+            "format": "date",
+            "title": "Valid Until"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "unit_price",
+          "incoterm",
+          "deposit_percent",
+          "balance_terms",
+          "lead_time_days",
+          "valid_until"
+        ],
+        "title": "QuoteIn",
+        "description": "Seller báo giá: đơn giá, Incoterm, đặt cọc %, điều khoản phần còn lại, thời gian giao và\nhiệu lực. quantity / unit bỏ trống thì lấy theo RFQ."
+      },
+      "QuoteOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "rfq_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Rfq Id"
+          },
+          "unit_price": {
+            "type": "string",
+            "title": "Unit Price"
+          },
+          "currency": {
+            "type": "string",
+            "title": "Currency"
+          },
+          "quantity": {
+            "type": "string",
+            "title": "Quantity"
+          },
+          "unit": {
+            "type": "string",
+            "title": "Unit"
+          },
+          "total_amount": {
+            "type": "string",
+            "title": "Total Amount"
+          },
+          "deposit_percent": {
+            "type": "integer",
+            "title": "Deposit Percent"
+          },
+          "deposit_amount": {
+            "type": "string",
+            "title": "Deposit Amount"
+          },
+          "balance_terms": {
+            "$ref": "#/components/schemas/BalanceTerms"
+          },
+          "incoterm": {
+            "$ref": "#/components/schemas/Incoterm"
+          },
+          "named_place": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Named Place"
+          },
+          "lead_time_days": {
+            "type": "integer",
+            "title": "Lead Time Days"
+          },
+          "valid_until": {
+            "type": "string",
+            "format": "date",
+            "title": "Valid Until"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "decision_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decision Reason"
+          },
+          "decided_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decided At"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "rfq_id",
+          "unit_price",
+          "currency",
+          "quantity",
+          "unit",
+          "total_amount",
+          "deposit_percent",
+          "deposit_amount",
+          "balance_terms",
+          "incoterm",
+          "named_place",
+          "lead_time_days",
+          "valid_until",
+          "notes",
+          "status",
+          "decision_reason",
+          "decided_at",
+          "created_at"
+        ],
+        "title": "QuoteOut"
       },
       "RegisterIn": {
         "properties": {

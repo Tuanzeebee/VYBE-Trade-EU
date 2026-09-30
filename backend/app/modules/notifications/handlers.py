@@ -13,7 +13,13 @@ from app.core.events import subscribe
 from app.modules.auth import service as auth
 from app.modules.companies import product_service
 from app.modules.companies import service as companies
-from app.modules.messaging.events import MessageSent, RfqCreated, RfqStatusChanged
+from app.modules.messaging.events import (
+    MessageSent,
+    QuoteDecided,
+    QuoteSent,
+    RfqCreated,
+    RfqStatusChanged,
+)
 from app.modules.notifications import center
 from app.modules.notifications.models import NotificationType
 from app.modules.verification.events import VerificationStatusChanged
@@ -162,6 +168,36 @@ async def on_rfq_status_changed(event: RfqStatusChanged) -> None:
     )
 
 
+async def on_quote_sent(event: QuoteSent) -> None:
+    """Buyer thấy có báo giá mới cho RFQ của mình (chỉ trong ứng dụng)."""
+    await _record_in_app(
+        NotificationType.rfq,
+        event.buyer_company_id,
+        {
+            "event": "quote_sent",
+            "rfq_id": str(event.rfq_id),
+            "quote_id": str(event.quote_id),
+            "exporter_name": event.exporter_name,
+            "product_name": event.product_name,
+        },
+    )
+
+
+async def on_quote_decided(event: QuoteDecided) -> None:
+    """Seller thấy buyer chấp nhận hoặc từ chối báo giá (chỉ trong ứng dụng)."""
+    await _record_in_app(
+        NotificationType.rfq,
+        event.exporter_company_id,
+        {
+            "event": f"quote_{event.decision}",
+            "rfq_id": str(event.rfq_id),
+            "quote_id": str(event.quote_id),
+            "buyer_name": event.buyer_name,
+            "product_name": event.product_name,
+        },
+    )
+
+
 async def on_message_sent(event: MessageSent) -> None:
     """Bên nhận thấy tin mới trong ứng dụng và nhận email (không kèm nội dung tin)."""
     await _record_in_app(
@@ -184,3 +220,5 @@ def register() -> None:
     subscribe(RfqCreated, on_rfq_created)
     subscribe(RfqStatusChanged, on_rfq_status_changed)
     subscribe(MessageSent, on_message_sent)
+    subscribe(QuoteSent, on_quote_sent)
+    subscribe(QuoteDecided, on_quote_decided)

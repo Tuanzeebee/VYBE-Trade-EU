@@ -36,3 +36,26 @@ class MessageSent(Event):
     sender_company_id: uuid.UUID
     recipient_company_id: uuid.UUID
     sender_name: str
+
+
+@dataclass(frozen=True)
+class QuoteSent(Event):
+    """Seller gửi báo giá (U8): buyer thấy thông báo trong ứng dụng."""
+
+    rfq_id: uuid.UUID
+    quote_id: uuid.UUID
+    buyer_company_id: uuid.UUID
+    exporter_name: str
+    product_name: str
+
+
+@dataclass(frozen=True)
+class QuoteDecided(Event):
+    """Buyer chấp nhận / từ chối báo giá (U8): seller thấy thông báo trong ứng dụng."""
+
+    rfq_id: uuid.UUID
+    quote_id: uuid.UUID
+    exporter_company_id: uuid.UUID
+    buyer_name: str
+    product_name: str
+    decision: str  # accepted | declined

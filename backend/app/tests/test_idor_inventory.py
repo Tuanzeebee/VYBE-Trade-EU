@@ -49,6 +49,19 @@ COVERED = {
     ): "messaging: test_only_recipient_exporter_changes_status",
     ("/api/me/rfqs/{rfq_id}", "get"): "messaging: test_lists_are_scoped_to_the_callers_company",
     (
+        "/api/exporter/rfqs/{rfq_id}/quotes",
+        "post",
+    ): "messaging: test_outsiders_and_wrong_side_get_404",
+    ("/api/me/rfqs/{rfq_id}/quotes", "get"): "messaging: test_outsiders_and_wrong_side_get_404",
+    (
+        "/api/buyer/quotes/{quote_id}/decision",
+        "post",
+    ): "messaging: test_outsiders_and_wrong_side_get_404",
+    (
+        "/api/exporter/quotes/{quote_id}/withdraw",
+        "post",
+    ): "messaging: test_outsiders_and_wrong_side_get_404",
+    (
         "/api/me/conversations/{conversation_id}/messages",
         "get",
     ): "messaging: test_non_participant_gets_404",

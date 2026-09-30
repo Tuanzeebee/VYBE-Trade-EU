@@ -2,11 +2,12 @@ import datetime as dt
 import re
 import uuid
 from decimal import Decimal
-from typing import Annotated, Any
+from typing import Annotated, Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints, field_validator
 
 from app.modules.messaging.models import Incoterm, RfqStatus
+from app.modules.messaging.quote_logic import BalanceTerms
 
 _AMOUNT = re.compile(r"[0-9]{1,12}(\.[0-9]{1,2})?")
 _MAX = Decimal(10) ** 12
@@ -101,3 +102,72 @@ class RfqSummary(BaseModel):
     total: int
     created_since: int  # số RFQ tạo từ mốc `since`
     recent: list[RfqOut]
+
+
+# ── Báo giá RFQ (U8) ─────────────────────────────────────────────────────────
+class QuoteIn(BaseModel):
+    """Seller báo giá: đơn giá, Incoterm, đặt cọc %, điều khoản phần còn lại, thời gian giao và
+    hiệu lực. quantity / unit bỏ trống thì lấy theo RFQ.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    unit_price: Decimal
+    currency: Annotated[str, Field(pattern=r"^[A-Z]{3}$")] = "EUR"
+    quantity: Decimal | None = None
+    unit: Annotated[str | None, StringConstraints(strip_whitespace=True, max_length=32)] = None
+    incoterm: Incoterm
+    named_place: Annotated[str | None, Field(max_length=100)] = None
+    deposit_percent: Annotated[int, Field(ge=0, le=100)]
+    balance_terms: BalanceTerms
+    lead_time_days: Annotated[int, Field(ge=1, le=365)]
+    valid_until: dt.date
+    notes: Annotated[str | None, Field(max_length=2000)] = None
+
+    @field_validator("unit_price", mode="before")
+    @classmethod
+    def _price(cls, value: Any) -> Decimal:
+        return _amount(value)
+
+    @field_validator("quantity", mode="before")
+    @classmethod
+    def _quantity(cls, value: Any) -> Decimal | None:
+        return None if value is None else _amount(value)
+
+    @field_validator("named_place", "notes", "unit")
+    @classmethod
+    def _strip(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
+        value = value.strip()
+        return value or None
+
+
+class QuoteDecisionIn(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    decision: Literal["accept", "decline"]
+    reason: Annotated[str | None, Field(max_length=2000)] = None
+
+
+class QuoteOut(BaseModel):
+    id: uuid.UUID
+    rfq_id: uuid.UUID
+    unit_price: str
+    currency: str
+    quantity: str
+    unit: str
+    total_amount: str
+    deposit_percent: int
+    deposit_amount: str
+    balance_terms: BalanceTerms
+    incoterm: Incoterm
+    named_place: str | None
+    lead_time_days: int
+    valid_until: dt.date
+    notes: str | None
+    # sent | accepted | declined | withdrawn | superseded | expired (sent quá hạn hiệu lực)
+    status: str
+    decision_reason: str | None
+    decided_at: dt.datetime | None
+    created_at: dt.datetime

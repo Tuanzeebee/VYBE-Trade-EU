@@ -8,7 +8,7 @@ from app.core.db import get_session
 from app.core.translation import TranslationService, get_translation_service
 from app.modules.auth.schemas import CurrentUser
 from app.modules.auth.service import require_role
-from app.modules.messaging import conversation_service, service
+from app.modules.messaging import conversation_service, quote_service, service
 from app.modules.messaging.conversation_schemas import (
     ConversationOut,
     DirectConversationIn,
@@ -16,7 +16,15 @@ from app.modules.messaging.conversation_schemas import (
     MessageOut,
 )
 from app.modules.messaging.models import RfqStatus
-from app.modules.messaging.schemas import RfqIn, RfqOut, RfqQuotaOut, RfqStatusIn
+from app.modules.messaging.schemas import (
+    QuoteDecisionIn,
+    QuoteIn,
+    QuoteOut,
+    RfqIn,
+    RfqOut,
+    RfqQuotaOut,
+    RfqStatusIn,
+)
 
 router = APIRouter(tags=["messaging"])
 DB = Annotated[AsyncSession, Depends(get_session)]
@@ -56,6 +64,29 @@ async def set_rfq_status(
     rfq_id: uuid.UUID, data: RfqStatusIn, user: Exporter, session: DB
 ) -> RfqOut:
     return await service.set_status(session, user, rfq_id, data.status)
+
+
+# ── Báo giá RFQ (U8) ─────────────────────────────────────────────────────────
+@router.post("/api/exporter/rfqs/{rfq_id}/quotes", status_code=status.HTTP_201_CREATED)
+async def create_quote(rfq_id: uuid.UUID, data: QuoteIn, user: Exporter, session: DB) -> QuoteOut:
+    return await quote_service.create_quote(session, user, rfq_id, data)
+
+
+@router.get("/api/me/rfqs/{rfq_id}/quotes")
+async def list_quotes(rfq_id: uuid.UUID, user: Member, session: DB) -> list[QuoteOut]:
+    return await quote_service.list_quotes(session, user, rfq_id)
+
+
+@router.post("/api/buyer/quotes/{quote_id}/decision")
+async def decide_quote(
+    quote_id: uuid.UUID, data: QuoteDecisionIn, user: Buyer, session: DB
+) -> QuoteOut:
+    return await quote_service.decide_quote(session, user, quote_id, data)
+
+
+@router.post("/api/exporter/quotes/{quote_id}/withdraw")
+async def withdraw_quote(quote_id: uuid.UUID, user: Exporter, session: DB) -> QuoteOut:
+    return await quote_service.withdraw_quote(session, user, quote_id)
 
 
 Translator = Annotated[TranslationService, Depends(get_translation_service)]

@@ -12543,5 +12543,200 @@
     "Please sign in to send messages.",
     "Veuillez vous connecter pour écrire.",
     "メッセージを送るにはログインしてください。"
+  ],
+  "Gửi báo giá": [
+    "Send quote",
+    "Envoyer le devis",
+    "見積を送信"
+  ],
+  "Địa điểm giao (không bắt buộc)": [
+    "Named place (optional)",
+    "Lieu convenu (facultatif)",
+    "指定地（任意）"
+  ],
+  "Ví dụ: Cát Lái, TP.HCM": [
+    "e.g. Cat Lai, Ho Chi Minh City",
+    "ex. Cat Lai, Hô-Chi-Minh-Ville",
+    "例: カットライ（ホーチミン市）"
+  ],
+  "Đặt cọc": [
+    "Deposit",
+    "Acompte",
+    "前払金"
+  ],
+  "Phần còn lại": [
+    "Balance",
+    "Solde",
+    "残金"
+  ],
+  "Thời gian giao hàng (ngày)": [
+    "Lead time (days)",
+    "Délai de livraison (jours)",
+    "納期（日）"
+  ],
+  "Báo giá có hiệu lực đến": [
+    "Quote valid until",
+    "Devis valable jusqu'au",
+    "見積有効期限"
+  ],
+  "Không tải được báo giá. Vui lòng thử lại.": [
+    "Could not load quotes. Please try again.",
+    "Impossible de charger les devis. Réessayez.",
+    "見積を読み込めませんでした。もう一度お試しください。"
+  ],
+  "Báo giá": [
+    "Quotes",
+    "Devis",
+    "見積"
+  ],
+  "Giao hàng sau": [
+    "Delivery in",
+    "Livraison sous",
+    "納期"
+  ],
+  "Hai bên hoàn tất hợp đồng và thanh toán trực tiếp với nhau; VYBE Trade chưa xử lý thanh toán.": [
+    "Both parties finalise the contract and payment directly; VYBE Trade does not process payments yet.",
+    "Les deux parties finalisent le contrat et le paiement directement ; VYBE Trade ne traite pas encore les paiements.",
+    "契約と支払いは両者間で直接行います。VYBE Tradeはまだ決済を扱っていません。"
+  ],
+  "Lý do từ chối (không bắt buộc)": [
+    "Reason for declining (optional)",
+    "Motif du refus (facultatif)",
+    "辞退理由（任意）"
+  ],
+  "Chấp nhận báo giá": [
+    "Accept quote",
+    "Accepter le devis",
+    "見積を承諾"
+  ],
+  "Rút báo giá": [
+    "Withdraw quote",
+    "Retirer le devis",
+    "見積を取り下げ"
+  ],
+  "Nhà cung cấp chưa gửi báo giá.": [
+    "The supplier has not sent a quote yet.",
+    "Le fournisseur n'a pas encore envoyé de devis.",
+    "サプライヤーはまだ見積を送っていません。"
+  ],
+  "Bạn chưa gửi báo giá cho yêu cầu này.": [
+    "You have not quoted this request yet.",
+    "Vous n'avez pas encore chiffré cette demande.",
+    "このリクエストにはまだ見積を送っていません。"
+  ],
+  "Gửi báo giá mới (thay báo giá hiện tại)": [
+    "Send a new quote (replaces the current one)",
+    "Envoyer un nouveau devis (remplace l'actuel)",
+    "新しい見積を送信（現在の見積を置き換え）"
+  ],
+  "Tạo báo giá": [
+    "Create quote",
+    "Créer un devis",
+    "見積を作成"
+  ],
+  "Đơn giá (/{0})": [
+    "Unit price (/{0})",
+    "Prix unitaire (/{0})",
+    "単価（/{0}）"
+  ],
+  "{0} ngày": [
+    "{0} days",
+    "{0} jours",
+    "{0}日"
+  ],
+  "Đang chờ buyer": [
+    "Awaiting buyer",
+    "En attente de l'acheteur",
+    "バイヤーの回答待ち"
+  ],
+  "Đã chấp nhận": [
+    "Accepted",
+    "Accepté",
+    "承諾済み"
+  ],
+  "Đã rút": [
+    "Withdrawn",
+    "Retiré",
+    "取り下げ済み"
+  ],
+  "Đã thay bằng báo giá mới": [
+    "Replaced by a newer quote",
+    "Remplacé par un devis plus récent",
+    "新しい見積に置き換え済み"
+  ],
+  "Hết hiệu lực": [
+    "Expired",
+    "Expiré",
+    "期限切れ"
+  ],
+  "Chuyển khoản (T/T) phần còn lại trước khi giao hàng": [
+    "Balance by bank transfer (T/T) before shipment",
+    "Solde par virement (T/T) avant expédition",
+    "残金は出荷前に送金（T/T）"
+  ],
+  "Chuyển khoản (T/T) khi nhận bản sao vận đơn (B/L)": [
+    "Bank transfer (T/T) against copy of bill of lading (B/L)",
+    "Virement (T/T) contre copie du connaissement (B/L)",
+    "船荷証券（B/L）写しと引換えに送金（T/T）"
+  ],
+  "Thư tín dụng trả ngay (L/C at sight)": [
+    "Letter of credit at sight (L/C at sight)",
+    "Lettre de crédit à vue (L/C at sight)",
+    "一覧払信用状（L/C at sight）"
+  ],
+  "Không còn phần phải trả (đã đặt cọc 100%)": [
+    "Nothing left to pay (100% deposit)",
+    "Rien à payer (acompte de 100 %)",
+    "残金なし（100%前払い）"
+  ],
+  "Điều khoản chưa hợp lệ: đặt cọc 100% thì không còn phần phải trả, và ngày hiệu lực phải trong 180 ngày tới.": [
+    "Invalid terms: a 100% deposit leaves no balance, and the validity date must be within the next 180 days.",
+    "Conditions invalides : un acompte de 100 % ne laisse aucun solde, et la date de validité doit être dans les 180 prochains jours.",
+    "条件が不正です。100%前払いの場合は残金なし、有効期限は180日以内にしてください。"
+  ],
+  "Yêu cầu báo giá đã đóng.": [
+    "This quote request is closed.",
+    "Cette demande de devis est clôturée.",
+    "この見積依頼は終了しています。"
+  ],
+  "Buyer đã chấp nhận một báo giá cho yêu cầu này.": [
+    "The buyer has already accepted a quote for this request.",
+    "L'acheteur a déjà accepté un devis pour cette demande.",
+    "バイヤーはこの依頼の見積を既に承諾しています。"
+  ],
+  "Báo giá đã hết hiệu lực. Hãy đề nghị nhà cung cấp gửi báo giá mới.": [
+    "This quote has expired. Ask the supplier for a new one.",
+    "Ce devis a expiré. Demandez-en un nouveau au fournisseur.",
+    "この見積は期限切れです。サプライヤーに新しい見積を依頼してください。"
+  ],
+  "Đơn giá phải là số dương, tối đa 2 chữ số thập phân.": [
+    "Unit price must be a positive number with at most 2 decimals.",
+    "Le prix unitaire doit être un nombre positif avec 2 décimales au plus.",
+    "単価は小数点以下2桁までの正の数にしてください。"
+  ],
+  "Thời gian giao hàng phải từ 1 đến 365 ngày.": [
+    "Lead time must be between 1 and 365 days.",
+    "Le délai doit être compris entre 1 et 365 jours.",
+    "納期は1〜365日にしてください。"
+  ],
+  "Bạn nhận được báo giá mới cho yêu cầu báo giá.": [
+    "You received a new quote for your request.",
+    "Vous avez reçu un nouveau devis pour votre demande.",
+    "見積依頼に新しい見積が届きました。"
+  ],
+  "Buyer đã chấp nhận báo giá của bạn.": [
+    "The buyer accepted your quote.",
+    "L'acheteur a accepté votre devis.",
+    "バイヤーが見積を承諾しました。"
+  ],
+  "Buyer đã từ chối báo giá của bạn.": [
+    "The buyer declined your quote.",
+    "L'acheteur a refusé votre devis.",
+    "バイヤーが見積を辞退しました。"
+  ],
+  "Nhà cung cấp đã cập nhật yêu cầu báo giá của bạn.": [
+    "The supplier updated your quote request.",
+    "Le fournisseur a mis à jour votre demande de devis.",
+    "サプライヤーが見積依頼を更新しました。"
   ]
 }

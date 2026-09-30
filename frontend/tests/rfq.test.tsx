@@ -67,6 +67,7 @@ function serve(world: World) {
       if (path === '/api/buyer/rfqs') return world.create ? world.create() : json(201, rfq());
       if (path === '/api/buyer/rfq-quota') return world.quota ? json(200, world.quota) : json(404, {});
       if (path === '/api/me/rfqs') return world.rfqs === null ? json(500, {}) : json(200, world.rfqs ?? []);
+      if (req.method === 'GET' && path.endsWith('/quotes')) return json(200, []);
       if (req.method === 'GET' && path.startsWith('/api/me/rfqs/')) return json(200, world.opened ?? rfq({ status: 'viewed' }));
       if (req.method === 'PATCH') return world.patched ? json(200, world.patched) : json(409, {});
       return json(404, {});
