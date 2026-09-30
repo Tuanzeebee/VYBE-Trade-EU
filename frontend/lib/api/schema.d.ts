@@ -1647,6 +1647,92 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/exporter/market-reports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Market Reports */
+        get: operations["list_market_reports_api_exporter_market_reports_get"];
+        put?: never;
+        /** Create Market Report */
+        post: operations["create_market_report_api_exporter_market_reports_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/exporter/market-reports/{report_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Market Report */
+        get: operations["get_market_report_api_exporter_market_reports__report_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/exporter/consulting-leads": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create Consulting Lead */
+        post: operations["create_consulting_lead_api_exporter_consulting_leads_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/consulting-leads": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Consulting Leads */
+        get: operations["list_consulting_leads_api_admin_consulting_leads_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/consulting-leads/{lead_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update Consulting Lead */
+        patch: operations["update_consulting_lead_api_admin_consulting_leads__lead_id__patch"];
+        trace?: never;
+    };
     "/api/exporter/evidence-types": {
         parameters: {
             query?: never;
@@ -2104,6 +2190,45 @@ export interface components {
             contact_email?: string | null;
             /** Is Hidden */
             is_hidden?: boolean | null;
+        };
+        /** AdminConsultingLeadOut */
+        AdminConsultingLeadOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Company Id
+             * Format: uuid
+             */
+            company_id: string;
+            /** Report Id */
+            report_id: string | null;
+            /** Contact Name */
+            contact_name: string;
+            /** Contact Email */
+            contact_email: string;
+            /** Phone */
+            phone: string | null;
+            /** Message */
+            message: string | null;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "new" | "contacted" | "closed";
+            /** Handled At */
+            handled_at: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Company Name */
+            company_name: string;
+            /** Report Query */
+            report_query?: string | null;
         };
         /** AdminProductOut */
         AdminProductOut: {
@@ -2694,6 +2819,65 @@ export interface components {
             data: components["schemas"]["CompletenessData"] | null;
             /** Empty Hint Key */
             empty_hint_key?: string | null;
+        };
+        /** ConsultingLeadIn */
+        ConsultingLeadIn: {
+            /** Report Id */
+            report_id?: string | null;
+            /** Contact Name */
+            contact_name: string;
+            /**
+             * Contact Email
+             * Format: email
+             */
+            contact_email: string;
+            /** Phone */
+            phone?: string | null;
+            /** Message */
+            message?: string | null;
+        };
+        /** ConsultingLeadOut */
+        ConsultingLeadOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Company Id
+             * Format: uuid
+             */
+            company_id: string;
+            /** Report Id */
+            report_id: string | null;
+            /** Contact Name */
+            contact_name: string;
+            /** Contact Email */
+            contact_email: string;
+            /** Phone */
+            phone: string | null;
+            /** Message */
+            message: string | null;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "new" | "contacted" | "closed";
+            /** Handled At */
+            handled_at: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
+        /** ConsultingLeadPatch */
+        ConsultingLeadPatch: {
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "new" | "contacted" | "closed";
         };
         /** ConversationOut */
         ConversationOut: {
@@ -4178,6 +4362,138 @@ export interface components {
              * @constant
              */
             accept_terms: true;
+        };
+        /**
+         * ReportIn
+         * @description Chọn sản phẩm của công ty (product_id) hoặc nhập tên/mã HS. Ngân sách là tuỳ chọn, dùng cho
+         *     phần "OEM hay thương hiệu riêng".
+         */
+        ReportIn: {
+            /** Product Id */
+            product_id?: string | null;
+            /**
+             * Q
+             * @default
+             */
+            q?: string;
+            /** Hs */
+            hs?: string | null;
+            /**
+             * Language
+             * @default vi
+             * @enum {string}
+             */
+            language?: "vi" | "en";
+            /** Marketing Budget */
+            marketing_budget?: number | string | null;
+            /** Expected Revenue */
+            expected_revenue?: number | string | null;
+            /** Brand Model */
+            brand_model?: ("oem" | "own_brand" | "both") | null;
+        };
+        /** ReportListItemOut */
+        ReportListItemOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Query */
+            query: string;
+            /** Language */
+            language: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "queued" | "running" | "ready" | "failed";
+            /** Product Id */
+            product_id: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Finished At */
+            finished_at: string | null;
+        };
+        /**
+         * ReportOut
+         * @description full = công ty có quyền xem bản đầy đủ. Bản tóm tắt: chỉ phần summary/recommendations có
+         *     lời văn, bảng đối thủ và file PDF bị khoá.
+         */
+        ReportOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Query */
+            query: string;
+            /** Language */
+            language: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "queued" | "running" | "ready" | "failed";
+            /** Product Id */
+            product_id: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Finished At */
+            finished_at: string | null;
+            /** Full */
+            full: boolean;
+            /** Product Name */
+            product_name?: string | null;
+            /** Year */
+            year?: number | null;
+            /** Source */
+            source?: string | null;
+            /** Narrative Source */
+            narrative_source?: ("model" | "template") | null;
+            /** Tariff Data Status */
+            tariff_data_status?: ("reviewed" | "demo_unreviewed") | null;
+            /** Sections */
+            sections?: components["schemas"]["ReportSectionOut"][];
+            /** Top Markets */
+            top_markets?: components["schemas"]["ReportTableRowOut"][];
+            /** Potential Markets */
+            potential_markets?: components["schemas"]["ReportTableRowOut"][];
+            /** Competitors */
+            competitors?: components["schemas"]["ReportTableRowOut"][];
+            /** Pdf Url */
+            pdf_url?: string | null;
+            /** Error */
+            error?: string | null;
+        };
+        /** ReportSectionOut */
+        ReportSectionOut: {
+            /** Key */
+            key: string;
+            /** Title */
+            title: string;
+            /** Text */
+            text: string;
+            /** Locked */
+            locked: boolean;
+        };
+        /** ReportTableRowOut */
+        ReportTableRowOut: {
+            /** Country */
+            country: string;
+            /** Value */
+            value: string;
+            /** Share */
+            share: string | null;
+            /** Growth */
+            growth?: string | null;
+            /** Unit Price */
+            unit_price?: string | null;
         };
         /** ReturnVisitStats */
         ReturnVisitStats: {
@@ -9575,6 +9891,210 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PriceReferenceOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_market_reports_api_exporter_market_reports_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReportListItemOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_market_report_api_exporter_market_reports_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReportIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReportOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_market_report_api_exporter_market_reports__report_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                report_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReportOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_consulting_lead_api_exporter_consulting_leads_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ConsultingLeadIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConsultingLeadOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_consulting_leads_api_admin_consulting_leads_get: {
+        parameters: {
+            query?: {
+                status?: ("new" | "contacted" | "closed") | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminConsultingLeadOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_consulting_lead_api_admin_consulting_leads__lead_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                lead_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ConsultingLeadPatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConsultingLeadOut"];
                 };
             };
             /** @description Validation Error */

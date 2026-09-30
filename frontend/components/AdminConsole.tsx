@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import AdminAi from './AdminAi';
 import AdminAuditLog from './AdminAuditLog';
 import AdminComplianceData from './AdminComplianceData';
+import AdminConsultingLeads from './AdminConsultingLeads';
 import AdminMarkets from './AdminMarkets';
 import AdminModeration from './AdminModeration';
 import AdminOverview from './AdminOverview';
@@ -17,6 +18,7 @@ const TABS = [
   { key: 'moderation', label: 'Hồ sơ & sản phẩm' },
   { key: 'data', label: 'Dữ liệu tuân thủ' },
   { key: 'markets', label: 'Thị trường' },
+  { key: 'leads', label: 'Yêu cầu tư vấn' },
   { key: 'ai', label: 'Trợ lý AI' },
   { key: 'audit', label: 'Nhật ký' },
 ] as const;
@@ -27,6 +29,7 @@ const PANELS = {
   moderation: AdminModeration,
   data: AdminComplianceData,
   markets: AdminMarkets,
+  leads: AdminConsultingLeads,
   ai: AdminAi,
   audit: AdminAuditLog,
 };

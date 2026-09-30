@@ -21,7 +21,7 @@ import { submitRequestIfNeeded } from '../../lib/verificationApi';
 import { saveSourcingNeeds, type NeedsDraft } from '../../lib/buyerNeedsApi';
 import { hrefFor, roleFromType } from '../../lib/legacyNav';
 
-const WORKSPACE_TABS: WorkspaceTabId[] = ['verification', 'profile', 'overview', 'products', 'rfq', 'messages', 'notifications', 'licenses'];
+const WORKSPACE_TABS: WorkspaceTabId[] = ['verification', 'profile', 'overview', 'products', 'rfq', 'messages', 'notifications', 'licenses', 'report'];
 
 function useGoHome() {
   const router = useRouter();

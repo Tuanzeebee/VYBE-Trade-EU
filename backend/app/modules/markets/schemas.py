@@ -3,7 +3,7 @@ import uuid
 from decimal import Decimal
 from typing import Annotated, Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator, model_validator
 
 HsCode = Annotated[str, Field(pattern=r"^[0-9]{2,8}$")]
 
@@ -117,3 +117,103 @@ class PriceReferenceOut(BaseModel):
     vietnam: PricePointOut | None
     extra_eu_average: PricePointOut | None
     competitors: list[PricePointOut] = Field(default_factory=list)
+
+
+# ── Báo cáo go-to-market (U18) ───────────────────────────────────────────────
+Money = Annotated[Decimal, Field(ge=0, le=Decimal("1e12"), max_digits=15, decimal_places=2)]
+
+
+class ReportIn(BaseModel):
+    """Chọn sản phẩm của công ty (product_id) hoặc nhập tên/mã HS. Ngân sách là tuỳ chọn, dùng cho
+    phần "OEM hay thương hiệu riêng"."""
+
+    product_id: uuid.UUID | None = None
+    q: Annotated[str, Field(max_length=100)] = ""
+    hs: Annotated[str | None, Field(pattern=r"^[0-9]{6,8}$")] = None
+    language: Literal["vi", "en"] = "vi"
+    marketing_budget: Money | None = None
+    expected_revenue: Money | None = None
+    brand_model: Literal["oem", "own_brand", "both"] | None = None
+
+    @model_validator(mode="after")
+    def _has_subject(self) -> "ReportIn":
+        if self.product_id is None and not self.q.strip() and self.hs is None:
+            raise ValueError("Choose a product or enter a product name / HS code")
+        return self
+
+
+class ReportSectionOut(BaseModel):
+    key: str
+    title: str
+    text: str  # rỗng khi locked
+    locked: bool
+
+
+class ReportTableRowOut(BaseModel):
+    country: str
+    value: Decimal
+    share: Decimal | None
+    growth: Decimal | None = None
+    unit_price: Decimal | None = None
+
+
+class ReportListItemOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: uuid.UUID
+    query: str
+    language: str
+    status: Literal["queued", "running", "ready", "failed"]
+    product_id: uuid.UUID | None
+    created_at: dt.datetime
+    finished_at: dt.datetime | None
+
+
+class ReportOut(ReportListItemOut):
+    """full = công ty có quyền xem bản đầy đủ. Bản tóm tắt: chỉ phần summary/recommendations có
+    lời văn, bảng đối thủ và file PDF bị khoá."""
+
+    full: bool
+    product_name: str | None = None
+    year: int | None = None
+    source: str | None = None
+    narrative_source: Literal["model", "template"] | None = None
+    tariff_data_status: Literal["reviewed", "demo_unreviewed"] | None = None
+    sections: list[ReportSectionOut] = Field(default_factory=list)
+    top_markets: list[ReportTableRowOut] = Field(default_factory=list)
+    potential_markets: list[ReportTableRowOut] = Field(default_factory=list)
+    competitors: list[ReportTableRowOut] = Field(default_factory=list)
+    pdf_url: str | None = None
+    error: str | None = None
+
+
+class ConsultingLeadIn(BaseModel):
+    report_id: uuid.UUID | None = None
+    contact_name: Annotated[str, Field(min_length=1, max_length=255)]
+    contact_email: EmailStr
+    phone: Annotated[str | None, Field(max_length=40)] = None
+    message: Annotated[str | None, Field(max_length=2000)] = None
+
+
+class ConsultingLeadOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: uuid.UUID
+    company_id: uuid.UUID
+    report_id: uuid.UUID | None
+    contact_name: str
+    contact_email: str
+    phone: str | None
+    message: str | None
+    status: Literal["new", "contacted", "closed"]
+    handled_at: dt.datetime | None
+    created_at: dt.datetime
+
+
+class AdminConsultingLeadOut(ConsultingLeadOut):
+    company_name: str
+    report_query: str | None = None
+
+
+class ConsultingLeadPatch(BaseModel):
+    status: Literal["new", "contacted", "closed"]

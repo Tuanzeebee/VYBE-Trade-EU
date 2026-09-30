@@ -13863,5 +13863,280 @@
     "For pricing reference only, not a floor price.",
     "À titre indicatif uniquement, pas un prix plancher.",
     "価格設定の参考のみで、最低価格ではありません。"
+  ],
+  "Yêu cầu tư vấn": [
+    "Consulting requests",
+    "Demandes de conseil",
+    "コンサルティング依頼"
+  ],
+  "Không tải được danh sách yêu cầu.": [
+    "Could not load the requests.",
+    "Impossible de charger les demandes.",
+    "依頼一覧を読み込めませんでした。"
+  ],
+  "Không có yêu cầu nào.": [
+    "No requests.",
+    "Aucune demande.",
+    "依頼はありません。"
+  ],
+  "Từ báo cáo": [
+    "From report",
+    "Depuis le rapport",
+    "レポートから"
+  ],
+  "Đã gửi yêu cầu. Mạng lưới VBA sẽ liên hệ với bạn qua email hoặc điện thoại.": [
+    "Request sent. The VBA network will contact you by email or phone.",
+    "Demande envoyée. Le réseau VBA vous contactera par e-mail ou téléphone.",
+    "依頼を送信しました。VBAネットワークからメールまたは電話でご連絡します。"
+  ],
+  "Cần người đồng hành khi vào thị trường này?": [
+    "Need a partner to enter this market?",
+    "Besoin d'un accompagnement pour entrer sur ce marché ?",
+    "この市場への参入に伴走者が必要ですか？"
+  ],
+  "Tư vấn triển khai qua mạng lưới VBA": [
+    "Implementation advice via the VBA network",
+    "Conseil de mise en œuvre via le réseau VBA",
+    "VBAネットワークによる展開コンサルティング"
+  ],
+  "Số điện thoại (không bắt buộc)": [
+    "Phone (optional)",
+    "Téléphone (facultatif)",
+    "電話番号（任意）"
+  ],
+  "Bạn cần hỗ trợ gì? (không bắt buộc)": [
+    "What do you need help with? (optional)",
+    "De quelle aide avez-vous besoin ? (facultatif)",
+    "どのような支援が必要ですか？（任意）"
+  ],
+  "Đang dựng báo cáo, thường mất dưới một phút…": [
+    "Building the report, usually under a minute…",
+    "Création du rapport, généralement moins d'une minute…",
+    "レポートを作成中です（通常1分以内）…"
+  ],
+  "Không dựng được báo cáo này. Vui lòng tạo lại hoặc thử sản phẩm khác.": [
+    "This report could not be built. Please create it again or try another product.",
+    "Impossible de créer ce rapport. Réessayez ou essayez un autre produit.",
+    "このレポートを作成できませんでした。再作成するか別の製品をお試しください。"
+  ],
+  "Báo cáo go-to-market": [
+    "Go-to-market report",
+    "Rapport go-to-market",
+    "市場参入レポート"
+  ],
+  "Tải PDF": [
+    "Download PDF",
+    "Télécharger le PDF",
+    "PDFをダウンロード"
+  ],
+  "Dữ liệu thuế minh hoạ, chưa được luật TM duyệt.": [
+    "Illustrative tariff data, not yet reviewed by trade lawyers.",
+    "Données tarifaires illustratives, non encore validées par les juristes.",
+    "例示用の関税データで、通商法務の確認前です。"
+  ],
+  "Phần này có trong bản đầy đủ.": [
+    "This section is in the full report.",
+    "Cette section figure dans le rapport complet.",
+    "このセクションは完全版に含まれます。"
+  ],
+  "Bạn đang xem bản tóm tắt miễn phí.": [
+    "You are viewing the free summary.",
+    "Vous consultez le résumé gratuit.",
+    "無料の要約を表示しています。"
+  ],
+  "Bản đầy đủ có phân tích đối thủ, định vị giá, thuế và hạn ngạch, OEM hay thương hiệu riêng, rủi ro, bước tiếp theo và file PDF.": [
+    "The full report adds competitor analysis, price positioning, tariffs and quotas, OEM vs own brand, risks, next steps and a PDF file.",
+    "Le rapport complet ajoute l'analyse des concurrents, le positionnement prix, droits et contingents, OEM ou marque propre, risques, prochaines étapes et un PDF.",
+    "完全版には競合分析、価格ポジション、関税・割当、OEMか自社ブランドか、リスク、次のステップ、PDFが含まれます。"
+  ],
+  "Xem gói báo cáo đầy đủ": [
+    "See the full report plan",
+    "Voir l'offre rapport complet",
+    "完全版レポートのプランを見る"
+  ],
+  "Báo cáo tham khảo, không phải tư vấn pháp lý hay cam kết kết quả.": [
+    "For reference only; not legal advice or a guarantee of results.",
+    "À titre indicatif ; ni conseil juridique ni garantie de résultat.",
+    "参考情報であり、法的助言や成果の保証ではありません。"
+  ],
+  "Thị trường EU nên ưu tiên, đối thủ, định vị giá, thuế và cảnh báo ngành, OEM hay thương hiệu riêng — tính từ thống kê hải quan EU (Eurostat) và hồ sơ công ty của bạn.": [
+    "Priority EU markets, competitors, price positioning, tariffs and sector alerts, OEM vs own brand — computed from EU customs statistics (Eurostat) and your company profile.",
+    "Marchés UE prioritaires, concurrents, positionnement prix, droits et alertes sectorielles, OEM ou marque propre — d'après les statistiques douanières de l'UE (Eurostat) et votre profil.",
+    "優先すべきEU市場、競合、価格ポジション、関税と業界警告、OEMか自社ブランドか — EU税関統計（Eurostat）と貴社プロフィールから算出。"
+  ],
+  "Tạo báo cáo": [
+    "Create report",
+    "Créer le rapport",
+    "レポートを作成"
+  ],
+  "Sản phẩm của bạn": [
+    "Your product",
+    "Votre produit",
+    "貴社の製品"
+  ],
+  "— Nhập tên sản phẩm bên cạnh —": [
+    "— Enter a product name alongside —",
+    "— Saisissez un nom de produit à côté —",
+    "— 横に製品名を入力 —"
+  ],
+  "Hoặc tên sản phẩm": [
+    "Or product name",
+    "Ou nom du produit",
+    "または製品名"
+  ],
+  "Ngân sách marketing dự kiến (EUR/năm, không bắt buộc)": [
+    "Planned marketing budget (EUR/year, optional)",
+    "Budget marketing prévu (EUR/an, facultatif)",
+    "予定マーケティング予算（EUR/年、任意）"
+  ],
+  "Doanh thu xuất khẩu dự kiến (EUR/năm, không bắt buộc)": [
+    "Expected export revenue (EUR/year, optional)",
+    "Chiffre d'affaires export prévu (EUR/an, facultatif)",
+    "予定輸出売上（EUR/年、任意）"
+  ],
+  "Theo sản phẩm / chưa rõ": [
+    "From product / not sure",
+    "Selon le produit / incertain",
+    "製品に従う／未定"
+  ],
+  "OEM (sản xuất cho nhãn khác)": [
+    "OEM (manufacturing for other brands)",
+    "OEM (fabrication pour d'autres marques)",
+    "OEM（他社ブランド向け製造）"
+  ],
+  "Thương hiệu riêng": [
+    "Own brand",
+    "Marque propre",
+    "自社ブランド"
+  ],
+  "Ngôn ngữ báo cáo": [
+    "Report language",
+    "Langue du rapport",
+    "レポートの言語"
+  ],
+  "Báo cáo đã tạo": [
+    "Your reports",
+    "Vos rapports",
+    "作成済みレポート"
+  ],
+  "Không tải được danh sách báo cáo.": [
+    "Could not load your reports.",
+    "Impossible de charger vos rapports.",
+    "レポート一覧を読み込めませんでした。"
+  ],
+  "Chưa có báo cáo nào.": [
+    "No reports yet.",
+    "Aucun rapport pour l'instant.",
+    "レポートはまだありません。"
+  ],
+  "Đang gửi…": [
+    "Sending…",
+    "Envoi…",
+    "送信中…"
+  ],
+  "Thị trường nên ưu tiên": [
+    "Priority markets",
+    "Marchés prioritaires",
+    "優先市場"
+  ],
+  "Đã liên hệ": [
+    "Contacted",
+    "Contacté",
+    "連絡済み"
+  ],
+  "Đã đóng": [
+    "Closed",
+    "Clôturé",
+    "完了"
+  ],
+  "Đã xong": [
+    "Ready",
+    "Prêt",
+    "完了"
+  ],
+  "Đang chờ xử lý": [
+    "Queued",
+    "En attente",
+    "処理待ち"
+  ],
+  "Đang dựng báo cáo": [
+    "Building report",
+    "Création en cours",
+    "作成中"
+  ],
+  "Không dựng được": [
+    "Failed",
+    "Échec",
+    "作成失敗"
+  ],
+  "Vui lòng nhập tên và email liên hệ.": [
+    "Please enter a contact name and email.",
+    "Veuillez saisir un nom et un e-mail de contact.",
+    "連絡先の氏名とメールを入力してください。"
+  ],
+  "Email hoặc số điện thoại chưa hợp lệ.": [
+    "Invalid email or phone number.",
+    "E-mail ou téléphone invalide.",
+    "メールまたは電話番号が無効です。"
+  ],
+  "Bạn đã gửi nhiều yêu cầu hôm nay; chúng tôi sẽ liên hệ sớm.": [
+    "You have sent several requests today; we will contact you soon.",
+    "Vous avez envoyé plusieurs demandes aujourd'hui ; nous vous contacterons bientôt.",
+    "本日は多数の依頼を受け付けました。まもなくご連絡します。"
+  ],
+  "Lời văn do AI viết, số liệu do hệ thống điền": [
+    "Text written by AI, figures filled in by the system",
+    "Texte rédigé par l'IA, chiffres renseignés par le système",
+    "文章はAI作成、数値はシステムが記入"
+  ],
+  "Lời văn theo mẫu, số liệu do hệ thống điền": [
+    "Template text, figures filled in by the system",
+    "Texte type, chiffres renseignés par le système",
+    "文章はテンプレート、数値はシステムが記入"
+  ],
+  "Đánh dấu đã liên hệ": [
+    "Mark as contacted",
+    "Marquer comme contacté",
+    "連絡済みにする"
+  ],
+  "Đóng yêu cầu": [
+    "Close request",
+    "Clôturer la demande",
+    "依頼を完了にする"
+  ],
+  "Không cập nhật được trạng thái. Vui lòng thử lại.": [
+    "Could not update the status. Please try again.",
+    "Impossible de mettre à jour le statut. Réessayez.",
+    "ステータスを更新できませんでした。もう一度お試しください。"
+  ],
+  "Đang gửi yêu cầu…": [
+    "Sending request…",
+    "Envoi de la demande…",
+    "依頼を送信中…"
+  ],
+  "Chọn một sản phẩm hoặc nhập tên sản phẩm.": [
+    "Choose a product or enter a product name.",
+    "Choisissez un produit ou saisissez un nom de produit.",
+    "製品を選ぶか製品名を入力してください。"
+  ],
+  "Số tiền chỉ gồm chữ số (EUR, không có phần lẻ).": [
+    "Amounts must be whole numbers (EUR, no decimals).",
+    "Les montants doivent être des nombres entiers (EUR, sans décimales).",
+    "金額は整数で入力してください（EUR、小数なし）。"
+  ],
+  "Chưa có thống kê thương mại cho sản phẩm này. Thử sản phẩm khác (cá tra, tôm, cà phê…).": [
+    "No trade statistics for this product yet. Try another product (pangasius, shrimp, coffee…).",
+    "Pas encore de statistiques pour ce produit. Essayez un autre produit (pangasius, crevettes, café…).",
+    "この製品の貿易統計はまだありません。別の製品（パンガシウス、エビ、コーヒー…）をお試しください。"
+  ],
+  "Bạn đã tạo đủ số báo cáo cho hôm nay. Vui lòng thử lại vào ngày mai.": [
+    "You have reached today's report limit. Please try again tomorrow.",
+    "Vous avez atteint la limite de rapports du jour. Réessayez demain.",
+    "本日のレポート作成上限に達しました。明日もう一度お試しください。"
+  ],
+  "Thông tin chưa hợp lệ. Hãy chọn sản phẩm và kiểm tra các ô số tiền.": [
+    "Invalid input. Choose a product and check the amount fields.",
+    "Saisie invalide. Choisissez un produit et vérifiez les montants.",
+    "入力が無効です。製品を選び金額欄を確認してください。"
   ]
 }

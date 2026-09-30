@@ -12,6 +12,10 @@ COVERED = {
         "get",
     ): "compliance: test_other_exporter_cannot_see_or_open_my_documents",
     (
+        "/api/exporter/market-reports/{report_id}",
+        "get",
+    ): "markets: test_auth_and_idor",
+    (
         "/api/exporter/evidences/{evidence_id}",
         "get",
     ): "verification: test_other_exporter_cannot_touch_my_evidence",

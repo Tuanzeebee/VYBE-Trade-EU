@@ -33,6 +33,7 @@ import {
   FileSignature,
   Bot,
   Globe,
+  FileText,
 } from 'lucide-react';
 import EvidenceManager from './EvidenceManager';
 import VerificationPanel from './VerificationPanel';
@@ -41,10 +42,11 @@ import RfqInbox from './RfqInbox';
 import NotificationsPanel from './NotificationsPanel';
 import Conversations from './Conversations';
 import ProfileViewers from './ProfileViewers';
+import MarketReportPanel from './MarketReportPanel';
 import { Link } from '../i18n/navigation';
 import ExporterDashboard from './ExporterDashboard';
 
-export type WorkspaceTabId = 'overview' | 'profile' | 'verification' | 'products' | 'rfq' | 'messages' | 'notifications' | 'licenses' | 'viewers';
+export type WorkspaceTabId = 'overview' | 'profile' | 'verification' | 'products' | 'rfq' | 'messages' | 'notifications' | 'licenses' | 'viewers' | 'report';
 
 interface SellerWorkspaceProps {
   account?: DemoUser;
@@ -116,6 +118,7 @@ export default function SellerWorkspace({
               { id: 'viewers', label: 'Ai đã xem hồ sơ', icon: Eye },
               { id: 'products', label: 'Sản phẩm cung cấp', icon: Package, badge: `${productsList.length}` },
               { id: 'rfq', label: 'Cơ hội kết nối B2B', icon: Handshake },
+              { id: 'report', label: 'Báo cáo go-to-market', icon: FileText },
               { id: 'messages', label: 'Tin nhắn', icon: MessageSquare },
               { id: 'notifications', label: 'Thông báo', icon: Bell }
             ];
@@ -266,6 +269,7 @@ export default function SellerWorkspace({
                 {tr(activeTab === 'messages' && 'Tin nhắn với buyer')}
                 {tr(activeTab === 'notifications' && 'Thông báo hệ thống')}
                 {tr(activeTab === 'viewers' && 'Ai đã xem hồ sơ của bạn')}
+                {tr(activeTab === 'report' && 'Báo cáo go-to-market')}
               </span>
             </div>
 
@@ -588,6 +592,8 @@ export default function SellerWorkspace({
           {activeTab === 'notifications' && <NotificationsPanel />}
 
           {activeTab === 'viewers' && <ProfileViewers />}
+
+          {activeTab === 'report' && <MarketReportPanel products={productsList} />}
 
         </main>
 
