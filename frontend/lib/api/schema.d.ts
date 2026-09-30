@@ -1558,6 +1558,58 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/trade-imports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Trade Imports */
+        get: operations["list_trade_imports_api_admin_trade_imports_get"];
+        put?: never;
+        /** Create Trade Import */
+        post: operations["create_trade_import_api_admin_trade_imports_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/trade-imports/priority-products": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Priority Products */
+        get: operations["priority_products_api_admin_trade_imports_priority_products_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/trade-imports/file": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Upload Trade File */
+        post: operations["upload_trade_file_api_admin_trade_imports_file_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/exporter/evidence-types": {
         parameters: {
             query?: never;
@@ -2244,6 +2296,11 @@ export interface components {
         };
         /** Body_tariff_lines_import_api_admin_tariff_lines_import_post */
         Body_tariff_lines_import_api_admin_tariff_lines_import_post: {
+            /** File */
+            file: string;
+        };
+        /** Body_upload_trade_file_api_admin_trade_imports_file_post */
+        Body_upload_trade_file_api_admin_trade_imports_file_post: {
             /** File */
             file: string;
         };
@@ -3354,6 +3411,19 @@ export interface components {
             min_quantity: string;
             /** Unit Price */
             unit_price: string;
+        };
+        /** PriorityProductOut */
+        PriorityProductOut: {
+            /** Hs Code */
+            hs_code: string;
+            /** Family */
+            family: string;
+            /** Name Vi */
+            name_vi: string;
+            /** Name En */
+            name_en: string;
+            /** Keywords */
+            keywords: string[];
         };
         /** ProductImageOut */
         ProductImageOut: {
@@ -5181,6 +5251,46 @@ export interface components {
             source_url?: string | null;
             /** Note */
             note?: string | null;
+        };
+        /** TradeImportBatchOut */
+        TradeImportBatchOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Source */
+            source: string;
+            /** Params */
+            params: {
+                [key: string]: unknown;
+            };
+            /** Status */
+            status: string;
+            /** Rows Imported */
+            rows_imported: number;
+            /** Error */
+            error: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Finished At */
+            finished_at: string | null;
+        };
+        /**
+         * TradeImportIn
+         * @description Nạp từ Eurostat Comext. Bỏ trống products = danh sách mã ưu tiên; năm mặc định 6 năm gần
+         *     nhất.
+         */
+        TradeImportIn: {
+            /** Products */
+            products?: string[];
+            /** Year From */
+            year_from?: number | null;
+            /** Year To */
+            year_to?: number | null;
         };
         /** UnreadCountOut */
         UnreadCountOut: {
@@ -9106,6 +9216,140 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["MessageOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_trade_imports_api_admin_trade_imports_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TradeImportBatchOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_trade_import_api_admin_trade_imports_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TradeImportIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TradeImportBatchOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    priority_products_api_admin_trade_imports_priority_products_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PriorityProductOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    upload_trade_file_api_admin_trade_imports_file_post: {
+        parameters: {
+            query?: {
+                source?: "eurostat_comext" | "curated";
+            };
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_upload_trade_file_api_admin_trade_imports_file_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TradeImportBatchOut"];
                 };
             };
             /** @description Validation Error */

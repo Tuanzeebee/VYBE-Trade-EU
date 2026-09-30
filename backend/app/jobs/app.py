@@ -21,5 +21,6 @@ app = App(
         "app.jobs.send_email",
         "app.jobs.generate_eur1",
         "app.jobs.translate_product",
+        "app.jobs.import_trade_stats",
     ],
 )

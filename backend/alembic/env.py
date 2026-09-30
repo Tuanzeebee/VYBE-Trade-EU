@@ -12,6 +12,7 @@ import app.modules.companies.models
 import app.modules.compliance.models
 import app.modules.copilot.models
 import app.modules.dashboard.models
+import app.modules.markets.models
 import app.modules.messaging.models
 import app.modules.notifications.models
 import app.modules.verification.models  # noqa: F401

@@ -47,6 +47,10 @@ class Settings(BaseSettings):
     translation_backend: str = "unavailable"
     deepl_api_key: str | None = None
     deepl_api_url: str = "https://api-free.deepl.com"
+    # U15: thống kê thương mại Eurostat Comext DS-045409 (SDMX 2.1, không khoá); chỉ job nền gọi.
+    eurostat_comext_url: str = (
+        "https://ec.europa.eu/eurostat/api/comext/dissemination/sdmx/2.1/data/DS-045409"
+    )
     # Origin của frontend được gọi API kèm cookie
     cors_origins: list[str] = ["http://localhost:3000"]
     # Dữ liệu tuân thủ minh hoạ (AGENTS.md §6.2 ngoại lệ DEMO): chỉ staging/dev được bật. Khi bật,

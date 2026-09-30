@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import AdminAi from './AdminAi';
 import AdminAuditLog from './AdminAuditLog';
 import AdminComplianceData from './AdminComplianceData';
+import AdminMarkets from './AdminMarkets';
 import AdminModeration from './AdminModeration';
 import AdminOverview from './AdminOverview';
 import AdminVerificationQueue from './AdminVerificationQueue';
@@ -15,6 +16,7 @@ const TABS = [
   { key: 'queue', label: 'Chờ duyệt' },
   { key: 'moderation', label: 'Hồ sơ & sản phẩm' },
   { key: 'data', label: 'Dữ liệu tuân thủ' },
+  { key: 'markets', label: 'Thị trường' },
   { key: 'ai', label: 'Trợ lý AI' },
   { key: 'audit', label: 'Nhật ký' },
 ] as const;
@@ -24,6 +26,7 @@ const PANELS = {
   queue: AdminVerificationQueue,
   moderation: AdminModeration,
   data: AdminComplianceData,
+  markets: AdminMarkets,
   ai: AdminAi,
   audit: AdminAuditLog,
 };

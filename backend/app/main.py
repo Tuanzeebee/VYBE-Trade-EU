@@ -28,6 +28,7 @@ from app.modules.copilot import service as copilot_service
 from app.modules.copilot.router import router as copilot_router
 from app.modules.dashboard.router import router as dashboard_router
 from app.modules.directory.router import router as directory_router
+from app.modules.markets.router import router as markets_router
 from app.modules.messaging.router import router as messaging_router
 from app.modules.notifications import center as notification_center
 from app.modules.notifications import handlers as notification_handlers
@@ -74,6 +75,7 @@ app.include_router(dashboard_router)
 app.include_router(directory_router)
 app.include_router(notifications_router)
 app.include_router(messaging_router)
+app.include_router(markets_router)
 app.include_router(verification_router)
 
 

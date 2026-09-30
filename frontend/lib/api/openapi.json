@@ -7018,6 +7018,242 @@
         }
       }
     },
+    "/api/admin/trade-imports": {
+      "get": {
+        "tags": [
+          "markets"
+        ],
+        "summary": "List Trade Imports",
+        "operationId": "list_trade_imports_api_admin_trade_imports_get",
+        "parameters": [
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TradeImportBatchOut"
+                  },
+                  "title": "Response List Trade Imports Api Admin Trade Imports Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "markets"
+        ],
+        "summary": "Create Trade Import",
+        "operationId": "create_trade_import_api_admin_trade_imports_post",
+        "parameters": [
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TradeImportIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TradeImportBatchOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/trade-imports/priority-products": {
+      "get": {
+        "tags": [
+          "markets"
+        ],
+        "summary": "Priority Products",
+        "operationId": "priority_products_api_admin_trade_imports_priority_products_get",
+        "parameters": [
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PriorityProductOut"
+                  },
+                  "title": "Response Priority Products Api Admin Trade Imports Priority Products Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/trade-imports/file": {
+      "post": {
+        "tags": [
+          "markets"
+        ],
+        "summary": "Upload Trade File",
+        "operationId": "upload_trade_file_api_admin_trade_imports_file_post",
+        "parameters": [
+          {
+            "name": "source",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "eurostat_comext",
+                "curated"
+              ],
+              "type": "string",
+              "default": "curated",
+              "title": "Source"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_trade_file_api_admin_trade_imports_file_post"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TradeImportBatchOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/exporter/evidence-types": {
       "get": {
         "tags": [
@@ -9614,6 +9850,20 @@
           "file"
         ],
         "title": "Body_tariff_lines_import_api_admin_tariff_lines_import_post"
+      },
+      "Body_upload_trade_file_api_admin_trade_imports_file_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "contentMediaType": "application/octet-stream",
+            "title": "File"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "title": "Body_upload_trade_file_api_admin_trade_imports_file_post"
       },
       "BuyerDashboard": {
         "properties": {
@@ -13679,6 +13929,42 @@
           "unit_price"
         ],
         "title": "PriceTierOut"
+      },
+      "PriorityProductOut": {
+        "properties": {
+          "hs_code": {
+            "type": "string",
+            "title": "Hs Code"
+          },
+          "family": {
+            "type": "string",
+            "title": "Family"
+          },
+          "name_vi": {
+            "type": "string",
+            "title": "Name Vi"
+          },
+          "name_en": {
+            "type": "string",
+            "title": "Name En"
+          },
+          "keywords": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Keywords"
+          }
+        },
+        "type": "object",
+        "required": [
+          "hs_code",
+          "family",
+          "name_vi",
+          "name_en",
+          "keywords"
+        ],
+        "title": "PriorityProductOut"
       },
       "ProductImageOut": {
         "properties": {
@@ -20577,6 +20863,115 @@
         },
         "type": "object",
         "title": "TradeAgreementPatch"
+      },
+      "TradeImportBatchOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "source": {
+            "type": "string",
+            "title": "Source"
+          },
+          "params": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Params"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "rows_imported": {
+            "type": "integer",
+            "title": "Rows Imported"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "finished_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Finished At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "source",
+          "params",
+          "status",
+          "rows_imported",
+          "error",
+          "created_at",
+          "finished_at"
+        ],
+        "title": "TradeImportBatchOut"
+      },
+      "TradeImportIn": {
+        "properties": {
+          "products": {
+            "items": {
+              "type": "string",
+              "pattern": "^[0-9]{2,8}$"
+            },
+            "type": "array",
+            "maxItems": 50,
+            "title": "Products"
+          },
+          "year_from": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 2100,
+                "minimum": 2000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Year From"
+          },
+          "year_to": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 2100,
+                "minimum": 2000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Year To"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "TradeImportIn",
+        "description": "Nạp từ Eurostat Comext. Bỏ trống products = danh sách mã ưu tiên; năm mặc định 6 năm gần\nnhất."
       },
       "UnreadCountOut": {
         "properties": {

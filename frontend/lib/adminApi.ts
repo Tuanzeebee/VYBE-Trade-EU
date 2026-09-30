@@ -315,3 +315,29 @@ export const reviewSectorAlert = (id: string) =>
   act(() => createApiClient().POST('/api/admin/sector-alerts/{alert_id}/review', { params: { path: { alert_id: id } } }), DEMO_REVIEW_ERRORS);
 export const deleteSectorAlert = (id: string) =>
   act(() => createApiClient().DELETE('/api/admin/sector-alerts/{alert_id}', { params: { path: { alert_id: id } } }), DELETE_ERRORS);
+
+// ── Thống kê thương mại (U15) ────────────────────────────────────────────────
+export type TradeImportBatch = components['schemas']['TradeImportBatchOut'];
+export type PriorityProduct = components['schemas']['PriorityProductOut'];
+export const listTradeImports = () => read(() => createApiClient().GET('/api/admin/trade-imports'));
+export const listPriorityProducts = () => read(() => createApiClient().GET('/api/admin/trade-imports/priority-products'));
+export const startTradeImport = (body: { products?: string[]; year_from?: number; year_to?: number }) =>
+  save(() => createApiClient().POST('/api/admin/trade-imports', { body }));
+
+const TRADE_FILE_ERRORS: Record<number, string> = {
+  413: 'File quá lớn (tối đa 2 MB).',
+  422: 'File không hợp lệ: cần CSV với các cột reporter, partner, product, year, flow, value_eur, quantity_kg.',
+};
+
+export async function uploadTradeFile(file: File, source: 'eurostat_comext' | 'curated'): Promise<TradeImportBatch> {
+  const form = new FormData();
+  form.append('file', file);
+  let response: Response;
+  try {
+    response = await fetch(new Request(apiUrl(`/api/admin/trade-imports/file?source=${source}`), { method: 'POST', body: form, credentials: 'include' }));
+  } catch {
+    throw new Error(NETWORK);
+  }
+  if (!response.ok) throw new Error(TRADE_FILE_ERRORS[response.status] ?? NETWORK);
+  return (await response.json()) as TradeImportBatch;
+}

@@ -13548,5 +13548,100 @@
     "Illustrative rows cannot be approved — create a real row with a legal source.",
     "Les lignes d'illustration ne peuvent pas être validées — créez une ligne réelle avec une source juridique.",
     "例示行は承認できません。法的出典のある実データ行を作成してください。"
+  ],
+  "Thống kê thương mại": [
+    "Trade statistics",
+    "Statistiques commerciales",
+    "貿易統計"
+  ],
+  "Nguồn: Eurostat Comext (DS-045409). Job nền nạp nhập khẩu của 27 nước EU từ thế giới, ngoài EU và Việt Nam, cùng cơ cấu đối tác của EU để tính thị phần đối thủ.": [
+    "Source: Eurostat Comext (DS-045409). A background job loads imports of the 27 EU countries from the world, from outside the EU and from Vietnam, plus the EU's partner breakdown to compute competitor shares.",
+    "Source : Eurostat Comext (DS-045409). Une tâche de fond charge les importations des 27 pays de l'UE depuis le monde, hors UE et le Vietnam, ainsi que la répartition des partenaires de l'UE pour calculer les parts des concurrents.",
+    "出典：Eurostat Comext（DS-045409）。バックグラウンドジョブがEU27か国の世界・EU域外・ベトナムからの輸入と、競合シェア算出用のEUの相手国内訳を取り込みます。"
+  ],
+  "Mã HS ưu tiên": [
+    "Priority HS codes",
+    "Codes SH prioritaires",
+    "優先HSコード"
+  ],
+  "Nạp dữ liệu Eurostat cho mã ưu tiên": [
+    "Load Eurostat data for priority codes",
+    "Charger les données Eurostat des codes prioritaires",
+    "優先コードのEurostatデータを取り込む"
+  ],
+  "Nạp file CSV đã tuyển chọn": [
+    "Load a curated CSV file",
+    "Charger un fichier CSV sélectionné",
+    "精選したCSVファイルを取り込む"
+  ],
+  "Nguồn dữ liệu": [
+    "Data source",
+    "Source des données",
+    "データソース"
+  ],
+  "Nguồn khác (đã tuyển chọn)": [
+    "Other source (curated)",
+    "Autre source (sélectionnée)",
+    "その他の出典（精選）"
+  ],
+  "File CSV thống kê": [
+    "Statistics CSV file",
+    "Fichier CSV de statistiques",
+    "統計CSVファイル"
+  ],
+  "Số dòng": [
+    "Rows",
+    "Lignes",
+    "行数"
+  ],
+  "Chưa có lần nạp nào.": [
+    "No imports yet.",
+    "Aucun chargement pour l'instant.",
+    "取り込みはまだありません。"
+  ],
+  "Thị trường": [
+    "Markets",
+    "Marchés",
+    "市場"
+  ],
+  "Đang chờ": [
+    "Queued",
+    "En attente",
+    "待機中"
+  ],
+  "Đang nạp": [
+    "Loading",
+    "Chargement",
+    "取り込み中"
+  ],
+  "Xong": [
+    "Done",
+    "Terminé",
+    "完了"
+  ],
+  "Lỗi": [
+    "Error",
+    "Erreur",
+    "エラー"
+  ],
+  "Đã xếp hàng nạp dữ liệu Eurostat. Làm mới sau vài phút để xem kết quả.": [
+    "Eurostat import queued. Refresh in a few minutes to see the result.",
+    "Chargement Eurostat en file d'attente. Actualisez dans quelques minutes.",
+    "Eurostatの取り込みを予約しました。数分後に更新して結果を確認してください。"
+  ],
+  "Đã nạp file thống kê.": [
+    "Statistics file loaded.",
+    "Fichier de statistiques chargé.",
+    "統計ファイルを取り込みました。"
+  ],
+  "File quá lớn (tối đa 2 MB).": [
+    "File too large (max 2 MB).",
+    "Fichier trop volumineux (2 Mo max).",
+    "ファイルが大きすぎます（最大2MB）。"
+  ],
+  "File không hợp lệ: cần CSV với các cột reporter, partner, product, year, flow, value_eur, quantity_kg.": [
+    "Invalid file: a CSV with columns reporter, partner, product, year, flow, value_eur, quantity_kg is required.",
+    "Fichier invalide : CSV avec les colonnes reporter, partner, product, year, flow, value_eur, quantity_kg requis.",
+    "無効なファイル：reporter、partner、product、year、flow、value_eur、quantity_kg列のCSVが必要です。"
   ]
 }
