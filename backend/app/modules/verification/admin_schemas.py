@@ -53,6 +53,13 @@ class RuleIn(BaseModel):
     note: Annotated[str | None, Field(max_length=1000)] = None
 
 
+class RulePatch(BaseModel):
+    category: Annotated[str | None, Field(min_length=1, max_length=32)] = None
+    evidence_type_code: Code | None = None
+    is_required: bool | None = None
+    note: Annotated[str | None, Field(max_length=1000)] = None
+
+
 class RuleOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 

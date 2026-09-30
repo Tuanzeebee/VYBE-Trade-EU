@@ -99,8 +99,21 @@ describe('hrefFor — mỗi trang cũ có một URL (chưa gắn locale)', () =>
     expect(hrefFor('seller-profile')).toBe('/exporter/profile');
   });
 
+  it.each([
+    [undefined, '/exporter'],
+    ['overview', '/exporter'],
+    ['profile', '/exporter/company'],
+    ['products', '/exporter/products'],
+    ['licenses', '/exporter/certificates'],
+    ['verification', '/exporter/verification'],
+    ['messages', '/exporter/messages'],
+    ['notifications', '/exporter/notifications'],
+  ])('mục workspace exporter %s là một trang riêng %s', (tab, href) => {
+    expect(hrefFor('workspace', { tab })).toBe(href);
+  });
+
   it('workspace giữ tab, sản phẩm chọn dịch vụ xác minh', () => {
-    expect(hrefFor('workspace', { tab: 'rfq' })).toBe('/exporter?tab=rfq');
+    expect(hrefFor('workspace', { tab: 'rfq' })).toBe('/exporter/rfqs');
     expect(hrefFor('product', { productService: 'verification' })).toBe('/products/verification');
   });
 });

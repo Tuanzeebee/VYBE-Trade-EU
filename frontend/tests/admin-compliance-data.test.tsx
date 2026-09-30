@@ -82,17 +82,23 @@ interface World {
   evRules?: unknown[];
   fail?: boolean;
   action?: (method: string, path: string) => Response;
+  importResult?: (search: string) => Response;
 }
 
-let calls: { method: string; path: string }[] = [];
+const IMPORT_OK = { created: 2, updated: 1, unchanged: 3, dry_run: true, applied: false, errors: [] };
+
+let calls: { method: string; path: string; search: string; body: string }[] = [];
 
 function serve(world: World = {}) {
   calls = [];
   vi.stubGlobal(
     'fetch',
     vi.fn(async (req: Request) => {
-      const { pathname } = new URL(req.url);
-      calls.push({ method: req.method, path: pathname });
+      const { pathname, search } = new URL(req.url);
+      const body = req.method === 'GET' || req.body === null ? '' : await req.clone().text().catch(() => '');
+      calls.push({ method: req.method, path: pathname, search, body });
+      if (pathname.endsWith('/import')) return world.importResult ? world.importResult(search) : json(200, IMPORT_OK);
+      if (pathname.endsWith('.xlsx')) return new Response('xlsx', { status: 200 });
       if (req.method !== 'GET') return world.action ? world.action(req.method, pathname) : new Response(null, { status: req.method === 'DELETE' ? 204 : 200 });
       if (world.fail) return json(500, {});
       if (pathname === '/api/admin/tariff-lines') return json(200, world.lines ?? []);
@@ -115,7 +121,7 @@ function renderData(locale: 'vi' | 'en' = 'vi') {
 }
 
 const tab = (name: string) => fireEvent.click(screen.getByRole('tab', { name }));
-const actions = () => calls.filter((c) => c.method !== 'GET');
+const actions = () => calls.filter((c) => c.method !== 'GET').map(({ method, path }) => ({ method, path }));
 
 describe('Dữ liệu tuân thủ (admin)', () => {
   afterEach(() => vi.unstubAllGlobals());
@@ -132,10 +138,10 @@ describe('Dữ liệu tuân thủ (admin)', () => {
     ]);
   });
 
-  it('chưa có dữ liệu: hướng dẫn nhập bằng script CSV', async () => {
+  it('chưa có dữ liệu: hướng dẫn dùng nút Thêm hoặc Nhập Excel', async () => {
     serve();
     renderData();
-    expect(await screen.findByRole('status')).toHaveTextContent('script CSV');
+    expect(await screen.findByRole('status')).toHaveTextContent('Nhập Excel');
   });
 
   it('dòng thuế: hiện thuế suất, trạng thái và đếm số dòng chưa duyệt', async () => {
@@ -144,8 +150,9 @@ describe('Dữ liệu tuân thủ (admin)', () => {
     const table = await screen.findByRole('region', { name: 'Dòng thuế' });
     expect(table).toHaveTextContent('1 dòng chưa duyệt / 2');
     expect(table).toHaveTextContent('7.5%');
-    expect(within(table).getAllByText('Chưa duyệt')).toHaveLength(1);
-    expect(within(table).getAllByText('Đã duyệt')).toHaveLength(1);
+    const grid = within(within(table).getByRole('table'));
+    expect(grid.getAllByText('Chưa duyệt')).toHaveLength(1);
+    expect(grid.getAllByText('Đã duyệt')).toHaveLength(1);
   });
 
   it('chỉ dòng chưa duyệt có nút Duyệt và Xóa; dòng đã duyệt thì không', async () => {
@@ -226,5 +233,188 @@ describe('Dữ liệu tuân thủ (admin)', () => {
     serve({ lines: [line()] });
     renderData('en');
     expect(await screen.findByRole('button', { name: 'Approve' })).toBeInTheDocument();
+  });
+  it('cột hiệu lực tách thành Từ ngày và Đến ngày; để trống hiện Không thời hạn', async () => {
+    serve({ lines: [line({ valid_from: '2026-01-01', valid_until: '2027-06-30' }), line({ id: 'l-2', hs_code: '090111' })] });
+    renderData();
+    const table = await screen.findByRole('region', { name: 'Dòng thuế' });
+    const headers = within(table).getAllByRole('columnheader').map((h) => h.textContent);
+    expect(headers).toContain('Từ ngày');
+    expect(headers).toContain('Đến ngày');
+    expect(headers).not.toContain('Hiệu lực');
+    expect(table).toHaveTextContent('2027-06-30');
+    expect(table).toHaveTextContent('Không thời hạn');
+  });
+
+  it('chú thích giải thích các giá trị của cột Loại thuế', async () => {
+    serve({ lines: [line()] });
+    renderData();
+    const legend = (await screen.findByText('Chú thích các cột và giá trị')).closest('details') as HTMLElement;
+    for (const value of ['ad_valorem', 'specific', 'mixed']) expect(within(legend).getByText(value)).toBeInTheDocument();
+    expect(legend).toHaveTextContent('cần xem xét');
+  });
+
+  it('phân trang: 25 dòng chia 2 trang, Sau/Trước chuyển trang', async () => {
+    const lines = Array.from({ length: 25 }, (_, i) => line({ id: `l-${i}`, hs_code: String(100000 + i) }));
+    serve({ lines });
+    renderData();
+    const table = await screen.findByRole('region', { name: 'Dòng thuế' });
+    expect(within(table).getAllByRole('row')).toHaveLength(1 + 20);
+    expect(table).toHaveTextContent('1–20 / 25');
+    fireEvent.click(screen.getByRole('button', { name: 'Sau' }));
+    expect(within(table).getAllByRole('row')).toHaveLength(1 + 5);
+    expect(table).toHaveTextContent('21–25 / 25');
+    expect(screen.getByRole('button', { name: 'Sau' })).toBeDisabled();
+    fireEvent.click(screen.getByRole('button', { name: 'Trước' }));
+    expect(table).toHaveTextContent('1–20 / 25');
+  });
+
+  it('ít hơn 21 dòng thì không hiện phân trang', async () => {
+    serve({ lines: [line()] });
+    renderData();
+    await screen.findByRole('region', { name: 'Dòng thuế' });
+    expect(screen.queryByRole('navigation', { name: 'Phân trang' })).not.toBeInTheDocument();
+  });
+
+  it('tìm kiếm lọc dòng (không phân biệt dấu) và về trang 1; không khớp thì báo', async () => {
+    const lines = [
+      line({ id: 'a', hs_code: '090121', condition_note: 'Cà phê rang xay' }),
+      line({ id: 'b', hs_code: '100630' }),
+      ...Array.from({ length: 22 }, (_, i) => line({ id: `x-${i}`, hs_code: String(200000 + i) })),
+    ];
+    serve({ lines });
+    renderData();
+    const table = await screen.findByRole('region', { name: 'Dòng thuế' });
+    fireEvent.click(screen.getByRole('button', { name: 'Sau' }));
+    fireEvent.change(screen.getByRole('searchbox', { name: 'Tìm kiếm' }), { target: { value: 'ca phe' } });
+    expect(within(table).getAllByRole('row')).toHaveLength(1 + 1);
+    expect(table).toHaveTextContent('090121');
+    fireEvent.change(screen.getByRole('searchbox', { name: 'Tìm kiếm' }), { target: { value: 'không có gì' } });
+    expect(await screen.findByRole('status')).toHaveTextContent('Không có dòng nào khớp');
+  });
+
+  it('lọc theo trạng thái duyệt', async () => {
+    serve({ lines: [line(), line({ id: 'l-2', hs_code: '090111', reviewed_by: REVIEWER })] });
+    renderData();
+    const table = await screen.findByRole('region', { name: 'Dòng thuế' });
+    fireEvent.change(screen.getByRole('combobox', { name: 'Trạng thái' }), { target: { value: 'reviewed' } });
+    expect(within(table).getAllByRole('row')).toHaveLength(1 + 1);
+    expect(table).toHaveTextContent('090111');
+  });
+
+  it('thêm dòng thuế: bắt buộc nhập, gửi đúng body, thuế suất là chuỗi', async () => {
+    serve();
+    renderData();
+    fireEvent.click(await screen.findByRole('button', { name: 'Thêm' }));
+    const dialog = screen.getByRole('dialog');
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Lưu' }));
+    expect(within(dialog).getByRole('alert')).toHaveTextContent('Mã HS');
+    expect(actions()).toEqual([]);
+    fireEvent.change(within(dialog).getByLabelText(/Mã HS/), { target: { value: '090121' } });
+    fireEvent.change(within(dialog).getByLabelText(/MFN/), { target: { value: '7.5' } });
+    fireEvent.change(within(dialog).getByLabelText(/Từ ngày/), { target: { value: '2026-01-01' } });
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Lưu' }));
+    await waitFor(() => expect(actions()).toEqual([{ method: 'POST', path: '/api/admin/tariff-lines' }]));
+    const sent = JSON.parse(calls.find((c) => c.method === 'POST')!.body);
+    expect(sent).toMatchObject({ hs_code: '090121', destination: 'EU', duty_type: 'ad_valorem', mfn_rate: '7.5', quota_required: false, valid_from: '2026-01-01' });
+    expect(sent).not.toHaveProperty('valid_until');
+    await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
+  });
+
+  it('thêm lỗi: hiện thông báo trong form và giữ form mở', async () => {
+    serve({ action: () => json(422, { error: { code: 'unknown_hs_code', message: 'x' } }) });
+    renderData();
+    fireEvent.click(await screen.findByRole('button', { name: 'Thêm' }));
+    const dialog = screen.getByRole('dialog');
+    fireEvent.change(within(dialog).getByLabelText(/Mã HS/), { target: { value: '999999' } });
+    fireEvent.change(within(dialog).getByLabelText(/Từ ngày/), { target: { value: '2026-01-01' } });
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Lưu' }));
+    expect(await within(dialog).findByRole('alert')).toHaveTextContent('Mã HS không có trong danh mục');
+  });
+
+  it('sửa dòng đã duyệt: cảnh báo về chưa duyệt, PATCH chỉ trường đã đổi', async () => {
+    serve({ lines: [line({ reviewed_by: REVIEWER })] });
+    renderData();
+    fireEvent.click(await screen.findByRole('button', { name: 'Sửa' }));
+    const dialog = screen.getByRole('dialog');
+    expect(dialog).toHaveTextContent('về Chưa duyệt');
+    expect(within(dialog).getByLabelText(/MFN/)).toHaveValue('7.5');
+    fireEvent.change(within(dialog).getByLabelText(/MFN/), { target: { value: '9' } });
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Lưu' }));
+    await waitFor(() => expect(actions()).toEqual([{ method: 'PATCH', path: '/api/admin/tariff-lines/l-1' }]));
+    expect(JSON.parse(calls.find((c) => c.method === 'PATCH')!.body)).toEqual({ mfn_rate: '9' });
+  });
+
+  it('sửa loại bằng chứng: mã bị khóa; xóa ô trống gửi null', async () => {
+    serve({ types: [type({ validity_months: 12 })] });
+    renderData();
+    tab('Loại bằng chứng');
+    fireEvent.click(await screen.findByRole('button', { name: 'Sửa' }));
+    const dialog = screen.getByRole('dialog');
+    expect(within(dialog).getByLabelText(/^Mã/)).toBeDisabled();
+    fireEvent.change(within(dialog).getByLabelText(/Hạn \(tháng\)/), { target: { value: '' } });
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Lưu' }));
+    await waitFor(() => expect(actions()).toEqual([{ method: 'PATCH', path: '/api/admin/evidence-types/iso_9001' }]));
+    expect(JSON.parse(calls.find((c) => c.method === 'PATCH')!.body)).toEqual({ validity_months: null });
+  });
+
+  it('luật bằng chứng sửa được qua PATCH', async () => {
+    serve({ evRules: [evRule()] });
+    renderData();
+    tab('Luật bằng chứng theo nhóm hàng');
+    fireEvent.click(await screen.findByRole('button', { name: 'Sửa' }));
+    const dialog = screen.getByRole('dialog');
+    fireEvent.click(within(dialog).getByLabelText(/Bắt buộc/));
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Lưu' }));
+    await waitFor(() => expect(actions()).toEqual([{ method: 'PATCH', path: '/api/admin/evidence-rules/er-1' }]));
+    expect(JSON.parse(calls.find((c) => c.method === 'PATCH')!.body)).toEqual({ is_required: false });
+  });
+
+  it('tải template và xuất Excel gọi đúng endpoint theo nhóm dữ liệu', async () => {
+    const createObjectURL = vi.fn(() => 'blob:x');
+    const saved = { create: URL.createObjectURL, revoke: URL.revokeObjectURL };
+    URL.createObjectURL = createObjectURL;
+    URL.revokeObjectURL = vi.fn();
+    const click = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
+    serve();
+    renderData();
+    fireEvent.click(await screen.findByRole('button', { name: 'Tải template' }));
+    await waitFor(() => expect(calls.some((c) => c.path === '/api/admin/tariff-lines/template.xlsx')).toBe(true));
+    fireEvent.click(screen.getByRole('button', { name: 'Xuất Excel' }));
+    await waitFor(() => expect(calls.some((c) => c.path === '/api/admin/tariff-lines/export.xlsx')).toBe(true));
+    tab('Quy tắc xuất xứ');
+    fireEvent.click(await screen.findByRole('button', { name: 'Xuất Excel' }));
+    await waitFor(() => expect(calls.some((c) => c.path === '/api/admin/roo-rules/export.xlsx')).toBe(true));
+    await waitFor(() => expect(createObjectURL).toHaveBeenCalledTimes(3));
+    click.mockRestore();
+    URL.createObjectURL = saved.create;
+    URL.revokeObjectURL = saved.revoke;
+  });
+
+  it('nhập Excel: kiểm tra thử trước, xác nhận rồi mới ghi', async () => {
+    serve({ importResult: (search) => json(200, search.includes('dry_run=true') ? IMPORT_OK : { ...IMPORT_OK, dry_run: false, applied: true }) });
+    renderData();
+    fireEvent.click(await screen.findByRole('button', { name: 'Nhập Excel' }));
+    const dialog = screen.getByRole('dialog');
+    const confirm = within(dialog).getByRole('button', { name: 'Nhập vào hệ thống' });
+    expect(confirm).toBeDisabled();
+    fireEvent.change(within(dialog).getByLabelText('Chọn file .xlsx'), { target: { files: [new File(['x'], 'tariff.xlsx')] } });
+    expect(await within(dialog).findByRole('status')).toHaveTextContent('Dòng mới2');
+    expect(calls.filter((c) => c.path.endsWith('/import')).map((c) => c.search)).toEqual(['?dry_run=true']);
+    await waitFor(() => expect(confirm).toBeEnabled());
+    fireEvent.click(confirm);
+    await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
+    expect(calls.filter((c) => c.path.endsWith('/import')).map((c) => c.search)).toEqual(['?dry_run=true', '?dry_run=false']);
+    expect(screen.getByText(/Đã nhập xong/)).toBeInTheDocument();
+  });
+
+  it('nhập Excel có lỗi: liệt kê theo dòng và không cho xác nhận', async () => {
+    serve({ importResult: () => json(200, { ...IMPORT_OK, created: 0, errors: [{ row: 3, message: 'hs_code: sai' }] }) });
+    renderData();
+    fireEvent.click(await screen.findByRole('button', { name: 'Nhập Excel' }));
+    const dialog = screen.getByRole('dialog');
+    fireEvent.change(within(dialog).getByLabelText('Chọn file .xlsx'), { target: { files: [new File(['x'], 'a.xlsx')] } });
+    expect(await within(dialog).findByRole('alert')).toHaveTextContent('Dòng 3: hs_code: sai');
+    expect(within(dialog).getByRole('button', { name: 'Nhập vào hệ thống' })).toBeDisabled();
   });
 });

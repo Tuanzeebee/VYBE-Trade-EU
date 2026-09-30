@@ -125,7 +125,7 @@ describe('SellerWorkspace — sản phẩm lấy từ server (B5)', () => {
   it('nút Sản phẩm trong menu hiện đúng số lượng thật', async () => {
     serve([product(), product({ id: 'p2', name: 'Cà phê' })]);
     renderWorkspace('overview');
-    const nav = await screen.findByRole('button', { name: /Sản phẩm xuất khẩu/ });
+    const [nav] = await screen.findAllByRole('button', { name: /Sản phẩm xuất khẩu/ }); // menu bên + menu mobile
     expect(nav).toHaveTextContent('2');
   });
 

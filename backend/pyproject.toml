@@ -9,6 +9,7 @@ dependencies = [
     "boto3>=1.43.104",
     "fastapi[standard]>=0.141.1",
     "jinja2>=3.1.6",
+    "openpyxl>=3.1.5",
     "pgvector>=0.5.0",
     "procrastinate>=3.10.0",
     "psycopg[binary,pool]>=3.3.6",
@@ -40,7 +41,7 @@ python_version = "3.12"
 plugins = ["pydantic.mypy"]
 
 [[tool.mypy.overrides]]
-module = ["boto3.*", "botocore.*", "reportlab.*", "asyncpg.*", "pgvector.*"]
+module = ["boto3.*", "botocore.*", "reportlab.*", "asyncpg.*", "pgvector.*", "openpyxl.*"]
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]

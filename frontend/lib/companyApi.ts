@@ -107,6 +107,8 @@ export function profileToCompany(profile: Record<string, string>): CompanyIn {
     industry_sector: (blank(profile.industrySector) as Industry | null) ?? null,
     languages_spoken: [...new Set(languages)],
     export_markets: [...new Set(markets)],
+    // Chỉ gửi khi đã có khóa để PATCH không xóa logo cũ.
+    ...(blank(profile.logoKey) ? { logo_key: blank(profile.logoKey) } : {}),
   };
 }
 
@@ -217,6 +219,7 @@ export function companyToForm(company: CompanyOut): Record<string, string> {
     industrySector: company.industry_sector ?? '',
     languages: company.languages_spoken.join(','),
     markets: company.export_markets.join(','),
+    logoKey: company.logo_key ?? '',
   };
 }
 
@@ -255,5 +258,33 @@ export async function getCompleteness(): Promise<Completeness | null> {
     return response.ok && data ? data : null;
   } catch {
     return null;
+  }
+}
+
+export const LOGO_TYPES = ['image/png', 'image/jpeg', 'image/webp'];
+export const MAX_LOGO_BYTES = 2 * 1024 * 1024;
+
+/** Kiểm tra file logo ở trình duyệt; trả thông báo lỗi hoặc null nếu hợp lệ. */
+export function logoFileError(file: File): string | null {
+  if (!LOGO_TYPES.includes(file.type)) return 'Logo phải là PNG, JPEG hoặc WebP.';
+  if (file.size > MAX_LOGO_BYTES) return 'Logo tối đa 2MB.';
+  return null;
+}
+
+/** Tải logo lên kho qua URL ký sẵn (cần công ty đã lưu). Trả khóa để ghi vào hồ sơ. */
+export async function uploadCompanyLogo(file: File): Promise<string> {
+  const failed = new Error('Không tải được logo lên. Vui lòng thử lại.');
+  const invalid = logoFileError(file);
+  if (invalid) throw new Error(invalid);
+  try {
+    const { data, response } = await createApiClient().POST('/api/uploads/presign', {
+      body: { purpose: 'logo', content_type: file.type as 'image/png' | 'image/jpeg' | 'image/webp' },
+    });
+    if (!response.ok || !data) throw failed;
+    const put = await fetch(new Request(data.upload_url, { method: 'PUT', headers: { 'content-type': file.type }, body: file }));
+    if (!put.ok) throw failed;
+    return data.key;
+  } catch {
+    throw failed;
   }
 }

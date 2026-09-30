@@ -10493,5 +10493,500 @@
     "Rules of origin calculator",
     "Rules of origin calculator",
     "Rules of origin calculator"
+  ],
+  "Dữ liệu mới thêm, mới nhập hoặc vừa sửa. Không hiện công khai và máy tính tuân thủ chưa dùng.": [
+    "Newly added, imported or just edited data. Not shown publicly and not yet used by the compliance calculator.",
+    "Données récemment ajoutées, importées ou modifiées. Non publiques et pas encore utilisées par le calculateur de conformité.",
+    "追加・インポート・編集したばかりのデータです。公開されず、コンプライアンス計算機にもまだ使われません。"
+  ],
+  "Đã có người duyệt. Sửa lại sẽ đưa dòng về Chưa duyệt. Dòng thuế và quy tắc xuất xứ đã duyệt không xóa được: đặt Đến ngày để ngừng áp dụng.": [
+    "Already approved. Editing puts the row back to Pending. Approved tariff lines and origin rules cannot be deleted: set an End date to stop applying them.",
+    "Déjà approuvé. Toute modification remet la ligne en attente. Les lignes tarifaires et règles d'origine approuvées ne peuvent pas être supprimées : renseignez une date de fin.",
+    "承認済みです。編集すると未承認に戻ります。承認済みの関税ラインと原産地規則は削除できません。終了日を設定して適用を止めてください。"
+  ],
+  "Thuế theo phần trăm trị giá hàng. Chỉ loại này mới cho ra con số thuế trong máy tính.": [
+    "Duty as a percentage of the goods' value. Only this type produces a duty figure in the calculator.",
+    "Droit en pourcentage de la valeur des marchandises. Seul ce type produit un chiffre dans le calculateur.",
+    "商品価額に対する割合の関税です。計算機で税額が出るのはこの種類だけです。"
+  ],
+  "Thuế tuyệt đối: số tiền cố định trên mỗi đơn vị (kg, tấn…), ghi ở trường thuế tuyệt đối. Máy tính không tự quy đổi mà trả về \"cần xem xét\".": [
+    "Specific duty: a fixed amount per unit (kg, tonne…), recorded in the specific-duty field. The calculator does not convert it and returns \"needs review\".",
+    "Droit spécifique : montant fixe par unité (kg, tonne…), saisi dans le champ dédié. Le calculateur ne le convertit pas et renvoie « à examiner ».",
+    "従量税：単位（kg、トン等）あたりの固定額で、従量税欄に記載します。計算機は換算せず「要確認」を返します。"
+  ],
+  "Thuế hỗn hợp: kết hợp phần trăm và thuế tuyệt đối. Máy tính trả về \"cần xem xét\".": [
+    "Mixed duty: a percentage combined with a specific amount. The calculator returns \"needs review\".",
+    "Droit mixte : pourcentage combiné à un montant spécifique. Le calculateur renvoie « à examiner ».",
+    "混合税：従価税と従量税の組み合わせです。計算機は「要確認」を返します。"
+  ],
+  "Thuế tối huệ quốc áp cho hàng không hưởng ưu đãi EVFTA, tính bằng %.": [
+    "Most-favoured-nation duty applied to goods not enjoying EVFTA preference, in %.",
+    "Droit de la nation la plus favorisée appliqué aux marchandises sans préférence EVFTA, en %.",
+    "EVFTA優遇を受けない商品に適用される最恵国待遇税率（%）です。"
+  ],
+  "Thuế ưu đãi EVFTA hiện hành, tính bằng %.": [
+    "Current EVFTA preferential duty, in %.",
+    "Droit préférentiel EVFTA en vigueur, en %.",
+    "現行のEVFTA特恵税率（%）です。"
+  ],
+  "Có = hàng chịu hạn ngạch thuế quan. Máy tính trả về \"cần xem xét\", không trả 0%.": [
+    "Yes = goods subject to a tariff quota. The calculator returns \"needs review\", never 0%.",
+    "Oui = marchandises soumises à un contingent tarifaire. Le calculateur renvoie « à examiner », jamais 0 %.",
+    "はい＝関税割当の対象商品です。計算機は0%ではなく「要確認」を返します。"
+  ],
+  "Mã ISO-2 của nước EU, hoặc EU nếu áp dụng biểu thuế chung của cả liên minh thuế quan.": [
+    "ISO-2 code of the EU country, or EU when the common tariff of the customs union applies.",
+    "Code ISO-2 du pays de l'UE, ou EU si le tarif commun de l'union douanière s'applique.",
+    "EU加盟国のISO-2コード。関税同盟の共通関税を適用する場合は EU。"
+  ],
+  "Từ ngày / Đến ngày": [
+    "Start date / End date",
+    "Date de début / Date de fin",
+    "開始日 / 終了日"
+  ],
+  "Ngày bắt đầu hiệu lực và ngày đã hết hiệu lực. Đến ngày để trống nghĩa là không thời hạn.": [
+    "The date validity starts and the date it has ended. An empty End date means no expiry.",
+    "Date de début de validité et date à laquelle elle a pris fin. Une date de fin vide signifie sans échéance.",
+    "有効期間の開始日と失効日です。終了日が空欄の場合は無期限です。"
+  ],
+  "Xuất xứ thuần túy: hàng được sản xuất hoàn toàn tại nước xuất khẩu.": [
+    "Wholly obtained: the goods are produced entirely in the exporting country.",
+    "Entièrement obtenu : les marchandises sont produites entièrement dans le pays exportateur.",
+    "完全生産：商品が輸出国内で完全に生産されたものです。"
+  ],
+  "Chuyển đổi nhóm HS: nguyên liệu không xuất xứ phải khác nhóm HS 4 số với thành phẩm.": [
+    "Change of tariff heading: non-originating materials must fall under a different 4-digit HS heading than the finished product.",
+    "Changement de position tarifaire : les matières non originaires doivent relever d'une position SH à 4 chiffres différente du produit fini.",
+    "関税分類変更：非原産材料は完成品と異なるHS4桁の項に分類される必要があります。"
+  ],
+  "Nguyên liệu không xuất xứ tối đa một tỷ lệ % giá xuất xưởng. Bắt buộc nhập Ngưỡng NOM.": [
+    "Non-originating materials may not exceed a percentage of the ex-works price. The NOM threshold is required.",
+    "Les matières non originaires ne peuvent dépasser un pourcentage du prix départ usine. Le seuil NOM est obligatoire.",
+    "非原産材料は工場渡し価格の一定割合以下でなければなりません。NOM上限の入力が必須です。"
+  ],
+  "Đạt CTH hoặc MaxNOM là được. Bắt buộc nhập Ngưỡng NOM.": [
+    "Meeting either CTH or MaxNOM is enough. The NOM threshold is required.",
+    "Il suffit de satisfaire CTH ou MaxNOM. Le seuil NOM est obligatoire.",
+    "CTHまたはMaxNOMのどちらかを満たせば十分です。NOM上限の入力が必須です。"
+  ],
+  "Chỉ nhập cho MaxNOM và CTH_OR_MaxNOM; phải để trống với WO và CTH.": [
+    "Only for MaxNOM and CTH_OR_MaxNOM; must be empty for WO and CTH.",
+    "Uniquement pour MaxNOM et CTH_OR_MaxNOM ; doit rester vide pour WO et CTH.",
+    "MaxNOMとCTH_OR_MaxNOMのみ入力します。WOとCTHでは空欄にしてください。"
+  ],
+  "Có = quy tắc phức tạp; máy tính luôn trả về \"chưa kết luận\" và chuyển cho chuyên gia.": [
+    "Yes = complex rule; the calculator always returns \"inconclusive\" and refers to an expert.",
+    "Oui = règle complexe ; le calculateur renvoie toujours « non concluant » et oriente vers un expert.",
+    "はい＝複雑な規則です。計算機は常に「判定不能」を返し、専門家に委ねます。"
+  ],
+  "Định danh duy nhất: chữ thường, số, gạch dưới, bắt đầu bằng chữ (vd iso_9001). Không đổi được sau khi tạo.": [
+    "Unique identifier: lowercase letters, digits, underscores, starting with a letter (e.g. iso_9001). Cannot be changed after creation.",
+    "Identifiant unique : minuscules, chiffres, tirets bas, commençant par une lettre (ex. iso_9001). Non modifiable après création.",
+    "一意の識別子：小文字・数字・アンダースコア、先頭は英字（例 iso_9001）。作成後は変更できません。"
+  ],
+  "Nhóm gom loại bằng chứng: origin, quality, social, technical, lab…": [
+    "Group of evidence types: origin, quality, social, technical, lab…",
+    "Groupe de types de preuves : origin, quality, social, technical, lab…",
+    "証拠種別のグループ：origin、quality、social、technical、lab など。"
+  ],
+  "Số tháng bằng chứng có hiệu lực kể từ ngày cấp. Để trống nếu không tự tính hạn.": [
+    "Months the evidence stays valid from its issue date. Leave empty if no expiry is calculated.",
+    "Nombre de mois de validité de la preuve à compter de sa date d'émission. Laisser vide si aucune échéance n'est calculée.",
+    "証拠が発行日から有効な月数。有効期限を自動計算しない場合は空欄。"
+  ],
+  "Không = exporter không thể nộp loại bằng chứng này nữa.": [
+    "No = exporters can no longer submit this evidence type.",
+    "Non = les exportateurs ne peuvent plus soumettre ce type de preuve.",
+    "いいえ＝輸出者はこの証拠種別を提出できなくなります。"
+  ],
+  "Nhóm hàng trong danh mục HS (vd agriculture, seafood).": [
+    "Product category in the HS catalog (e.g. agriculture, seafood).",
+    "Catégorie de produits du catalogue SH (ex. agriculture, seafood).",
+    "HSカタログの商品カテゴリ（例 agriculture、seafood）。"
+  ],
+  "Tính vào điều kiện đạt EVFTA-verified của nhà xuất khẩu.": [
+    "Counts toward the exporter's EVFTA-verified requirements.",
+    "Compte dans les conditions EVFTA-verified de l'exportateur.",
+    "輸出者のEVFTA-verified要件に含まれます。"
+  ],
+  "Chỉ nhắc nhà xuất khẩu, không tính vào điều kiện đạt.": [
+    "Only a reminder to the exporter; not counted toward the requirements.",
+    "Simple rappel pour l'exportateur ; ne compte pas dans les conditions.",
+    "輸出者への注意喚起のみで、要件には含まれません。"
+  ],
+  "Từ ngày": [
+    "Start date",
+    "Date de début",
+    "開始日"
+  ],
+  "Đến ngày": [
+    "End date",
+    "Date de fin",
+    "終了日"
+  ],
+  "Ngày bắt đầu hiệu lực.": [
+    "Date validity starts.",
+    "Date de début de validité.",
+    "有効期間の開始日。"
+  ],
+  "Ngày ĐÃ hết hiệu lực, phải sau Từ ngày. Để trống = không thời hạn.": [
+    "The date validity HAS ended; must be after the Start date. Empty = no expiry.",
+    "Date à laquelle la validité A pris fin ; doit suivre la date de début. Vide = sans échéance.",
+    "失効済みとなる日付。開始日より後にしてください。空欄＝無期限。"
+  ],
+  "6–8 chữ số, phải có trong danh mục HS.": [
+    "6–8 digits, must exist in the HS catalog.",
+    "6 à 8 chiffres, doit exister dans le catalogue SH.",
+    "6～8桁。HSカタログに存在する必要があります。"
+  ],
+  "Xem chú thích: chỉ ad_valorem cho ra con số thuế.": [
+    "See the legend: only ad_valorem produces a duty figure.",
+    "Voir la légende : seul ad_valorem produit un chiffre.",
+    "凡例を参照：税額が出るのは ad_valorem のみです。"
+  ],
+  "0–100, tối đa 4 chữ số thập phân.": [
+    "0–100, up to 4 decimal places.",
+    "0 à 100, jusqu'à 4 décimales.",
+    "0～100、小数点以下4桁まで。"
+  ],
+  "Thuế tuyệt đối/hỗn hợp": [
+    "Specific/mixed duty",
+    "Droit spécifique/mixte",
+    "従量税／混合税"
+  ],
+  "Dạng văn bản, vd \"176 EUR/100 kg\".": [
+    "Free text, e.g. \"176 EUR/100 kg\".",
+    "Texte libre, ex. « 176 EUR/100 kg ».",
+    "テキスト形式（例 \"176 EUR/100 kg\"）。"
+  ],
+  "EVFTA hiện hành (%)": [
+    "Current EVFTA (%)",
+    "EVFTA en vigueur (%)",
+    "現行EVFTA（%）"
+  ],
+  "MFN (%)": [
+    "MFN (%)",
+    "NPF (%)",
+    "MFN（%）"
+  ],
+  "Lộ trình cắt giảm": [
+    "Reduction schedule",
+    "Calendrier de réduction",
+    "削減スケジュール"
+  ],
+  "Ký hiệu nhóm cắt giảm, vd A, B5.": [
+    "Reduction category code, e.g. A, B5.",
+    "Code de catégorie de réduction, ex. A, B5.",
+    "削減カテゴリ記号（例 A、B5）。"
+  ],
+  "Ngày về 0%": [
+    "Date reaching 0%",
+    "Date d'atteinte de 0 %",
+    "0%になる日"
+  ],
+  "Ghi chú hạn ngạch": [
+    "Quota note",
+    "Note sur le contingent",
+    "関税割当メモ"
+  ],
+  "Điều kiện áp dụng": [
+    "Conditions of application",
+    "Conditions d'application",
+    "適用条件"
+  ],
+  "Nguồn (URL)": [
+    "Source (URL)",
+    "Source (URL)",
+    "出典（URL）"
+  ],
+  "Ngưỡng NOM (%)": [
+    "NOM threshold (%)",
+    "Seuil NOM (%)",
+    "NOM上限（%）"
+  ],
+  "Bắt buộc với MaxNOM và CTH_OR_MaxNOM; để trống với WO và CTH.": [
+    "Required for MaxNOM and CTH_OR_MaxNOM; leave empty for WO and CTH.",
+    "Obligatoire pour MaxNOM et CTH_OR_MaxNOM ; laisser vide pour WO et CTH.",
+    "MaxNOMとCTH_OR_MaxNOMでは必須、WOとCTHでは空欄にします。"
+  ],
+  "Nguyên văn quy tắc": [
+    "Rule text",
+    "Texte de la règle",
+    "規則の原文"
+  ],
+  "Nguồn": [
+    "Source",
+    "Source",
+    "出典"
+  ],
+  "Chữ thường, số, gạch dưới; không đổi được sau khi tạo.": [
+    "Lowercase letters, digits, underscores; cannot be changed after creation.",
+    "Minuscules, chiffres, tirets bas ; non modifiable après création.",
+    "小文字・数字・アンダースコア。作成後は変更できません。"
+  ],
+  "Tên (tiếng Việt)": [
+    "Name (Vietnamese)",
+    "Nom (vietnamien)",
+    "名称（ベトナム語）"
+  ],
+  "Tên (tiếng Anh)": [
+    "Name (English)",
+    "Nom (anglais)",
+    "名称（英語）"
+  ],
+  "Số nguyên > 0; để trống nếu không tự tính hạn.": [
+    "Integer > 0; leave empty if no expiry is calculated.",
+    "Entier > 0 ; laisser vide si aucune échéance n'est calculée.",
+    "0より大きい整数。有効期限を自動計算しない場合は空欄。"
+  ],
+  "Nhóm hàng trong danh mục HS, vd agriculture.": [
+    "Product category in the HS catalog, e.g. agriculture.",
+    "Catégorie de produits du catalogue SH, ex. agriculture.",
+    "HSカタログの商品カテゴリ（例 agriculture）。"
+  ],
+  "Mã loại bằng chứng đã tồn tại.": [
+    "The evidence type code already exists.",
+    "Ce code de type de preuve existe déjà.",
+    "この証拠種別コードは既に存在します。"
+  ],
+  "Bỏ chọn = chỉ nhắc.": [
+    "Untick = reminder only.",
+    "Décocher = simple rappel.",
+    "チェックを外す＝注意喚起のみ。"
+  ],
+  "Mã HS không có trong danh mục.": [
+    "The HS code is not in the catalog.",
+    "Le code SH n'est pas dans le catalogue.",
+    "このHSコードはカタログにありません。"
+  ],
+  "Ngày hết hiệu lực phải sau ngày bắt đầu.": [
+    "The end date must be after the start date.",
+    "La date de fin doit être postérieure à la date de début.",
+    "終了日は開始日より後にしてください。"
+  ],
+  "Ngưỡng % bắt buộc với MaxNOM/CTH_OR_MaxNOM và phải để trống với WO/CTH.": [
+    "The % threshold is required for MaxNOM/CTH_OR_MaxNOM and must be empty for WO/CTH.",
+    "Le seuil % est obligatoire pour MaxNOM/CTH_OR_MaxNOM et doit rester vide pour WO/CTH.",
+    "MaxNOM/CTH_OR_MaxNOMでは上限%が必須、WO/CTHでは空欄にしてください。"
+  ],
+  "Nhóm hàng không có trong danh mục HS.": [
+    "The product category is not in the HS catalog.",
+    "La catégorie de produits n'est pas dans le catalogue SH.",
+    "この商品カテゴリはHSカタログにありません。"
+  ],
+  "Loại bằng chứng không tồn tại.": [
+    "The evidence type does not exist.",
+    "Ce type de preuve n'existe pas.",
+    "この証拠種別は存在しません。"
+  ],
+  "Luật này đã tồn tại.": [
+    "This rule already exists.",
+    "Cette règle existe déjà.",
+    "このルールは既に存在します。"
+  ],
+  "Trường bắt buộc không được để trống.": [
+    "Required fields cannot be empty.",
+    "Les champs obligatoires ne peuvent pas être vides.",
+    "必須項目は空欄にできません。"
+  ],
+  "Không tải được file. Vui lòng thử lại.": [
+    "Could not download the file. Please try again.",
+    "Impossible de télécharger le fichier. Veuillez réessayer.",
+    "ファイルをダウンロードできませんでした。もう一度お試しください。"
+  ],
+  "File quá lớn (tối đa 2 MB, 5000 dòng).": [
+    "File too large (max 2 MB, 5000 rows).",
+    "Fichier trop volumineux (2 Mo et 5000 lignes maximum).",
+    "ファイルが大きすぎます（最大2 MB、5000行）。"
+  ],
+  "File không hợp lệ: cần file .xlsx có sheet \"data\" và đủ cột bắt buộc.": [
+    "Invalid file: an .xlsx file with a \"data\" sheet and all required columns is needed.",
+    "Fichier invalide : un fichier .xlsx avec une feuille « data » et toutes les colonnes obligatoires est requis.",
+    "無効なファイル：\"data\"シートと必須列をすべて含む.xlsxファイルが必要です。"
+  ],
+  "Chú thích các cột và giá trị": [
+    "Legend: columns and values",
+    "Légende : colonnes et valeurs",
+    "列と値の凡例"
+  ],
+  "Vui lòng nhập": [
+    "Please fill in",
+    "Veuillez renseigner",
+    "入力してください"
+  ],
+  "Sửa dòng": [
+    "Edit row",
+    "Modifier la ligne",
+    "行を編集"
+  ],
+  "Thêm dòng": [
+    "Add row",
+    "Ajouter une ligne",
+    "行を追加"
+  ],
+  "Dòng này đã duyệt. Sau khi lưu, dòng sẽ về Chưa duyệt và phải được duyệt lại.": [
+    "This row is approved. After saving it returns to Pending and must be approved again.",
+    "Cette ligne est approuvée. Après enregistrement, elle repasse en attente et doit être approuvée à nouveau.",
+    "この行は承認済みです。保存すると未承認に戻り、再承認が必要です。"
+  ],
+  "Lưu": [
+    "Save",
+    "Enregistrer",
+    "保存"
+  ],
+  "Thêm": [
+    "Add",
+    "Ajouter",
+    "追加"
+  ],
+  "Tải template": [
+    "Download template",
+    "Télécharger le modèle",
+    "テンプレートをダウンロード"
+  ],
+  "Xuất Excel": [
+    "Export Excel",
+    "Exporter en Excel",
+    "Excelにエクスポート"
+  ],
+  "Nhập Excel": [
+    "Import Excel",
+    "Importer depuis Excel",
+    "Excelからインポート"
+  ],
+  "Tìm theo mã, tên, ghi chú…": [
+    "Search by code, name, note…",
+    "Rechercher par code, nom, note…",
+    "コード・名称・メモで検索…"
+  ],
+  "Chưa có dữ liệu. Dùng nút Thêm hoặc Nhập Excel để bắt đầu.": [
+    "No data yet. Use Add or Import Excel to get started.",
+    "Aucune donnée. Utilisez Ajouter ou Importer depuis Excel pour commencer.",
+    "データがありません。「追加」または「Excelからインポート」で始めてください。"
+  ],
+  "Không có dòng nào khớp.": [
+    "No matching rows.",
+    "Aucune ligne correspondante.",
+    "一致する行がありません。"
+  ],
+  "Đã nhập xong": [
+    "Import complete",
+    "Import terminé",
+    "インポート完了"
+  ],
+  "Dòng mới": [
+    "New rows",
+    "Nouvelles lignes",
+    "新規行"
+  ],
+  "Cập nhật": [
+    "Updated",
+    "Mis à jour",
+    "更新"
+  ],
+  "Không đổi": [
+    "Unchanged",
+    "Inchangé",
+    "変更なし"
+  ],
+  "Cập nhật (sẽ về chưa duyệt)": [
+    "Updated (will return to pending)",
+    "Mis à jour (repasse en attente)",
+    "更新（未承認に戻ります）"
+  ],
+  "Dòng": [
+    "Row",
+    "Ligne",
+    "行"
+  ],
+  "Chọn file .xlsx": [
+    "Choose an .xlsx file",
+    "Choisir un fichier .xlsx",
+    ".xlsxファイルを選択"
+  ],
+  "Nhập vào hệ thống": [
+    "Import into the system",
+    "Importer dans le système",
+    "システムにインポート"
+  ],
+  "File có lỗi, chưa ghi gì. Sửa file rồi chọn lại.": [
+    "The file has errors and nothing was written. Fix the file and choose it again.",
+    "Le fichier comporte des erreurs et rien n'a été écrit. Corrigez-le puis sélectionnez-le à nouveau.",
+    "ファイルにエラーがあり、何も書き込まれていません。修正して再度選択してください。"
+  ],
+  "Dòng nhập vào luôn ở trạng thái Chưa duyệt. Dòng trùng khóa với dòng đã có sẽ được cập nhật và về Chưa duyệt. Cột trạng thái duyệt trong file bị bỏ qua.": [
+    "Imported rows always start as Pending. Rows whose key matches an existing row are updated and return to Pending. The review-status column in the file is ignored.",
+    "Les lignes importées sont toujours en attente. Une ligne dont la clé correspond à une ligne existante est mise à jour et repasse en attente. La colonne de statut d'approbation du fichier est ignorée.",
+    "インポートした行は常に未承認になります。既存行とキーが一致する行は更新され、未承認に戻ります。ファイル内の承認状況の列は無視されます。"
+  ],
+  "Logo công ty": [
+    "Company logo",
+    "Logo de l'entreprise",
+    "会社ロゴ"
+  ],
+  "Thêm logo": [
+    "Add logo",
+    "Ajouter un logo",
+    "ロゴを追加"
+  ],
+  "Đổi logo": [
+    "Change logo",
+    "Changer le logo",
+    "ロゴを変更"
+  ],
+  "Logo đã được tải lên.": [
+    "Logo uploaded.",
+    "Logo téléversé.",
+    "ロゴをアップロードしました。"
+  ],
+  "PNG, JPEG hoặc WebP, tối đa 2MB.": [
+    "PNG, JPEG or WebP, up to 2 MB.",
+    "PNG, JPEG ou WebP, 2 Mo maximum.",
+    "PNG、JPEG、WebP（最大2MB）。"
+  ],
+  "Logo phải là PNG, JPEG hoặc WebP.": [
+    "Logo must be PNG, JPEG or WebP.",
+    "Le logo doit être au format PNG, JPEG ou WebP.",
+    "ロゴはPNG、JPEG、WebPのいずれかにしてください。"
+  ],
+  "Logo tối đa 2MB.": [
+    "Logo must be 2 MB or smaller.",
+    "Le logo ne doit pas dépasser 2 Mo.",
+    "ロゴは2MB以下にしてください。"
+  ],
+  "Không tải được logo lên. Vui lòng thử lại.": [
+    "Could not upload the logo. Please try again.",
+    "Impossible de téléverser le logo. Veuillez réessayer.",
+    "ロゴをアップロードできませんでした。もう一度お試しください。"
+  ],
+  "Công cụ tuân thủ": [
+    "Compliance tools",
+    "Outils de conformité",
+    "コンプライアンスツール"
+  ],
+  "Máy tính thuế EVFTA": [
+    "EVFTA tariff calculator",
+    "Calculateur de droits EVFTA",
+    "EVFTA関税計算ツール"
+  ],
+  "Quy tắc xuất xứ & EUR.1 nháp": [
+    "Rules of origin & EUR.1 draft",
+    "Règles d'origine et brouillon EUR.1",
+    "原産地規則とEUR.1ドラフト"
+  ],
+  "Trợ lý AI tuân thủ": [
+    "AI compliance assistant",
+    "Assistant IA de conformité",
+    "AIコンプライアンスアシスタント"
+  ],
+  "Menu exporter": [
+    "Exporter menu",
+    "Menu exportateur",
+    "輸出者メニュー"
+  ],
+  "Tin nhắn với buyer": [
+    "Messages with buyers",
+    "Messages avec les acheteurs",
+    "バイヤーとのメッセージ"
   ]
 }

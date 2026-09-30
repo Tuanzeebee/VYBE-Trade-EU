@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { NextIntlClientProvider } from 'next-intl';
 import { describe, expect, it, vi } from 'vitest';
 import SellerOnboarding from '@/components/SellerOnboarding';
@@ -39,6 +39,19 @@ function renderOnboarding(initialCompany?: Record<string, string>) {
 const input = (label: RegExp) => screen.getByLabelText(label) as HTMLInputElement;
 
 describe('SellerOnboarding bước 1 (B1)', () => {
+  it('có chọn logo công ty (PNG/JPEG/WebP) và báo lỗi khi file không hợp lệ', async () => {
+    renderOnboarding();
+    const picker = screen.getByLabelText(/Thêm logo/) as HTMLInputElement;
+    expect(picker.accept).toBe('image/png,image/jpeg,image/webp');
+    fireEvent.change(picker, { target: { files: [new File(['x'], 'logo.gif', { type: 'image/gif' })] } });
+    expect(await screen.findByRole('alert')).toHaveTextContent('Logo phải là PNG, JPEG hoặc WebP.');
+  });
+
+  it('thanh điều hướng không còn nút "Vào Workspace Seller"', () => {
+    renderOnboarding();
+    expect(screen.queryByRole('button', { name: /Vào Workspace Seller/ })).not.toBeInTheDocument();
+  });
+
   it('không còn điền sẵn dữ liệu demo — chỉ tên công ty và email từ tài khoản', () => {
     renderOnboarding();
     expect(screen.getByDisplayValue('Công ty A')).toBeInTheDocument();

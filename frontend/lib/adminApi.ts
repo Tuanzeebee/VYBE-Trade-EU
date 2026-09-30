@@ -7,6 +7,15 @@ export type TariffLine = components['schemas']['TariffLineOut'];
 export type RooRule = components['schemas']['RooRuleOut'];
 export type EvidenceTypeRow = components['schemas']['EvidenceTypeOut'];
 export type EvidenceRuleRow = components['schemas']['RuleOut'];
+export type TariffLineInput = components['schemas']['TariffLineIn'];
+export type TariffLinePatch = components['schemas']['TariffLinePatch'];
+export type RooRuleInput = components['schemas']['RooRuleIn'];
+export type RooRulePatch = components['schemas']['RooRulePatch'];
+export type EvidenceTypeInput = components['schemas']['EvidenceTypeIn'];
+export type EvidenceTypePatch = components['schemas']['EvidenceTypePatch'];
+export type EvidenceRuleInput = components['schemas']['RuleIn'];
+export type EvidenceRulePatch = components['schemas']['RulePatch'];
+export type ImportResult = components['schemas']['ImportResult'];
 export type Decision = 'approve' | 'reject' | 'request_info';
 
 const NETWORK = 'Không kết nối được máy chủ. Vui lòng thử lại.';
@@ -84,6 +93,94 @@ export const reviewEvidenceRule = (id: string) =>
   act(() => createApiClient().POST('/api/admin/evidence-rules/{rule_id}/review', { params: { path: { rule_id: id } } }), REVIEW_ERRORS);
 export const deleteEvidenceRule = (id: string) =>
   act(() => createApiClient().DELETE('/api/admin/evidence-rules/{rule_id}', { params: { path: { rule_id: id } } }), { 404: 'Không tìm thấy dòng dữ liệu.' });
+
+// Thêm / sửa: lỗi nghiệp vụ của backend (mã lỗi) được dịch ra câu tiếng Việt để admin biết sửa ở đâu.
+const SAVE_ERRORS: Record<string, string> = {
+  unknown_hs_code: 'Mã HS không có trong danh mục.',
+  invalid_validity: 'Ngày hết hiệu lực phải sau ngày bắt đầu.',
+  invalid_threshold: 'Ngưỡng % bắt buộc với MaxNOM/CTH_OR_MaxNOM và phải để trống với WO/CTH.',
+  unknown_category: 'Nhóm hàng không có trong danh mục HS.',
+  unknown_evidence_type: 'Loại bằng chứng không tồn tại.',
+  evidence_type_exists: 'Mã loại bằng chứng đã tồn tại.',
+  rule_exists: 'Luật này đã tồn tại.',
+  invalid_patch: 'Trường bắt buộc không được để trống.',
+  not_found: 'Không tìm thấy dòng dữ liệu.',
+  rule_not_found: 'Không tìm thấy dòng dữ liệu.',
+  evidence_type_not_found: 'Không tìm thấy dòng dữ liệu.',
+};
+
+type ErrorBody = { error?: { code?: string; message?: string }; detail?: { loc: (string | number)[]; msg: string }[] };
+
+function saveMessage(status: number, error: unknown): string {
+  const body = (error ?? undefined) as ErrorBody | undefined;
+  const code = body?.error?.code;
+  if (code && SAVE_ERRORS[code]) return SAVE_ERRORS[code];
+  if (Array.isArray(body?.detail)) return body.detail.map((d) => `${String(d.loc.at(-1))}: ${d.msg}`).join('; ');
+  if (status === 404) return SAVE_ERRORS.not_found;
+  return body?.error?.message ?? NETWORK;
+}
+
+async function save(call: () => Promise<{ response: Response; error?: unknown }>): Promise<void> {
+  let result: { response: Response; error?: unknown };
+  try {
+    result = await call();
+  } catch {
+    throw new Error(NETWORK);
+  }
+  if (!result.response.ok) throw new Error(saveMessage(result.response.status, result.error));
+}
+
+export const createTariffLine = (body: TariffLineInput) => save(() => createApiClient().POST('/api/admin/tariff-lines', { body }));
+export const updateTariffLine = (id: string, body: TariffLinePatch) =>
+  save(() => createApiClient().PATCH('/api/admin/tariff-lines/{line_id}', { params: { path: { line_id: id } }, body }));
+export const createRooRule = (body: RooRuleInput) => save(() => createApiClient().POST('/api/admin/roo-rules', { body }));
+export const updateRooRule = (id: string, body: RooRulePatch) =>
+  save(() => createApiClient().PATCH('/api/admin/roo-rules/{rule_id}', { params: { path: { rule_id: id } }, body }));
+export const createEvidenceType = (body: EvidenceTypeInput) => save(() => createApiClient().POST('/api/admin/evidence-types', { body }));
+export const updateEvidenceType = (code: string, body: EvidenceTypePatch) =>
+  save(() => createApiClient().PATCH('/api/admin/evidence-types/{code}', { params: { path: { code } }, body }));
+export const createEvidenceRule = (body: EvidenceRuleInput) => save(() => createApiClient().POST('/api/admin/evidence-rules', { body }));
+export const updateEvidenceRule = (id: string, body: EvidenceRulePatch) =>
+  save(() => createApiClient().PATCH('/api/admin/evidence-rules/{rule_id}', { params: { path: { rule_id: id } }, body }));
+
+// ── Excel: tải template / xuất / nhập (file đi thẳng qua fetch, không qua client sinh tự động) ──
+const apiUrl = (path: string) => `${process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000'}${path}`;
+
+/** Tải file .xlsx từ backend rồi cho trình duyệt lưu xuống máy. */
+export async function downloadXlsx(path: string, filename: string): Promise<void> {
+  let response: Response;
+  try {
+    response = await fetch(new Request(apiUrl(path), { credentials: 'include' }));
+  } catch {
+    throw new Error(NETWORK);
+  }
+  if (!response.ok) throw new Error('Không tải được file. Vui lòng thử lại.');
+  const url = URL.createObjectURL(await response.blob());
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+const IMPORT_ERRORS: Record<number, string> = {
+  413: 'File quá lớn (tối đa 2 MB, 5000 dòng).',
+  422: 'File không hợp lệ: cần file .xlsx có sheet "data" và đủ cột bắt buộc.',
+};
+
+/** dryRun = true chỉ kiểm tra và đếm, không ghi. Lỗi theo dòng nằm trong kết quả (errors), không ném. */
+export async function importXlsx(path: string, file: File, dryRun: boolean): Promise<ImportResult> {
+  const form = new FormData();
+  form.append('file', file);
+  let response: Response;
+  try {
+    response = await fetch(new Request(apiUrl(`${path}?dry_run=${dryRun}`), { method: 'POST', body: form, credentials: 'include' }));
+  } catch {
+    throw new Error(NETWORK);
+  }
+  if (!response.ok) throw new Error(IMPORT_ERRORS[response.status] ?? NETWORK);
+  return (await response.json()) as ImportResult;
+}
 
 // ── Kiểm duyệt hồ sơ, sản phẩm, nhật ký, thống kê (I4, I5) ─────────────────────
 export type AdminCompany = components['schemas']['AdminCompanyOut'];

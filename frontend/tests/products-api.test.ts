@@ -19,6 +19,10 @@ const draft = (patch: Partial<ProductDraft> = {}): ProductDraft => ({
   ...emptyDraft(),
   name: 'Gạo thơm Jasmine',
   hs: RICE,
+  priceMin: '480',
+  unit: 'tonne',
+  moq: '25',
+  moqUnit: 'tonne',
   ...patch,
 });
 
@@ -79,9 +83,17 @@ describe('draftToBody — bản nháp → ProductIn', () => {
     });
   });
 
-  it('ô giá/MOQ/đơn vị để trống → null', () => {
-    const body = draftToBody(draft());
-    expect([body.price_min, body.price_max, body.moq, body.unit, body.moq_unit]).toEqual([null, null, null, null, null]);
+  it('giá cao nhất là tùy chọn: để trống → null', () => {
+    expect(draftToBody(draft()).price_max).toBeNull();
+  });
+
+  it.each([
+    [{ priceMin: '' }, 'chưa nhập giá'],
+    [{ unit: '' }, 'chưa chọn đơn vị giá'],
+    [{ moq: '' }, 'chưa nhập MOQ'],
+    [{ moqUnit: '' }, 'chưa chọn đơn vị MOQ'],
+  ] as [Partial<ProductDraft>, string][])('trường bắt buộc bị bỏ trống %j → lỗi', (patch, message) => {
+    expect(() => draftToBody(draft(patch))).toThrow(message);
   });
 
   it('thiếu mã HS → lỗi rõ ràng, không thể lưu', () => {

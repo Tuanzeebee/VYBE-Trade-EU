@@ -51,13 +51,19 @@ import {
   Plus,
   Trash2,
   UploadCloud,
-  Filter
+  Filter,
+  MessageSquare,
+  Calculator,
+  FileSignature,
+  Bot
 } from 'lucide-react';
 import EvidenceManager from './EvidenceManager';
 import VerificationPanel from './VerificationPanel';
 import { useLanguage } from "../context/LanguageContext";
 import RfqInbox from './RfqInbox';
 import NotificationsPanel from './NotificationsPanel';
+import Conversations from './Conversations';
+import { Link } from '../i18n/navigation';
 import ExporterDashboard from './ExporterDashboard';
 
 export interface WorkspaceCertificateItem {
@@ -77,6 +83,8 @@ export interface WorkspaceCertificateItem {
   isMandatory?: boolean;
 }
 
+export type WorkspaceTabId = 'overview' | 'profile' | 'verification' | 'products' | 'rfq' | 'messages' | 'notifications' | 'licenses';
+
 interface SellerWorkspaceProps {
   account?: DemoUser;
   onLogout: () => void;
@@ -84,7 +92,9 @@ interface SellerWorkspaceProps {
   /** Mở form hồ sơ; step = bước cần bổ sung (1 công ty, 2 sản phẩm, 3 giấy phép). */
   onNavigateOnboarding: (step?: number) => void;
   onNavigateBuyerDetail?: () => void;
-  initialTab?: 'verification' | 'profile' | 'overview' | 'products' | 'rfq' | 'notifications' | 'licenses';
+  initialTab?: WorkspaceTabId;
+  /** Có → mỗi mục trong menu là một trang riêng (route); không có → đổi tab tại chỗ. */
+  onNavigateTab?: (tab: WorkspaceTabId) => void;
 }
 
 export default function SellerWorkspace({ 
@@ -93,10 +103,12 @@ export default function SellerWorkspace({
   onNavigateHome, 
   onNavigateOnboarding,
   onNavigateBuyerDetail,
-  initialTab = 'profile'
+  initialTab = 'profile',
+  onNavigateTab
 }: SellerWorkspaceProps) {
   const { tr, language } = useLanguage();
-  const [activeTab, setActiveTab] = useState<'overview' | 'profile' | 'verification' | 'products' | 'rfq' | 'notifications' | 'licenses'>(initialTab);
+  const [activeTab, setActiveTab] = useState<WorkspaceTabId>(initialTab);
+  const goTab = (tab: WorkspaceTabId) => (onNavigateTab ? onNavigateTab(tab) : setActiveTab(tab));
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [activeModal, setActiveModal] = useState<
     'upgrade-l1' | 'upgrade-l2' | 'upgrade-l3' | 'evidence-record' | 'edit-profile' | 'view-doc' | 'public-preview' | 'add-cert' | 'edit-cert' | 'delete-cert' | null
@@ -309,6 +321,22 @@ export default function SellerWorkspace({
     setDeletingCert(null);
   };
 
+  const navItems: { id: WorkspaceTabId; label: string; icon: typeof Home; badge?: string }[] = [
+              { id: 'profile', label: 'Hồ sơ doanh nghiệp', icon: Building2, badge: 'Đã hoàn tất' },
+              { id: 'licenses', label: 'Tải lên & Quản lý Giấy phép & Chứng nhận', icon: Award, badge: `${certificatesList.length} tài liệu` },
+              { id: 'verification', label: 'Tiến trình xác minh (L0-L3)', icon: ShieldCheck, badge: 'L2' },
+              { id: 'overview', label: 'Tổng quan & Chỉ số', icon: Home },
+              { id: 'products', label: 'Sản phẩm xuất khẩu', icon: Package, badge: `${productsList.length}` },
+              { id: 'rfq', label: 'Cơ hội kết nối B2B', icon: Handshake },
+              { id: 'messages', label: 'Tin nhắn', icon: MessageSquare },
+              { id: 'notifications', label: 'Thông báo', icon: Bell }
+            ];
+  const toolLinks = [
+    { href: '/tools/tariff', label: 'Máy tính thuế EVFTA', icon: Calculator },
+    { href: '/tools/origin', label: 'Quy tắc xuất xứ & EUR.1 nháp', icon: FileSignature },
+    { href: '/copilot', label: 'Trợ lý AI tuân thủ', icon: Bot },
+  ] as const;
+
   return (
     <div className="min-h-screen bg-[#f8fafc] text-slate-900 font-['Plus_Jakarta_Sans',sans-serif] selection:bg-blue-600 selection:text-white flex">
       
@@ -342,21 +370,13 @@ export default function SellerWorkspace({
 
           {/* Navigation Links */}
           <nav className="space-y-1.5">
-            {[
-              { id: 'profile', label: 'Hồ sơ doanh nghiệp', icon: Building2, badge: 'Đã hoàn tất' },
-              { id: 'licenses', label: 'Tải lên & Quản lý Giấy phép & Chứng nhận', icon: Award, badge: `${certificatesList.length} tài liệu` },
-              { id: 'verification', label: 'Tiến trình xác minh (L0-L3)', icon: ShieldCheck, badge: 'L2' },
-              { id: 'overview', label: 'Tổng quan & Chỉ số', icon: Home },
-              { id: 'products', label: 'Sản phẩm xuất khẩu', icon: Package, badge: `${productsList.length}` },
-              { id: 'rfq', label: 'Cơ hội kết nối B2B', icon: Handshake, badge: '3 mới' },
-              { id: 'notifications', label: 'Thông báo', icon: Bell }
-            ].map((item) => {
+            {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
               return (
                 <button
                   key={item.id}
-                  onClick={() => setActiveTab(item.id as any)}
+                  onClick={() => goTab(item.id as WorkspaceTabId)}
                   className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs sm:text-[13px] font-semibold transition-all cursor-pointer text-left ${
                     isActive
                       ? 'bg-[#e6f4f2] text-[#0d766e]'
@@ -381,12 +401,24 @@ export default function SellerWorkspace({
             })}
           </nav>
 
+          <div className="mt-6">
+            <p className="px-3.5 mb-2 text-[10px] font-bold uppercase tracking-wider text-slate-500">{tr("Công cụ tuân thủ")}</p>
+            <div className="space-y-1.5">
+              {toolLinks.map(({ href, label, icon: Icon }) => (
+                <Link key={href} href={href} className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs sm:text-[13px] font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-50">
+                  <Icon className="w-4 h-4 stroke-[2] text-slate-500" />
+                  <span>{tr(label)}</span>
+                </Link>
+              ))}
+            </div>
+          </div>
+
         </div>
 
         {/* Bottom User Profile Card */}
         <div className="p-4 m-4 rounded-2xl bg-gradient-to-br from-slate-50 to-teal-50/40 border border-slate-200/80">
           <div 
-            onClick={() => setActiveTab('profile')}
+            onClick={() => goTab('profile')}
             className="flex items-center justify-between cursor-pointer group"
           >
             <div className="flex items-center gap-2.5 min-w-0">
@@ -445,6 +477,7 @@ export default function SellerWorkspace({
                 {tr(activeTab === 'overview' && 'Tổng quan & Chỉ số tăng trưởng')}
                 {tr(activeTab === 'products' && 'Quản lý Sản phẩm xuất khẩu')}
                 {tr(activeTab === 'rfq' && 'Cơ hội kết nối & Báo giá B2B')}
+                {tr(activeTab === 'messages' && 'Tin nhắn với buyer')}
                 {tr(activeTab === 'notifications' && 'Thông báo hệ thống')}
               </span>
             </div>
@@ -481,7 +514,7 @@ export default function SellerWorkspace({
 
               {/* Notification Bell */}
               <button 
-                onClick={() => setActiveTab('notifications')}
+                onClick={() => goTab('notifications')}
                 className="p-1.5 text-slate-600 hover:text-slate-900 transition-colors rounded-full hover:bg-slate-100 cursor-pointer relative"
                 title={tr("Thông báo")}
               >
@@ -513,7 +546,7 @@ export default function SellerWorkspace({
                     </div>
                     <button 
                       onClick={() => {
-                        setActiveTab('profile');
+                        goTab('profile');
                         setProfileDropdownOpen(false);
                       }}
                       className="w-full px-4 py-2 text-left hover:bg-slate-50 text-slate-700 cursor-pointer flex items-center gap-2"
@@ -523,7 +556,7 @@ export default function SellerWorkspace({
                     </button>
                     <button 
                       onClick={() => {
-                        setActiveTab('licenses');
+                        goTab('licenses');
                         setProfileDropdownOpen(false);
                       }}
                       className="w-full px-4 py-2 text-left hover:bg-teal-50 text-teal-900 font-semibold cursor-pointer flex items-center gap-2"
@@ -533,7 +566,7 @@ export default function SellerWorkspace({
                     </button>
                     <button 
                       onClick={() => {
-                        setActiveTab('verification');
+                        goTab('verification');
                         setProfileDropdownOpen(false);
                       }}
                       className="w-full px-4 py-2 text-left hover:bg-slate-50 text-slate-700 cursor-pointer flex items-center gap-2"
@@ -591,6 +624,32 @@ export default function SellerWorkspace({
         {/* =========================================================================
             3. TAB CONTENT DISPATCHER
            ========================================================================= */}
+        {/* Menu cho màn hình hẹp (thanh bên chỉ hiện từ md trở lên) */}
+        <nav aria-label={tr("Menu exporter")} className="md:hidden flex gap-2 overflow-x-auto px-4 py-2 bg-white border-b border-slate-100">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = activeTab === item.id;
+            return (
+              <button
+                key={item.id}
+                type="button"
+                aria-current={isActive ? 'page' : undefined}
+                onClick={() => goTab(item.id)}
+                className={`shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-semibold cursor-pointer ${isActive ? 'bg-[#e6f4f2] text-[#0d766e]' : 'bg-slate-50 text-slate-600'}`}
+              >
+                <Icon className="w-3.5 h-3.5" />
+                <span>{tr(item.label)}</span>
+              </button>
+            );
+          })}
+          {toolLinks.map(({ href, label, icon: Icon }) => (
+            <Link key={href} href={href} className="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-semibold bg-slate-50 text-slate-600">
+              <Icon className="w-3.5 h-3.5" />
+              <span>{tr(label)}</span>
+            </Link>
+          ))}
+        </nav>
+
         <main className="flex-1 w-full max-w-7xl mx-auto p-5 sm:p-8 lg:p-10 select-none">
           
           {/* -----------------------------------------------------------------------
@@ -869,7 +928,7 @@ export default function SellerWorkspace({
                         <h3 className="text-sm font-bold text-slate-900">{tr("3. Chứng nhận chất lượng")}</h3>
                       </div>
                       <button
-                        onClick={() => setActiveTab('licenses')}
+                        onClick={() => goTab('licenses')}
                         className="text-xs font-semibold text-teal-700 hover:text-teal-900 flex items-center gap-1 cursor-pointer"
                       >
                         <span>{tr("Quản lý (")}{tr(certificatesList.length)}{tr(")")}</span>
@@ -918,7 +977,7 @@ export default function SellerWorkspace({
                     </div>
 
                     <button
-                      onClick={() => setActiveTab('licenses')}
+                      onClick={() => goTab('licenses')}
                       className="w-full py-2.5 rounded-xl border border-teal-200 bg-teal-50/50 hover:bg-teal-100 text-teal-900 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
                     >
                       <Plus className="w-3.5 h-3.5 text-teal-700" />
@@ -940,7 +999,7 @@ export default function SellerWorkspace({
                         <h3 className="text-sm font-bold text-slate-900">{tr("4. Sản phẩm xuất khẩu")}</h3>
                       </div>
                       <button
-                        onClick={() => setActiveTab('products')}
+                        onClick={() => goTab('products')}
                         className="text-xs font-semibold text-teal-700 hover:text-teal-900"
                       >
                         {tr("Quản lý (")}{tr(productsList.length)}{tr(") →")}</button>
@@ -984,7 +1043,7 @@ export default function SellerWorkspace({
                     <p className="text-xs text-slate-300 leading-relaxed">
                       {tr("Muốn hiển thị ưu tiên hàng đầu và nhận bảo lãnh Escrow từ VYBE? Nâng cấp lên chương trình thẩm định ")}<strong>{tr("L3 VYBE Certified")}</strong>{tr(".")}</p>
                     <button
-                      onClick={() => setActiveTab('verification')}
+                      onClick={() => goTab('verification')}
                       className="w-full py-2.5 rounded-xl bg-teal-400 hover:bg-teal-300 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
                     >
                       <span>{tr("Xem lộ trình L0 → L3")}</span>
@@ -1104,6 +1163,8 @@ export default function SellerWorkspace({
           {/* -----------------------------------------------------------------------
               TAB: THÔNG BÁO (NOTIFICATIONS)
              ----------------------------------------------------------------------- */}
+          {activeTab === 'messages' && <Conversations />}
+
           {activeTab === 'notifications' && <NotificationsPanel />}
 
         </main>

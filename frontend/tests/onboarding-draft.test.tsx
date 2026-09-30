@@ -19,7 +19,7 @@ const ACCOUNT: DemoUser = {
   id: 'u-1', name: 'Nguyễn A', email: 'a@congtya.vn', company: 'Công ty A', role: 'seller', onboardingCompleted: false,
 };
 const RICE = { code: '100630', formatted: '1006.30', name_vi: 'Gạo xát', name_en: 'Semi-milled or wholly milled rice' };
-const product: ProductDraft = { ...emptyDraft(), name: 'Gạo thơm', hs: RICE, priceMin: '480', priceMax: '560' };
+const product: ProductDraft = { ...emptyDraft(), name: 'Gạo thơm', hs: RICE, priceMin: '480', priceMax: '560', unit: 'tonne', moq: '25', moqUnit: 'tonne' };
 
 function renderWizard(props: Partial<React.ComponentProps<typeof SellerOnboarding>>) {
   render(

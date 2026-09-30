@@ -23,6 +23,7 @@ from app.modules.verification.admin_schemas import (
     EvidenceTypeIn,
     EvidenceTypePatch,
     RuleIn,
+    RulePatch,
 )
 from app.modules.verification.models import (
     ApprovalStatus,
@@ -61,7 +62,7 @@ async def _get_type(session: AsyncSession, code: str) -> EvidenceType:
 
 
 async def create_type(
-    session: AsyncSession, actor: CurrentUser, data: EvidenceTypeIn
+    session: AsyncSession, actor: CurrentUser, data: EvidenceTypeIn, commit: bool = True
 ) -> EvidenceType:
     if await session.get(EvidenceType, data.code) is not None:
         raise AppError("evidence_type_exists", "Evidence type already exists", 409)
@@ -77,12 +78,17 @@ async def create_type(
         before=None,
         after=_type_snapshot(row),
     )
-    await session.commit()
+    if commit:
+        await session.commit()
     return row
 
 
 async def update_type(
-    session: AsyncSession, actor: CurrentUser, code: str, patch: EvidenceTypePatch
+    session: AsyncSession,
+    actor: CurrentUser,
+    code: str,
+    patch: EvidenceTypePatch,
+    commit: bool = True,
 ) -> EvidenceType:
     row = await _get_type(session, code)
     before = _type_snapshot(row)
@@ -103,7 +109,8 @@ async def update_type(
         before=before,
         after=_type_snapshot(row),
     )
-    await session.commit()
+    if commit:
+        await session.commit()
     return row
 
 
@@ -136,13 +143,17 @@ async def list_rules(session: AsyncSession, category: str | None) -> list[Requir
     return list(await session.scalars(query))
 
 
-async def create_rule(
-    session: AsyncSession, actor: CurrentUser, data: RuleIn
-) -> RequiredEvidenceRule:
-    if data.category not in await catalog.list_categories(session):
+async def _check_rule_refs(session: AsyncSession, category: str, type_code: str) -> None:
+    if category not in await catalog.list_categories(session):
         raise AppError("unknown_category", "Category is not in the HS catalog", 422)
-    if await session.get(EvidenceType, data.evidence_type_code) is None:
+    if await session.get(EvidenceType, type_code) is None:
         raise AppError("unknown_evidence_type", "Evidence type does not exist", 422)
+
+
+async def create_rule(
+    session: AsyncSession, actor: CurrentUser, data: RuleIn, commit: bool = True
+) -> RequiredEvidenceRule:
+    await _check_rule_refs(session, data.category, data.evidence_type_code)
     row = RequiredEvidenceRule(**data.model_dump())
     session.add(row)
     try:
@@ -159,7 +170,8 @@ async def create_rule(
         before=None,
         after=_rule_snapshot(row),
     )
-    await session.commit()
+    if commit:
+        await session.commit()
     return row
 
 
@@ -167,6 +179,51 @@ async def _get_rule(session: AsyncSession, rule_id: uuid.UUID) -> RequiredEviden
     row = await session.get(RequiredEvidenceRule, rule_id)
     if row is None:
         raise AppError("rule_not_found", "Rule not found", 404)
+    return row
+
+
+async def update_rule(
+    session: AsyncSession,
+    actor: CurrentUser,
+    rule_id: uuid.UUID,
+    patch: RulePatch,
+    commit: bool = True,
+) -> RequiredEvidenceRule:
+    row = await _get_rule(session, rule_id)
+    fields = patch.model_fields_set
+    if any(
+        getattr(patch, n) is None
+        for n in {"category", "evidence_type_code", "is_required"} & fields
+    ):
+        raise AppError("invalid_patch", "Required fields cannot be null", 422)
+    await _check_rule_refs(
+        session,
+        patch.category if patch.category is not None else row.category,
+        patch.evidence_type_code
+        if patch.evidence_type_code is not None
+        else row.evidence_type_code,
+    )
+    before = _rule_snapshot(row)
+    for name in fields:
+        setattr(row, name, getattr(patch, name))
+    row.reviewed_by = None  # sửa xong phải duyệt lại
+    row.reviewed_at = None
+    try:
+        await session.flush()
+    except IntegrityError as error:
+        await session.rollback()
+        raise AppError("rule_exists", "This rule already exists", 409) from error
+    await record(
+        session,
+        actor_id=actor.id,
+        action_type=f"{RULE_ENTITY}.update",
+        entity_type=RULE_ENTITY,
+        entity_id=str(row.id),
+        before=before,
+        after=_rule_snapshot(row),
+    )
+    if commit:
+        await session.commit()
     return row
 
 

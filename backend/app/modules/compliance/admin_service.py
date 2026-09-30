@@ -104,6 +104,7 @@ async def _update[Row: (TariffLine, ProductSpecificRule)](
     row: Row,
     patch: BaseModel,
     entity: str,
+    commit: bool = True,
 ) -> Row:
     before = _snapshot(row)
     for name in patch.model_fields_set:
@@ -121,7 +122,7 @@ async def _update[Row: (TariffLine, ProductSpecificRule)](
         before=before,
         after=_snapshot(row),
     )
-    return await _save(session, row)
+    return await _save(session, row) if commit else row
 
 
 async def _review[Row: (TariffLine, ProductSpecificRule)](
@@ -195,7 +196,11 @@ async def create_tariff_line(
 
 
 async def update_tariff_line(
-    session: AsyncSession, actor: CurrentUser, line_id: uuid.UUID, patch: TariffLinePatch
+    session: AsyncSession,
+    actor: CurrentUser,
+    line_id: uuid.UUID,
+    patch: TariffLinePatch,
+    commit: bool = True,
 ) -> TariffLine:
     line = await _get(session, TariffLine, line_id)
     fields = patch.model_fields_set
@@ -210,7 +215,7 @@ async def update_tariff_line(
     )
     if "quota_required" in fields and patch.quota_required is None:
         raise AppError("invalid_patch", "quota_required cannot be null", 422)
-    return await _update(session, actor, line, patch, TARIFF_ENTITY)
+    return await _update(session, actor, line, patch, TARIFF_ENTITY, commit)
 
 
 async def review_tariff_line(
@@ -243,7 +248,11 @@ async def create_roo_rule(
 
 
 async def update_roo_rule(
-    session: AsyncSession, actor: CurrentUser, rule_id: uuid.UUID, patch: RooRulePatch
+    session: AsyncSession,
+    actor: CurrentUser,
+    rule_id: uuid.UUID,
+    patch: RooRulePatch,
+    commit: bool = True,
 ) -> ProductSpecificRule:
     rule = await _get(session, ProductSpecificRule, rule_id)
     fields = patch.model_fields_set
@@ -260,7 +269,7 @@ async def update_roo_rule(
         patch.rule_type if "rule_type" in fields and patch.rule_type else rule.rule_type,
         patch.threshold_pct if "threshold_pct" in fields else rule.threshold_pct,
     )
-    return await _update(session, actor, rule, patch, RULE_ENTITY)
+    return await _update(session, actor, rule, patch, RULE_ENTITY, commit)
 
 
 async def review_roo_rule(

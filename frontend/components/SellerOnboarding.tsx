@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import type { DemoUser } from '../lib/demoAuth';
-import { BUSINESS_MODELS, EXPORT_MARKETS, INDUSTRIES, STAFF_LANGUAGES } from '../lib/companyApi';
+import { BUSINESS_MODELS, EXPORT_MARKETS, INDUSTRIES, STAFF_LANGUAGES, logoFileError, uploadCompanyLogo } from '../lib/companyApi';
 import { draftToBody, type ProductDraft } from '../lib/productsApi';
 import ProductsEditor from './ProductsEditor';
 import LanguageSelect from './LanguageSelect';
@@ -83,8 +83,26 @@ export default function SellerOnboarding({ account, initialStep = 2, initialComp
     descriptionVi: '',
     descriptionEn: '',
     markets: '',
+    logoKey: '',
     ...initialCompany
   });
+
+  // Logo (bước 1): công ty chưa có trên server khi vừa chọn file nên giữ file ở đây, tải lên sau khi lưu bước 1.
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [logoPreview, setLogoPreview] = useState('');
+  const [logoError, setLogoError] = useState('');
+  useEffect(() => {
+    if (!logoFile) { setLogoPreview(''); return; }
+    const url = URL.createObjectURL(logoFile);
+    setLogoPreview(url);
+    return () => URL.revokeObjectURL(url);
+  }, [logoFile]);
+  const pickLogo = (file: File | undefined) => {
+    if (!file) return;
+    const problem = logoFileError(file);
+    setLogoError(problem ?? '');
+    if (!problem) setLogoFile(file);
+  };
   const staffLanguages = formData.languages.split(',').filter(Boolean);
   const exportMarkets = formData.markets.split(',').filter(Boolean);
   const toggleMarket = (code: string) => setFormData({
@@ -125,7 +143,15 @@ export default function SellerOnboarding({ account, initialStep = 2, initialComp
     setSubmitError('');
     if (!onComplete) { setSubmittedSuccess(true); return; }
     try {
-      await onComplete(buildProfile(), products);
+      let profile = buildProfile();
+      if (logoFile && onSaveCompany) {
+        await onSaveCompany(profile);
+        const logoKey = await uploadCompanyLogo(logoFile);
+        setFormData((prev) => ({ ...prev, logoKey }));
+        setLogoFile(null);
+        profile = { ...profile, logoKey };
+      }
+      await onComplete(profile, products);
     } catch (cause) { setSubmitError(cause instanceof Error ? cause.message : 'Không thể lưu hồ sơ. Vui lòng thử lại.'); }
   };
 
@@ -135,6 +161,12 @@ export default function SellerOnboarding({ account, initialStep = 2, initialComp
       setSubmitError('');
       try {
         await onSaveCompany(buildProfile());
+        if (logoFile) {
+          const logoKey = await uploadCompanyLogo(logoFile);
+          setFormData((prev) => ({ ...prev, logoKey }));
+          setLogoFile(null);
+          await onSaveCompany({ ...buildProfile(), logoKey });
+        }
       } catch (cause) {
         setSubmitError(cause instanceof Error ? cause.message : 'Không thể lưu hồ sơ. Vui lòng thử lại.');
         return;
@@ -175,16 +207,6 @@ export default function SellerOnboarding({ account, initialStep = 2, initialComp
           {/* Right: Language Globe + Bell Notification + Seller Profile */}
           <div className="flex flex-wrap items-center gap-3">
             
-            {/* Direct Workspace link button */}
-            <button 
-              onClick={() => onNavigateWorkspace ? onNavigateWorkspace('profile') : onNavigateHome()}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-teal-50 hover:bg-teal-100 text-[#083832] text-xs font-semibold border border-teal-200/80 transition-all cursor-pointer shadow-2xs"
-              title={tr("Vào Workspace xem Profile Company")}
-            >
-              <Building2 className="w-3.5 h-3.5 text-teal-700" />
-              <span>{tr("Vào Workspace Seller")}</span>
-            </button>
-
             <LanguageSelect />
             {/* Seller Account Pill with Dropdown */}
             <div className="relative">
@@ -477,7 +499,34 @@ export default function SellerOnboarding({ account, initialStep = 2, initialComp
               {/* Step 1 Form Body */}
               {currentStep === 1 && (
                 <form onSubmit={handleNextStep} className="space-y-4 sm:space-y-5">
-                  
+
+                  {/* Logo công ty */}
+                  <div>
+                    <span className="block text-xs sm:text-[13px] font-semibold text-slate-800 mb-1.5">{tr("Logo công ty")}</span>
+                    <div className="flex items-center gap-4">
+                      <div className="w-20 h-20 rounded-2xl border border-dashed border-slate-300 bg-white overflow-hidden flex items-center justify-center text-slate-400 shrink-0">
+                        {logoPreview
+                          ? <img src={logoPreview} alt={tr("Logo công ty")} className="w-full h-full object-contain" />
+                          : formData.logoKey ? <CheckCircle2 className="w-7 h-7 text-emerald-600" /> : <ImageIcon className="w-7 h-7" />}
+                      </div>
+                      <div className="space-y-1.5">
+                        <label className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 bg-white text-xs font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer">
+                          <UploadCloud className="w-4 h-4" />
+                          <span>{logoPreview || formData.logoKey ? tr("Đổi logo") : tr("Thêm logo")}</span>
+                          <input
+                            type="file"
+                            accept="image/png,image/jpeg,image/webp"
+                            className="sr-only"
+                            onChange={(e) => { pickLogo(e.target.files?.[0]); e.target.value = ''; }}
+                          />
+                        </label>
+                        {formData.logoKey && !logoPreview && <p className="text-[11px] text-emerald-700">{tr("Logo đã được tải lên.")}</p>}
+                        <p className="text-[11px] text-slate-600">{tr("PNG, JPEG hoặc WebP, tối đa 2MB.")}</p>
+                        {logoError && <p role="alert" className="text-[11px] text-rose-700">{tr(logoError)}</p>}
+                      </div>
+                    </div>
+                  </div>
+
                   {/* Field 1: Tên công ty * */}
                   <div>
                     <label className="block text-xs sm:text-[13px] font-semibold text-slate-800 mb-1.5">
@@ -837,14 +886,6 @@ export default function SellerOnboarding({ account, initialStep = 2, initialComp
                     >
                       {tr("Quay lại Bước 3")}</button>
                     <div className="flex items-center gap-2.5 w-full sm:w-auto">
-                      <button 
-                        type="button"
-                        onClick={() => onNavigateWorkspace ? onNavigateWorkspace('profile') : setSubmittedSuccess(true)}
-                        className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl border border-teal-600 text-teal-800 bg-teal-50 hover:bg-teal-100 text-xs font-semibold flex items-center justify-center gap-1.5 cursor-pointer transition-colors shadow-2xs"
-                      >
-                        <Building2 className="w-3.5 h-3.5 text-teal-700" />
-                        <span>{tr("Xem trước Workspace")}</span>
-                      </button>
                       <button 
                         type="button"
                         onClick={finish}

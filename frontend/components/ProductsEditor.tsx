@@ -144,22 +144,22 @@ function ProductCard({
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div>
-          <label htmlFor={id('pmin')} className={LABEL}>{tr('Giá thấp nhất')}</label>
-          <input id={id('pmin')} inputMode="decimal" value={product.priceMin} onChange={(e) => set('priceMin', e.target.value)} className={FIELD} placeholder="480.00" />
+          <label htmlFor={id('pmin')} className={LABEL}>{tr('Giá thấp nhất')} *</label>
+          <input id={id('pmin')} required inputMode="decimal" value={product.priceMin} onChange={(e) => set('priceMin', e.target.value)} className={FIELD} placeholder="480.00" />
         </div>
         <div>
           <label htmlFor={id('pmax')} className={LABEL}>{tr('Giá cao nhất')}</label>
           <input id={id('pmax')} inputMode="decimal" value={product.priceMax} onChange={(e) => set('priceMax', e.target.value)} className={FIELD} placeholder="560.50" />
         </div>
         <div>
-          <label htmlFor={id('cur')} className={LABEL}>{tr('Tiền tệ')}</label>
-          <select id={id('cur')} value={product.currency} onChange={(e) => set('currency', e.target.value as Currency)} className={FIELD}>
+          <label htmlFor={id('cur')} className={LABEL}>{tr('Tiền tệ')} *</label>
+          <select id={id('cur')} required value={product.currency} onChange={(e) => set('currency', e.target.value as Currency)} className={FIELD}>
             {CURRENCIES.map((c) => <option key={c} value={c}>{c}</option>)}
           </select>
         </div>
         <div>
-          <label htmlFor={id('unit')} className={LABEL}>{tr('Đơn vị giá')}</label>
-          <select id={id('unit')} value={product.unit} onChange={(e) => set('unit', e.target.value)} className={FIELD}>
+          <label htmlFor={id('unit')} className={LABEL}>{tr('Đơn vị giá')} *</label>
+          <select id={id('unit')} required value={product.unit} onChange={(e) => set('unit', e.target.value)} className={FIELD}>
             <option value="">{tr('Chọn đơn vị')}</option>
             {UNITS.map((u) => <option key={u.code} value={u.code}>{tr(u.label)}</option>)}
           </select>
@@ -168,12 +168,12 @@ function ProductCard({
 
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label htmlFor={id('moq')} className={LABEL}>{tr('MOQ (số lượng đặt tối thiểu)')}</label>
-          <input id={id('moq')} inputMode="decimal" value={product.moq} onChange={(e) => set('moq', e.target.value)} className={FIELD} placeholder="25" />
+          <label htmlFor={id('moq')} className={LABEL}>{tr('MOQ (số lượng đặt tối thiểu)')} *</label>
+          <input id={id('moq')} required inputMode="decimal" value={product.moq} onChange={(e) => set('moq', e.target.value)} className={FIELD} placeholder="25" />
         </div>
         <div>
-          <label htmlFor={id('moqunit')} className={LABEL}>{tr('Đơn vị MOQ')}</label>
-          <select id={id('moqunit')} value={product.moqUnit} onChange={(e) => set('moqUnit', e.target.value)} className={FIELD}>
+          <label htmlFor={id('moqunit')} className={LABEL}>{tr('Đơn vị MOQ')} *</label>
+          <select id={id('moqunit')} required value={product.moqUnit} onChange={(e) => set('moqUnit', e.target.value)} className={FIELD}>
             <option value="">{tr('Chọn đơn vị')}</option>
             {UNITS.map((u) => <option key={u.code} value={u.code}>{tr(u.label)}</option>)}
           </select>

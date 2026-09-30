@@ -7,7 +7,7 @@ import { useSearchParams } from 'next/navigation';
 import AuthPage from '../AuthPage';
 import BuyerOnboarding from '../BuyerOnboarding';
 import SellerOnboarding from '../SellerOnboarding';
-import SellerWorkspace from '../SellerWorkspace';
+import SellerWorkspace, { type WorkspaceTabId } from '../SellerWorkspace';
 import AdminConsole from '../AdminConsole';
 import { LegacyGate } from '../app-shell/LegacyGate';
 import { PublicShell } from '../app-shell/PublicShell';
@@ -18,8 +18,7 @@ import { buyerProfileToCompany, companyToForm, getMyCompany, profileToCompany, s
 import { draftFromProduct, getMyProducts, syncProducts, type ProductDraft } from '../../lib/productsApi';
 import { hrefFor, roleFromType } from '../../lib/legacyNav';
 
-const WORKSPACE_TABS = ['verification', 'profile', 'overview', 'products', 'rfq', 'notifications', 'licenses'] as const;
-type WorkspaceTab = (typeof WORKSPACE_TABS)[number];
+const WORKSPACE_TABS: WorkspaceTabId[] = ['verification', 'profile', 'overview', 'products', 'rfq', 'messages', 'notifications', 'licenses'];
 
 function useGoHome() {
   const router = useRouter();
@@ -152,7 +151,7 @@ function useHasCompany(): boolean | undefined {
   return has;
 }
 
-function WorkspaceContent({ user }: { user: DemoUser }) {
+function WorkspaceContent({ user, tab: routeTab }: { user: DemoUser; tab?: WorkspaceTabId }) {
   const navigate = useLegacyNavigate(user);
   const handleLogout = useLogout();
   const router = useRouter();
@@ -160,8 +159,9 @@ function WorkspaceContent({ user }: { user: DemoUser }) {
   useEffect(() => {
     if (hasCompany === false && user.role === 'seller') router.replace(hrefFor('seller-profile', { user, step: 1 }));
   }, [hasCompany, user, router]);
-  const tab = useSearchParams().get('tab');
-  const initialTab: WorkspaceTab = WORKSPACE_TABS.includes(tab as WorkspaceTab) ? (tab as WorkspaceTab) : 'profile';
+  // Mỗi mục là một route riêng; /exporter?tab=… cũ vẫn mở đúng mục.
+  const queryTab = useSearchParams().get('tab') as WorkspaceTabId | null;
+  const initialTab: WorkspaceTabId = routeTab ?? (queryTab && WORKSPACE_TABS.includes(queryTab) ? queryTab : 'overview');
   if (hasCompany !== true && user.role === 'seller') return null;
   return (
     <SellerWorkspace
@@ -172,12 +172,13 @@ function WorkspaceContent({ user }: { user: DemoUser }) {
       onNavigateOnboarding={(step) => navigate('seller-profile', { step: typeof step === 'number' ? step : undefined })}
       onNavigateBuyerDetail={() => navigate('buyer-seller-detail')}
       initialTab={initialTab}
+      onNavigateTab={(next) => navigate('workspace', { tab: next })}
     />
   );
 }
 
-export function WorkspaceRoute() {
-  return <LegacyGate page="workspace">{(user) => user && <WorkspaceContent user={user} />}</LegacyGate>;
+export function WorkspaceRoute({ tab }: { tab?: WorkspaceTabId }) {
+  return <LegacyGate page="workspace">{(user) => user && <WorkspaceContent user={user} tab={tab} />}</LegacyGate>;
 }
 
 function SellerProfileContent({ user }: { user: DemoUser }) {

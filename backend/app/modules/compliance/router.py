@@ -1,15 +1,16 @@
 import uuid
 from typing import Annotated
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, UploadFile
 from fastapi.responses import Response, StreamingResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import get_session
+from app.core.spreadsheet import ImportResult, read_upload, xlsx_response
 from app.core.storage import Storage, get_storage
 from app.modules.auth.schemas import CurrentUser
 from app.modules.auth.service import get_optional_user, require_role
-from app.modules.compliance import admin_service, documents, service
+from app.modules.compliance import admin_service, admin_spreadsheet, documents, service
 from app.modules.compliance.admin_schemas import (
     RooRuleIn,
     RooRuleOut,
@@ -64,6 +65,42 @@ async def calculate_roo(
 # ── Admin: nhập + duyệt dữ liệu tuân thủ ─────────────────────────────────────
 Admin = Annotated[CurrentUser, Depends(require_role("admin"))]
 DB = Annotated[AsyncSession, Depends(get_session)]
+
+
+@router.get("/api/admin/tariff-lines/template.xlsx")
+async def tariff_lines_template(_: Admin) -> Response:
+    return xlsx_response(admin_spreadsheet.tariff_template(), "tariff-lines-template.xlsx")
+
+
+@router.get("/api/admin/tariff-lines/export.xlsx")
+async def tariff_lines_export(_: Admin, session: DB) -> Response:
+    return xlsx_response(await admin_spreadsheet.export_tariff(session), "tariff-lines.xlsx")
+
+
+@router.post("/api/admin/tariff-lines/import")
+async def tariff_lines_import(
+    file: UploadFile, admin: Admin, session: DB, dry_run: bool = False
+) -> ImportResult:
+    data = await read_upload(file)
+    return await admin_spreadsheet.import_tariff(session, admin, data, dry_run)
+
+
+@router.get("/api/admin/roo-rules/template.xlsx")
+async def roo_rules_template(_: Admin) -> Response:
+    return xlsx_response(admin_spreadsheet.psr_template(), "roo-rules-template.xlsx")
+
+
+@router.get("/api/admin/roo-rules/export.xlsx")
+async def roo_rules_export(_: Admin, session: DB) -> Response:
+    return xlsx_response(await admin_spreadsheet.export_psr(session), "roo-rules.xlsx")
+
+
+@router.post("/api/admin/roo-rules/import")
+async def roo_rules_import(
+    file: UploadFile, admin: Admin, session: DB, dry_run: bool = False
+) -> ImportResult:
+    data = await read_upload(file)
+    return await admin_spreadsheet.import_psr(session, admin, data, dry_run)
 
 
 @router.get("/api/admin/tariff-lines")

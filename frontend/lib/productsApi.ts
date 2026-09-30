@@ -108,6 +108,11 @@ export function draftToBody(d: ProductDraft): ProductIn {
   if (!d.hs) throw new Error(`Sản phẩm "${name}" chưa chọn mã HS.`);
   const priceMin = parseAmount('Giá thấp nhất', d.priceMin);
   const priceMax = parseAmount('Giá cao nhất', d.priceMax);
+  if (!priceMin) throw new Error(`Sản phẩm "${name}" chưa nhập giá.`);
+  if (!blank(d.unit)) throw new Error(`Sản phẩm "${name}" chưa chọn đơn vị giá.`);
+  const moq = parseAmount('MOQ', d.moq);
+  if (!moq) throw new Error(`Sản phẩm "${name}" chưa nhập MOQ.`);
+  if (!blank(d.moqUnit)) throw new Error(`Sản phẩm "${name}" chưa chọn đơn vị MOQ.`);
   if (priceMin && priceMax && Number(priceMin) > Number(priceMax)) {
     throw new Error('Giá thấp nhất không được lớn hơn giá cao nhất.');
   }
@@ -120,7 +125,7 @@ export function draftToBody(d: ProductDraft): ProductIn {
     price_max: priceMax,
     currency: d.currency,
     unit: (blank(d.unit) as UnitCode | null) ?? null,
-    moq: parseAmount('MOQ', d.moq),
+    moq,
     moq_unit: (blank(d.moqUnit) as UnitCode | null) ?? null,
     is_active: d.isActive,
     image_keys: d.images.map((image) => image.key),

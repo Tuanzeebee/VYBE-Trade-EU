@@ -32,6 +32,18 @@ export interface DirectoryQuery {
 export const DEFAULT_MARKET = 'Tất cả thị trường';
 export const DEFAULT_LEVEL = 'all';
 
+// Mỗi mục của workspace exporter là một trang riêng. overview nằm ở gốc /exporter.
+const WORKSPACE_PATHS: Record<string, string> = {
+  overview: '/exporter',
+  profile: '/exporter/company',
+  products: '/exporter/products',
+  licenses: '/exporter/certificates',
+  verification: '/exporter/verification',
+  rfq: '/exporter/rfqs',
+  messages: '/exporter/messages',
+  notifications: '/exporter/notifications',
+};
+
 export const PROTECTED_PAGES: LegacyPage[] = ['workspace', 'onboarding', 'seller-profile', 'admin'];
 
 /** Giữ nguyên quy tắc setCurrentPage của app/page.tsx cũ: trang được phép hiển thị cho user này. */
@@ -81,7 +93,7 @@ export function hrefFor(page: LegacyPage, options: HrefOptions = {}): string {
     case 'seller-profile':
       return withQuery('/exporter/profile', { step: options.step ? String(options.step) : null });
     case 'workspace':
-      return withQuery('/exporter', { tab: options.tab });
+      return options.tab && WORKSPACE_PATHS[options.tab] ? WORKSPACE_PATHS[options.tab] : '/exporter';
     case 'buyer-directory': {
       const d = options.directory ?? {};
       return withQuery('/suppliers', {
