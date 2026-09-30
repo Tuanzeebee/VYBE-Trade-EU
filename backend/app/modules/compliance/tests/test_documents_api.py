@@ -14,6 +14,8 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.audit import AuditLog
+from app.modules.catalog.schemas import HsCodeIn
+from app.modules.catalog.service import upsert_hs_codes
 from app.modules.companies.tests.helpers import company_body, login_as
 from app.modules.compliance import documents
 from app.modules.compliance.eur1 import WATERMARK
@@ -268,3 +270,30 @@ async def test_document_without_company_profile_404(
     await login_as(api_client, "exporter", "nocompany@x.vn")
     check = await roo_check(db_session, None)
     assert (await api_client.post(URL, json=body(check.id))).status_code == 404
+
+
+async def test_goods_description_fallback_prefers_the_eight_digit_catalog_name(
+    api_client: AsyncClient, db_session: AsyncSession, exporter: uuid.UUID, queued_jobs: list[str]
+) -> None:
+    await upsert_hs_codes(
+        db_session,
+        [
+            HsCodeIn(
+                code="09012190",
+                name_vi="Cà phê rang",
+                name_en="Roasted coffee eightdigit",
+                category="agriculture",
+                is_calculator_supported=True,
+            )
+        ],
+    )
+    check = await roo_check(db_session, exporter, hs="09012190")
+    document_id = uuid.UUID((await api_client.post(URL, json=body(check.id))).json()["id"])
+    doc = await db_session.get_one(Document, document_id)
+    doc.input_data = {**doc.input_data, "goods_description": ""}
+    await db_session.flush()
+    await documents.generate_document(db_session, FakeStorage(), document_id)
+    ready = await db_session.get_one(Document, document_id)
+    assert ready.file_key is not None
+    text = PdfReader(io.BytesIO(FakeStorage.objects[ready.file_key])).pages[0].extract_text()
+    assert "eightdigit" in text
