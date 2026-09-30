@@ -24,6 +24,14 @@ def normalize_code(raw: str) -> str | None:
     return digits if _CODE.fullmatch(digits) else None
 
 
+def _code_prefixes(digits: str) -> list[str]:
+    """Tiền tố mã để tìm. Bảng tính hay làm mất số 0 đầu (03061792 → 3061792, 030617 → 30617):
+    mã đủ 5 hoặc 7 số không bắt đầu bằng 0 được thử thêm với số 0 đứng trước."""
+    if len(digits) in (5, 7) and not digits.startswith("0"):
+        return [digits, f"0{digits}"]
+    return [digits]
+
+
 def format_code(code: str) -> str:
     """'100630' → '1006.30'; '10063000' → '1006.30.00'."""
     parts = [code[:4], code[4:6], code[6:]]
@@ -57,7 +65,8 @@ async def search_hs_codes(
     limit = min(limit, MAX_RESULTS)
     digits = _SEPARATORS.sub("", q)
     if _DIGITS.fullmatch(digits):
-        query = select(HsCode).where(HsCode.code.like(f"{digits}%")).order_by(HsCode.code)
+        prefixes = or_(*(HsCode.code.like(f"{p}%") for p in _code_prefixes(digits)))
+        query = select(HsCode).where(prefixes).order_by(HsCode.code)
     else:
         conditions = []
         for token in q.split():
@@ -118,7 +127,9 @@ def hs_codes_matching(token: str) -> Select[str]:
     token = token.strip()
     digits = _SEPARATORS.sub("", token)
     if _DIGITS.fullmatch(digits):
-        return select(HsCode.code).where(HsCode.code.like(f"{digits}%"))
+        return select(HsCode.code).where(
+            or_(*(HsCode.code.like(f"{p}%") for p in _code_prefixes(digits)))
+        )
     pattern = f"%{_escape_like(token)}%"
     return select(HsCode.code).where(
         or_(

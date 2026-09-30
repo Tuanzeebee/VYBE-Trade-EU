@@ -71,6 +71,8 @@ async def import_pack(
     session: AsyncSession, actor_email: str, pack: Pack, dry_run: bool
 ) -> dict[str, tuple[int, int]]:
     if dry_run:
+        if await get_admin_by_email(session, actor_email) is None:
+            raise ValueError(f"không có tài khoản admin {actor_email}")
         # Không ghi gì, kể cả danh mục HS (upsert_hs_codes luôn commit): chỉ đếm dòng hợp lệ,
         # schema đã kiểm khi dựng các dòng.
         return {
@@ -86,9 +88,9 @@ async def import_pack(
     }
 
 
-async def _run(path: Path, actor: str, dry_run: bool) -> dict[str, tuple[int, int]]:
+async def _run(pack: Pack, actor: str, dry_run: bool) -> dict[str, tuple[int, int]]:
     async with get_sessionmaker()() as session:
-        return await import_pack(session, actor, load_pack(path), dry_run)
+        return await import_pack(session, actor, pack, dry_run)
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -104,10 +106,16 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(f"Không tìm thấy file: {args.file}", file=sys.stderr)
         return 1
     try:
-        report = asyncio.run(_run(args.file, args.actor, args.dry_run))
+        pack = load_pack(args.file)
+        report = asyncio.run(_run(pack, args.actor, args.dry_run))
     except ValueError as exc:
         print(f"Lỗi dữ liệu: {exc}", file=sys.stderr)
         return 1
+    withheld = [(r.cn_code, r.internal_note) for r in pack.rows if r.internal_note]
+    if withheld:
+        print("Ghi chú nội bộ KHÔNG nạp vào DB (người duyệt luật đọc, không hiển thị công khai):")
+        for code, text in withheld:
+            print(f"  {code}: {text}")
     verb = "sẽ thêm" if args.dry_run else "đã thêm"
     for name, (added, skipped) in report.items():
         print(f"{name}: {verb} {added} dòng (chưa duyệt), bỏ qua {skipped} dòng đã có")

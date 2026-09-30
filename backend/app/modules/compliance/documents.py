@@ -117,7 +117,10 @@ async def generate_document(
     check = await session.get_one(ComplianceCheck, row.compliance_check_id)
     summaries = await companies.get_company_summaries(session, [row.company_id])
     company = summaries[row.company_id]
-    hs = await catalog.get_hs_code(session, check.hs_code[:6])
+    # Mô tả hàng dự phòng: mã 8 số của lần kiểm trước, rồi mới lùi về nhóm 6 số.
+    hs = await catalog.get_hs_code(session, check.hs_code) or (
+        await catalog.get_hs_code(session, check.hs_code[:6])
+    )
     inv = row.input_data
     data = Eur1Data(
         exporter_name=company.legal_name,

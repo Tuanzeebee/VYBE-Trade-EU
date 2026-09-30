@@ -62,6 +62,16 @@ EN_NAMES = {
 }  # fmt: skip
 WHOLLY_OBTAINED = "All fish and crustaceans"
 VESSEL_MARKER = "điều kiện tàu"
+# Ghi chú nội bộ của người soạn file (việc cần đối chiếu, nhận xét minh hoạ) KHÔNG được lộ ra
+# condition_note công khai. Chỉ ghi chú điều kiện thật (IUU, vùng nuôi, kiểm soát dư lượng) được
+# nạp; ghi chú khớp dấu hiệu dưới đây được giữ ở internal_note để người duyệt luật đọc.
+INTERNAL_NOTE_MARKERS = (
+    "Đối chiếu",
+    "luật sư",
+    "Xác nhận phân loại",
+    "Giữ để minh hoạ",
+    "Giá trị nằm ở",
+)
 
 
 @dataclass(frozen=True)
@@ -77,7 +87,8 @@ class PackRow:
     zero_from: dt.date
     rule_text: str
     requires_expert: bool
-    note: str | None
+    condition_note: str | None  # điều kiện thật, được nạp vào dòng thuế
+    internal_note: str | None  # ghi chú nội bộ của người soạn file, không nạp vào DB
 
 
 @dataclass(frozen=True)
@@ -103,6 +114,15 @@ def _pct(value: Any) -> str:
 
 def _text(value: Any) -> str | None:
     return str(value).strip() or None if value is not None else None
+
+
+def split_note(note: str | None) -> tuple[str | None, str | None]:
+    """(condition_note, internal_note): ghi chú nội bộ không bao giờ thành condition_note."""
+    if note is None:
+        return None, None
+    if any(marker.lower() in note.lower() for marker in INTERNAL_NOTE_MARKERS):
+        return None, note
+    return note, None
 
 
 def _table(ws: Any) -> list[dict[str, Any]]:
@@ -139,6 +159,14 @@ def load_pack(path: Path = DEFAULT_XLSX) -> Pack:
         rule_text = str(r["Quy tắc xuất xứ – nguyên văn Annex II"]).strip()
         logic = str(r["Loại logic cho máy tính RoO"])
         wholly = rule_text.startswith(WHOLLY_OBTAINED) and VESSEL_MARKER not in logic
+        evfta_rate = _pct(r["Thuế EVFTA năm tính"])
+        # Dòng thuế chỉ có ngày bắt đầu = ngày về 0%: chỉ nạp khi thuế EVFTA năm tính khớp lộ trình.
+        if Decimal(evfta_rate) != 0 or ZERO_FROM[staging] > dt.date(year, 1, 1):
+            raise ValueError(
+                f"{code}: thuế EVFTA {evfta_rate}% không khớp lộ trình {staging} "
+                f"(về 0% từ {ZERO_FROM[staging]}) cho năm {year}"
+            )
+        condition_note, internal_note = split_note(_text(r.get("Ghi chú")))
         rows.append(
             PackRow(
                 cn_code=code,
@@ -147,12 +175,13 @@ def load_pack(path: Path = DEFAULT_XLSX) -> Pack:
                 name_en=EN_NAMES[code],
                 category=CATEGORY[str(r["Nhóm"]).strip()],
                 mfn_rate=_pct(r["Thuế cơ sở / MFN tham chiếu"]),
-                evfta_rate=_pct(r["Thuế EVFTA năm tính"]),
+                evfta_rate=evfta_rate,
                 staging=staging,
                 zero_from=ZERO_FROM[staging],
                 rule_text=rule_text,
                 requires_expert=not wholly,
-                note=_text(r.get("Ghi chú")),
+                condition_note=condition_note,
+                internal_note=internal_note,
             )
         )
         vat = vat_by_code[code]
@@ -195,7 +224,7 @@ def tariff_rows(pack: Pack) -> list[tuple[int, TariffLineIn]]:
                 staging_category=r.staging,
                 zero_from=r.zero_from,
                 quota_required=False,
-                condition_note=r.note,
+                condition_note=r.condition_note,
                 valid_from=r.zero_from,
             ),
         )
