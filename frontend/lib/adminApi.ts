@@ -16,6 +16,8 @@ export type ProductSubtypeInput = components['schemas']['ProductSubtypeIn'];
 export type ProductSubtypePatch = components['schemas']['ProductSubtypePatch'];
 export type TariffQuotaInput = components['schemas']['TariffQuotaIn'];
 export type TariffQuotaPatch = components['schemas']['TariffQuotaPatch'];
+export type SectorAlertInput = components['schemas']['SectorAlertIn'];
+export type SectorAlertPatch = components['schemas']['SectorAlertPatch'];
 export type RooRuleInput = components['schemas']['RooRuleIn'];
 export type RooRulePatch = components['schemas']['RooRulePatch'];
 export type EvidenceTypeInput = components['schemas']['EvidenceTypeIn'];
@@ -100,7 +102,7 @@ export const listRooRules = () => read(() => createApiClient().GET('/api/admin/r
 export const listEvidenceTypes = () => read(() => createApiClient().GET('/api/admin/evidence-types'));
 export const listEvidenceRules = () => read(() => createApiClient().GET('/api/admin/evidence-rules'));
 
-const REVIEW_ERRORS = { 404: 'Không tìm thấy dòng dữ liệu.' };
+const REVIEW_ERRORS = { 404: 'Không tìm thấy dòng dữ liệu.', 409: 'Dòng minh hoạ không duyệt được — hãy tạo dòng thật có nguồn pháp lý.' };
 const DELETE_ERRORS = { 404: 'Không tìm thấy dòng dữ liệu.', 409: 'Dòng đã duyệt không xóa được.' };
 
 export const reviewTariffLine = (id: string) =>
@@ -302,3 +304,14 @@ export const reviewTariffQuota = (id: string) =>
   act(() => createApiClient().POST('/api/admin/tariff-quotas/{quota_id}/review', { params: { path: { quota_id: id } } }), REVIEW_ERRORS);
 export const deleteTariffQuota = (id: string) =>
   act(() => createApiClient().DELETE('/api/admin/tariff-quotas/{quota_id}', { params: { path: { quota_id: id } } }), DELETE_ERRORS);
+
+// ── Cảnh báo ngành (U14) ─────────────────────────────────────────────────────
+const DEMO_REVIEW_ERRORS = { 404: 'Không tìm thấy dòng dữ liệu.', 409: 'Dòng minh hoạ không duyệt được — hãy tạo dòng thật có nguồn pháp lý.' };
+export const listSectorAlerts = () => read(() => createApiClient().GET('/api/admin/sector-alerts'));
+export const createSectorAlert = (body: SectorAlertInput) => save(() => createApiClient().POST('/api/admin/sector-alerts', { body }));
+export const updateSectorAlert = (id: string, body: SectorAlertPatch) =>
+  save(() => createApiClient().PATCH('/api/admin/sector-alerts/{alert_id}', { params: { path: { alert_id: id } }, body }));
+export const reviewSectorAlert = (id: string) =>
+  act(() => createApiClient().POST('/api/admin/sector-alerts/{alert_id}/review', { params: { path: { alert_id: id } } }), DEMO_REVIEW_ERRORS);
+export const deleteSectorAlert = (id: string) =>
+  act(() => createApiClient().DELETE('/api/admin/sector-alerts/{alert_id}', { params: { path: { alert_id: id } } }), DELETE_ERRORS);

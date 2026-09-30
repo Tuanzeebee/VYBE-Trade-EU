@@ -212,6 +212,8 @@ class TariffLine(Base):
     quota_note_en: Mapped[str | None] = mapped_column(Text)
     condition_note_en: Mapped[str | None] = mapped_column(Text)
     source_url: Mapped[str | None] = mapped_column(String(1024))
+    # U14: dữ liệu minh hoạ (AGENTS.md §6.2 sửa đổi) — chỉ dùng khi cờ bật và không phải prod.
+    is_demo: Mapped[bool] = mapped_column(Boolean, default=False, server_default=text("false"))
     reviewed_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id"))
     reviewed_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
     valid_from: Mapped[dt.date] = mapped_column(Date)
@@ -294,6 +296,7 @@ class ImportCountryTerm(Base):
     note: Mapped[str | None] = mapped_column(Text)
     note_en: Mapped[str | None] = mapped_column(Text)
     source: Mapped[str | None] = mapped_column(Text)
+    is_demo: Mapped[bool] = mapped_column(Boolean, default=False, server_default=text("false"))
     reviewed_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id"))
     reviewed_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
     valid_from: Mapped[dt.date] = mapped_column(Date)
@@ -401,4 +404,45 @@ class TariffQuota(Base):
 
     eligible_subtypes: Mapped[list[ProductSubtype]] = relationship(
         secondary=tariff_quota_subtypes, lazy="selectin", order_by=ProductSubtype.code
+    )
+
+
+class SectorAlert(Base):
+    """Cảnh báo ngành theo tiền tố HS (U14), vd thẻ vàng IUU cho thủy sản khai thác. Do luật TM
+    nhập và duyệt; chưa duyệt không bao giờ hiện công khai (trừ DEMO khi cờ bật, ngoài prod)."""
+
+    __tablename__ = "sector_alerts"
+    __table_args__ = (
+        CheckConstraint("code ~ '^[a-z0-9_]{2,40}$'", name="code_format"),
+        CheckConstraint("severity IN ('info', 'warning', 'critical')", name="severity"),
+        CheckConstraint("cardinality(hs_prefixes) > 0", name="has_prefixes"),
+        CheckConstraint("valid_until IS NULL OR valid_until > valid_from", name="valid_window"),
+        CheckConstraint(
+            "(reviewed_by IS NULL) = (reviewed_at IS NULL)", name="reviewed_by_and_at_together"
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, primary_key=True, default=uuid.uuid4, server_default=text("gen_random_uuid()")
+    )
+    code: Mapped[str] = mapped_column(String(40), unique=True)
+    hs_prefixes: Mapped[list[str]] = mapped_column(
+        ARRAY(String(8)), default=list, server_default=text("'{}'")
+    )
+    severity: Mapped[str] = mapped_column(String(16), default="warning", server_default="warning")
+    title_vi: Mapped[str] = mapped_column(String(255))
+    title_en: Mapped[str] = mapped_column(String(255))
+    body_vi: Mapped[str | None] = mapped_column(Text)
+    body_en: Mapped[str | None] = mapped_column(Text)
+    source_url: Mapped[str | None] = mapped_column(String(1024))
+    valid_from: Mapped[dt.date] = mapped_column(Date)
+    valid_until: Mapped[dt.date | None] = mapped_column(Date)
+    is_demo: Mapped[bool] = mapped_column(Boolean, default=False, server_default=text("false"))
+    reviewed_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id"))
+    reviewed_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=text("clock_timestamp()")
+    )
+    updated_at: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
     )

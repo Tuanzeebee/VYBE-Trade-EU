@@ -93,6 +93,19 @@ class QuotaInfoOut(BaseModel):
     source_url: str | None
 
 
+class SectorAlertOut(BaseModel):
+    """Cảnh báo ngành áp cho mã HS (U14). data_status = demo_unreviewed với dữ liệu minh hoạ."""
+
+    code: str
+    severity: Literal["info", "warning", "critical"]
+    title_vi: str
+    title_en: str
+    body_vi: str | None
+    body_en: str | None
+    source_url: str | None
+    data_status: Literal["reviewed", "demo_unreviewed"]
+
+
 class ScenarioOut(BaseModel):
     kind: Literal["in_quota", "out_of_quota"]
     duty_type: Literal["ad_valorem", "specific", "mixed"]
@@ -144,6 +157,7 @@ class TariffOut(BaseModel):
     conditions: list[str] = Field(default_factory=list)  # origin | allocation | subtype | licence
     quantity: Decimal | None = None
     quota_allocated: Literal["yes", "no", "unknown"] | None = None
+    alerts: list[SectorAlertOut] = Field(default_factory=list)  # U14
 
 
 class TariffPreviewOut(BaseModel):
@@ -161,6 +175,8 @@ class TariffPreviewOut(BaseModel):
     quota_note_en: str | None
     condition_note_en: str | None
     source_url: str | None
+    data_status: Literal["reviewed", "demo_unreviewed"] | None = None  # U14
+    alerts: list[SectorAlertOut] = Field(default_factory=list)
 
 
 class MarketsIn(BaseModel):

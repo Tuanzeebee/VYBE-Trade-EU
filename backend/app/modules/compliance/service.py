@@ -12,6 +12,7 @@ from sqlalchemy import Select, func, literal, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.audit import record
+from app.core.config import get_settings
 from app.core.errors import AppError
 from app.modules.auth.schemas import CurrentUser
 from app.modules.catalog import service as catalog
@@ -37,6 +38,7 @@ from app.modules.compliance.models import (
     ImportCountryTerm,
     ProductSpecificRule,
     ProductSubtype,
+    SectorAlert,
     TariffLine,
     TariffQuota,
     TradeAgreement,
@@ -50,6 +52,7 @@ from app.modules.compliance.schemas import (
     RooIn,
     RooOut,
     ScenarioOut,
+    SectorAlertOut,
     SubtypeOut,
     TariffIn,
     TariffOptionsOut,
@@ -65,17 +68,41 @@ HEADING_LENGTH = 6  # mã HS 6 số — cấp danh mục và dòng thuế
 _RATE_BASIS = Decimal(100)
 
 
+REVIEWED = "reviewed"
+DEMO_UNREVIEWED = "demo_unreviewed"
+
+
+def demo_enabled() -> bool:
+    """AGENTS.md §6.2 (sửa đổi): dữ liệu minh hoạ chỉ khi cờ DEMO_COMPLIANCE_DATA bật VÀ ENV khác
+    prod (cấu hình prod + cờ đã bị từ chối khi khởi động; đây là lớp chặn thứ hai)."""
+    settings = get_settings()
+    return settings.demo_compliance_data and settings.env != "prod"
+
+
+def _visibility(model: Any, demo: bool) -> Any:
+    """Dòng ĐÃ DUYỆT; hoặc (demo=True) dòng minh hoạ CHƯA duyệt. Dòng nháp không gắn is_demo không
+    bao giờ khớp nhánh nào."""
+    if demo:
+        return (model.is_demo.is_(True)) & (model.reviewed_by.is_(None))
+    return model.reviewed_by.is_not(None)
+
+
 def destination_key(country: str) -> str:
     """Nước thành viên EU dùng biểu thuế chung 'EU'; nước khác dùng chính mã ISO-2."""
     return UNION_DESTINATION if country in EU_MEMBERS else country
 
 
 def _reviewed_lines(
-    hs_code: str, destination: str, on_date: dt.date, agreement: str = DEFAULT_AGREEMENT
+    hs_code: str,
+    destination: str,
+    on_date: dt.date,
+    agreement: str = DEFAULT_AGREEMENT,
+    demo: bool = False,
 ) -> Select[TariffLine]:
-    """Dòng thuế ĐÃ DUYỆT và đang hiệu lực vào `on_date` (valid_until là ngày đã hết hiệu lực)."""
+    """Dòng thuế ĐÃ DUYỆT (demo=True: dòng minh hoạ) đang hiệu lực vào `on_date` (valid_until là
+    ngày đã hết hiệu lực)."""
     return select(TariffLine).where(
-        TariffLine.reviewed_by.is_not(None),
+        _visibility(TariffLine, demo),
         TariffLine.hs_code == hs_code,
         TariffLine.destination == destination,
         TariffLine.agreement_code == agreement,
@@ -90,9 +117,10 @@ async def find_lines(
     destination: str,
     on_date: dt.date,
     agreement: str = DEFAULT_AGREEMENT,
+    demo: bool = False,
 ) -> list[TariffLine]:
     """Dòng đã duyệt khớp mã HS + nước đến + hiệp định vào `on_date` (đếm để phát hiện mơ hồ)."""
-    result = await session.scalars(_reviewed_lines(hs_code, destination, on_date, agreement))
+    result = await session.scalars(_reviewed_lines(hs_code, destination, on_date, agreement, demo))
     return list(result)
 
 
@@ -148,15 +176,32 @@ async def lookup_lines(
     on_date: dt.date,
     destination: str = UNION_DESTINATION,
     agreement: str = DEFAULT_AGREEMENT,
+    demo: bool = False,
 ) -> list[TariffLine]:
     """Dòng thuế đã duyệt cho mã `code`: thử mã 8 số trước, không có thì lùi về nhóm 6 số.
 
     Mã 6 số KHÔNG tự chọn một mã 8 số con (các con có thể khác thuế, vd 081090)."""
     for key in await _supported_keys(session, code):
-        lines = await find_lines(session, key, destination, on_date, agreement)
+        lines = await find_lines(session, key, destination, on_date, agreement, demo)
         if lines:
             return lines
     return []
+
+
+async def lookup_lines_visible(
+    session: AsyncSession,
+    code: str,
+    on_date: dt.date,
+    destination: str = UNION_DESTINATION,
+    agreement: str = DEFAULT_AGREEMENT,
+) -> tuple[list[TariffLine], bool]:
+    """Dòng đã duyệt; không có và DEMO bật thì dòng minh hoạ. Trả (dòng, có dùng dữ liệu minh hoạ).
+    Dòng đã duyệt luôn thắng — không bao giờ trộn hai loại."""
+    lines = await lookup_lines(session, code, on_date, destination, agreement)
+    if lines or not demo_enabled():
+        return lines, False
+    demo = await lookup_lines(session, code, on_date, destination, agreement, demo=True)
+    return demo, bool(demo)
 
 
 async def _agreement_out(session: AsyncSession, code: str) -> AgreementOut:
@@ -173,11 +218,12 @@ async def available_agreements(
     nào áp dụng (bảng trade_agreements chỉ cho tên hiển thị)."""
     destination = destination_key(country)
     codes: list[str] = []
-    for key in await _supported_keys(session, code):
+    modes = (False, True) if demo_enabled() else (False,)
+    for key, demo in ((k, d) for k in await _supported_keys(session, code) for d in modes):
         found = await session.scalars(
             select(TariffLine.agreement_code)
             .where(
-                TariffLine.reviewed_by.is_not(None),
+                _visibility(TariffLine, demo),
                 TariffLine.hs_code == key,
                 TariffLine.destination == destination,
                 TariffLine.valid_from <= on_date,
@@ -195,11 +241,11 @@ def _prefix_of(code: str, column: Any) -> Any:
 
 
 def _reviewed_quotas(
-    code: str, destination: str, agreement: str, on_date: dt.date
+    code: str, destination: str, agreement: str, on_date: dt.date, demo: bool = False
 ) -> Select[TariffQuota]:
-    """Hạn ngạch ĐÃ DUYỆT, đang hiệu lực, khớp (hiệp định, nơi đến, tiền tố HS)."""
+    """Hạn ngạch ĐÃ DUYỆT (demo=True: minh hoạ), đang hiệu lực, khớp hiệp định/nơi đến/tiền tố."""
     return select(TariffQuota).where(
-        TariffQuota.reviewed_by.is_not(None),
+        _visibility(TariffQuota, demo),
         TariffQuota.agreement_code == agreement,
         TariffQuota.destination == destination,
         _prefix_of(code, TariffQuota.hs_prefix),
@@ -208,13 +254,75 @@ def _reviewed_quotas(
     )
 
 
-def _reviewed_subtypes(code: str) -> Select[ProductSubtype]:
-    """Phân nhóm ĐÃ DUYỆT áp cho mã `code` (tiền tố HS khớp)."""
+def _reviewed_subtypes(code: str, demo: bool = False) -> Select[ProductSubtype]:
+    """Phân nhóm ĐÃ DUYỆT (demo=True: minh hoạ) áp cho mã `code` (tiền tố HS khớp)."""
     return (
         select(ProductSubtype)
-        .where(ProductSubtype.reviewed_by.is_not(None), _prefix_of(code, ProductSubtype.hs_prefix))
+        .where(_visibility(ProductSubtype, demo), _prefix_of(code, ProductSubtype.hs_prefix))
         .order_by(ProductSubtype.code)
     )
+
+
+async def visible_subtypes(session: AsyncSession, code: str) -> list[ProductSubtype]:
+    rows = list(await session.scalars(_reviewed_subtypes(code)))
+    if demo_enabled():
+        rows += list(await session.scalars(_reviewed_subtypes(code, demo=True)))
+    return rows
+
+
+async def visible_quotas(
+    session: AsyncSession, code: str, destination: str, agreement: str, on_date: dt.date
+) -> tuple[list[TariffQuota], bool]:
+    """Hạn ngạch đã duyệt; không có và DEMO bật thì hạn ngạch minh hoạ (đã duyệt luôn thắng)."""
+    rows = list(await session.scalars(_reviewed_quotas(code, destination, agreement, on_date)))
+    if rows or not demo_enabled():
+        return rows, False
+    demo = list(
+        await session.scalars(_reviewed_quotas(code, destination, agreement, on_date, demo=True))
+    )
+    return demo, bool(demo)
+
+
+def _is_visible(row: ProductSubtype) -> bool:
+    return row.reviewed_by is not None or (demo_enabled() and row.is_demo)
+
+
+async def alerts_for(session: AsyncSession, code: str, on_date: dt.date) -> list[SectorAlertOut]:
+    """Cảnh báo ngành đang hiệu lực, tiền tố HS khớp `code`: đã duyệt, thêm minh hoạ khi DEMO."""
+    modes = (False, True) if demo_enabled() else (False,)
+    out: list[SectorAlertOut] = []
+    for demo in modes:
+        rows = await session.scalars(
+            select(SectorAlert)
+            .where(
+                _visibility(SectorAlert, demo),
+                SectorAlert.valid_from <= on_date,
+                or_(SectorAlert.valid_until.is_(None), SectorAlert.valid_until > on_date),
+            )
+            .order_by(SectorAlert.code)
+        )
+        out.extend(
+            SectorAlertOut(
+                code=a.code,
+                severity=a.severity,
+                title_vi=a.title_vi,
+                title_en=a.title_en,
+                body_vi=a.body_vi,
+                body_en=a.body_en,
+                source_url=a.source_url,
+                data_status=DEMO_UNREVIEWED if demo else REVIEWED,
+            )
+            for a in rows
+            if any(code.startswith(prefix) for prefix in a.hs_prefixes)
+        )
+    return out
+
+
+async def sector_alerts(session: AsyncSession, hs_code: str) -> list[SectorAlertOut]:
+    code = catalog.normalize_code(hs_code)
+    if code is None:
+        raise AppError("invalid_hs_code", "HS code must be 6 to 8 digits", 422)
+    return await alerts_for(session, code, dt.datetime.now(dt.UTC).date())
 
 
 def _subtype_out(row: ProductSubtype) -> SubtypeOut:
@@ -260,13 +368,9 @@ async def tariff_options(session: AsyncSession, hs_code: str, country: str) -> T
     quota_agreements = [
         a.code
         for a in agreements
-        if await session.scalar(
-            _reviewed_quotas(code, destination_key(upper), a.code, today)
-            .with_only_columns(TariffQuota.id)
-            .limit(1)
-        )
+        if (await visible_quotas(session, code, destination_key(upper), a.code, today))[0]
     ]
-    subtypes = list(await session.scalars(_reviewed_subtypes(code))) if quota_agreements else []
+    subtypes = await visible_subtypes(session, code) if quota_agreements else []
     return TariffOptionsOut(
         hs_code=code,
         destination=upper,
@@ -422,10 +526,12 @@ async def calculate_tariff(
                     "agreement_required", "Choose a trade agreement for this market", 422
                 )
             agreement = available[0].code if available else None
-    lines = (
-        await lookup_lines(session, code, today, destination_key(data.destination), agreement)
+    lines, demo_used = (
+        await lookup_lines_visible(
+            session, code, today, destination_key(data.destination), agreement
+        )
         if agreement
-        else []
+        else ([], False)
     )
     line = lines[0] if lines else None
     result = tariff_savings(
@@ -440,30 +546,41 @@ async def calculate_tariff(
     quota_result: QuotaResult | None = None
     subtypes: list[ProductSubtype] = []
     if line is not None and len(lines) == 1 and line.quota_required and agreement:
-        quotas = list(
-            await session.scalars(
-                _reviewed_quotas(code, destination_key(data.destination), agreement, today)
-            )
+        quotas, demo_quota = await visible_quotas(
+            session, code, destination_key(data.destination), agreement, today
         )
-        quota = quotas[0] if len(quotas) == 1 else None
-        eligible = (
-            {s.code for s in quota.eligible_subtypes if s.reviewed_by is not None}
-            if quota is not None
-            else set()
+
+        # Nhiều hạn ngạch cùng tiền tố (vd gạo xay xát / gạo thơm): chọn hạn ngạch liệt kê phân nhóm
+        # người dùng chọn là đủ điều kiện; khớp nhiều hơn một = mơ hồ → needs_review.
+        def lists(q: TariffQuota) -> ProductSubtype | None:
+            return next(
+                (s for s in q.eligible_subtypes if s.code == data.subtype_code and _is_visible(s)),
+                None,
+            )
+
+        matching = [q for q in quotas if data.subtype_code and lists(q) is not None]
+        if matching:
+            quota, found, chosen_eligible = matching[0], len(matching), lists(matching[0])
+        else:
+            quota, found, chosen_eligible = (quotas[0] if quotas else None), len(quotas[:1]), None
+        demo_used = (
+            demo_used
+            or (demo_quota and quota is not None)
+            or bool(chosen_eligible and chosen_eligible.reviewed_by is None)
         )
         quota_result = quota_scenarios(
-            len(quotas),
+            found,
             None if quota is None else _quota_data(quota),
             subtype_chosen=data.subtype_code is not None,
-            subtype_eligible=data.subtype_code in eligible,
+            subtype_eligible=chosen_eligible is not None,
             product_value=data.product_value,
             quantity=data.quantity,
         )
-        subtypes = list(await session.scalars(_reviewed_subtypes(code)))
+        subtypes = await visible_subtypes(session, code)
     status = quota_result.status if quota_result is not None else result.status
     scenarios = quota_result.scenarios if quota_result is not None else ()
     quota_savings = quota_result.savings if quota_result is not None else None
-    data_status = "reviewed" if line is not None else None
+    data_status = (DEMO_UNREVIEWED if demo_used else REVIEWED) if line is not None else None
     chosen = next((s for s in subtypes if s.code == data.subtype_code), None)
     conditions: list[str] = []
     if status == "quota_scenarios" and quota is not None:
@@ -515,6 +632,7 @@ async def calculate_tariff(
         subtype=None if chosen is None else _subtype_out(chosen),
         subtypes=[_subtype_out(s) for s in subtypes],
         conditions=conditions,
+        alerts=await alerts_for(session, code, today),
         quantity=data.quantity if quota_result is not None else None,
         quota_allocated=data.quota_allocated if quota_result is not None else None,
         agreement=await _agreement_out(session, agreement) if agreement and line else None,
@@ -545,13 +663,16 @@ async def preview_tariff(session: AsyncSession, hs_code: str) -> TariffPreviewOu
     code = catalog.normalize_code(hs_code)
     if code is None:
         raise AppError("invalid_hs_code", "HS code must be 6 to 8 digits", 422)
-    lines = await lookup_lines(session, code, dt.datetime.now(dt.UTC).date())
+    today = dt.datetime.now(dt.UTC).date()
+    lines, demo_used = await lookup_lines_visible(session, code, today)
     line = lines[0] if lines else None
     result = tariff_savings(
         None if line is None else _line_data(line), len(lines), _RATE_BASIS, None
     )
     ok = result.status == "ok" and line is not None
     return TariffPreviewOut(
+        data_status=(DEMO_UNREVIEWED if demo_used else REVIEWED) if line is not None else None,
+        alerts=await alerts_for(session, code, today),
         status=result.status,
         hs_code=code,
         hs_formatted=catalog.format_code(code),

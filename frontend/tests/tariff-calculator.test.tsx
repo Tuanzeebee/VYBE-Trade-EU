@@ -387,6 +387,22 @@ describe('Máy tính tiết kiệm thuế (C2)', () => {
       expect(tariffBodies[0]).toMatchObject({ subtype_code: 'rice_fragrant_listed', quantity: '100', quota_allocated: 'unknown' });
     });
 
+    it('U14: kết quả dùng dữ liệu minh hoạ hiện banner; cảnh báo ngành hiện trong kết quả', async () => {
+      serve(() =>
+        json(200, {
+          ...OK,
+          data_status: 'demo_unreviewed',
+          alerts: [{ code: 'iuu_yellow_card', severity: 'warning', title_vi: 'Thẻ vàng IUU', title_en: 'IUU yellow card', body_vi: null, body_en: null, source_url: null, data_status: 'demo_unreviewed' }],
+        }),
+      );
+      renderCalc();
+      await pickCoffee();
+      fillValue('10000');
+      submit();
+      expect(await screen.findByTestId('demo-banner')).toHaveTextContent('Dữ liệu minh hoạ — chưa được chuyên gia pháp lý duyệt');
+      expect(screen.getByRole('list', { name: 'Cảnh báo ngành' })).toHaveTextContent('Thẻ vàng IUU');
+    });
+
     it('không có hạn ngạch đã duyệt thì không hỏi phân nhóm, không gửi tham số hạn ngạch', async () => {
       serve(() => json(200, OK));
       renderCalc();

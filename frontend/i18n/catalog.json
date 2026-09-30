@@ -13483,5 +13483,70 @@
     "Yes = the goods are subject to a tariff-rate quota. The tool only calculates in/out-of-quota scenarios when a reviewed quota line and eligible subtype exist; otherwise it returns \"needs review\", never 0%.",
     "Oui = marchandises soumises à un contingent tarifaire. L'outil ne calcule les scénarios que si une ligne de contingent et une sous-catégorie éligible validées existent ; sinon « à examiner », jamais 0 %.",
     "はい＝関税割当の対象。確認済みの割当行と対象区分がある場合のみ割当内／外のシナリオを計算し、それ以外は「要確認」を返し、0%は返しません。"
+  ],
+  "Dữ liệu minh hoạ — chưa được chuyên gia pháp lý duyệt": [
+    "Illustrative data — not yet reviewed by a legal expert",
+    "Données d'illustration — pas encore validées par un juriste",
+    "例示データ — 法務専門家による確認前"
+  ],
+  "Cảnh báo ngành": [
+    "Sector alerts",
+    "Alertes sectorielles",
+    "業界アラート"
+  ],
+  "Minh hoạ": [
+    "Illustrative",
+    "Illustration",
+    "例示"
+  ],
+  "Tiêu đề": [
+    "Title",
+    "Titre",
+    "タイトル"
+  ],
+  "Tiêu đề (tiếng Việt)": [
+    "Title (Vietnamese)",
+    "Titre (vietnamien)",
+    "タイトル（ベトナム語）"
+  ],
+  "Tiêu đề (tiếng Anh)": [
+    "Title (English)",
+    "Titre (anglais)",
+    "タイトル（英語）"
+  ],
+  "Nội dung (tiếng Việt)": [
+    "Content (Vietnamese)",
+    "Contenu (vietnamien)",
+    "内容（ベトナム語）"
+  ],
+  "Nội dung (tiếng Anh)": [
+    "Content (English)",
+    "Contenu (anglais)",
+    "内容（英語）"
+  ],
+  "Cách nhau bằng dấu phẩy, vd 03, 1604.": [
+    "Separated by commas, e.g. 03, 1604.",
+    "Séparés par des virgules, ex. 03, 1604.",
+    "カンマ区切り、例：03、1604。"
+  ],
+  "Một hoặc nhiều tiền tố 2–8 chữ số, cách nhau bằng dấu phẩy (vd 03, 1604). Cảnh báo hiện trong kết quả thuế, form sản phẩm và báo cáo.": [
+    "One or more 2–8 digit prefixes separated by commas (e.g. 03, 1604). Alerts appear in tariff results, the product form and reports.",
+    "Un ou plusieurs préfixes de 2 à 8 chiffres séparés par des virgules (ex. 03, 1604). Les alertes s'affichent dans les résultats, le formulaire produit et les rapports.",
+    "2〜8桁の接頭辞をカンマ区切りで1つ以上（例：03、1604）。関税結果・製品フォーム・レポートに表示されます。"
+  ],
+  "info = thông tin; warning = cần lưu ý; critical = rủi ro cao.": [
+    "info = information; warning = needs attention; critical = high risk.",
+    "info = information ; warning = attention ; critical = risque élevé.",
+    "info＝情報、warning＝注意、critical＝高リスク。"
+  ],
+  "Dòng minh hoạ chỉ hiện khi cờ DEMO_COMPLIANCE_DATA bật ngoài production, kèm banner; không duyệt được thành dữ liệu thật.": [
+    "Illustrative rows only appear when DEMO_COMPLIANCE_DATA is on outside production, with a banner; they cannot be approved as real data.",
+    "Les lignes d'illustration n'apparaissent que si DEMO_COMPLIANCE_DATA est actif hors production, avec un bandeau ; elles ne peuvent pas être validées comme données réelles.",
+    "例示行は本番以外でDEMO_COMPLIANCE_DATAが有効な場合のみバナー付きで表示され、実データとして承認できません。"
+  ],
+  "Dòng minh hoạ không duyệt được — hãy tạo dòng thật có nguồn pháp lý.": [
+    "Illustrative rows cannot be approved — create a real row with a legal source.",
+    "Les lignes d'illustration ne peuvent pas être validées — créez une ligne réelle avec une source juridique.",
+    "例示行は承認できません。法的出典のある実データ行を作成してください。"
   ]
 }

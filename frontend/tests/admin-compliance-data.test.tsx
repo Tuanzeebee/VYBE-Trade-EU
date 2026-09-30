@@ -159,6 +159,7 @@ describe('Dữ liệu tuân thủ (admin)', () => {
       'Hiệp định thương mại',
       'Phân nhóm sản phẩm',
       'Hạn ngạch thuế quan',
+      'Cảnh báo ngành',
     ]);
   });
 

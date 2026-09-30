@@ -6,6 +6,7 @@ import React, { useEffect, useState } from 'react';
 import HsCodePicker, { type HsCodeOption } from './HsCodePicker';
 import { useLanguage } from '../context/LanguageContext';
 import MarketRanking from './MarketRanking';
+import SectorAlerts, { DemoDataBanner } from './SectorAlerts';
 import { isRooStatus, rankMarkets, type MarketsResult, type RooStatus } from '../lib/marketsApi';
 import {
   calculateTariff,
@@ -120,7 +121,8 @@ function Result({ data }: { data: TariffResult }) {
   const agreementName = data.agreement ? (language === 'en' ? data.agreement.name_en : data.agreement.name_vi) : null;
 
   return (
-    <section aria-label={tr('Kết quả')} className="mt-8 rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
+    <section aria-label={tr('Kết quả')} className="mt-8 space-y-4 rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
+      {data.data_status === 'demo_unreviewed' && <DemoDataBanner />}
       {data.status === 'ok' && data.savings !== null && data.mfn_duty !== null && data.evfta_duty !== null && (
         <>
           <p className="text-sm font-semibold text-slate-600">{tr('Tiết kiệm mỗi lô')}</p>
@@ -166,6 +168,7 @@ function Result({ data }: { data: TariffResult }) {
           {note}
         </p>
       ))}
+      <SectorAlerts alerts={data.alerts ?? []} />
       <p className="mt-5 text-xs text-slate-500">
         {tr('Kết quả chỉ mang tính tham khảo, không thay thế tư vấn pháp lý hoặc xác nhận của cơ quan hải quan.')}
       </p>

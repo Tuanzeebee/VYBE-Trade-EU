@@ -25,6 +25,8 @@ from app.modules.compliance.admin_schemas import (
     ProductSubtypePatch,
     RooRuleIn,
     RooRulePatch,
+    SectorAlertIn,
+    SectorAlertPatch,
     TariffLineIn,
     TariffLinePatch,
     TariffQuotaIn,
@@ -39,6 +41,7 @@ from app.modules.compliance.models import (
     ProductSpecificRule,
     ProductSubtype,
     RuleType,
+    SectorAlert,
     TariffLine,
     TariffQuota,
     TradeAgreement,
@@ -50,6 +53,7 @@ RULE_ENTITY = "roo_rule"
 AGREEMENT_ENTITY = "trade_agreement"
 SUBTYPE_ENTITY = "product_subtype"
 QUOTA_ENTITY = "tariff_quota"
+ALERT_ENTITY = "sector_alert"
 _WITH_THRESHOLD = (RuleType.MaxNOM, RuleType.CTH_OR_MaxNOM)
 
 
@@ -61,6 +65,7 @@ type ComplianceRow = (
     | TradeAgreement
     | ProductSubtype
     | TariffQuota
+    | SectorAlert
 )
 
 
@@ -163,6 +168,13 @@ async def _update[Row: ComplianceRow](
 async def _review[Row: ComplianceRow](
     session: AsyncSession, actor: CurrentUser, row: Row, entity: str
 ) -> Row:
+    # U14: dòng minh hoạ không bao giờ được "duyệt" thành dữ liệu thật — phải tạo dòng mới có nguồn.
+    if getattr(row, "is_demo", False):
+        raise AppError(
+            "demo_row_not_reviewable",
+            "Demo rows cannot be reviewed; create a real row with a legal source instead",
+            409,
+        )
     before = _snapshot(row)
     row.reviewed_by = actor.id
     row.reviewed_at = dt.datetime.now(dt.UTC)
@@ -608,3 +620,47 @@ async def review_quota(
 
 async def delete_quota(session: AsyncSession, actor: CurrentUser, quota_id: uuid.UUID) -> None:
     await _delete(session, actor, await _get(session, TariffQuota, quota_id), QUOTA_ENTITY)
+
+
+# ── Cảnh báo ngành (U14) ─────────────────────────────────────────────────────
+async def list_alerts(session: AsyncSession, reviewed: bool | None) -> list[SectorAlert]:
+    query = select(SectorAlert)
+    if reviewed is not None:
+        query = query.where(
+            SectorAlert.reviewed_by.is_not(None) if reviewed else SectorAlert.reviewed_by.is_(None)
+        )
+    return list(await session.scalars(query.order_by(SectorAlert.code)))
+
+
+async def create_alert(
+    session: AsyncSession, actor: CurrentUser, data: SectorAlertIn
+) -> SectorAlert:
+    if await session.scalar(select(SectorAlert.id).where(SectorAlert.code == data.code)):
+        raise AppError("duplicate_alert", "This alert code already exists", 409)
+    _check_window(data.valid_from, data.valid_until)
+    return await _create(session, actor, SectorAlert(**data.model_dump()), ALERT_ENTITY)
+
+
+async def update_alert(
+    session: AsyncSession, actor: CurrentUser, alert_id: uuid.UUID, patch: SectorAlertPatch
+) -> SectorAlert:
+    row = await _get(session, SectorAlert, alert_id)
+    fields = patch.model_fields_set
+    required = {"hs_prefixes", "severity", "title_vi", "title_en", "valid_from"} & fields
+    if any(getattr(patch, name) is None for name in required):
+        raise AppError("invalid_patch", "Required fields cannot be null", 422)
+    _check_window(
+        patch.valid_from if "valid_from" in fields and patch.valid_from else row.valid_from,
+        patch.valid_until if "valid_until" in fields else row.valid_until,
+    )
+    return await _update(session, actor, row, patch, ALERT_ENTITY)
+
+
+async def review_alert(
+    session: AsyncSession, actor: CurrentUser, alert_id: uuid.UUID
+) -> SectorAlert:
+    return await _review(session, actor, await _get(session, SectorAlert, alert_id), ALERT_ENTITY)
+
+
+async def delete_alert(session: AsyncSession, actor: CurrentUser, alert_id: uuid.UUID) -> None:
+    await _delete(session, actor, await _get(session, SectorAlert, alert_id), ALERT_ENTITY)

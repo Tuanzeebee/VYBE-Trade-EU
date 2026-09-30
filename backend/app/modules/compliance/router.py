@@ -12,6 +12,7 @@ from app.modules.auth.schemas import CurrentUser
 from app.modules.auth.service import get_optional_user, require_role
 from app.modules.compliance import admin_service, admin_spreadsheet, documents, service
 from app.modules.compliance.admin_schemas import (
+    AdminSectorAlertOut,
     CountryTermIn,
     CountryTermOut,
     CountryTermPatch,
@@ -21,6 +22,8 @@ from app.modules.compliance.admin_schemas import (
     RooRuleIn,
     RooRuleOut,
     RooRulePatch,
+    SectorAlertIn,
+    SectorAlertPatch,
     TariffLineIn,
     TariffLineOut,
     TariffLinePatch,
@@ -38,6 +41,7 @@ from app.modules.compliance.schemas import (
     MarketsOut,
     RooIn,
     RooOut,
+    SectorAlertOut,
     TariffIn,
     TariffOptionsOut,
     TariffOut,
@@ -76,6 +80,14 @@ async def tariff_options(
     session: Annotated[AsyncSession, Depends(get_session)],
 ) -> TariffOptionsOut:
     return await service.tariff_options(session, hs_code, destination)
+
+
+@router.get("/api/public/sector-alerts")
+async def sector_alerts(
+    hs_code: Annotated[str, Query(max_length=32)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> list[SectorAlertOut]:
+    return await service.sector_alerts(session, hs_code)
 
 
 @router.get("/api/exporter/tariff-preview")
@@ -359,6 +371,50 @@ async def delete_tariff_quota(
     quota_id: uuid.UUID, admin: AdminUser, session: DBSession
 ) -> Response:
     await admin_service.delete_quota(session, admin, quota_id)
+    return Response(status_code=204)
+
+
+# ── Cảnh báo ngành (U14) ─────────────────────────────────────────────────────
+@router.get("/api/admin/sector-alerts")
+async def list_sector_alerts(
+    _: AdminUser, session: DBSession, reviewed: bool | None = None
+) -> list[AdminSectorAlertOut]:
+    return [
+        AdminSectorAlertOut.model_validate(r)
+        for r in await admin_service.list_alerts(session, reviewed)
+    ]
+
+
+@router.post("/api/admin/sector-alerts", status_code=201)
+async def create_sector_alert(
+    data: SectorAlertIn, admin: AdminUser, session: DBSession
+) -> AdminSectorAlertOut:
+    return AdminSectorAlertOut.model_validate(
+        await admin_service.create_alert(session, admin, data)
+    )
+
+
+@router.patch("/api/admin/sector-alerts/{alert_id}")
+async def update_sector_alert(
+    alert_id: uuid.UUID, data: SectorAlertPatch, admin: AdminUser, session: DBSession
+) -> AdminSectorAlertOut:
+    row = await admin_service.update_alert(session, admin, alert_id, data)
+    return AdminSectorAlertOut.model_validate(row)
+
+
+@router.post("/api/admin/sector-alerts/{alert_id}/review")
+async def review_sector_alert(
+    alert_id: uuid.UUID, admin: AdminUser, session: DBSession
+) -> AdminSectorAlertOut:
+    row = await admin_service.review_alert(session, admin, alert_id)
+    return AdminSectorAlertOut.model_validate(row)
+
+
+@router.delete("/api/admin/sector-alerts/{alert_id}", status_code=204)
+async def delete_sector_alert(
+    alert_id: uuid.UUID, admin: AdminUser, session: DBSession
+) -> Response:
+    await admin_service.delete_alert(session, admin, alert_id)
     return Response(status_code=204)
 
 

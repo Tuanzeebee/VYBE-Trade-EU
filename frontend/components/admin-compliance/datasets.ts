@@ -9,6 +9,7 @@ import {
   createTradeAgreement,
   createProductSubtype,
   createTariffQuota,
+  createSectorAlert,
   deleteCountryTerm,
   deleteEvidenceRule,
   deleteRooRule,
@@ -16,6 +17,7 @@ import {
   deleteTradeAgreement,
   deleteProductSubtype,
   deleteTariffQuota,
+  deleteSectorAlert,
   listCountryTerms,
   listEvidenceRules,
   listEvidenceTypes,
@@ -24,6 +26,7 @@ import {
   listTradeAgreements,
   listProductSubtypes,
   listTariffQuotas,
+  listSectorAlerts,
   reviewCountryTerm,
   reviewEvidenceRule,
   reviewEvidenceType,
@@ -32,6 +35,7 @@ import {
   reviewTradeAgreement,
   reviewProductSubtype,
   reviewTariffQuota,
+  reviewSectorAlert,
   updateCountryTerm,
   updateEvidenceRule,
   updateEvidenceType,
@@ -40,6 +44,7 @@ import {
   updateTradeAgreement,
   updateProductSubtype,
   updateTariffQuota,
+  updateSectorAlert,
   type CountryTermInput,
   type CountryTermPatch,
   type EvidenceRuleInput,
@@ -56,6 +61,8 @@ import {
   type ProductSubtypePatch,
   type TariffQuotaInput,
   type TariffQuotaPatch,
+  type SectorAlertInput,
+  type SectorAlertPatch,
 } from '../../lib/adminApi';
 
 export type FieldKind = 'text' | 'textarea' | 'date' | 'bool' | 'decimal' | 'int' | 'select';
@@ -204,6 +211,16 @@ const QUOTA_LEGEND: LegendItem[] = [
   { term: 'Sửa đổi §6.4', text: 'Kịch bản hạn ngạch cần luật TM ký sửa đổi AGENTS.md §6.4 trước khi dùng dữ liệu thật ở production.' },
 ];
 
+/** Dòng minh hoạ (U14): không duyệt được, chỉ hiện khi cờ DEMO bật ngoài production. */
+export const DEMO_MARK = 'Minh hoạ';
+const demoMark = (value: string, demo: boolean | undefined) => (demo ? `${value} · ${DEMO_MARK}` : value);
+
+const ALERT_LEGEND: LegendItem[] = [
+  { term: 'Tiền tố HS', text: 'Một hoặc nhiều tiền tố 2–8 chữ số, cách nhau bằng dấu phẩy (vd 03, 1604). Cảnh báo hiện trong kết quả thuế, form sản phẩm và báo cáo.' },
+  { term: 'Mức độ', text: 'info = thông tin; warning = cần lưu ý; critical = rủi ro cao.' },
+  { term: DEMO_MARK, text: 'Dòng minh hoạ chỉ hiện khi cờ DEMO_COMPLIANCE_DATA bật ngoài production, kèm banner; không duyệt được thành dữ liệu thật.' },
+];
+
 const splitList = (value: unknown) =>
   String(value ?? '')
     .split(',')
@@ -241,7 +258,7 @@ export const DATASETS: Dataset[] = [
         id: r.id,
         reviewed: r.reviewed_by !== null,
         canDelete: r.reviewed_by === null,
-        cells: [r.hs_code, r.destination, r.agreement_code, r.duty_type, pct(r.mfn_rate), pct(r.evfta_rate_current), yesNo(r.quota_required), r.valid_from, r.valid_until ?? NO_EXPIRY],
+        cells: [demoMark(r.hs_code, r.is_demo), r.destination, r.agreement_code, r.duty_type, pct(r.mfn_rate), pct(r.evfta_rate_current), yesNo(r.quota_required), r.valid_from, r.valid_until ?? NO_EXPIRY],
         values: {
           hs_code: r.hs_code,
           destination: r.destination,
@@ -471,7 +488,7 @@ export const DATASETS: Dataset[] = [
         id: r.id,
         reviewed: r.reviewed_by !== null,
         canDelete: r.reviewed_by === null,
-        cells: [r.code, r.hs_prefix, r.name_vi],
+        cells: [demoMark(r.code, r.is_demo), r.hs_prefix, r.name_vi],
         values: {
           code: r.code,
           hs_prefix: r.hs_prefix,
@@ -522,7 +539,7 @@ export const DATASETS: Dataset[] = [
         reviewed: r.reviewed_by !== null,
         canDelete: r.reviewed_by === null,
         cells: [
-          r.agreement_code,
+          demoMark(r.agreement_code, r.is_demo),
           r.destination,
           r.hs_prefix,
           `${plain(r.volume)} ${r.volume_unit}`,
@@ -565,6 +582,51 @@ export const DATASETS: Dataset[] = [
     },
     review: reviewTariffQuota,
     remove: deleteTariffQuota,
+  },
+  {
+    key: 'alerts',
+    label: 'Cảnh báo ngành',
+    columns: ['Mã', 'Tiền tố HS', 'Mức độ', 'Tiêu đề', 'Từ ngày', 'Đến ngày'],
+    fields: [
+      { key: 'code', label: 'Mã', kind: 'text', required: true, locked: true, help: 'Chữ thường, số, gạch dưới.' },
+      { key: 'hs_prefixes', label: 'Tiền tố HS', kind: 'text', required: true, help: 'Cách nhau bằng dấu phẩy, vd 03, 1604.' },
+      { key: 'severity', label: 'Mức độ', kind: 'select', required: true, options: ['info', 'warning', 'critical'], initial: 'warning' },
+      { key: 'title_vi', label: 'Tiêu đề (tiếng Việt)', kind: 'text', required: true },
+      { key: 'title_en', label: 'Tiêu đề (tiếng Anh)', kind: 'text', required: true },
+      { key: 'body_vi', label: 'Nội dung (tiếng Việt)', kind: 'textarea' },
+      { key: 'body_en', label: 'Nội dung (tiếng Anh)', kind: 'textarea' },
+      { key: 'source_url', label: 'Nguồn (URL)', kind: 'text' },
+      ...validity,
+    ],
+    legend: ALERT_LEGEND,
+    load: async () =>
+      ((await listSectorAlerts()) ?? null)?.map((r) => ({
+        id: r.id,
+        reviewed: r.reviewed_by !== null,
+        canDelete: r.reviewed_by === null,
+        cells: [demoMark(r.code, r.is_demo), r.hs_prefixes.join(', '), r.severity, r.title_vi, r.valid_from, r.valid_until ?? NO_EXPIRY],
+        values: {
+          code: r.code,
+          hs_prefixes: r.hs_prefixes.join(', '),
+          severity: r.severity,
+          title_vi: r.title_vi,
+          title_en: r.title_en,
+          body_vi: text(r.body_vi),
+          body_en: text(r.body_en),
+          source_url: text(r.source_url),
+          valid_from: r.valid_from,
+          valid_until: text(r.valid_until),
+        },
+        search: searchable(r.code, r.hs_prefixes.join(' '), r.title_vi, r.title_en, r.body_vi),
+      })) ?? null,
+    create: (body) => createSectorAlert({ ...body, hs_prefixes: splitList(body.hs_prefixes) } as unknown as SectorAlertInput),
+    update: (id, body) => {
+      const patch: Body = { ...body };
+      if ('hs_prefixes' in patch) patch.hs_prefixes = splitList(patch.hs_prefixes);
+      return updateSectorAlert(id, patch as SectorAlertPatch);
+    },
+    review: reviewSectorAlert,
+    remove: deleteSectorAlert,
   },
 ];
 

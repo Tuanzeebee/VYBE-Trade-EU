@@ -451,6 +451,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/public/sector-alerts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Sector Alerts */
+        get: operations["sector_alerts_api_public_sector_alerts_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/exporter/tariff-preview": {
         parameters: {
             query?: never;
@@ -914,6 +931,59 @@ export interface paths {
         put?: never;
         /** Review Tariff Quota */
         post: operations["review_tariff_quota_api_admin_tariff_quotas__quota_id__review_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/sector-alerts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Sector Alerts */
+        get: operations["list_sector_alerts_api_admin_sector_alerts_get"];
+        put?: never;
+        /** Create Sector Alert */
+        post: operations["create_sector_alert_api_admin_sector_alerts_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/sector-alerts/{alert_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete Sector Alert */
+        delete: operations["delete_sector_alert_api_admin_sector_alerts__alert_id__delete"];
+        options?: never;
+        head?: never;
+        /** Update Sector Alert */
+        patch: operations["update_sector_alert_api_admin_sector_alerts__alert_id__patch"];
+        trace?: never;
+    };
+    "/api/admin/sector-alerts/{alert_id}/review": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Review Sector Alert */
+        post: operations["review_sector_alert_api_admin_sector_alerts__alert_id__review_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1998,6 +2068,43 @@ export interface components {
             is_active?: boolean | null;
             /** Approval Status */
             approval_status?: ("approved" | "hidden") | null;
+        };
+        /** AdminSectorAlertOut */
+        AdminSectorAlertOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Code */
+            code: string;
+            /** Hs Prefixes */
+            hs_prefixes: string[];
+            /** Severity */
+            severity: string;
+            /** Title Vi */
+            title_vi: string;
+            /** Title En */
+            title_en: string;
+            /** Body Vi */
+            body_vi: string | null;
+            /** Body En */
+            body_en: string | null;
+            /** Source Url */
+            source_url: string | null;
+            /**
+             * Valid From
+             * Format: date
+             */
+            valid_from: string;
+            /** Valid Until */
+            valid_until: string | null;
+            /** Is Demo */
+            is_demo: boolean;
+            /** Reviewed By */
+            reviewed_by: string | null;
+            /** Reviewed At */
+            reviewed_at: string | null;
         };
         /** AgreementOut */
         AgreementOut: {
@@ -4253,6 +4360,85 @@ export interface components {
             /** Duty */
             duty: string;
         };
+        /** SectorAlertIn */
+        SectorAlertIn: {
+            /** Code */
+            code: string;
+            /** Hs Prefixes */
+            hs_prefixes: string[];
+            /**
+             * Severity
+             * @default warning
+             * @enum {string}
+             */
+            severity?: "info" | "warning" | "critical";
+            /** Title Vi */
+            title_vi: string;
+            /** Title En */
+            title_en: string;
+            /** Body Vi */
+            body_vi?: string | null;
+            /** Body En */
+            body_en?: string | null;
+            /** Source Url */
+            source_url?: string | null;
+            /**
+             * Valid From
+             * Format: date
+             */
+            valid_from: string;
+            /** Valid Until */
+            valid_until?: string | null;
+        };
+        /**
+         * SectorAlertOut
+         * @description Cảnh báo ngành áp cho mã HS (U14). data_status = demo_unreviewed với dữ liệu minh hoạ.
+         */
+        SectorAlertOut: {
+            /** Code */
+            code: string;
+            /**
+             * Severity
+             * @enum {string}
+             */
+            severity: "info" | "warning" | "critical";
+            /** Title Vi */
+            title_vi: string;
+            /** Title En */
+            title_en: string;
+            /** Body Vi */
+            body_vi: string | null;
+            /** Body En */
+            body_en: string | null;
+            /** Source Url */
+            source_url: string | null;
+            /**
+             * Data Status
+             * @enum {string}
+             */
+            data_status: "reviewed" | "demo_unreviewed";
+        };
+        /** SectorAlertPatch */
+        SectorAlertPatch: {
+            /** Hs Prefixes */
+            hs_prefixes?: string[] | null;
+            /** Severity */
+            severity?: ("info" | "warning" | "critical") | null;
+            /** Title Vi */
+            title_vi?: string | null;
+            /** Title En */
+            title_en?: string | null;
+            /** Body Vi */
+            body_vi?: string | null;
+            /** Body En */
+            body_en?: string | null;
+            /** Source Url */
+            source_url?: string | null;
+            /** Valid From */
+            valid_from?: string | null;
+            /** Valid Until */
+            valid_until?: string | null;
+        };
         /** ServiceOfferingIn */
         ServiceOfferingIn: {
             /** Category Code */
@@ -4615,6 +4801,11 @@ export interface components {
             valid_from: string;
             /** Valid Until */
             valid_until: string | null;
+            /**
+             * Is Demo
+             * @default false
+             */
+            is_demo?: boolean;
             /** Reviewed By */
             reviewed_by: string | null;
             /** Reviewed At */
@@ -4734,6 +4925,8 @@ export interface components {
             quantity?: string | null;
             /** Quota Allocated */
             quota_allocated?: ("yes" | "no" | "unknown") | null;
+            /** Alerts */
+            alerts?: components["schemas"]["SectorAlertOut"][];
         };
         /**
          * TariffPreviewOut
@@ -4767,6 +4960,10 @@ export interface components {
             condition_note_en: string | null;
             /** Source Url */
             source_url: string | null;
+            /** Data Status */
+            data_status?: ("reviewed" | "demo_unreviewed") | null;
+            /** Alerts */
+            alerts?: components["schemas"]["SectorAlertOut"][];
         };
         /** TariffQuotaIn */
         TariffQuotaIn: {
@@ -6238,6 +6435,37 @@ export interface operations {
             };
         };
     };
+    sector_alerts_api_public_sector_alerts_get: {
+        parameters: {
+            query: {
+                hs_code: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SectorAlertOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     tariff_preview_api_exporter_tariff_preview_get: {
         parameters: {
             query: {
@@ -7472,6 +7700,175 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["TariffQuotaOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_sector_alerts_api_admin_sector_alerts_get: {
+        parameters: {
+            query?: {
+                reviewed?: boolean | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminSectorAlertOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_sector_alert_api_admin_sector_alerts_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SectorAlertIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminSectorAlertOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_sector_alert_api_admin_sector_alerts__alert_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                alert_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_sector_alert_api_admin_sector_alerts__alert_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                alert_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SectorAlertPatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminSectorAlertOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    review_sector_alert_api_admin_sector_alerts__alert_id__review_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                alert_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminSectorAlertOut"];
                 };
             };
             /** @description Validation Error */

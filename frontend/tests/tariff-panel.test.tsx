@@ -141,3 +141,35 @@ describe('TariffPanel', () => {
     expect(url.searchParams.get('hs_code')).toBe('100630');
   });
 });
+
+describe('TariffPanel — dữ liệu minh hoạ và cảnh báo ngành (U14)', () => {
+  afterEach(() => vi.unstubAllGlobals());
+
+  const IUU = {
+    code: 'iuu_yellow_card',
+    severity: 'warning',
+    title_vi: 'Thẻ vàng IUU của EU đối với thủy sản khai thác Việt Nam',
+    title_en: 'EU IUU yellow card for Vietnamese wild-caught seafood',
+    body_vi: 'Lô hàng thủy sản khai thác cần giấy chứng nhận khai thác hợp lệ.',
+    body_en: null,
+    source_url: null,
+    data_status: 'demo_unreviewed',
+  };
+
+  it('dữ liệu minh hoạ: hiện banner; cảnh báo ngành gắn nhãn minh hoạ', async () => {
+    serve({ ...base, hs_code: '030462', status: 'ok', mfn_rate: '9.0000', evfta_rate: '0.0000', data_status: 'demo_unreviewed', alerts: [IUU] });
+    renderPanel('summary', '030462');
+    expect(await screen.findByTestId('demo-banner')).toHaveTextContent('Dữ liệu minh hoạ — chưa được chuyên gia pháp lý duyệt');
+    const alerts = screen.getByRole('list', { name: 'Cảnh báo ngành' });
+    expect(alerts).toHaveTextContent('Thẻ vàng IUU');
+    expect(alerts).toHaveTextContent('Minh hoạ');
+  });
+
+  it('dữ liệu đã duyệt: không có banner; cảnh báo vẫn hiện cả khi mã chưa được hỗ trợ', async () => {
+    serve({ ...base, hs_code: '030462', status: 'unsupported', data_status: null, alerts: [{ ...IUU, data_status: 'reviewed' }] });
+    renderPanel('summary', '030462');
+    expect(await screen.findByText(/chưa có dữ liệu thuế được duyệt/)).toBeInTheDocument();
+    expect(screen.queryByTestId('demo-banner')).toBeNull();
+    expect(screen.getByRole('list', { name: 'Cảnh báo ngành' })).not.toHaveTextContent('Minh hoạ');
+  });
+});

@@ -151,6 +151,7 @@ class TariffLineOut(BaseModel):
     source_url: str | None
     valid_from: dt.date
     valid_until: dt.date | None
+    is_demo: bool = False
     reviewed_by: uuid.UUID | None
     reviewed_at: dt.datetime | None
 
@@ -539,6 +540,75 @@ class TariffQuotaOut(BaseModel):
     valid_from: dt.date
     valid_until: dt.date | None
     eligible_subtypes: list[str]
+    is_demo: bool
+    reviewed_by: uuid.UUID | None
+    reviewed_at: dt.datetime | None
+
+
+# ── Cảnh báo ngành (U14) ─────────────────────────────────────────────────────
+Severity = Literal["info", "warning", "critical"]
+Prefixes = Annotated[list[str], Field(min_length=1, max_length=40)]
+
+
+def _prefixes(values: list[str]) -> list[str]:
+    return list(dict.fromkeys(_hs_prefix_short(v) for v in values if v.strip()))
+
+
+def _hs_prefix_short(value: str) -> str:
+    """Tiền tố cảnh báo: 2–8 chữ số (chương 03 cũng hợp lệ)."""
+    digits = re.sub(r"[\s.]", "", value)
+    if not re.fullmatch(r"[0-9]{2,8}", digits):
+        raise ValueError("hs_prefixes must be 2 to 8 digits each")
+    return digits
+
+
+class SectorAlertIn(BaseModel):
+    code: str
+    hs_prefixes: Prefixes
+    severity: Severity = "warning"
+    title_vi: Annotated[str, Field(min_length=1, max_length=255)]
+    title_en: Annotated[str, Field(min_length=1, max_length=255)]
+    body_vi: Text = None
+    body_en: Text = None
+    source_url: Url = None
+    valid_from: dt.date
+    valid_until: dt.date | None = None
+
+    _code = field_validator("code")(_subtype_code)
+    _prefix_list = field_validator("hs_prefixes")(_prefixes)
+
+
+class SectorAlertPatch(BaseModel):
+    hs_prefixes: Annotated[list[str] | None, Field(min_length=1, max_length=40)] = None
+    severity: Severity | None = None
+    title_vi: Annotated[str | None, Field(min_length=1, max_length=255)] = None
+    title_en: Annotated[str | None, Field(min_length=1, max_length=255)] = None
+    body_vi: Text = None
+    body_en: Text = None
+    source_url: Url = None
+    valid_from: dt.date | None = None
+    valid_until: dt.date | None = None
+
+    @field_validator("hs_prefixes")
+    @classmethod
+    def _prefix_list(cls, values: list[str] | None) -> list[str] | None:
+        return None if values is None else _prefixes(values)
+
+
+class AdminSectorAlertOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: uuid.UUID
+    code: str
+    hs_prefixes: list[str]
+    severity: str
+    title_vi: str
+    title_en: str
+    body_vi: str | None
+    body_en: str | None
+    source_url: str | None
+    valid_from: dt.date
+    valid_until: dt.date | None
     is_demo: bool
     reviewed_by: uuid.UUID | None
     reviewed_at: dt.datetime | None
