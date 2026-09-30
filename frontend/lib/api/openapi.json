@@ -1662,6 +1662,65 @@
         }
       }
     },
+    "/api/public/markets": {
+      "post": {
+        "tags": [
+          "compliance"
+        ],
+        "summary": "Rank Markets",
+        "operationId": "rank_markets_api_public_markets_post",
+        "parameters": [
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MarketsIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarketsOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/admin/tariff-lines/template.xlsx": {
       "get": {
         "tags": [
@@ -2782,6 +2841,326 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/DocumentOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/country-terms": {
+      "get": {
+        "tags": [
+          "compliance"
+        ],
+        "summary": "List Country Terms",
+        "operationId": "list_country_terms_api_admin_country_terms_get",
+        "parameters": [
+          {
+            "name": "hs_code",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Hs Code"
+            }
+          },
+          {
+            "name": "reviewed",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Reviewed"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CountryTermOut"
+                  },
+                  "title": "Response List Country Terms Api Admin Country Terms Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "compliance"
+        ],
+        "summary": "Create Country Term",
+        "operationId": "create_country_term_api_admin_country_terms_post",
+        "parameters": [
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CountryTermIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CountryTermOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/country-terms/{term_id}": {
+      "patch": {
+        "tags": [
+          "compliance"
+        ],
+        "summary": "Update Country Term",
+        "operationId": "update_country_term_api_admin_country_terms__term_id__patch",
+        "parameters": [
+          {
+            "name": "term_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Term Id"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CountryTermPatch"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CountryTermOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "compliance"
+        ],
+        "summary": "Delete Country Term",
+        "operationId": "delete_country_term_api_admin_country_terms__term_id__delete",
+        "parameters": [
+          {
+            "name": "term_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Term Id"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/country-terms/{term_id}/review": {
+      "post": {
+        "tags": [
+          "compliance"
+        ],
+        "summary": "Review Country Term",
+        "operationId": "review_country_term_api_admin_country_terms__term_id__review_post",
+        "parameters": [
+          {
+            "name": "term_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Term Id"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CountryTermOut"
                 }
               }
             }
@@ -6998,7 +7377,7 @@
           "export_markets": {
             "items": {
               "type": "string",
-              "pattern": "^(EU|ASEAN|[A-Z]{2})$"
+              "pattern": "^(EU|AT|BE|BG|HR|CY|CZ|DK|EE|FI|FR|DE|GR|HU|IE|IT|LV|LT|LU|MT|NL|PL|PT|RO|SK|SI|ES|SE)$"
             },
             "type": "array",
             "maxItems": 50,
@@ -7560,7 +7939,7 @@
               {
                 "items": {
                   "type": "string",
-                  "pattern": "^(EU|ASEAN|[A-Z]{2})$"
+                  "pattern": "^(EU|AT|BE|BG|HR|CY|CZ|DK|EE|FI|FR|DE|GR|HU|IE|IT|LV|LT|LU|MT|NL|PL|PT|RO|SK|SI|ES|SE)$"
                 },
                 "type": "array",
                 "maxItems": 50
@@ -7871,6 +8250,341 @@
           "ingested_at"
         ],
         "title": "CorpusDocumentOut"
+      },
+      "CountryTermIn": {
+        "properties": {
+          "hs_code": {
+            "type": "string",
+            "title": "Hs Code"
+          },
+          "country": {
+            "type": "string",
+            "title": "Country"
+          },
+          "vat_rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              }
+            ],
+            "title": "Vat Rate"
+          },
+          "label_languages": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 64
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Label Languages"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 4000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "note_en": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 4000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note En"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 4000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          },
+          "valid_from": {
+            "type": "string",
+            "format": "date",
+            "title": "Valid From"
+          },
+          "valid_until": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Valid Until"
+          }
+        },
+        "type": "object",
+        "required": [
+          "hs_code",
+          "country",
+          "vat_rate",
+          "valid_from"
+        ],
+        "title": "CountryTermIn"
+      },
+      "CountryTermOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "hs_code": {
+            "type": "string",
+            "title": "Hs Code"
+          },
+          "country": {
+            "type": "string",
+            "title": "Country"
+          },
+          "vat_rate": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Vat Rate"
+          },
+          "label_languages": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Label Languages"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "note_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note En"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          },
+          "valid_from": {
+            "type": "string",
+            "format": "date",
+            "title": "Valid From"
+          },
+          "valid_until": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Valid Until"
+          },
+          "reviewed_by": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reviewed By"
+          },
+          "reviewed_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reviewed At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "hs_code",
+          "country",
+          "vat_rate",
+          "label_languages",
+          "note",
+          "note_en",
+          "source",
+          "valid_from",
+          "valid_until",
+          "reviewed_by",
+          "reviewed_at"
+        ],
+        "title": "CountryTermOut"
+      },
+      "CountryTermPatch": {
+        "properties": {
+          "hs_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hs Code"
+          },
+          "country": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Country"
+          },
+          "vat_rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vat Rate"
+          },
+          "label_languages": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 64
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Label Languages"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 4000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "note_en": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 4000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note En"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 4000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          },
+          "valid_from": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Valid From"
+          },
+          "valid_until": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Valid Until"
+          }
+        },
+        "type": "object",
+        "title": "CountryTermPatch"
       },
       "CurrentUser": {
         "properties": {
@@ -8909,6 +9623,248 @@
           "password"
         ],
         "title": "LoginIn"
+      },
+      "MarketRowOut": {
+        "properties": {
+          "country": {
+            "type": "string",
+            "title": "Country"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ranked",
+              "no_data"
+            ],
+            "title": "Status"
+          },
+          "rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rank"
+          },
+          "duty": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duty"
+          },
+          "vat_rate": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vat Rate"
+          },
+          "vat": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vat"
+          },
+          "total": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Total"
+          },
+          "label_languages": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Label Languages"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "note_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note En"
+          }
+        },
+        "type": "object",
+        "required": [
+          "country",
+          "status",
+          "rank",
+          "duty",
+          "vat_rate",
+          "vat",
+          "total",
+          "label_languages",
+          "note",
+          "note_en"
+        ],
+        "title": "MarketRowOut"
+      },
+      "MarketsIn": {
+        "properties": {
+          "hs_code": {
+            "type": "string",
+            "maxLength": 32,
+            "title": "Hs Code"
+          },
+          "product_value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              }
+            ],
+            "title": "Product Value"
+          },
+          "roo_status": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "pass",
+                  "fail",
+                  "inconclusive"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Roo Status"
+          }
+        },
+        "type": "object",
+        "required": [
+          "hs_code",
+          "product_value"
+        ],
+        "title": "MarketsIn",
+        "description": "Số tiền nhận dạng CHUỖI JSON (không nhận số). roo_status lấy từ máy tính xuất xứ."
+      },
+      "MarketsOut": {
+        "properties": {
+          "check_id": {
+            "type": "string",
+            "title": "Check Id"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ok",
+              "unsupported",
+              "needs_review"
+            ],
+            "title": "Status"
+          },
+          "basis": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "evfta",
+                  "mfn"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Basis"
+          },
+          "hs_code": {
+            "type": "string",
+            "title": "Hs Code"
+          },
+          "hs_formatted": {
+            "type": "string",
+            "title": "Hs Formatted"
+          },
+          "product_value": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Product Value"
+          },
+          "duty_rate": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duty Rate"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/MarketRowOut"
+            },
+            "type": "array",
+            "title": "Rows"
+          }
+        },
+        "type": "object",
+        "required": [
+          "check_id",
+          "status",
+          "basis",
+          "hs_code",
+          "hs_formatted",
+          "product_value",
+          "duty_rate",
+          "rows"
+        ],
+        "title": "MarketsOut"
       },
       "MaterialIn": {
         "properties": {

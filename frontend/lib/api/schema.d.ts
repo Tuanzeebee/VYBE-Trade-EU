@@ -363,6 +363,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/public/markets": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Rank Markets */
+        post: operations["rank_markets_api_public_markets_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/tariff-lines/template.xlsx": {
         parameters: {
             query?: never;
@@ -616,6 +633,59 @@ export interface paths {
         get: operations["get_document_api_exporter_documents__document_id__get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/country-terms": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Country Terms */
+        get: operations["list_country_terms_api_admin_country_terms_get"];
+        put?: never;
+        /** Create Country Term */
+        post: operations["create_country_term_api_admin_country_terms_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/country-terms/{term_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete Country Term */
+        delete: operations["delete_country_term_api_admin_country_terms__term_id__delete"];
+        options?: never;
+        head?: never;
+        /** Update Country Term */
+        patch: operations["update_country_term_api_admin_country_terms__term_id__patch"];
+        trace?: never;
+    };
+    "/api/admin/country-terms/{term_id}/review": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Review Country Term */
+        post: operations["review_country_term_api_admin_country_terms__term_id__review_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1928,6 +1998,84 @@ export interface components {
              */
             chunk_count?: number;
         };
+        /** CountryTermIn */
+        CountryTermIn: {
+            /** Hs Code */
+            hs_code: string;
+            /** Country */
+            country: string;
+            /** Vat Rate */
+            vat_rate: number | string;
+            /** Label Languages */
+            label_languages?: string | null;
+            /** Note */
+            note?: string | null;
+            /** Note En */
+            note_en?: string | null;
+            /** Source */
+            source?: string | null;
+            /**
+             * Valid From
+             * Format: date
+             */
+            valid_from: string;
+            /** Valid Until */
+            valid_until?: string | null;
+        };
+        /** CountryTermOut */
+        CountryTermOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Hs Code */
+            hs_code: string;
+            /** Country */
+            country: string;
+            /** Vat Rate */
+            vat_rate: string;
+            /** Label Languages */
+            label_languages: string | null;
+            /** Note */
+            note: string | null;
+            /** Note En */
+            note_en: string | null;
+            /** Source */
+            source: string | null;
+            /**
+             * Valid From
+             * Format: date
+             */
+            valid_from: string;
+            /** Valid Until */
+            valid_until: string | null;
+            /** Reviewed By */
+            reviewed_by: string | null;
+            /** Reviewed At */
+            reviewed_at: string | null;
+        };
+        /** CountryTermPatch */
+        CountryTermPatch: {
+            /** Hs Code */
+            hs_code?: string | null;
+            /** Country */
+            country?: string | null;
+            /** Vat Rate */
+            vat_rate?: number | string | null;
+            /** Label Languages */
+            label_languages?: string | null;
+            /** Note */
+            note?: string | null;
+            /** Note En */
+            note_en?: string | null;
+            /** Source */
+            source?: string | null;
+            /** Valid From */
+            valid_from?: string | null;
+            /** Valid Until */
+            valid_until?: string | null;
+        };
         /** CurrentUser */
         CurrentUser: {
             /**
@@ -2278,6 +2426,66 @@ export interface components {
             email: string;
             /** Password */
             password: string;
+        };
+        /** MarketRowOut */
+        MarketRowOut: {
+            /** Country */
+            country: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "ranked" | "no_data";
+            /** Rank */
+            rank: number | null;
+            /** Duty */
+            duty: string | null;
+            /** Vat Rate */
+            vat_rate: string | null;
+            /** Vat */
+            vat: string | null;
+            /** Total */
+            total: string | null;
+            /** Label Languages */
+            label_languages: string | null;
+            /** Note */
+            note: string | null;
+            /** Note En */
+            note_en: string | null;
+        };
+        /**
+         * MarketsIn
+         * @description Số tiền nhận dạng CHUỖI JSON (không nhận số). roo_status lấy từ máy tính xuất xứ.
+         */
+        MarketsIn: {
+            /** Hs Code */
+            hs_code: string;
+            /** Product Value */
+            product_value: number | string;
+            /** Roo Status */
+            roo_status?: ("pass" | "fail" | "inconclusive") | null;
+        };
+        /** MarketsOut */
+        MarketsOut: {
+            /** Check Id */
+            check_id: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "ok" | "unsupported" | "needs_review";
+            /** Basis */
+            basis: ("evfta" | "mfn") | null;
+            /** Hs Code */
+            hs_code: string;
+            /** Hs Formatted */
+            hs_formatted: string;
+            /** Product Value */
+            product_value: string;
+            /** Duty Rate */
+            duty_rate: string | null;
+            /** Rows */
+            rows: components["schemas"]["MarketRowOut"][];
         };
         /** MaterialIn */
         MaterialIn: {
@@ -4283,6 +4491,41 @@ export interface operations {
             };
         };
     };
+    rank_markets_api_public_markets_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MarketsIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MarketsOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     tariff_lines_template_api_admin_tariff_lines_template_xlsx_get: {
         parameters: {
             query?: never;
@@ -4907,6 +5150,176 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["DocumentOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_country_terms_api_admin_country_terms_get: {
+        parameters: {
+            query?: {
+                hs_code?: string | null;
+                reviewed?: boolean | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CountryTermOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_country_term_api_admin_country_terms_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CountryTermIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CountryTermOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_country_term_api_admin_country_terms__term_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                term_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_country_term_api_admin_country_terms__term_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                term_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CountryTermPatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CountryTermOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    review_country_term_api_admin_country_terms__term_id__review_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                term_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CountryTermOut"];
                 };
             };
             /** @description Validation Error */
