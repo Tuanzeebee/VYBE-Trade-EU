@@ -6,7 +6,7 @@ Mọi quy tắc dự án nằm trong `AGENTS.md` (import ở trên). File này c
 
 ## Cách Claude Code làm việc trong repo này
 
-- **Bắt đầu mỗi hạng mục:** đọc dòng backlog tương ứng (mã, "Việc cần làm", "Xong khi", "Phụ thuộc") và phần module đó trong `docs/KE_HOACH_CODE_THEO_MODULE.md`. Nếu hạng mục phụ thuộc còn chưa xong, báo lại trước khi code.
+- **Bắt đầu mỗi hạng mục:** đọc dòng backlog tương ứng (mã, "Việc cần làm", "Xong khi", "Phụ thuộc") và phần module đó trong `KE_HOACH_CODE_THEO_MODULE.md` (gốc repo). Nếu hạng mục phụ thuộc còn chưa xong, báo lại trước khi code.
 - **Plan mode:** dùng cho mọi việc chạm >1 module, thêm/sửa bảng, hoặc đụng module `compliance`, `verification`, `copilot`. Trình kế hoạch và chờ duyệt.
 - **Task list:** hạng mục có ≥3 bước thì tạo task list. Bước cuối luôn là "chạy lint + typecheck + test và báo kết quả".
 - **Subagent:** chỉ dùng `Explore` để tìm kiếm rộng trong repo khi cần. Không giao việc sửa code nghiệp vụ tuân thủ cho subagent.

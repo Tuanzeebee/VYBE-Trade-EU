@@ -16,7 +16,7 @@ Bốn vai trò: `guest` (không đăng nhập, dùng máy tính và trợ lý AI
 | File | Dùng khi |
 |---|---|
 | `docs/backlog/EVFTA_eu_Backlog_MVP.xlsx` | Phạm vi, ưu tiên, tiêu chí "Xong khi" của từng hạng mục (mã A1, C2, D2…) |
-| `docs/KE_HOACH_CODE_THEO_MODULE.md` | Bảng, API, màn hình, test của từng module |
+| `KE_HOACH_CODE_THEO_MODULE.md` (gốc repo) | Bảng, API, màn hình, test của từng module |
 | `docs/spec/EVFTA_MVP_Build_Specification.md` | Ý đồ sản phẩm, mô hình dữ liệu §4, tiêu chí nghiệm thu §5 |
 | `docs/adr/` | Quyết định kiến trúc đã chốt |
 | `docs/reference/VYBE_*.docx` | **Chỉ tham khảo** bài học cũ (.NET). Không làm theo stack hay phạm vi trong đó |
@@ -130,7 +130,7 @@ Module: `auth`, `companies`, `catalog`, `compliance`, `verification`, `copilot`,
 ## 7. Dữ liệu & bảo mật
 
 - Mỗi thay đổi schema = một migration Alembic, đọc lại file autogenerate trước khi commit. Không sửa migration đã merge.
-- `audit_logs`, `compliance_checks`, `verification_decisions`, `ai_queries` là **append-only** (trigger chặn UPDATE/DELETE). Không viết code sửa hay xóa chúng.
+- `audit_logs`, `compliance_checks`, `verification_decisions`, `ai_queries`, `ai_query_feedback`, `evidence_checks` là **append-only** (trigger chặn UPDATE/DELETE). Không viết code sửa hay xóa chúng.
 - Hành động nhạy cảm (quyết định xác minh, admin sửa/ẩn hồ sơ, sinh chứng từ, xóa tài khoản) ghi audit qua `core.audit.record()` với before/after.
 - Mật khẩu Argon2, tối thiểu 10 ký tự, kiểm ở server; phiên cookie HTTP-only + Secure + SameSite.
 - File trong bucket private, chỉ phát qua pre-signed URL ngắn hạn.

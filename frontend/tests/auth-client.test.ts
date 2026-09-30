@@ -116,6 +116,21 @@ describe('phiên đăng nhập thật qua API', () => {
     ).rejects.toThrow('Email này đã có tài khoản.');
   });
 
+  it('register với định danh bị chặn (I11) → thông báo chung, không nói trường nào', async () => {
+    serve({ 'POST /api/auth/register': () => json(403, { error: { code: 'identifier_blocked', message: 'x' } }) });
+    await expect(
+      register({
+        name: 'A',
+        company: 'C',
+        email: 'a@fraud-co.vn',
+        password: 'mat-khau-du-dai',
+        role: 'seller',
+        acceptTerms: true,
+        language: 'vi',
+      }),
+    ).rejects.toThrow('Không thể dùng thông tin này trên evfta.eu. Vui lòng liên hệ bộ phận hỗ trợ.');
+  });
+
   it('refreshSession: phiên hết hạn (401) → null và xóa bộ nhớ phiên', async () => {
     serve({ 'POST /api/auth/login': () => json(200, {}), 'GET /api/me': () => json(200, ME) });
     await login('seller@x.vn', 'mat-khau-du-dai');

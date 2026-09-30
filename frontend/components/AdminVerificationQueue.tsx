@@ -4,7 +4,15 @@
 // không phải hệ thống hay AI. Từ chối và yêu cầu bổ sung bắt buộc có lý do.
 import React, { useCallback, useEffect, useState } from 'react';
 import { useLanguage } from '../context/LanguageContext';
-import { decideRequest, getQueue, reviewEvidence, type Decision, type QueueItem } from '../lib/adminApi';
+import {
+  decideRequest,
+  getQueue,
+  recordIdentityCheck,
+  reviewEvidence,
+  type Decision,
+  type IdentityCheckInput,
+  type QueueItem,
+} from '../lib/adminApi';
 
 const STATUS_LABEL: Record<string, string> = {
   pending: 'Chờ duyệt',
@@ -14,6 +22,78 @@ const STATUS_LABEL: Record<string, string> = {
 
 const NEED_REASON = 'Vui lòng nhập lý do.';
 
+// I11: cờ danh tính chỉ để xếp ưu tiên; quản trị viên quyết định.
+const SIGNAL_LABEL: Record<string, string> = {
+  blocklisted: 'Định danh nằm trong danh sách chặn',
+  shared_tax_id: 'Dùng chung mã số thuế với doanh nghiệp khác',
+  shared_file: 'Dùng chung file bằng chứng với doanh nghiệp khác',
+  shared_phone: 'Dùng chung số điện thoại với doanh nghiệp khác',
+  shared_domain: 'Dùng chung tên miền với doanh nghiệp khác',
+  shared_representative: 'Dùng chung người đại diện với doanh nghiệp khác',
+  tax_inactive: 'Trạng thái thuế không hoạt động',
+  founded_mismatch: 'Năm thành lập tự khai sớm hơn sổ đăng ký',
+  name_changed_recently: 'Vừa đổi tên',
+  representative_changed_recently: 'Vừa đổi người đại diện',
+  free_email: 'Email liên hệ là email miễn phí',
+  email_domain_mismatch: 'Email liên hệ khác tên miền website',
+};
+const SEVERITY_STYLE: Record<string, string> = {
+  high: 'bg-rose-100 text-rose-800',
+  medium: 'bg-amber-100 text-amber-900',
+  low: 'bg-slate-100 text-slate-700',
+};
+const CHECK_TYPES: [IdentityCheckInput['check_type'], string][] = [
+  ['phone_callback', 'Gọi lại số trên hồ sơ đăng ký chính thức'],
+  ['email_domain', 'Email thuộc tên miền chính thức'],
+  ['registry_lookup', 'Tra sổ đăng ký / MST'],
+];
+const RESULTS: [IdentityCheckInput['result'], string][] = [
+  ['match', 'Khớp'],
+  ['mismatch', 'Không khớp'],
+  ['not_found', 'Không tìm thấy'],
+  ['unchecked', 'Chưa kiểm được'],
+];
+const TAX_STATUS: ['active' | 'inactive' | 'unknown', string][] = [
+  ['unknown', 'Không rõ'],
+  ['active', 'Đang hoạt động'],
+  ['inactive', 'Không hoạt động'],
+];
+
+type CheckForm = {
+  check_type: IdentityCheckInput['check_type'];
+  result: IdentityCheckInput['result'];
+  note: string;
+  representative: string;
+  founded_year: string;
+  tax_status: 'active' | 'inactive' | 'unknown';
+  name_changed: boolean;
+  representative_changed: boolean;
+};
+const EMPTY_CHECK: CheckForm = {
+  check_type: 'phone_callback',
+  result: 'match',
+  note: '',
+  representative: '',
+  founded_year: '',
+  tax_status: 'unknown',
+  name_changed: false,
+  representative_changed: false,
+};
+
+function toCheckInput(form: CheckForm): IdentityCheckInput {
+  const body: IdentityCheckInput = { check_type: form.check_type, result: form.result, note: form.note.trim() || null };
+  if (form.check_type === 'registry_lookup') {
+    body.registry = {
+      legal_representative: form.representative.trim() || null,
+      founded_year: form.founded_year ? Number(form.founded_year) : null,
+      tax_status: form.tax_status,
+      name_changed_recently: form.name_changed,
+      representative_changed_recently: form.representative_changed,
+    };
+  }
+  return body;
+}
+
 export default function AdminVerificationQueue() {
   const { tr, language } = useLanguage();
   const [items, setItems] = useState<QueueItem[] | null>(null);
@@ -21,6 +101,7 @@ export default function AdminVerificationQueue() {
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [reasons, setReasons] = useState<Record<string, string>>({});
+  const [checks, setChecks] = useState<Record<string, CheckForm>>({});
 
   const load = useCallback(async () => {
     const queue = await getQueue();
@@ -59,7 +140,17 @@ export default function AdminVerificationQueue() {
     void run(() => reviewEvidence(evidenceId, decision, reason));
   };
 
+  const checkOf = (companyId: string) => checks[companyId] ?? EMPTY_CHECK;
+  const setCheck = (companyId: string, patch: Partial<CheckForm>) =>
+    setChecks((c) => ({ ...c, [companyId]: { ...(c[companyId] ?? EMPTY_CHECK), ...patch } }));
+  const saveCheck = (companyId: string) =>
+    void run(async () => {
+      await recordIdentityCheck(companyId, toCheckInput(checkOf(companyId)));
+      setChecks((c) => ({ ...c, [companyId]: EMPTY_CHECK }));
+    });
+
   const button = 'rounded-lg px-3 py-1.5 text-xs font-semibold disabled:opacity-60';
+  const small = 'rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs';
 
   return (
     <div className="space-y-5 text-left">
@@ -134,6 +225,80 @@ export default function AdminVerificationQueue() {
                     </div>
                   </div>
                 ))}
+              </div>
+
+              <div role="group" aria-label={tr('Kiểm danh tính')} className="mt-4 rounded-xl border border-slate-200 p-3 text-sm">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <strong>{tr('Kiểm danh tính')}</strong>
+                  <span className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${item.ownership_proven ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-700'}`}>
+                    {item.ownership_proven ? tr('Đã chứng minh quyền sở hữu') : tr('Chưa chứng minh quyền sở hữu')}
+                  </span>
+                </div>
+                {(item.signals ?? []).length > 0 && (
+                  <ul className="mt-2 flex flex-wrap gap-2" aria-label={tr('Cờ danh tính')}>
+                    {(item.signals ?? []).map((s) => (
+                      <li key={s.code} className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${SEVERITY_STYLE[s.severity]}`}>
+                        {tr(SIGNAL_LABEL[s.code] ?? s.code)}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                <div className="mt-3 flex flex-wrap items-end gap-2">
+                  <label className="text-xs text-slate-700">
+                    {tr('Loại kiểm')}
+                    <select value={checkOf(item.company_id).check_type} onChange={(e) => setCheck(item.company_id, { check_type: e.target.value as CheckForm['check_type'] })} className={`${small} ml-1`}>
+                      {CHECK_TYPES.map(([v, label]) => (
+                        <option key={v} value={v}>{tr(label)}</option>
+                      ))}
+                    </select>
+                  </label>
+                  <label className="text-xs text-slate-700">
+                    {tr('Kết quả')}
+                    <select value={checkOf(item.company_id).result} onChange={(e) => setCheck(item.company_id, { result: e.target.value as CheckForm['result'] })} className={`${small} ml-1`}>
+                      {RESULTS.map(([v, label]) => (
+                        <option key={v} value={v}>{tr(label)}</option>
+                      ))}
+                    </select>
+                  </label>
+                  <label className="text-xs text-slate-700">
+                    {tr('Ghi chú kiểm')}
+                    <input value={checkOf(item.company_id).note} onChange={(e) => setCheck(item.company_id, { note: e.target.value })} className={`${small} ml-1`} />
+                  </label>
+                </div>
+                {checkOf(item.company_id).check_type === 'registry_lookup' && (
+                  <div className="mt-2 flex flex-wrap items-end gap-2">
+                    <label className="text-xs text-slate-700">
+                      {tr('Người đại diện theo sổ đăng ký')}
+                      <input value={checkOf(item.company_id).representative} onChange={(e) => setCheck(item.company_id, { representative: e.target.value })} className={`${small} ml-1`} />
+                    </label>
+                    <label className="text-xs text-slate-700">
+                      {tr('Năm thành lập theo sổ đăng ký')}
+                      <input type="number" min={1900} max={2100} value={checkOf(item.company_id).founded_year} onChange={(e) => setCheck(item.company_id, { founded_year: e.target.value })} className={`${small} ml-1 w-20`} />
+                    </label>
+                    <label className="text-xs text-slate-700">
+                      {tr('Trạng thái thuế')}
+                      <select value={checkOf(item.company_id).tax_status} onChange={(e) => setCheck(item.company_id, { tax_status: e.target.value as CheckForm['tax_status'] })} className={`${small} ml-1`}>
+                        {TAX_STATUS.map(([v, label]) => (
+                          <option key={v} value={v}>{tr(label)}</option>
+                        ))}
+                      </select>
+                    </label>
+                    <label className="flex items-center gap-1 text-xs text-slate-700">
+                      <input type="checkbox" checked={checkOf(item.company_id).name_changed} onChange={(e) => setCheck(item.company_id, { name_changed: e.target.checked })} />
+                      {tr('Vừa đổi tên')}
+                    </label>
+                    <label className="flex items-center gap-1 text-xs text-slate-700">
+                      <input type="checkbox" checked={checkOf(item.company_id).representative_changed} onChange={(e) => setCheck(item.company_id, { representative_changed: e.target.checked })} />
+                      {tr('Vừa đổi người đại diện')}
+                    </label>
+                  </div>
+                )}
+                <p className="mt-2 text-[11px] text-slate-500">
+                  {tr('Gọi lại số ghi trên hồ sơ đăng ký chính thức, không gọi số doanh nghiệp tự khai. Tên người đại diện chỉ được băm để so trùng, không lưu.')}
+                </p>
+                <button type="button" disabled={busy} onClick={() => saveCheck(item.company_id)} className={`${button} mt-2 border border-slate-300 text-slate-800`}>
+                  {tr('Ghi kết quả kiểm')}
+                </button>
               </div>
 
               <div className="mt-4 border-t border-slate-100 pt-4">

@@ -78,6 +78,13 @@ class VerificationRequestOut(BaseModel):
     decision_reason: str | None  # exporter thấy lý do từ chối / yêu cầu bổ sung
 
 
+class SignalOut(BaseModel):
+    """Tín hiệu rủi ro danh tính (I11) — chỉ để xếp ưu tiên, không phải quyết định."""
+
+    code: str
+    severity: Literal["high", "medium", "low"]
+
+
 class QueueItem(BaseModel):
     request_id: uuid.UUID
     company_id: uuid.UUID
@@ -86,6 +93,8 @@ class QueueItem(BaseModel):
     country: str
     submitted_at: dt.datetime
     evidences: list[EvidenceOut]  # xem bằng chứng ngay trên dòng
+    signals: list[SignalOut] = []  # I11: có cờ cao thì lên đầu hàng đợi
+    ownership_proven: bool = False  # I11: đã gọi lại số chính thức và khớp
 
 
 class DecisionIn(BaseModel):

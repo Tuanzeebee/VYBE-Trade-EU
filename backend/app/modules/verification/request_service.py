@@ -14,8 +14,9 @@ from app.core.events import publish
 from app.core.storage import Storage
 from app.modules.auth.schemas import CurrentUser
 from app.modules.companies import service as companies
-from app.modules.verification import evidence_service
+from app.modules.verification import evidence_service, identity_service
 from app.modules.verification.events import VerificationStatusChanged
+from app.modules.verification.identity import SEVERITY_RANK
 from app.modules.verification.models import (
     ApprovalStatus,
     Decision,
@@ -107,6 +108,7 @@ async def queue(session: AsyncSession, storage: Storage) -> list[QueueItem]:
         )
     )
     summaries = await companies.get_company_summaries(session, [r.company_id for r in requests])
+    flags = await identity_service.signals_for(session, [r.company_id for r in requests])
     items: list[QueueItem] = []
     for request in requests:
         summary = summaries[request.company_id]
@@ -128,9 +130,17 @@ async def queue(session: AsyncSession, storage: Storage) -> list[QueueItem]:
                 evidences=[
                     await evidence_service.to_out(session, storage, e) for e in evidence_rows
                 ],
+                signals=flags[request.company_id],
+                ownership_proven=await evidence_service.ownership_proven_for(
+                    session, request.company_id
+                ),
             )
         )
-    return items
+    # I11: cờ danh tính chỉ đẩy hồ sơ lên đầu (mức cao nhất trước), không tự quyết định gì.
+    # sorted ổn định → cùng mức giữ thứ tự cũ nhất trước.
+    return sorted(
+        items, key=lambda i: -max((SEVERITY_RANK[s.severity] for s in i.signals), default=0)
+    )
 
 
 async def decide_request(

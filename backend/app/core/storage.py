@@ -4,6 +4,7 @@ from functools import lru_cache
 from typing import Any, Protocol
 
 import boto3
+from botocore.exceptions import ClientError
 from starlette.concurrency import run_in_threadpool
 
 from app.core.config import get_settings
@@ -16,6 +17,7 @@ class Storage(Protocol):
     async def presign_get(self, key: str) -> str: ...
     async def presign_put(self, key: str, content_type: str) -> str: ...
     async def put(self, key: str, data: bytes, content_type: str) -> None: ...
+    async def get(self, key: str) -> bytes | None: ...
 
 
 class S3Storage:
@@ -51,6 +53,21 @@ class S3Storage:
             Body=data,
             ContentType=content_type,
         )
+
+    async def get(self, key: str) -> bytes | None:
+        """Đọc file người dùng đã tải lên (vd tính hash bằng chứng). Không có file → None."""
+
+        def _read() -> bytes | None:
+            try:
+                body = self._client.get_object(Bucket=self._bucket, Key=key)["Body"]
+            except ClientError as exc:
+                if exc.response.get("Error", {}).get("Code") in ("NoSuchKey", "404"):
+                    return None
+                raise
+            data: bytes = body.read()
+            return data
+
+        return await run_in_threadpool(_read)
 
     async def presign_put(self, key: str, content_type: str) -> str:
         url: str = await run_in_threadpool(

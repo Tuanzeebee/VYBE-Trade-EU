@@ -101,7 +101,7 @@ Quy trình bổ trợ: bắt buộc PDF gốc cho chứng nhận chính; cho ph�
 | Công ty thương mại tự nhận nhà sản xuất | Địa chỉ nhà máy trên chứng nhận ≠ địa chỉ seller | Phân loại Nhà sản xuất / Thương mại — I8 |
 | Mượn chứng nhận của nhà cung ứng | Tên người giữ chứng nhận ≠ tên seller | Hiện riêng mục "Chứng nhận của nhà cung ứng" — I8 |
 | Công ty vỏ | Thành lập < 1 năm nhưng khai lâu năm; vừa đổi tên/người đại diện; trạng thái thuế không hoạt động | Cờ — I11 |
-| Một người nhiều tài khoản | Dùng chung điện thoại, domain, hash file, người đại diện, thiết bị | Gom cụm cho admin — I11 |
+| Một người nhiều tài khoản | Dùng chung điện thoại, domain, MST, hash file, người đại diện (thiết bị: sau MVP — cần thu fingerprint, chạm GDPR) | Gom cụm cho admin — I11 |
 | Thổi phồng năng lực | Công suất/MOQ/giá lệch hẳn so với seller cùng mã HS | Cờ để admin hỏi lại — sau MVP |
 | **Lừa thanh toán** | Số tài khoản hoặc câu yêu cầu chuyển tiền trong chat; thông tin ngân hàng vừa đổi | Cảnh báo cho buyer; thư xác nhận ngân hàng làm bằng chứng — F4 |
 | Mẫu tốt, hàng kém | Đánh giá sau giao dịch; khiếu nại được xác nhận | Hạ mức, hiện công khai sau khi seller được phản hồi — sau MVP |
@@ -134,16 +134,19 @@ Khi xác nhận gian lận: thu hồi xác minh, giữ nhật ký, đưa định
 
 ## 10. Mô hình dữ liệu bổ sung
 
+Cập nhật 30/09/2026 theo code hiện có (chi tiết: `docs/TRUST_IMPLEMENTATION_PLAN.md` §4).
+
 | Bảng | Hạng mục | Ghi chú |
 |---|---|---|
+| `evidence_checks` | I11, I8 | Append-only; mọi lần đối chiếu, cả claim cấp công ty (pháp nhân, quyền sở hữu: `evidence_id` rỗng) |
 | `certification_bodies` | I8 | Dữ liệu cấu hình có người duyệt |
-| `evidence_checks` | I8 | Append-only; mọi lần đối chiếu |
-| `claim_types`, `category_claim_rules` | I10 | Nhóm hàng → tuyên bố bắt buộc / tăng điểm |
+| `evidence_types`, `required_evidence_rules` *(đã có từ C6)* | I10 | Nhóm hàng → tuyên bố bắt buộc (`is_required`) / tăng điểm. Không tạo bảng `claim_types` riêng |
 | `sources`, `reference_lists`, `reference_list_entries` | I10 | Nguồn A/B/C/D; danh sách nhập có phiên bản |
-| `identity_signals`, `account_clusters`, `blocklist_identifiers` | I11 | Chống mạo danh, gom cụm, danh sách chặn |
-| `trade_records` + `companies.trade_history_level` | E6 | Bằng chứng giao hàng, xác nhận của buyer cũ |
+| `identity_signals`, `blocklist_identifiers` | I11 | Chống mạo danh, danh sách chặn. Cụm tài khoản là truy vấn theo định danh trùng, không lưu bảng |
+| `evidences.file_sha256` | I11 | Hash file để chặn/gom cụm |
+| `trade_records` | E6 | Bằng chứng giao hàng, xác nhận của buyer cũ. Mức lịch sử thương mại tính từ bảng này khi đọc, không lưu cột |
 | `document_access_requests` | E5 | Buyer xin xem file gốc |
-| `payment_detail_changes` | F4 | Lịch sử đổi thông tin ngân hàng |
+| — (dùng `evidences` loại `bank_letter`) | F4 | Nền tảng không lưu thông tin ngân hàng; "vừa đổi" = thư xác nhận ngân hàng mới được duyệt ≤ 30 ngày thay thư cũ |
 | `company_relationships` | B6 | Nhà sản xuất VN ↔ đại diện tại EU |
 
 ## 11. Ánh xạ backlog (chờ duyệt)

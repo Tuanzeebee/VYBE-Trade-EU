@@ -1361,6 +1361,109 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/companies/{company_id}/identity": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Company Identity */
+        get: operations["company_identity_api_admin_companies__company_id__identity_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/companies/{company_id}/identity-checks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Record Identity Check */
+        post: operations["record_identity_check_api_admin_companies__company_id__identity_checks_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/identity-clusters": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Identity Clusters */
+        get: operations["identity_clusters_api_admin_identity_clusters_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/identity-clusters/export.xlsx": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Identity Clusters Export */
+        get: operations["identity_clusters_export_api_admin_identity_clusters_export_xlsx_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/blocklist": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Blocklist */
+        get: operations["list_blocklist_api_admin_blocklist_get"];
+        put?: never;
+        /** Add Blocklist */
+        post: operations["add_blocklist_api_admin_blocklist_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/blocklist/{entry_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Remove Blocklist */
+        delete: operations["remove_blocklist_api_admin_blocklist__entry_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -1606,6 +1709,42 @@ export interface components {
              */
             created_at: string;
         };
+        /** BlocklistIn */
+        BlocklistIn: {
+            /**
+             * Identifier Type
+             * @enum {string}
+             */
+            identifier_type: "tax_id" | "domain" | "phone" | "file_sha256";
+            /** Value */
+            value: string;
+            /** Reason */
+            reason: string;
+        };
+        /** BlocklistOut */
+        BlocklistOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Identifier Type */
+            identifier_type: string;
+            /** Value */
+            value: string;
+            /** Reason */
+            reason: string;
+            /**
+             * Added By
+             * Format: uuid
+             */
+            added_by: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
         /** Body_evidence_rules_import_api_admin_evidence_rules_import_post */
         Body_evidence_rules_import_api_admin_evidence_rules_import_post: {
             /** File */
@@ -1666,6 +1805,41 @@ export interface components {
             source_url: string | null;
             /** Heading */
             heading: string;
+        };
+        /** ClusterCompany */
+        ClusterCompany: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Legal Name */
+            legal_name: string;
+        };
+        /** ClusterOut */
+        ClusterOut: {
+            /** Identifier Type */
+            identifier_type: string;
+            /** Value */
+            value: string;
+            /** Companies */
+            companies: components["schemas"]["ClusterCompany"][];
+        };
+        /** CompanyIdentityOut */
+        CompanyIdentityOut: {
+            /**
+             * Company Id
+             * Format: uuid
+             */
+            company_id: string;
+            /** Ownership Proven */
+            ownership_proven: boolean;
+            /** Signals */
+            signals: components["schemas"]["SignalOut"][];
+            /** Checks */
+            checks: components["schemas"]["IdentityCheckOut"][];
+            /** Clusters */
+            clusters: components["schemas"]["ClusterOut"][];
         };
         /** CompanyIn */
         CompanyIn: {
@@ -2248,6 +2422,49 @@ export interface components {
             /** Supported */
             supported: boolean;
         };
+        /** IdentityCheckIn */
+        IdentityCheckIn: {
+            /**
+             * Check Type
+             * @enum {string}
+             */
+            check_type: "registry_lookup" | "phone_callback" | "email_domain";
+            /**
+             * Result
+             * @enum {string}
+             */
+            result: "match" | "mismatch" | "not_found" | "unchecked";
+            /** Note */
+            note?: string | null;
+            registry?: components["schemas"]["RegistryFactsIn"] | null;
+        };
+        /** IdentityCheckOut */
+        IdentityCheckOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Subject */
+            subject: string;
+            /** Check Type */
+            check_type: string;
+            /** Result */
+            result: string;
+            /** Facts */
+            facts: {
+                [key: string]: unknown;
+            } | null;
+            /** Note */
+            note: string | null;
+            /** Checked By */
+            checked_by: string | null;
+            /**
+             * Checked At
+             * Format: date-time
+             */
+            checked_at: string;
+        };
         /** ImportResult */
         ImportResult: {
             /** Created */
@@ -2665,6 +2882,16 @@ export interface components {
             submitted_at: string;
             /** Evidences */
             evidences: components["schemas"]["EvidenceOut"][];
+            /**
+             * Signals
+             * @default []
+             */
+            signals?: components["schemas"]["SignalOut"][];
+            /**
+             * Ownership Proven
+             * @default false
+             */
+            ownership_proven?: boolean;
         };
         /** RegisterIn */
         RegisterIn: {
@@ -2693,6 +2920,32 @@ export interface components {
              * @constant
              */
             accept_terms: true;
+        };
+        /**
+         * RegistryFactsIn
+         * @description Dữ kiện admin đọc từ sổ đăng ký chính thức. Tên người đại diện chỉ dùng để băm, không lưu.
+         */
+        RegistryFactsIn: {
+            /** Legal Representative */
+            legal_representative?: string | null;
+            /** Founded Year */
+            founded_year?: number | null;
+            /**
+             * Tax Status
+             * @default unknown
+             * @enum {string}
+             */
+            tax_status?: "active" | "inactive" | "unknown";
+            /**
+             * Name Changed Recently
+             * @default false
+             */
+            name_changed_recently?: boolean;
+            /**
+             * Representative Changed Recently
+             * @default false
+             */
+            representative_changed_recently?: boolean;
         };
         /** ReturnVisitStats */
         ReturnVisitStats: {
@@ -3036,6 +3289,19 @@ export interface components {
             data: components["schemas"]["SavingsData"] | null;
             /** Empty Hint Key */
             empty_hint_key?: string | null;
+        };
+        /**
+         * SignalOut
+         * @description Tín hiệu rủi ro danh tính (I11) — chỉ để xếp ưu tiên, không phải quyết định.
+         */
+        SignalOut: {
+            /** Code */
+            code: string;
+            /**
+             * Severity
+             * @enum {string}
+             */
+            severity: "high" | "medium" | "low";
         };
         /**
          * StatsOut
@@ -6586,6 +6852,235 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["VerificationRequestOut"];
                 };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    company_identity_api_admin_companies__company_id__identity_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                company_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CompanyIdentityOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    record_identity_check_api_admin_companies__company_id__identity_checks_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                company_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["IdentityCheckIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IdentityCheckOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    identity_clusters_api_admin_identity_clusters_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ClusterOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    identity_clusters_export_api_admin_identity_clusters_export_xlsx_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_blocklist_api_admin_blocklist_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BlocklistOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_blocklist_api_admin_blocklist_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BlocklistIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BlocklistOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    remove_blocklist_api_admin_blocklist__entry_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                entry_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Validation Error */
             422: {

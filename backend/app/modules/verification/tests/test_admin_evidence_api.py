@@ -14,7 +14,7 @@ from app.modules.auth.service import create_admin
 from app.modules.companies import service as companies
 from app.modules.companies.tests.helpers import PASSWORD, login_as, product_body
 from app.modules.verification.models import ApprovalStatus, Evidence
-from app.modules.verification.tests.helpers import TODAY, add_rule, add_type
+from app.modules.verification.tests.helpers import TODAY, add_rule, add_type, prove_ownership
 
 pytestmark = pytest.mark.usefixtures("hs_seeded")
 
@@ -218,6 +218,7 @@ async def test_admin_approves_evidence_and_it_upgrades_level(
 ) -> None:
     evidence = await submitted_evidence(db_session, company_id, reviewer_id)
     await add_rule(db_session, reviewer_id, "iso_9001")
+    await prove_ownership(db_session, company_id)
     await admin.post("/api/auth/logout")
     await login_as(admin, "exporter", "exp@x.vn")
     await admin.post("/api/exporter/products", json=product_body(hs_code="090121"))

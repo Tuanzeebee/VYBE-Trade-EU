@@ -225,6 +225,8 @@ export function companyToForm(company: CompanyOut): Record<string, string> {
 
 const INVALID = 'Thông tin doanh nghiệp chưa hợp lệ. Vui lòng kiểm tra lại.';
 const NETWORK = 'Không kết nối được máy chủ. Vui lòng thử lại.';
+// I11: MST/website/email nằm trong danh sách chặn — không nói trường nào để không lộ danh sách.
+const BLOCKED = 'Không thể dùng thông tin này trên evfta.eu. Vui lòng liên hệ bộ phận hỗ trợ.';
 
 export async function getMyCompany(): Promise<CompanyOut | null> {
   try {
@@ -247,6 +249,7 @@ export async function saveMyCompany(body: CompanyIn): Promise<CompanyOut> {
   } catch {
     throw new Error(NETWORK);
   }
+  if (result.response.status === 403) throw new Error(BLOCKED);
   if (!result.response.ok || !result.data) throw new Error(INVALID);
   return result.data;
 }

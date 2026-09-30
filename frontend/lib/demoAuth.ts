@@ -34,6 +34,7 @@ const MESSAGES = {
   fields: 'Vui lòng nhập đầy đủ tên, doanh nghiệp và email hợp lệ.',
   network: 'Không kết nối được máy chủ. Vui lòng thử lại.',
   invalidInput: 'Thông tin chưa hợp lệ. Vui lòng kiểm tra lại.',
+  blocked: 'Không thể dùng thông tin này trên evfta.eu. Vui lòng liên hệ bộ phận hỗ trợ.',
 };
 
 // Tạo client mỗi lần gọi để luôn dùng fetch hiện hành (test thay fetch toàn cục).
@@ -89,6 +90,7 @@ function errorMessage(status: number): string {
   if (status === 401) return MESSAGES.invalid;
   if (status === 423) return MESSAGES.locked;
   if (status === 409) return MESSAGES.taken;
+  if (status === 403) return MESSAGES.blocked; // I11: định danh trong danh sách chặn
   return MESSAGES.invalidInput;
 }
 

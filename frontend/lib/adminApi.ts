@@ -236,3 +236,30 @@ export const reviewCorpusDocument = (id: string) =>
     () => createApiClient().POST('/api/admin/corpus-documents/{document_id}/review', { params: { path: { document_id: id } } }),
     { 404: 'Không tìm thấy tài liệu.' },
   );
+
+// ── Chống mạo danh (I11): kiểm danh tính, cụm tài khoản, danh sách chặn ─────────
+export type Signal = components['schemas']['SignalOut'];
+export type CompanyIdentity = components['schemas']['CompanyIdentityOut'];
+export type IdentityCheckInput = components['schemas']['IdentityCheckIn'];
+export type IdentityCluster = components['schemas']['ClusterOut'];
+export type BlocklistEntry = components['schemas']['BlocklistOut'];
+export type BlocklistInput = components['schemas']['BlocklistIn'];
+
+export const getCompanyIdentity = (companyId: string) =>
+  read(() => createApiClient().GET('/api/admin/companies/{company_id}/identity', { params: { path: { company_id: companyId } } }));
+export const recordIdentityCheck = (companyId: string, body: IdentityCheckInput) =>
+  act(
+    () => createApiClient().POST('/api/admin/companies/{company_id}/identity-checks', { params: { path: { company_id: companyId } }, body }),
+    { 404: 'Không tìm thấy doanh nghiệp.', 422: 'Thông tin kiểm chưa hợp lệ. Vui lòng kiểm tra lại.' },
+  );
+export const listIdentityClusters = () => read(() => createApiClient().GET('/api/admin/identity-clusters'));
+export const listBlocklist = () => read(() => createApiClient().GET('/api/admin/blocklist'));
+export const addBlocklist = (body: BlocklistInput) =>
+  act(() => createApiClient().POST('/api/admin/blocklist', { body }), {
+    409: 'Định danh này đã nằm trong danh sách chặn.',
+    422: 'Giá trị không hợp lệ hoặc là domain email miễn phí.',
+  });
+export const removeBlocklist = (id: string) =>
+  act(() => createApiClient().DELETE('/api/admin/blocklist/{entry_id}', { params: { path: { entry_id: id } } }), {
+    404: 'Không tìm thấy dòng dữ liệu.',
+  });
