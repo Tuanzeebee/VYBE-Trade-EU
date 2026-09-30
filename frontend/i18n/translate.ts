@@ -7,7 +7,10 @@ const index = { en: 0, fr: 1, ja: 2 } as const;
 const escape = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const patterns = Object.entries(catalog).filter(([source]) => /\{\d+\}/.test(source) && source.replace(/\{\d+\}/g, '').trim().length > 3)
   .map(([source, values]) => ({ values, keys: [...source.matchAll(/\{(\d+)\}/g)].map((match) => match[1]),
-    regex: new RegExp('^' + source.split(/(\{\d+\})/).map((part) => /^\{\d+\}$/.test(part) ? '(.*?)' : escape(part)).join('') + '$') }));
+    literal: source.replace(/\{\d+\}/g, '').length,
+    regex: new RegExp('^' + source.split(/(\{\d+\})/).map((part) => /^\{\d+\}$/.test(part) ? '(.*?)' : escape(part)).join('') + '$') }))
+  // Mẫu cụ thể hơn (nhiều chữ cố định hơn) thắng: "Dùng trong {0} ngày" trước "{0} ngày".
+  .sort((a, b) => b.literal - a.literal);
 
 export function translateText<T>(value: T, language: Locale): T {
   if (language === 'vi' || typeof value !== 'string') return value;

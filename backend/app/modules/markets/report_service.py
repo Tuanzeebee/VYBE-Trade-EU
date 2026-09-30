@@ -1,5 +1,5 @@
 """Báo cáo go-to-market (U18): exporter tạo yêu cầu → job chụp chỉ số, viết lời văn, dựng PDF →
-xem bản tóm tắt (miễn phí) hoặc bản đầy đủ (cần quyền `gtm_report_full`, cấp ở module billing).
+xem bản tóm tắt (miễn phí) hoặc bản đầy đủ (quyền `gtm_report_full`, core.entitlements).
 
 Lời văn: ChatModel chỉ viết placeholder; server điền số và kiểm tra (report.validate_narrative).
 Model lỗi hoặc viết sai quy tắc → lời văn mẫu. CTA "Tư vấn triển khai qua mạng lưới VBA" tạo
@@ -16,6 +16,7 @@ from typing import Any
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core import entitlements
 from app.core.audit import record
 from app.core.chat import ChatModel, get_chat_model
 from app.core.errors import AppError
@@ -56,14 +57,13 @@ from app.modules.markets.schemas import (
 
 log = logging.getLogger(__name__)
 
-FULL_REPORT = "gtm_report_full"
+FULL_REPORT = entitlements.GTM_REPORT_FULL
 REPORTS_PER_DAY = 10
 LEADS_PER_DAY = 5
 FAILED_MESSAGE = "report_failed"
 
-# ── Hàng đợi job và kiểm tra quyền (test / module billing thay) ──────────────
+# ── Hàng đợi job (test thay bằng bản ghi trong bộ nhớ) ───────────────────────
 ReportEnqueuer = Callable[[uuid.UUID], Awaitable[None]]
-EntitlementChecker = Callable[[AsyncSession, uuid.UUID, str], Awaitable[bool]]
 
 
 async def _defer_report(report_id: uuid.UUID) -> None:
@@ -75,24 +75,12 @@ async def _defer_report(report_id: uuid.UUID) -> None:
         log.exception("Không xếp được job báo cáo thị trường %s", report_id)
 
 
-async def _no_entitlement(session: AsyncSession, company_id: uuid.UUID, feature: str) -> bool:
-    """Mặc định đóng: chưa nối billing thì chỉ có bản tóm tắt."""
-    return False
-
-
 _enqueue_report: ReportEnqueuer = _defer_report
-_entitled: EntitlementChecker = _no_entitlement
 
 
 def set_report_enqueuer(enqueuer: ReportEnqueuer) -> ReportEnqueuer:
     global _enqueue_report
     previous, _enqueue_report = _enqueue_report, enqueuer
-    return previous
-
-
-def set_entitlement_checker(checker: EntitlementChecker) -> EntitlementChecker:
-    global _entitled
-    previous, _entitled = _entitled, checker
     return previous
 
 
@@ -152,7 +140,9 @@ async def create_report(
     await session.commit()
     await session.refresh(row)
     await _enqueue_report(row.id)
-    return await _out(storage, row, full=await _entitled(session, company_id, FULL_REPORT))
+    return await _out(
+        storage, row, full=await entitlements.has_feature(session, company_id, FULL_REPORT)
+    )
 
 
 def _str(value: Decimal | None) -> str | None:
@@ -401,7 +391,9 @@ async def get_report(
     row = await session.get(MarketReport, report_id)
     if row is None or row.company_id != company_id:
         raise AppError("report_not_found", "Report not found", 404)
-    return await _out(storage, row, full=await _entitled(session, company_id, FULL_REPORT))
+    return await _out(
+        storage, row, full=await entitlements.has_feature(session, company_id, FULL_REPORT)
+    )
 
 
 # ── Tư vấn triển khai qua mạng lưới VBA ─────────────────────────────────────

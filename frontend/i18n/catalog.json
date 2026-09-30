@@ -14138,5 +14138,370 @@
     "Invalid input. Choose a product and check the amount fields.",
     "Saisie invalide. Choisissez un produit et vérifiez les montants.",
     "入力が無効です。製品を選び金額欄を確認してください。"
+  ],
+  "Ghi chú đối soát (không bắt buộc)": [
+    "Reconciliation note (optional)",
+    "Note de rapprochement (facultatif)",
+    "照合メモ（任意）"
+  ],
+  "Hiển thị": [
+    "Visibility",
+    "Visibilité",
+    "表示"
+  ],
+  "Huỷ đơn": [
+    "Cancel order",
+    "Annuler la commande",
+    "注文を取り消す"
+  ],
+  "Không có đơn nào.": [
+    "No orders.",
+    "Aucune commande.",
+    "注文はありません。"
+  ],
+  "Không tải được danh sách đơn.": [
+    "Could not load orders.",
+    "Impossible de charger les commandes.",
+    "注文一覧を読み込めませんでした。"
+  ],
+  "Lưu giá đã chốt": [
+    "Save as final price",
+    "Enregistrer le prix définitif",
+    "確定価格として保存"
+  ],
+  "Mục thu phí": [
+    "Billing items",
+    "Éléments facturables",
+    "課金項目"
+  ],
+  "Mục": [
+    "Item",
+    "Élément",
+    "項目"
+  ],
+  "Thanh toán": [
+    "Payments",
+    "Paiements",
+    "支払い"
+  ],
+  "Thôi": [
+    "Back",
+    "Retour",
+    "戻る"
+  ],
+  "Trạng thái giá": [
+    "Price status",
+    "Statut du prix",
+    "価格の状態"
+  ],
+  "Tạm tính": [
+    "Provisional",
+    "Provisoire",
+    "暫定"
+  ],
+  "Xuất hoá đơn": [
+    "Invoice to",
+    "Facturer à",
+    "請求書宛先"
+  ],
+  "Xác nhận": [
+    "Confirm",
+    "Confirmer",
+    "確定"
+  ],
+  "Đã chốt": [
+    "Final",
+    "Définitif",
+    "確定済み"
+  ],
+  "Đã nhận chuyển khoản": [
+    "Transfer received",
+    "Virement reçu",
+    "振込を確認"
+  ],
+  "Đơn chuyển khoản": [
+    "Bank transfer orders",
+    "Commandes par virement",
+    "銀行振込の注文"
+  ],
+  "Buyer và mọi công cụ tuân thủ luôn miễn phí. Doanh nghiệp bán hàng chỉ trả cho dịch vụ thêm, thanh toán bằng chuyển khoản ngân hàng.": [
+    "Buyers and all compliance tools are always free. Sellers only pay for add-on services, by bank transfer.",
+    "Les acheteurs et tous les outils de conformité sont toujours gratuits. Les vendeurs ne paient que les services additionnels, par virement.",
+    "バイヤーとすべてのコンプライアンスツールは常に無料です。セラーは追加サービスのみ銀行振込でお支払いください。"
+  ],
+  "Bảng giá": [
+    "Pricing",
+    "Tarifs",
+    "料金"
+  ],
+  "Chuyển khoản đúng số tiền, ghi mã tham chiếu vào nội dung chuyển khoản.": [
+    "Transfer the exact amount with the reference code in the payment note.",
+    "Virez le montant exact avec le code de référence dans le libellé.",
+    "正確な金額を、参照コードを振込メモに記入して振り込みます。"
+  ],
+  "Cách thanh toán": [
+    "How to pay",
+    "Comment payer",
+    "お支払い方法"
+  ],
+  "Dịch vụ trả phí cho seller": [
+    "Paid services for sellers",
+    "Services payants pour vendeurs",
+    "セラー向け有料サービス"
+  ],
+  "Giá tạm tính — chờ chốt": [
+    "Provisional price — to be confirmed",
+    "Prix provisoire — à confirmer",
+    "暫定価格 — 確定待ち"
+  ],
+  "Hoá đơn VAT xuất theo thông tin bạn cung cấp. Thanh toán qua nền tảng (bảo lãnh, ký quỹ) sẽ có ở giai đoạn sau.": [
+    "VAT invoices are issued from the details you provide. On-platform payments (guarantees, escrow) will come in a later phase.",
+    "Les factures TVA sont émises selon vos informations. Les paiements via la plateforme (garantie, séquestre) viendront plus tard.",
+    "VAT請求書はご提供の情報で発行します。プラットフォーム決済（保証・エスクロー）は後の段階で提供予定です。"
+  ],
+  "Không giới hạn thời gian": [
+    "No time limit",
+    "Sans limite de durée",
+    "期間無制限"
+  ],
+  "Không tải được bảng giá. Vui lòng thử lại.": [
+    "Could not load pricing. Please try again.",
+    "Impossible de charger les tarifs. Réessayez.",
+    "料金を読み込めませんでした。もう一度お試しください。"
+  ],
+  "Miễn phí": [
+    "Free",
+    "Gratuit",
+    "無料"
+  ],
+  "Xem đơn của bạn": [
+    "View your orders",
+    "Voir vos commandes",
+    "注文を見る"
+  ],
+  "Đặt mua: hệ thống tạo đơn với mã tham chiếu riêng.": [
+    "Order: the system creates an order with its own reference code.",
+    "Commandez : le système crée une commande avec son code de référence.",
+    "注文：システムが固有の参照コード付きで注文を作成します。"
+  ],
+  "Đội ngũ VYBE đối soát và xác nhận; dịch vụ mở ngay, bạn nhận thông báo.": [
+    "The VYBE team reconciles and confirms; the service opens immediately and you are notified.",
+    "L'équipe VYBE rapproche et confirme ; le service s'ouvre aussitôt et vous êtes notifié.",
+    "VYBEチームが照合・確認し、サービスがすぐに有効になり通知が届きます。"
+  ],
+  "Mở danh sách đầy đủ": [
+    "Unlock the full list",
+    "Débloquer la liste complète",
+    "全リストを開く"
+  ],
+  "Bạn đang dùng gói miễn phí.": [
+    "You are on the free plan.",
+    "Vous utilisez l'offre gratuite.",
+    "無料プランをご利用中です。"
+  ],
+  "Chưa có đơn nào.": [
+    "No orders yet.",
+    "Aucune commande pour l'instant.",
+    "注文はまだありません。"
+  ],
+  "Dịch vụ đang dùng": [
+    "Active services",
+    "Services actifs",
+    "利用中のサービス"
+  ],
+  "Ghi đúng nội dung chuyển khoản để được xác nhận nhanh. Dịch vụ mở ngay khi đội ngũ VYBE xác nhận đã nhận tiền.": [
+    "Use the exact payment note for fast confirmation. The service opens as soon as the VYBE team confirms receipt.",
+    "Utilisez le libellé exact pour une confirmation rapide. Le service s'ouvre dès que l'équipe VYBE confirme la réception.",
+    "迅速な確認のため振込メモを正確に記入してください。VYBEチームが入金を確認次第サービスが有効になります。"
+  ],
+  "Gói dịch vụ & thanh toán": [
+    "Plans & payments",
+    "Offres et paiements",
+    "プランと支払い"
+  ],
+  "Hướng dẫn chuyển khoản": [
+    "Bank transfer instructions",
+    "Instructions de virement",
+    "振込方法"
+  ],
+  "Tài khoản minh hoạ cho bản demo — không chuyển tiền thật.": [
+    "Demo account for illustration — do not transfer real money.",
+    "Compte de démonstration — ne virez pas d'argent réel.",
+    "デモ用の口座です — 実際の送金はしないでください。"
+  ],
+  "Xem bảng giá": [
+    "See pricing",
+    "Voir les tarifs",
+    "料金を見る"
+  ],
+  "không giới hạn thời gian": [
+    "no time limit",
+    "sans limite de durée",
+    "期間無制限"
+  ],
+  "Đơn của bạn": [
+    "Your orders",
+    "Vos commandes",
+    "あなたの注文"
+  ],
+  "Đặt mua": [
+    "Order",
+    "Commander",
+    "注文する"
+  ],
+  "Đang tạo đơn…": [
+    "Creating order…",
+    "Création de la commande…",
+    "注文を作成中…"
+  ],
+  "Ngân hàng": [
+    "Bank",
+    "Banque",
+    "銀行"
+  ],
+  "Chủ tài khoản": [
+    "Account holder",
+    "Titulaire du compte",
+    "口座名義"
+  ],
+  "Số tài khoản": [
+    "Account number",
+    "Numéro de compte",
+    "口座番号"
+  ],
+  "Số tiền": [
+    "Amount",
+    "Montant",
+    "金額"
+  ],
+  "Nội dung chuyển khoản": [
+    "Payment note",
+    "Libellé du virement",
+    "振込メモ"
+  ],
+  "Đang bán": [
+    "On sale",
+    "En vente",
+    "販売中"
+  ],
+  "Ẩn": [
+    "Hide",
+    "Masquer",
+    "非表示にする"
+  ],
+  "Bán lại": [
+    "Resume sale",
+    "Remettre en vente",
+    "販売を再開"
+  ],
+  "Chờ chuyển khoản": [
+    "Awaiting transfer",
+    "En attente de virement",
+    "振込待ち"
+  ],
+  "Đã thanh toán": [
+    "Paid",
+    "Payée",
+    "支払い済み"
+  ],
+  "Đã huỷ": [
+    "Cancelled",
+    "Annulée",
+    "取消済み"
+  ],
+  "Hồ sơ doanh nghiệp và xác minh Cơ bản": [
+    "Company profile and Basic verification",
+    "Profil d'entreprise et vérification de base",
+    "企業プロフィールと基本認証"
+  ],
+  "Niêm yết sản phẩm, nhận yêu cầu báo giá và nhắn tin với buyer": [
+    "Product listings, quote requests and messaging with buyers",
+    "Fiches produits, demandes de devis et messagerie avec les acheteurs",
+    "製品掲載、見積依頼の受信、バイヤーとのメッセージ"
+  ],
+  "Công cụ tính thuế, quy tắc xuất xứ và EUR.1 nháp": [
+    "Tariff tool, rules of origin and draft EUR.1",
+    "Outil tarifaire, règles d'origine et EUR.1 brouillon",
+    "関税ツール、原産地規則、EUR.1下書き"
+  ],
+  "Gợi ý thị trường EU và bản tóm tắt báo cáo go-to-market": [
+    "EU market recommendations and the go-to-market report summary",
+    "Recommandations de marchés UE et résumé du rapport go-to-market",
+    "EU市場の提案と市場参入レポートの要約"
+  ],
+  "Buyer: tìm nhà cung cấp, nhắn tin, gửi yêu cầu báo giá — miễn phí": [
+    "Buyers: find suppliers, message and send quote requests — free",
+    "Acheteurs : trouver des fournisseurs, échanger, demander des devis — gratuit",
+    "バイヤー：サプライヤー検索、メッセージ、見積依頼 — 無料"
+  ],
+  "Mục này dành cho doanh nghiệp bán hàng (seller).": [
+    "This item is for selling companies (sellers).",
+    "Cet élément est destiné aux vendeurs.",
+    "この項目は販売企業（セラー）向けです。"
+  ],
+  "Hãy hoàn thành hồ sơ doanh nghiệp trước khi đặt mua.": [
+    "Please complete your company profile before ordering.",
+    "Complétez votre profil d'entreprise avant de commander.",
+    "注文の前に企業プロフィールを完成させてください。"
+  ],
+  "Duyệt xác minh Nâng cao": [
+    "Enhanced verification review",
+    "Vérification avancée",
+    "上位認証の審査"
+  ],
+  "Báo cáo go-to-market đầy đủ": [
+    "Full go-to-market report",
+    "Rapport go-to-market complet",
+    "完全版市場参入レポート"
+  ],
+  "Danh sách đầy đủ ai đã xem hồ sơ": [
+    "Full profile viewers list",
+    "Liste complète des visiteurs du profil",
+    "プロフィール閲覧者の全リスト"
+  ],
+  "Xác nhận đã nhận đúng số tiền với nội dung là mã đơn?": [
+    "Confirm the exact amount was received with the order code as payment note?",
+    "Confirmer la réception du montant exact avec le code de commande en libellé ?",
+    "注文コードを振込メモとして正確な金額を受領したことを確認しますか？"
+  ],
+  "Huỷ đơn này?": [
+    "Cancel this order?",
+    "Annuler cette commande ?",
+    "この注文を取り消しますか？"
+  ],
+  "Đã cập nhật.": [
+    "Updated.",
+    "Mis à jour.",
+    "更新しました。"
+  ],
+  "Không cập nhật được. Vui lòng thử lại.": [
+    "Could not update. Please try again.",
+    "Mise à jour impossible. Réessayez.",
+    "更新できませんでした。もう一度お試しください。"
+  ],
+  "Không huỷ được đơn. Vui lòng thử lại.": [
+    "Could not cancel the order. Please try again.",
+    "Impossible d'annuler la commande. Réessayez.",
+    "注文を取り消せませんでした。もう一度お試しください。"
+  ],
+  "Dùng trong {0} ngày": [
+    "Valid for {0} days",
+    "Valable {0} jours",
+    "{0}日間有効"
+  ],
+  "hết hạn {0}": [
+    "expires {0}",
+    "expire le {0}",
+    "{0}に期限切れ"
+  ],
+  "Còn {0} buyer đã xác minh khác đã xem hồ sơ.": [
+    "{0} more verified buyers viewed your profile.",
+    "{0} autres acheteurs vérifiés ont consulté votre profil.",
+    "他に{0}社の認証済みバイヤーがプロフィールを閲覧しました。"
+  ],
+  "Đã xác nhận thanh toán đơn {0}. Dịch vụ đã được mở.": [
+    "Payment confirmed for order {0}. The service is now active.",
+    "Paiement confirmé pour la commande {0}. Le service est actif.",
+    "注文{0}の支払いを確認しました。サービスが有効になりました。"
   ]
 }

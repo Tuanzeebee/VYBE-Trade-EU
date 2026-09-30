@@ -3,6 +3,8 @@ from functools import lru_cache
 from pydantic import model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+DEMO_BANK_ACCOUNT = "0000000000"  # số tài khoản minh hoạ (U19); prod từ chối
+
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
@@ -59,6 +61,13 @@ class Settings(BaseSettings):
     # Điểm tín nhiệm seller (ADR-0004): công khai trên hồ sơ khi bật; tắt thì chỉ owner và admin
     # thấy. Production giữ tắt cho tới khi pháp lý/GDPR duyệt.
     trust_score_public: bool = False
+    # U19 (ADR-0005): tài khoản nhận chuyển khoản in trên đơn. Mặc định là MINH HOẠ — PO cung cấp
+    # tài khoản thật trước khi thu tiền; production từ chối chạy với số tài khoản minh hoạ.
+    bank_transfer_bank_name: str = "Ngân hàng minh hoạ (chờ PO cung cấp)"
+    bank_transfer_account_name: str = "VYBE TRADE (DEMO)"
+    bank_transfer_account_number: str = DEMO_BANK_ACCOUNT
+    bank_transfer_iban: str | None = None
+    bank_transfer_swift: str | None = None
 
     @model_validator(mode="after")
     def _no_dev_defaults_outside_dev(self) -> "Settings":
@@ -77,6 +86,8 @@ class Settings(BaseSettings):
             problems.append("CORS_ORIGINS phải dùng https")
         if self.env == "prod" and self.demo_compliance_data:
             problems.append("DEMO_COMPLIANCE_DATA không được bật ở production (AGENTS.md §6.2)")
+        if self.env == "prod" and self.bank_transfer_account_number == DEMO_BANK_ACCOUNT:
+            problems.append("BANK_TRANSFER_ACCOUNT_NUMBER còn là số tài khoản minh hoạ")
         if problems:
             raise ValueError("Cấu hình không an toàn ngoài môi trường dev: " + "; ".join(problems))
         return self

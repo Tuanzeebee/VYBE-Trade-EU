@@ -11,6 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 from app.core.db import get_sessionmaker
 from app.core.events import subscribe
 from app.modules.auth import service as auth
+from app.modules.billing.events import OrderPaid
 from app.modules.companies import product_service
 from app.modules.companies import service as companies
 from app.modules.dashboard.events import ProfileViewed
@@ -252,6 +253,21 @@ async def on_message_sent(event: MessageSent) -> None:
     )
 
 
+async def on_order_paid(event: OrderPaid) -> None:
+    """U19: admin xác nhận đã nhận chuyển khoản — công ty thấy quyền dùng đã mở (trong ứng dụng)."""
+    await _record_in_app(
+        NotificationType.order,
+        event.company_id,
+        {
+            "event": "paid",
+            "order_id": str(event.order_id),
+            "reference": event.reference,
+            "item_name_vi": event.item_name_vi,
+            "item_name_en": event.item_name_en,
+        },
+    )
+
+
 def register() -> None:
     subscribe(VerificationStatusChanged, on_verification_status_changed)
     subscribe(VerificationStatusChanged, on_new_supplier_verified)
@@ -261,3 +277,4 @@ def register() -> None:
     subscribe(QuoteSent, on_quote_sent)
     subscribe(QuoteDecided, on_quote_decided)
     subscribe(ProfileViewed, on_profile_viewed)
+    subscribe(OrderPaid, on_order_paid)

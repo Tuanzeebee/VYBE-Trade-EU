@@ -5,6 +5,7 @@
 import React, { useEffect, useState } from 'react';
 import { Eye } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import { Link } from '../i18n/navigation';
 import { countryName } from '../lib/companyApi';
 import { getProfileViewers, type ProfileViewers as Viewers } from '../lib/dashboardApi';
 
@@ -85,6 +86,14 @@ export default function ProfileViewers() {
                 </li>
               ))}
             </ul>
+          )}
+          {(data.hidden_viewers ?? 0) > 0 && (
+            <p className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900" data-testid="viewers-upsell">
+              {tr(`Còn ${data.hidden_viewers} buyer đã xác minh khác đã xem hồ sơ.`)}{' '}
+              <Link href="/pricing" className="font-semibold underline">
+                {tr('Mở danh sách đầy đủ')}
+              </Link>
+            </p>
           )}
         </>
       )}

@@ -16,6 +16,7 @@ from pypdf import PdfReader
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core import entitlements
 from app.core.audit import AuditLog
 from app.core.chat import FakeChatModel
 from app.core.trade_stats import parse_flow_csv
@@ -150,9 +151,9 @@ def entitled() -> Iterator[None]:
     async def yes(session: AsyncSession, company_id: uuid.UUID, feature: str) -> bool:
         return feature == report_service.FULL_REPORT
 
-    previous = report_service.set_entitlement_checker(yes)
+    previous = entitlements.register(yes)
     yield
-    report_service.set_entitlement_checker(previous)
+    entitlements.register(previous)
 
 
 async def exporter(client: AsyncClient, email: str = "exp@x.vn") -> None:

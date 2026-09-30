@@ -12,6 +12,7 @@ SAFE = {
     "s3_secret_key": "real-secret",
     "cookie_secure": True,
     "cors_origins": ["https://evfta.eu"],
+    "bank_transfer_account_number": "0071000123456",
 }
 
 
@@ -36,6 +37,7 @@ def test_a_fully_configured_production_starts() -> None:
         ({"cookie_secure": False}, "COOKIE_SECURE"),
         ({"cors_origins": ["http://evfta.eu"]}, "CORS_ORIGINS"),
         ({"demo_compliance_data": True}, "DEMO_COMPLIANCE_DATA"),
+        ({"bank_transfer_account_number": "0000000000"}, "BANK_TRANSFER_ACCOUNT_NUMBER"),
     ],
 )
 def test_each_unsafe_default_stops_startup(over: dict[str, object], needle: str) -> None:
@@ -57,3 +59,7 @@ def test_every_problem_is_reported_at_once() -> None:
         Settings(_env_file=None, env="staging")
     text = str(info.value)
     assert all(word in text for word in ("S3", "DATABASE_URL"))
+
+
+def test_demo_bank_account_is_allowed_outside_production() -> None:
+    assert make(env="staging", bank_transfer_account_number="0000000000").env == "staging"

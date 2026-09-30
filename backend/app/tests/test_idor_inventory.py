@@ -15,6 +15,8 @@ COVERED = {
         "/api/exporter/market-reports/{report_id}",
         "get",
     ): "markets: test_auth_and_idor",
+    ("/api/me/orders/{order_id}", "get"): "billing: test_roles_and_ownership",
+    ("/api/me/orders/{order_id}/cancel", "post"): "billing: test_roles_and_ownership",
     (
         "/api/exporter/evidences/{evidence_id}",
         "get",

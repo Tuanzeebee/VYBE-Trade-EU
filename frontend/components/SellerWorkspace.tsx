@@ -34,6 +34,7 @@ import {
   Bot,
   Globe,
   FileText,
+  CreditCard,
 } from 'lucide-react';
 import EvidenceManager from './EvidenceManager';
 import VerificationPanel from './VerificationPanel';
@@ -43,10 +44,11 @@ import NotificationsPanel from './NotificationsPanel';
 import Conversations from './Conversations';
 import ProfileViewers from './ProfileViewers';
 import MarketReportPanel from './MarketReportPanel';
+import SellerBilling from './SellerBilling';
 import { Link } from '../i18n/navigation';
 import ExporterDashboard from './ExporterDashboard';
 
-export type WorkspaceTabId = 'overview' | 'profile' | 'verification' | 'products' | 'rfq' | 'messages' | 'notifications' | 'licenses' | 'viewers' | 'report';
+export type WorkspaceTabId = 'overview' | 'profile' | 'verification' | 'products' | 'rfq' | 'messages' | 'notifications' | 'licenses' | 'viewers' | 'report' | 'billing';
 
 interface SellerWorkspaceProps {
   account?: DemoUser;
@@ -119,6 +121,7 @@ export default function SellerWorkspace({
               { id: 'products', label: 'Sản phẩm cung cấp', icon: Package, badge: `${productsList.length}` },
               { id: 'rfq', label: 'Cơ hội kết nối B2B', icon: Handshake },
               { id: 'report', label: 'Báo cáo go-to-market', icon: FileText },
+              { id: 'billing', label: 'Gói dịch vụ & thanh toán', icon: CreditCard },
               { id: 'messages', label: 'Tin nhắn', icon: MessageSquare },
               { id: 'notifications', label: 'Thông báo', icon: Bell }
             ];
@@ -270,6 +273,7 @@ export default function SellerWorkspace({
                 {tr(activeTab === 'notifications' && 'Thông báo hệ thống')}
                 {tr(activeTab === 'viewers' && 'Ai đã xem hồ sơ của bạn')}
                 {tr(activeTab === 'report' && 'Báo cáo go-to-market')}
+                {tr(activeTab === 'billing' && 'Gói dịch vụ & thanh toán')}
               </span>
             </div>
 
@@ -594,6 +598,8 @@ export default function SellerWorkspace({
           {activeTab === 'viewers' && <ProfileViewers />}
 
           {activeTab === 'report' && <MarketReportPanel products={productsList} />}
+
+          {activeTab === 'billing' && <SellerBilling />}
 
         </main>
 

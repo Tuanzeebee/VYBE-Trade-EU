@@ -43,6 +43,7 @@ const WORKSPACE_PATHS: Record<string, string> = {
   notifications: '/exporter/notifications',
   viewers: '/exporter/profile-views',
   report: '/exporter/market-report',
+  billing: '/exporter/billing',
 };
 
 export const PROTECTED_PAGES: LegacyPage[] = ['workspace', 'onboarding', 'seller-profile', 'admin'];

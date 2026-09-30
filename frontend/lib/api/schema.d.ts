@@ -188,6 +188,177 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/public/billing-items": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Billing Items */
+        get: operations["list_billing_items_api_public_billing_items_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/me/orders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List My Orders */
+        get: operations["list_my_orders_api_me_orders_get"];
+        put?: never;
+        /** Create Order */
+        post: operations["create_order_api_me_orders_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/me/orders/{order_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get My Order */
+        get: operations["get_my_order_api_me_orders__order_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/me/orders/{order_id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Cancel My Order */
+        post: operations["cancel_my_order_api_me_orders__order_id__cancel_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/me/entitlements": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** My Entitlements */
+        get: operations["my_entitlements_api_me_entitlements_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/orders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Admin List Orders */
+        get: operations["admin_list_orders_api_admin_orders_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/orders/{order_id}/confirm-payment": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Confirm Payment */
+        post: operations["confirm_payment_api_admin_orders__order_id__confirm_payment_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/orders/{order_id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Admin Cancel Order */
+        post: operations["admin_cancel_order_api_admin_orders__order_id__cancel_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/billing-items": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Admin List Items */
+        get: operations["admin_list_items_api_admin_billing_items_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/billing-items/{code}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Admin Update Item */
+        patch: operations["admin_update_item_api_admin_billing_items__code__patch"];
+        trace?: never;
+    };
     "/api/me/company": {
         parameters: {
             query?: never;
@@ -2119,6 +2290,40 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** AdminBillingItemOut */
+        AdminBillingItemOut: {
+            /** Code */
+            code: string;
+            /** Name Vi */
+            name_vi: string;
+            /** Name En */
+            name_en: string;
+            /** Description Vi */
+            description_vi: string | null;
+            /** Description En */
+            description_en: string | null;
+            /**
+             * Audience
+             * @enum {string}
+             */
+            audience: "exporter" | "buyer";
+            /** Feature */
+            feature: string;
+            /** Price */
+            price: string;
+            /** Currency */
+            currency: string;
+            /** Duration Days */
+            duration_days: number | null;
+            /** Price Is Placeholder */
+            price_is_placeholder: boolean;
+            /** Is Active */
+            is_active: boolean;
+            /** Sort Order */
+            sort_order: number;
+            /** Updated At */
+            updated_at: string | null;
+        };
         /** AdminCompanyOut */
         AdminCompanyOut: {
             /**
@@ -2229,6 +2434,56 @@ export interface components {
             company_name: string;
             /** Report Query */
             report_query?: string | null;
+        };
+        /** AdminOrderOut */
+        AdminOrderOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Item Code */
+            item_code: string;
+            /** Item Name Vi */
+            item_name_vi: string;
+            /** Item Name En */
+            item_name_en: string;
+            /** Feature */
+            feature: string;
+            /** Amount */
+            amount: string;
+            /** Currency */
+            currency: string;
+            /** Reference */
+            reference: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "pending" | "paid" | "cancelled";
+            /** Invoice Info */
+            invoice_info: {
+                [key: string]: string | null;
+            };
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Paid At */
+            paid_at: string | null;
+            /** Cancelled At */
+            cancelled_at: string | null;
+            bank_transfer: components["schemas"]["BankTransferOut"] | null;
+            /**
+             * Company Id
+             * Format: uuid
+             */
+            company_id: string;
+            /** Company Name */
+            company_name: string;
+            /** Admin Note */
+            admin_note: string | null;
         };
         /** AdminProductOut */
         AdminProductOut: {
@@ -2441,6 +2696,67 @@ export interface components {
          * @enum {string}
          */
         BalanceTerms: "tt_before_shipment" | "against_bl_copy" | "lc_at_sight" | "none";
+        /** BankTransferOut */
+        BankTransferOut: {
+            /** Bank Name */
+            bank_name: string;
+            /** Account Name */
+            account_name: string;
+            /** Account Number */
+            account_number: string;
+            /** Iban */
+            iban: string | null;
+            /** Swift */
+            swift: string | null;
+            /** Transfer Note */
+            transfer_note: string;
+            /** Is Demo Account */
+            is_demo_account: boolean;
+        };
+        /** BillingItemOut */
+        BillingItemOut: {
+            /** Code */
+            code: string;
+            /** Name Vi */
+            name_vi: string;
+            /** Name En */
+            name_en: string;
+            /** Description Vi */
+            description_vi: string | null;
+            /** Description En */
+            description_en: string | null;
+            /**
+             * Audience
+             * @enum {string}
+             */
+            audience: "exporter" | "buyer";
+            /** Feature */
+            feature: string;
+            /** Price */
+            price: string;
+            /** Currency */
+            currency: string;
+            /** Duration Days */
+            duration_days: number | null;
+            /** Price Is Placeholder */
+            price_is_placeholder: boolean;
+        };
+        /**
+         * BillingItemPatch
+         * @description Admin chỉnh giá / bật tắt mục thu phí. Tiền nhận CHUỖI JSON (strict), không nhận số.
+         */
+        BillingItemPatch: {
+            /** Price */
+            price?: number | string | null;
+            /** Currency */
+            currency?: ("VND" | "EUR" | "USD") | null;
+            /** Duration Days */
+            duration_days?: number | null;
+            /** Is Active */
+            is_active?: boolean | null;
+            /** Price Is Placeholder */
+            price_is_placeholder?: boolean | null;
+        };
         /** Body_evidence_rules_import_api_admin_evidence_rules_import_post */
         Body_evidence_rules_import_api_admin_evidence_rules_import_post: {
             /** File */
@@ -3111,6 +3427,23 @@ export interface components {
          * @enum {string}
          */
         DutyType: "ad_valorem" | "specific" | "mixed";
+        /** EntitlementOut */
+        EntitlementOut: {
+            /** Feature */
+            feature: string;
+            /**
+             * Valid From
+             * Format: date-time
+             */
+            valid_from: string;
+            /** Valid Until */
+            valid_until: string | null;
+            /**
+             * Order Id
+             * Format: uuid
+             */
+            order_id: string;
+        };
         /**
          * EscalateIn
          * @description Khách phải để lại email; người đã đăng nhập dùng email tài khoản.
@@ -3413,6 +3746,20 @@ export interface components {
          * @enum {string}
          */
         Incoterm: "EXW" | "FCA" | "FAS" | "FOB" | "CFR" | "CIF" | "CPT" | "CIP" | "DAP" | "DPU" | "DDP";
+        /**
+         * InvoiceInfo
+         * @description Thông tin xuất hoá đơn VAT (xuất ngoài hệ thống, ADR-0005). Tuỳ chọn.
+         */
+        InvoiceInfo: {
+            /** Company Name */
+            company_name?: string | null;
+            /** Tax Code */
+            tax_code?: string | null;
+            /** Address */
+            address?: string | null;
+            /** Email */
+            email?: string | null;
+        };
         /** LoginIn */
         LoginIn: {
             /**
@@ -3646,6 +3993,58 @@ export interface components {
          * @enum {string}
          */
         NotificationType: "message" | "rfq" | "verification_status" | "new_match" | "expiry_alert" | "profile_viewed" | "sector_alert" | "order";
+        /** OrderDecisionIn */
+        OrderDecisionIn: {
+            /** Note */
+            note?: string | null;
+        };
+        /** OrderIn */
+        OrderIn: {
+            /** Item Code */
+            item_code: string;
+            invoice_info?: components["schemas"]["InvoiceInfo"];
+        };
+        /** OrderOut */
+        OrderOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Item Code */
+            item_code: string;
+            /** Item Name Vi */
+            item_name_vi: string;
+            /** Item Name En */
+            item_name_en: string;
+            /** Feature */
+            feature: string;
+            /** Amount */
+            amount: string;
+            /** Currency */
+            currency: string;
+            /** Reference */
+            reference: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "pending" | "paid" | "cancelled";
+            /** Invoice Info */
+            invoice_info: {
+                [key: string]: string | null;
+            };
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Paid At */
+            paid_at: string | null;
+            /** Cancelled At */
+            cancelled_at: string | null;
+            bank_transfer: components["schemas"]["BankTransferOut"] | null;
+        };
         /** PackagingIn */
         PackagingIn: {
             /** Pack Size */
@@ -4006,6 +4405,16 @@ export interface components {
             anonymous_company_views: number;
             /** Viewers */
             viewers: components["schemas"]["ProfileViewerOut"][];
+            /**
+             * Full
+             * @default true
+             */
+            full?: boolean;
+            /**
+             * Hidden Viewers
+             * @default 0
+             */
+            hidden_viewers?: number;
         };
         /** ProfileViewsData */
         ProfileViewsData: {
@@ -6276,6 +6685,364 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["StatsOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_billing_items_api_public_billing_items_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BillingItemOut"][];
+                };
+            };
+        };
+    };
+    list_my_orders_api_me_orders_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_order_api_me_orders_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OrderIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_my_order_api_me_orders__order_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                order_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    cancel_my_order_api_me_orders__order_id__cancel_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                order_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    my_entitlements_api_me_entitlements_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EntitlementOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    admin_list_orders_api_admin_orders_get: {
+        parameters: {
+            query?: {
+                status?: ("pending" | "paid" | "cancelled") | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminOrderOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    confirm_payment_api_admin_orders__order_id__confirm_payment_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                order_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OrderDecisionIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    admin_cancel_order_api_admin_orders__order_id__cancel_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                order_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OrderDecisionIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    admin_list_items_api_admin_billing_items_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminBillingItemOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    admin_update_item_api_admin_billing_items__code__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                code: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BillingItemPatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminBillingItemOut"];
                 };
             };
             /** @description Validation Error */

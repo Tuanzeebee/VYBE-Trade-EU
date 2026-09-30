@@ -61,14 +61,7 @@ export function HomeRoute() {
 }
 
 function PricingContent({ user }: { user: DemoUser | null }) {
-  const navigate = useLegacyNavigate(user);
-  return (
-    <PricingPlans
-      onNavigateHome={() => navigate('home')}
-      onNavigateOnboarding={() => navigate('onboarding')}
-      onNavigateWorkspace={() => navigate('workspace', { tab: 'profile' })}
-    />
-  );
+  return <PricingPlans account={user} />;
 }
 
 export function PricingRoute() {

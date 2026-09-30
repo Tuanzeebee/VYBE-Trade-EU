@@ -14,6 +14,7 @@ from typing import Any
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core import entitlements
 from app.core.errors import AppError
 from app.core.events import publish
 from app.modules.auth.schemas import CurrentUser
@@ -54,6 +55,7 @@ WEEK = dt.timedelta(days=7)
 RECENT_LIMIT = 5
 TARGET_RATIO = Decimal("0.90")  # spec §5.8: thông tin mới ở 90% lượt quay lại
 VIEW_DEDUPE = dt.timedelta(hours=1)
+FREE_VIEWERS = 3  # U19: số buyer hiện tên khi chưa mua "danh sách đầy đủ"
 
 
 # ── Lượt xem hồ sơ (G1) ────────────────────────────────────────────────────────
@@ -104,7 +106,8 @@ async def record_profile_view(
 async def list_profile_viewers(
     session: AsyncSession, user: CurrentUser, days: int, now: dt.datetime | None = None
 ) -> ProfileViewersOut:
-    """U9: ai đã xem hồ sơ của công ty người gọi trong `days` ngày. Chưa có công ty → rỗng."""
+    """U9: ai đã xem hồ sơ của công ty người gọi trong `days` ngày. Chưa có công ty → rỗng.
+    U19: tên đầy đủ cần quyền profile_viewers_full; chưa có thì chỉ FREE_VIEWERS tên gần nhất."""
     moment = now or dt.datetime.now(dt.UTC)
     empty = ProfileViewersOut(
         days=days, total_views=0, guest_views=0, anonymous_company_views=0, viewers=[]
@@ -148,12 +151,16 @@ async def list_profile_viewers(
                 )
             )
     viewers.sort(key=lambda v: v.last_viewed_at, reverse=True)
+    full = await entitlements.has_feature(session, company_id, entitlements.PROFILE_VIEWERS_FULL)
+    shown = viewers if full else viewers[:FREE_VIEWERS]
     return ProfileViewersOut(
         days=days,
         total_views=guests + anonymous + sum(v.views for v in viewers),
         guest_views=guests,
         anonymous_company_views=anonymous,
-        viewers=viewers,
+        viewers=shown,
+        full=full,
+        hidden_viewers=len(viewers) - len(shown),
     )
 
 

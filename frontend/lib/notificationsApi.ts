@@ -74,8 +74,13 @@ export function describe(notification: Pick<AppNotification, 'type' | 'payload'>
     }
     case 'sector_alert':
       return 'Có cảnh báo mới cho ngành hàng của bạn.';
-    case 'order':
-      return 'Đơn hàng của bạn đã được cập nhật.';
+    case 'order': {
+      // U19: admin xác nhận đã nhận chuyển khoản → quyền dùng đã mở.
+      const reference = notification.payload.reference;
+      return notification.payload.event === 'paid' && typeof reference === 'string'
+        ? `Đã xác nhận thanh toán đơn ${reference}. Dịch vụ đã được mở.`
+        : 'Đơn hàng của bạn đã được cập nhật.';
+    }
     case 'new_match': {
       const name = notification.payload.company_name;
       return typeof name === 'string' && name

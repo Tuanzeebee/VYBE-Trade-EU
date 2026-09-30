@@ -45,6 +45,9 @@ class ProfileViewersOut(BaseModel):
     guest_views: int  # khách chưa đăng nhập
     anonymous_company_views: int  # công ty chưa xác minh, seller khác, hoặc buyer bật ẩn danh
     viewers: list[ProfileViewerOut]
+    # U19: chưa có quyền "danh sách đầy đủ" → chỉ hiện FREE_VIEWERS buyer gần nhất, còn lại đếm.
+    full: bool = True
+    hidden_viewers: int = 0
 
 
 class ProfileViewsTile(BaseModel):

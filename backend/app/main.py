@@ -9,6 +9,7 @@ from fastapi.responses import JSONResponse
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core import entitlements
 from app.core.config import get_settings
 from app.core.db import get_session
 from app.core.errors import register_error_handlers
@@ -20,6 +21,8 @@ from app.jobs.app import app as jobs_app
 from app.modules.admin.router import router as admin_router
 from app.modules.auth import service as auth_service
 from app.modules.auth.router import router as auth_router
+from app.modules.billing import service as billing_service
+from app.modules.billing.router import router as billing_router
 from app.modules.catalog.router import router as catalog_router
 from app.modules.companies import service as companies_service
 from app.modules.companies.router import router as companies_router
@@ -42,6 +45,8 @@ notification_handlers.register()
 auth_service.register_anonymize_hook(companies_service.anonymize_owner)
 auth_service.register_anonymize_hook(notification_center.delete_for_user)
 auth_service.register_anonymize_hook(copilot_service.redact_user_contacts)
+# Tính năng trả phí (U19): module dùng tính năng hỏi core.entitlements, billing trả lời.
+entitlements.register(billing_service.has_entitlement)
 
 
 @asynccontextmanager
@@ -67,6 +72,7 @@ app.add_middleware(SecurityHeadersMiddleware, hsts=get_settings().cookie_secure)
 register_error_handlers(app)
 app.include_router(auth_router)
 app.include_router(admin_router)
+app.include_router(billing_router)
 app.include_router(companies_router)
 app.include_router(catalog_router)
 app.include_router(compliance_router)
