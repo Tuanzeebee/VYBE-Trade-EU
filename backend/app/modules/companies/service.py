@@ -4,6 +4,7 @@ import re
 import unicodedata
 import uuid
 from datetime import datetime
+from decimal import Decimal
 from typing import Any
 
 from sqlalchemy import Select, func, select
@@ -183,6 +184,17 @@ async def set_verification_state(
         company.tier_expires_at = tier_expires_at
     await session.flush()
     return previous
+
+
+async def set_coordinates(
+    session: AsyncSession, company_id: uuid.UUID, latitude: Decimal, longitude: Decimal
+) -> None:
+    """U21: toạ độ từ định vị địa chỉ (job kiểm tự động), chỉ khi chủ hồ sơ bật location_public."""
+    company = await session.get(Company, company_id)
+    if company is None or not company.location_public:
+        return
+    company.latitude, company.longitude = latitude, longitude
+    await session.flush()
 
 
 async def list_tier_expired(session: AsyncSession, now: datetime) -> list[uuid.UUID]:

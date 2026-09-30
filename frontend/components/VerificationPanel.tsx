@@ -7,6 +7,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { getMyCompany, type CompanyOut } from '../lib/companyApi';
 import { listMyRequests, submitRequest, type VerificationRequest } from '../lib/verificationApi';
 import VerificationTier from './VerificationTier';
+import OwnerChecks from './OwnerChecks';
 
 const STATUS: Record<string, { label: string; tone: string }> = {
   unverified: { label: 'Chưa xác minh', tone: 'bg-slate-100 text-slate-700' },
@@ -116,6 +117,7 @@ export default function VerificationPanel() {
         )}
       </section>
       <VerificationTier />
+      <OwnerChecks />
     </div>
   );
 }

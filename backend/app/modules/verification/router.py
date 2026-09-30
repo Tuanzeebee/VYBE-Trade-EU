@@ -6,6 +6,7 @@ from fastapi.responses import Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import get_session
+from app.core.errors import AppError
 from app.core.spreadsheet import ImportResult, read_upload, xlsx_response
 from app.core.storage import Storage, get_storage
 from app.modules.auth.schemas import CurrentUser
@@ -13,6 +14,7 @@ from app.modules.auth.service import require_role
 from app.modules.verification import (
     admin_service,
     admin_spreadsheet,
+    checks_service,
     evidence_service,
     request_service,
     tier_service,
@@ -28,11 +30,13 @@ from app.modules.verification.admin_schemas import (
 )
 from app.modules.verification.schemas import (
     ChecklistItem,
+    CheckOut,
     DecisionIn,
     EvidenceIn,
     EvidenceOut,
     EvidencePatch,
     EvidenceTypePublic,
+    ManualCheckIn,
     QueueItem,
     TierDownIn,
     TierOverviewOut,
@@ -247,3 +251,37 @@ async def request_verification_tier(
 async def tier_down(company_id: uuid.UUID, data: TierDownIn, admin: Admin, session: DB) -> Response:
     await tier_service.admin_tier_down(session, admin, company_id, data)
     return Response(status_code=204)
+
+
+# ── Kiểm tự động và kiểm tay (U21, ADR-0003) — chỉ là tín hiệu cho admin ─────────────────────
+@router.get("/api/me/verification-checks")
+async def my_verification_checks(user: Owner, session: DB) -> list[CheckOut]:
+    return await checks_service.my_checks(session, user)
+
+
+@router.get("/api/admin/companies/{company_id}/checks")
+async def company_checks(company_id: uuid.UUID, _: Admin, session: DB) -> list[CheckOut]:
+    return await checks_service.latest_checks(session, company_id)
+
+
+@router.post("/api/admin/companies/{company_id}/checks/run", status_code=202)
+async def run_company_checks(company_id: uuid.UUID, _: Admin, session: DB) -> Response:
+    await checks_service.admin_run(session, company_id)
+    return Response(status_code=202)
+
+
+@router.post("/api/admin/companies/{company_id}/checks", status_code=201)
+async def record_manual_check(
+    company_id: uuid.UUID, data: ManualCheckIn, admin: Admin, session: DB
+) -> CheckOut:
+    return await checks_service.admin_record_manual(session, admin, company_id, data)
+
+
+@router.post("/api/admin/approved-establishments/import")
+async def import_approved_establishments(
+    file: UploadFile, admin: Admin, session: DB
+) -> dict[str, int]:
+    content = await file.read(5 * 1024 * 1024 + 1)
+    if len(content) > 5 * 1024 * 1024:
+        raise AppError("file_too_large", "File must be at most 5 MB", 413)
+    return {"imported": await checks_service.import_establishments(session, admin, content)}

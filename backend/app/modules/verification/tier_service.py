@@ -4,7 +4,6 @@
 
 import datetime as dt
 import uuid
-from collections.abc import Awaitable, Callable
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -15,7 +14,7 @@ from app.core.events import publish
 from app.modules.auth.schemas import CurrentUser
 from app.modules.companies import service as companies
 from app.modules.companies.schemas import CompanyOut
-from app.modules.verification import evidence_service
+from app.modules.verification import checks_service, evidence_service
 from app.modules.verification.events import VerificationStatusChanged
 from app.modules.verification.models import (
     ApprovalStatus,
@@ -43,22 +42,6 @@ from app.modules.verification.tiers import (
     requirement_state,
     tier_request_error,
 )
-
-# Kiểm tự động đã đạt (U21 đăng ký nguồn thật); mặc định chưa có kiểm nào.
-PassedChecks = Callable[[AsyncSession, uuid.UUID], Awaitable[set[str]]]
-
-
-async def _no_checks(session: AsyncSession, company_id: uuid.UUID) -> set[str]:
-    return set()
-
-
-_passed_checks: PassedChecks = _no_checks
-
-
-def set_passed_checks(source: PassedChecks) -> PassedChecks:
-    global _passed_checks
-    previous, _passed_checks = _passed_checks, source
-    return previous
 
 
 def _kind(company: CompanyOut) -> str:
@@ -90,7 +73,7 @@ async def requirements_for(
 ) -> list[TierRequirementOut]:
     """Danh sách kiểm các cấp 1..up_to_tier kèm trạng thái hiện tại của công ty."""
     states = await evidence_service.evidence_states(session, company.id)
-    checks = await _passed_checks(session, company.id)
+    checks = await checks_service.passed_check_codes(session, company.id)
     return [
         TierRequirementOut(
             tier=r.tier,
@@ -207,6 +190,7 @@ async def request_tier(
     session.add(row)
     await session.commit()
     await session.refresh(row)
+    await checks_service.enqueue_checks(company.id)
     return _out(row)
 
 

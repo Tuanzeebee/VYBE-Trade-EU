@@ -18,7 +18,7 @@ from app.core.storage import Storage
 from app.modules.auth.schemas import CurrentUser
 from app.modules.companies import product_service
 from app.modules.companies import service as companies
-from app.modules.verification import evidence_service, tier_service
+from app.modules.verification import checks_service, evidence_service, tier_service
 from app.modules.verification.events import VerificationStatusChanged
 from app.modules.verification.models import (
     ApprovalStatus,
@@ -100,6 +100,7 @@ async def submit_request(session: AsyncSession, user: CurrentUser) -> Verificati
     await session.refresh(row)
     for event in events:
         await publish(event)
+    await checks_service.enqueue_checks(company_id)
     return _out(row)
 
 
@@ -156,6 +157,7 @@ async def queue(session: AsyncSession, storage: Storage) -> list[QueueItem]:
                 tier_requirements=await tier_service.requirements_for(
                     session, company, request.target_tier
                 ),
+                checks=await checks_service.latest_checks(session, request.company_id),
             )
         )
     return items

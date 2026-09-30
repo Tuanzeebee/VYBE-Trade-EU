@@ -1,6 +1,6 @@
 import datetime as dt
 import uuid
-from typing import Annotated, Literal
+from typing import Annotated, Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -119,6 +119,26 @@ class TierOverviewOut(BaseModel):
     requirements: list[TierRequirementOut]
 
 
+class CheckOut(BaseModel):
+    """Kết quả mới nhất của một loại kiểm (U21) — tín hiệu cho admin, không phải quyết định."""
+
+    check_code: str
+    status: Literal["pass", "fail", "warning", "unknown"]
+    detail: dict[str, Any]
+    source: str
+    manual: bool
+    checked_at: dt.datetime
+
+
+class ManualCheckIn(BaseModel):
+    check_code: Literal[
+        "national_registry", "company_registry", "certificate_issuer", "factory_video", "other"
+    ]
+    status: Literal["pass", "fail", "warning"]
+    note: Annotated[str, Field(min_length=1, max_length=1000)]
+    url: Annotated[str | None, Field(max_length=500)] = None
+
+
 class TierRequestIn(BaseModel):
     target_tier: Annotated[int, Field(ge=2, le=3)]
 
@@ -140,6 +160,7 @@ class QueueItem(BaseModel):
     target_tier: int = 1  # U20
     current_tier: int = 0
     tier_requirements: list[TierRequirementOut] = Field(default_factory=list)
+    checks: list[CheckOut] = Field(default_factory=list)  # U21
 
 
 class DecisionIn(BaseModel):

@@ -185,6 +185,8 @@ class CompanyOut(BaseModel):
     capacity_period: str | None
     main_customers: str | None
     location_public: bool
+    latitude: Decimal | None = None  # U21: định vị khi chủ hồ sơ bật location_public
+    longitude: Decimal | None = None
     facility_codes: list[FacilityCodeOut]
     export_markets: list[str]
     languages_spoken: list[str]

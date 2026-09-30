@@ -53,6 +53,15 @@ class Settings(BaseSettings):
     eurostat_comext_url: str = (
         "https://ec.europa.eu/eurostat/api/comext/dissemination/sdmx/2.1/data/DS-045409"
     )
+    # U21 (ADR-0003): kiểm tự động — chỉ job nền gọi. fake (mặc định, test/dev) | live.
+    lookup_backend: str = "fake"
+    lookup_timeout_seconds: float = 5.0
+    vies_url: str = "https://ec.europa.eu/taxation_customs/vies/rest-api"
+    gleif_url: str = "https://api.gleif.org/api/v1"
+    doh_url: str = "https://cloudflare-dns.com/dns-query"
+    rdap_url: str = "https://rdap.org"
+    nominatim_url: str = "https://nominatim.openstreetmap.org/search"
+    nominatim_user_agent: str = "VYBE-Trade/1.0 (verification; contact: ops@vybe.trade)"
     # Origin của frontend được gọi API kèm cookie
     cors_origins: list[str] = ["http://localhost:3000"]
     # Dữ liệu tuân thủ minh hoạ (AGENTS.md §6.2 ngoại lệ DEMO): chỉ staging/dev được bật. Khi bật,

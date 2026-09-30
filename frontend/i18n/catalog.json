@@ -14663,5 +14663,175 @@
     "Capability checked by VYBE Trade (Enhanced tier)",
     "Capacités vérifiées par VYBE Trade (niveau avancé)",
     "能力をVYBE Tradeが確認（上位レベル）"
+  ],
+  "Hệ thống tự kiểm email, website, mã VAT và địa chỉ để quản trị viên tham khảo. Mục \"Cần xem thêm\" là gợi ý để bạn hoàn thiện hồ sơ.": [
+    "The system checks your email, website, VAT number and address for admins to consider. Items marked \"Needs a closer look\" are hints to improve your profile.",
+    "Le système vérifie e-mail, site web, numéro de TVA et adresse pour les administrateurs. Les éléments « À examiner » sont des pistes pour compléter votre profil.",
+    "システムがメール・ウェブサイト・VAT番号・住所を自動確認し、管理者の参考にします。「要確認」はプロフィール改善のヒントです。"
+  ],
+  "Kiểm tự động hồ sơ": [
+    "Automatic profile checks",
+    "Vérifications automatiques du profil",
+    "プロフィールの自動確認"
+  ],
+  "Chưa có kết quả kiểm tra.": [
+    "No check results yet.",
+    "Pas encore de résultats de vérification.",
+    "確認結果はまだありません。"
+  ],
+  "Chạy lại kiểm tra": [
+    "Run checks again",
+    "Relancer les vérifications",
+    "確認を再実行"
+  ],
+  "Cần xem thêm": [
+    "Needs a closer look",
+    "À examiner",
+    "要確認"
+  ],
+  "Ghi chú đối chiếu": [
+    "Verification note",
+    "Note de vérification",
+    "照合メモ"
+  ],
+  "Ghi kết quả kiểm tay": [
+    "Record a manual check",
+    "Enregistrer une vérification manuelle",
+    "手動確認を記録"
+  ],
+  "Kiểm tự động và kiểm tay": [
+    "Automatic and manual checks",
+    "Vérifications automatiques et manuelles",
+    "自動確認と手動確認"
+  ],
+  "Kết quả kiểm chỉ là tín hiệu tham khảo; quyết định xác minh do bạn đưa ra.": [
+    "Check results are signals only; you make the verification decision.",
+    "Les résultats ne sont que des indices ; la décision vous appartient.",
+    "確認結果は参考情報です。認証の判断はあなたが行います。"
+  ],
+  "Lưu kết quả kiểm tay": [
+    "Save manual check",
+    "Enregistrer la vérification",
+    "手動確認を保存"
+  ],
+  "Mở Cổng đăng ký doanh nghiệp": [
+    "Open the business registration portal",
+    "Ouvrir le portail d'immatriculation",
+    "企業登録ポータルを開く"
+  ],
+  "Chưa xác định": [
+    "Unknown",
+    "Indéterminé",
+    "不明"
+  ],
+  "kiểm tay": [
+    "manual",
+    "manuel",
+    "手動"
+  ],
+  "tự động": [
+    "automatic",
+    "automatique",
+    "自動"
+  ],
+  "Vui lòng ghi chú kết quả đối chiếu.": [
+    "Please add a note on what you checked.",
+    "Veuillez noter ce que vous avez vérifié.",
+    "確認内容をメモしてください。"
+  ],
+  "Đã ghi kết quả kiểm tay.": [
+    "Manual check recorded.",
+    "Vérification manuelle enregistrée.",
+    "手動確認を記録しました。"
+  ],
+  "Không ghi được. Vui lòng thử lại.": [
+    "Could not save. Please try again.",
+    "Enregistrement impossible. Réessayez.",
+    "保存できませんでした。もう一度お試しください。"
+  ],
+  "Đã xếp lịch kiểm lại; kết quả cập nhật sau ít phút.": [
+    "Checks scheduled; results update in a few minutes.",
+    "Vérifications planifiées ; résultats dans quelques minutes.",
+    "確認を予約しました。数分後に結果が更新されます。"
+  ],
+  "Email theo tên miền công ty (không phải mail miễn phí)": [
+    "Email on the company domain (not free webmail)",
+    "E-mail sur le domaine de l'entreprise (pas un webmail gratuit)",
+    "会社ドメインのメール（無料メールではない）"
+  ],
+  "Tên miền email nhận được thư (MX)": [
+    "Email domain can receive mail (MX)",
+    "Le domaine e-mail reçoit du courrier (MX)",
+    "メールドメインが受信可能（MX）"
+  ],
+  "Tên miền đã đăng ký trên 1 năm": [
+    "Domain registered for over a year",
+    "Domaine enregistré depuis plus d'un an",
+    "ドメイン登録から1年以上"
+  ],
+  "Website truy cập được": [
+    "Website reachable",
+    "Site web accessible",
+    "ウェブサイトにアクセス可能"
+  ],
+  "Website có tên công ty": [
+    "Website shows the company name",
+    "Le site affiche le nom de l'entreprise",
+    "ウェブサイトに社名がある"
+  ],
+  "Website cùng tên miền với email": [
+    "Website on the same domain as the email",
+    "Site sur le même domaine que l'e-mail",
+    "ウェブサイトとメールが同じドメイン"
+  ],
+  "Mã VAT hợp lệ trên VIES": [
+    "VAT number valid on VIES",
+    "Numéro de TVA valide sur VIES",
+    "VIESでVAT番号が有効"
+  ],
+  "Tên trên VIES khớp tên công ty": [
+    "VIES name matches the company name",
+    "Le nom VIES correspond à l'entreprise",
+    "VIESの名称が社名と一致"
+  ],
+  "Mã LEI trên GLEIF": [
+    "LEI listed on GLEIF",
+    "LEI enregistré sur GLEIF",
+    "GLEIFにLEIが登録"
+  ],
+  "Địa chỉ định vị được trên bản đồ": [
+    "Address found on the map",
+    "Adresse localisée sur la carte",
+    "住所を地図上で特定"
+  ],
+  "Mã cơ sở có trong danh sách EU TRACES-NT": [
+    "Facility code listed in EU TRACES-NT",
+    "Code d'établissement répertorié dans TRACES-NT",
+    "施設コードがEU TRACES-NTに掲載"
+  ],
+  "Đối chiếu Cổng thông tin quốc gia về đăng ký doanh nghiệp": [
+    "Checked on the national business registration portal",
+    "Vérifié sur le portail national d'immatriculation",
+    "国の企業登録ポータルで照合"
+  ],
+  "Đối chiếu sổ đăng ký doanh nghiệp nước sở tại": [
+    "Checked against the local company registry",
+    "Vérifié au registre des sociétés local",
+    "現地の企業登記簿で照合"
+  ],
+  "Đối chiếu chứng nhận với tổ chức cấp": [
+    "Certificates checked with the issuer",
+    "Certificats vérifiés auprès de l'émetteur",
+    "発行機関で認証を照合"
+  ],
+  "Xem tour video nhà máy": [
+    "Factory video tour reviewed",
+    "Visite vidéo de l'usine examinée",
+    "工場の動画ツアーを確認"
+  ],
+  "Kiểm tra khác": [
+    "Other check",
+    "Autre vérification",
+    "その他の確認"
   ]
 }

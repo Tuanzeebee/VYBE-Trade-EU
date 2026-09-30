@@ -2320,6 +2320,75 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/me/verification-checks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** My Verification Checks */
+        get: operations["my_verification_checks_api_me_verification_checks_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/companies/{company_id}/checks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Company Checks */
+        get: operations["company_checks_api_admin_companies__company_id__checks_get"];
+        put?: never;
+        /** Record Manual Check */
+        post: operations["record_manual_check_api_admin_companies__company_id__checks_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/companies/{company_id}/checks/run": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Run Company Checks */
+        post: operations["run_company_checks_api_admin_companies__company_id__checks_run_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/approved-establishments/import": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Import Approved Establishments */
+        post: operations["import_approved_establishments_api_admin_approved_establishments_import_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -2823,6 +2892,11 @@ export interface components {
             /** File */
             file: string;
         };
+        /** Body_import_approved_establishments_api_admin_approved_establishments_import_post */
+        Body_import_approved_establishments_api_admin_approved_establishments_import_post: {
+            /** File */
+            file: string;
+        };
         /** Body_roo_rules_import_api_admin_roo_rules_import_post */
         Body_roo_rules_import_api_admin_roo_rules_import_post: {
             /** File */
@@ -2856,6 +2930,32 @@ export interface components {
             name_vi: string;
             /** Name En */
             name_en: string;
+        };
+        /**
+         * CheckOut
+         * @description Kết quả mới nhất của một loại kiểm (U21) — tín hiệu cho admin, không phải quyết định.
+         */
+        CheckOut: {
+            /** Check Code */
+            check_code: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "pass" | "fail" | "warning" | "unknown";
+            /** Detail */
+            detail: {
+                [key: string]: unknown;
+            };
+            /** Source */
+            source: string;
+            /** Manual */
+            manual: boolean;
+            /**
+             * Checked At
+             * Format: date-time
+             */
+            checked_at: string;
         };
         /** ChecklistItem */
         ChecklistItem: {
@@ -3035,6 +3135,10 @@ export interface components {
             main_customers: string | null;
             /** Location Public */
             location_public: boolean;
+            /** Latitude */
+            latitude?: string | null;
+            /** Longitude */
+            longitude?: string | null;
             /** Facility Codes */
             facility_codes: components["schemas"]["FacilityCodeOut"][];
             /** Export Markets */
@@ -3834,6 +3938,23 @@ export interface components {
             email: string;
             /** Password */
             password: string;
+        };
+        /** ManualCheckIn */
+        ManualCheckIn: {
+            /**
+             * Check Code
+             * @enum {string}
+             */
+            check_code: "national_registry" | "company_registry" | "certificate_issuer" | "factory_video" | "other";
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "pass" | "fail" | "warning";
+            /** Note */
+            note: string;
+            /** Url */
+            url?: string | null;
         };
         /** MarketOut */
         MarketOut: {
@@ -4693,6 +4814,8 @@ export interface components {
             current_tier?: number;
             /** Tier Requirements */
             tier_requirements?: components["schemas"]["TierRequirementOut"][];
+            /** Checks */
+            checks?: components["schemas"]["CheckOut"][];
         };
         /**
          * QuotaInfoOut
@@ -12100,6 +12223,177 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    my_verification_checks_api_me_verification_checks_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CheckOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    company_checks_api_admin_companies__company_id__checks_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                company_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CheckOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    record_manual_check_api_admin_companies__company_id__checks_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                company_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ManualCheckIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CheckOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    run_company_checks_api_admin_companies__company_id__checks_run_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                company_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    import_approved_establishments_api_admin_approved_establishments_import_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_import_approved_establishments_api_admin_approved_establishments_import_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: number;
+                    };
+                };
             };
             /** @description Validation Error */
             422: {

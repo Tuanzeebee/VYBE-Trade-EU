@@ -1,6 +1,7 @@
 import datetime as dt
 import uuid
 from enum import StrEnum
+from typing import Any
 
 from sqlalchemy import (
     ARRAY,
@@ -10,6 +11,7 @@ from sqlalchemy import (
     DateTime,
     Enum,
     ForeignKey,
+    Index,
     Integer,
     SmallInteger,
     String,
@@ -19,6 +21,7 @@ from sqlalchemy import (
     func,
     text,
 )
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.db import Base
@@ -224,3 +227,54 @@ class TierRequirement(Base):
     source: Mapped[str | None] = mapped_column(Text)
     reviewed_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id"))
     reviewed_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class VerificationCheck(Base):
+    """Kết quả một lần kiểm (U21, ADR-0003). Tín hiệu cho admin — không bao giờ đổi trạng thái xác
+    minh. checked_by NULL = hệ thống; có giá trị = admin kiểm tay."""
+
+    __tablename__ = "verification_checks"
+    __table_args__ = (
+        CheckConstraint("status IN ('pass', 'fail', 'warning', 'unknown')", name="status"),
+        Index("ix_verification_checks_company_code", "company_id", "check_code", "checked_at"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, primary_key=True, default=uuid.uuid4, server_default=text("gen_random_uuid()")
+    )
+    company_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("companies.id"))
+    check_code: Mapped[str] = mapped_column(String(32))
+    status: Mapped[str] = mapped_column(String(16))
+    detail: Mapped[dict[str, Any]] = mapped_column(
+        JSONB, default=dict, server_default=text("'{}'::jsonb")
+    )
+    source: Mapped[str] = mapped_column(String(64))
+    checked_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id"))
+    checked_at: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=text("clock_timestamp()")
+    )
+
+
+class ApprovedEstablishment(Base):
+    """Cơ sở được EU cấp phép (TRACES-NT), admin nạp từ file CSV (U21)."""
+
+    __tablename__ = "approved_establishments"
+    __table_args__ = (
+        UniqueConstraint("list_code", "country", "approval_number", name="list_country_number"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, primary_key=True, default=uuid.uuid4, server_default=text("gen_random_uuid()")
+    )
+    list_code: Mapped[str] = mapped_column(
+        String(32), default="traces_nt", server_default="traces_nt"
+    )
+    country: Mapped[str] = mapped_column(String(2))
+    approval_number: Mapped[str] = mapped_column(String(64))
+    name: Mapped[str | None] = mapped_column(String(255))
+    section: Mapped[str | None] = mapped_column(String(128))
+    source: Mapped[str | None] = mapped_column(Text)
+    imported_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id"))
+    imported_at: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=text("clock_timestamp()")
+    )

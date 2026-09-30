@@ -10188,6 +10188,309 @@
         }
       }
     },
+    "/api/me/verification-checks": {
+      "get": {
+        "tags": [
+          "verification"
+        ],
+        "summary": "My Verification Checks",
+        "operationId": "my_verification_checks_api_me_verification_checks_get",
+        "parameters": [
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CheckOut"
+                  },
+                  "title": "Response My Verification Checks Api Me Verification Checks Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/companies/{company_id}/checks": {
+      "get": {
+        "tags": [
+          "verification"
+        ],
+        "summary": "Company Checks",
+        "operationId": "company_checks_api_admin_companies__company_id__checks_get",
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Company Id"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CheckOut"
+                  },
+                  "title": "Response Company Checks Api Admin Companies  Company Id  Checks Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "verification"
+        ],
+        "summary": "Record Manual Check",
+        "operationId": "record_manual_check_api_admin_companies__company_id__checks_post",
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Company Id"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ManualCheckIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/companies/{company_id}/checks/run": {
+      "post": {
+        "tags": [
+          "verification"
+        ],
+        "summary": "Run Company Checks",
+        "operationId": "run_company_checks_api_admin_companies__company_id__checks_run_post",
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Company Id"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/approved-establishments/import": {
+      "post": {
+        "tags": [
+          "verification"
+        ],
+        "summary": "Import Approved Establishments",
+        "operationId": "import_approved_establishments_api_admin_approved_establishments_import_post",
+        "parameters": [
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_import_approved_establishments_api_admin_approved_establishments_import_post"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "integer"
+                  },
+                  "title": "Response Import Approved Establishments Api Admin Approved Establishments Import Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/health": {
       "get": {
         "summary": "Health",
@@ -11697,6 +12000,20 @@
         ],
         "title": "Body_evidence_types_import_api_admin_evidence_types_import_post"
       },
+      "Body_import_approved_establishments_api_admin_approved_establishments_import_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "contentMediaType": "application/octet-stream",
+            "title": "File"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "title": "Body_import_approved_establishments_api_admin_approved_establishments_import_post"
+      },
       "Body_roo_rules_import_api_admin_roo_rules_import_post": {
         "properties": {
           "file": {
@@ -11786,6 +12103,53 @@
         ],
         "title": "CatalogItemOut",
         "description": "Một dòng danh mục (ngành hàng, loại dịch vụ) — tên hai ngôn ngữ lấy từ DB."
+      },
+      "CheckOut": {
+        "properties": {
+          "check_code": {
+            "type": "string",
+            "title": "Check Code"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pass",
+              "fail",
+              "warning",
+              "unknown"
+            ],
+            "title": "Status"
+          },
+          "detail": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Detail"
+          },
+          "source": {
+            "type": "string",
+            "title": "Source"
+          },
+          "manual": {
+            "type": "boolean",
+            "title": "Manual"
+          },
+          "checked_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Checked At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "check_code",
+          "status",
+          "detail",
+          "source",
+          "manual",
+          "checked_at"
+        ],
+        "title": "CheckOut",
+        "description": "Kết quả mới nhất của một loại kiểm (U21) — tín hiệu cho admin, không phải quyết định."
       },
       "ChecklistItem": {
         "properties": {
@@ -12632,6 +12996,30 @@
           "location_public": {
             "type": "boolean",
             "title": "Location Public"
+          },
+          "latitude": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latitude"
+          },
+          "longitude": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Longitude"
           },
           "facility_codes": {
             "items": {
@@ -15463,6 +15851,55 @@
           "password"
         ],
         "title": "LoginIn"
+      },
+      "ManualCheckIn": {
+        "properties": {
+          "check_code": {
+            "type": "string",
+            "enum": [
+              "national_registry",
+              "company_registry",
+              "certificate_issuer",
+              "factory_video",
+              "other"
+            ],
+            "title": "Check Code"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pass",
+              "fail",
+              "warning"
+            ],
+            "title": "Status"
+          },
+          "note": {
+            "type": "string",
+            "maxLength": 1000,
+            "minLength": 1,
+            "title": "Note"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Url"
+          }
+        },
+        "type": "object",
+        "required": [
+          "check_code",
+          "status",
+          "note"
+        ],
+        "title": "ManualCheckIn"
       },
       "MarketOut": {
         "properties": {
@@ -18325,6 +18762,13 @@
             },
             "type": "array",
             "title": "Tier Requirements"
+          },
+          "checks": {
+            "items": {
+              "$ref": "#/components/schemas/CheckOut"
+            },
+            "type": "array",
+            "title": "Checks"
           }
         },
         "type": "object",
