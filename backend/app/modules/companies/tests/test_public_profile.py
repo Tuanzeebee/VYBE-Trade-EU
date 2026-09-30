@@ -67,7 +67,7 @@ async def test_public_profile_shows_company_and_all_product_fields(
     assert p["founded_year"] == 2018
     assert p["website"] == "https://vietagri-export.vn"
     assert p["description_vi"] and p["description_en"]
-    assert p["export_markets"] == ["EU", "JP"]
+    assert p["export_markets"] == ["DE", "EU"]
     assert p["languages_spoken"] == ["en", "vi"]
     assert p["verification_level"] == "basic"
     assert p["verified_at"] is not None

@@ -10,13 +10,13 @@ from app.modules.companies.tests.helpers import company_body, login_as
 @pytest.fixture
 async def three_companies(api_client: AsyncClient) -> None:
     rows = [
-        ("rice@x.vn", company_body(legal_name="Gạo Mekong", export_markets=["EU", "US"])),
+        ("rice@x.vn", company_body(legal_name="Gạo Mekong", export_markets=["EU", "FR"])),
         (
             "fish@x.vn",
             company_body(
                 legal_name="Thủy sản Cà Mau",
                 industry_sector="seafood",
-                export_markets=["JP"],
+                export_markets=["DE"],
                 languages_spoken=["vi", "ja"],
             ),
         ),
@@ -41,7 +41,7 @@ async def _names(session: AsyncSession, **filters: str) -> list[str]:
     [
         ({}, ["Gạo Mekong", "Thủy sản Cà Mau", "Trà Lâm Đồng"]),
         ({"market": "EU"}, ["Gạo Mekong", "Trà Lâm Đồng"]),
-        ({"market": "JP"}, ["Thủy sản Cà Mau"]),
+        ({"market": "DE"}, ["Thủy sản Cà Mau"]),
         ({"country": "LA"}, ["Trà Lâm Đồng"]),
         ({"industry": "seafood"}, ["Thủy sản Cà Mau"]),
         ({"language": "ja"}, ["Thủy sản Cà Mau"]),

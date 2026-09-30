@@ -21,7 +21,7 @@ async def test_create_and_read_my_company(api_client: AsyncClient) -> None:
     assert created["slug"].startswith("cong-ty-tnhh-nong-san-viet")
     got = (await api_client.get("/api/me/company")).json()
     assert got == created
-    assert sorted(got["export_markets"]) == ["EU", "JP"]
+    assert sorted(got["export_markets"]) == ["DE", "EU"]
     assert sorted(got["languages_spoken"]) == ["en", "vi"]
     assert got["founded_year"] == 2018
 
@@ -41,13 +41,13 @@ async def test_patch_updates_only_sent_fields_and_replaces_lists(api_client: Asy
     await login_as(api_client, "exporter", "exp@x.vn")
     await api_client.post("/api/me/company", json=company_body())
     r = await api_client.patch(
-        "/api/me/company", json={"description_en": "Rice exporter.", "export_markets": ["US"]}
+        "/api/me/company", json={"description_en": "Rice exporter.", "export_markets": ["FR"]}
     )
     assert r.status_code == 200, r.text
     body = r.json()
     assert body["description_en"] == "Rice exporter."
     assert body["description_vi"] == "Gạo và cà phê xuất khẩu."
-    assert body["export_markets"] == ["US"]
+    assert body["export_markets"] == ["FR"]
 
 
 async def test_other_user_cannot_touch_my_company(api_client: AsyncClient) -> None:

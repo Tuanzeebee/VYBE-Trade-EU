@@ -18,6 +18,14 @@ from pydantic import (
 Industry = Literal["agriculture", "seafood", "food_beverage", "textiles", "handicrafts", "spices"]
 CountryCode = Annotated[str, StringConstraints(pattern=r"^[A-Z]{2}$")]
 MarketCode = Annotated[str, StringConstraints(pattern=r"^(EU|ASEAN|[A-Z]{2})$")]
+# Thị trường xuất khẩu GHI MỚI chỉ gồm EU hoặc một nước thành viên EU (27 nước, ISO-2).
+# MarketCode ở trên giữ để ĐỌC/lọc dữ liệu cũ (US, JP…) đã nằm trong DB.
+ExportMarketCode = Annotated[
+    str,
+    StringConstraints(
+        pattern=r"^(EU|AT|BE|BG|HR|CY|CZ|DK|EE|FI|FR|DE|GR|HU|IE|IT|LV|LT|LU|MT|NL|PL|PT|RO|SK|SI|ES|SE)$"
+    ),
+]
 LangCode = Annotated[str, StringConstraints(pattern=r"^[a-z]{2}$")]
 # Trường chỉ buyer dùng (B2). Giá trị cố định để lọc/ghép được.
 CompanySize = Literal["1_10", "11_50", "51_200", "201_500", "gt_500"]
@@ -67,7 +75,7 @@ class CompanyIn(_CompanyFields):
         str, StringConstraints(strip_whitespace=True, min_length=1, max_length=255)
     ]
     country: CountryCode = "VN"
-    export_markets: list[MarketCode] = Field(default_factory=list, max_length=50)
+    export_markets: list[ExportMarketCode] = Field(default_factory=list, max_length=50)
     languages_spoken: list[LangCode] = Field(default_factory=list, max_length=20)
     sourcing_categories: list[Industry] = Field(default_factory=list, max_length=20)
 
@@ -82,7 +90,7 @@ class CompanyPatch(_CompanyFields):
         | None
     ) = None
     country: CountryCode | None = None
-    export_markets: list[MarketCode] | None = Field(default=None, max_length=50)
+    export_markets: list[ExportMarketCode] | None = Field(default=None, max_length=50)
     languages_spoken: list[LangCode] | None = Field(default=None, max_length=20)
     sourcing_categories: list[Industry] | None = Field(default=None, max_length=20)
     logo_key: Annotated[str, StringConstraints(max_length=255)] | None = None

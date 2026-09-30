@@ -36,7 +36,7 @@ def company_body(**overrides: Any) -> dict[str, Any]:
         "contact_email": "contact@vietagri-export.vn",
         "description_vi": "Gạo và cà phê xuất khẩu.",
         "description_en": "Exporter of rice and coffee.",
-        "export_markets": ["EU", "JP"],
+        "export_markets": ["EU", "DE"],
         "languages_spoken": ["vi", "en"],
     }
     body.update(overrides)
