@@ -257,6 +257,14 @@ describe('Dữ liệu tuân thủ (admin)', () => {
     for (const name of ['Tải template', 'Xuất Excel', 'Nhập Excel']) expect(screen.queryByRole('button', { name })).not.toBeInTheDocument();
   });
 
+  it('VAT theo nước chưa có dữ liệu: hướng dẫn chỉ nhắc nút Thêm, không nhắc Excel', async () => {
+    serve();
+    renderData();
+    tab('VAT theo nước');
+    const hint = await screen.findByText('Chưa có dữ liệu. Dùng nút Thêm để bắt đầu.');
+    expect(hint).not.toHaveTextContent('Excel');
+  });
+
   it('thao tác lỗi: hiện thông báo và tải lại danh sách', async () => {
     serve({ lines: [line({ reviewed_by: null })], action: () => json(409, {}) });
     renderData();

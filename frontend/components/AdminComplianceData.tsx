@@ -158,7 +158,7 @@ export default function AdminComplianceData() {
             </p>
             {rows.length === 0 ? (
               <p role="status" className="rounded-xl bg-white p-4 text-sm text-slate-600">
-                {tr('Chưa có dữ liệu. Dùng nút Thêm hoặc Nhập Excel để bắt đầu.')}
+                {tr(xlsxPath ? 'Chưa có dữ liệu. Dùng nút Thêm hoặc Nhập Excel để bắt đầu.' : 'Chưa có dữ liệu. Dùng nút Thêm để bắt đầu.')}
               </p>
             ) : filtered.length === 0 ? (
               <p role="status" className="rounded-xl bg-white p-4 text-sm text-slate-600">

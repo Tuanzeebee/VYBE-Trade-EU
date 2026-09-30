@@ -11081,8 +11081,8 @@
   ],
   "Tiếng Hà Lan": [
     "Dutch",
-    "Dutch",
-    "Dutch"
+    "Néerlandais",
+    "オランダ語"
   ],
   "Chưa có dữ liệu cho": [
     "No data yet for",
@@ -11183,5 +11183,15 @@
     "Shown to English-interface users; if left empty the Vietnamese version is shown.",
     "Affiché aux utilisateurs de l'interface anglaise ; si vide, la version vietnamienne est affichée.",
     "英語UIのユーザーに表示されます。空の場合はベトナム語版が表示されます。"
+  ],
+  "Vui lòng bấm Tính tiết kiệm thuế trước khi xem thị trường nên xuất.": [
+    "Please run the tariff calculation before viewing the best export markets.",
+    "Veuillez d'abord lancer le calcul des droits avant de voir les meilleurs marchés à exporter.",
+    "輸出に適した市場を見る前に、関税の計算を実行してください。"
+  ],
+  "Chưa có dữ liệu. Dùng nút Thêm để bắt đầu.": [
+    "No data yet. Use Add to get started.",
+    "Aucune donnée. Utilisez Ajouter pour commencer.",
+    "データがありません。「追加」で始めてください。"
   ]
 }
