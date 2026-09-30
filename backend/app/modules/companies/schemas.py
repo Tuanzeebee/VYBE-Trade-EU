@@ -471,6 +471,7 @@ class CompanySummary(BaseModel):
     tax_id: str | None
     country: str
     address: str | None = None
+    verification_status: str = "unverified"
 
 
 class VerificationState(BaseModel):

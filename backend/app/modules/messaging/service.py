@@ -17,7 +17,7 @@ from app.modules.companies import service as companies
 from app.modules.messaging import conversation_service
 from app.modules.messaging.events import RfqCreated, RfqStatusChanged
 from app.modules.messaging.models import Rfq, RfqStatus
-from app.modules.messaging.schemas import RfqIn, RfqOut, RfqSummary
+from app.modules.messaging.schemas import RfqIn, RfqOut, RfqQuotaOut, RfqSummary
 
 MAX_HORIZON_DAYS = 5 * 366  # ngày cần hàng không quá xa (chặn nhập nhầm năm)
 
@@ -48,6 +48,7 @@ async def _to_out(session: AsyncSession, rows: list[Rfq]) -> list[RfqOut]:
             product_name=products.get(r.product_id, ""),
             buyer_company_id=r.buyer_company_id,
             buyer_name=names[r.buyer_company_id].legal_name,
+            buyer_verified=names[r.buyer_company_id].verification_status == "verified",
             exporter_company_id=r.exporter_company_id,
             exporter_name=names[r.exporter_company_id].legal_name,
             quantity=str(r.quantity),
@@ -68,11 +69,40 @@ async def _to_out(session: AsyncSession, rows: list[Rfq]) -> list[RfqOut]:
 
 
 async def daily_limit_for(session: AsyncSession, company_id: uuid.UUID) -> int:
-    """PO chốt: buyer đã xác minh 5 RFQ/24h, chưa xác minh 0 (cấu hình rfq_daily_limit_*)."""
+    """Buyer đã xác minh 5 RFQ/24h, chưa xác minh 3 (U6: không chặn buyer; cấu hình
+    rfq_daily_limit_*, con số cuối do PO chốt)."""
     settings = get_settings()
     state = await companies.get_verification_state(session, company_id)
     verified = state.status == "verified"
     return settings.rfq_daily_limit_verified if verified else settings.rfq_daily_limit_unverified
+
+
+async def _sent_last_24h(session: AsyncSession, company_id: uuid.UUID, moment: dt.datetime) -> int:
+    sent = await session.scalar(
+        select(func.count())
+        .select_from(Rfq)
+        .where(
+            Rfq.buyer_company_id == company_id,
+            Rfq.created_at > moment - dt.timedelta(hours=24),
+        )
+    )
+    return sent or 0
+
+
+async def rfq_quota(
+    session: AsyncSession, user: CurrentUser, now: dt.datetime | None = None
+) -> RfqQuotaOut:
+    """Hạn mức còn lại để form RFQ báo trước cho buyer (thay vì chỉ báo lỗi 429 sau khi gửi)."""
+    company_id = await _my_company_id(session, user)
+    limit = await daily_limit_for(session, company_id)
+    used = await _sent_last_24h(session, company_id, now or dt.datetime.now(dt.UTC))
+    state = await companies.get_verification_state(session, company_id)
+    return RfqQuotaOut(
+        limit=limit,
+        used=used,
+        remaining=max(limit - used, 0),
+        verified=state.status == "verified",
+    )
 
 
 async def create_rfq(
@@ -92,15 +122,7 @@ async def create_rfq(
     limit = await daily_limit_for(session, buyer_company_id)
     if limit == 0:
         raise AppError("buyer_not_verified", "Verify your company to send quote requests", 403)
-    sent = await session.scalar(
-        select(func.count())
-        .select_from(Rfq)
-        .where(
-            Rfq.buyer_company_id == buyer_company_id,
-            Rfq.created_at > moment - dt.timedelta(hours=24),
-        )
-    )
-    if (sent or 0) >= limit:
+    if await _sent_last_24h(session, buyer_company_id, moment) >= limit:
         raise AppError("rfq_daily_limit", "Daily request limit reached. Try again tomorrow.", 429)
 
     rfq = Rfq(

@@ -39,6 +39,7 @@ from app.modules.verification.schemas import (
 router = APIRouter(tags=["verification"])
 
 Exporter = Annotated[CurrentUser, Depends(require_role("exporter"))]
+Buyer = Annotated[CurrentUser, Depends(require_role("buyer"))]
 DB = Annotated[AsyncSession, Depends(get_session)]
 Store = Annotated[Storage, Depends(get_storage)]
 
@@ -196,6 +197,17 @@ async def submit_verification_request(user: Exporter, session: DB) -> Verificati
 
 @router.get("/api/exporter/verification-requests")
 async def my_verification_requests(user: Exporter, session: DB) -> list[VerificationRequestOut]:
+    return await request_service.list_my_requests(session, user)
+
+
+# Buyer xin xác minh tùy chọn (B1, ADR-0004): không là điều kiện để xem, nhắn tin hay gửi RFQ.
+@router.post("/api/buyer/verification-requests", status_code=201)
+async def submit_buyer_verification_request(user: Buyer, session: DB) -> VerificationRequestOut:
+    return await request_service.submit_request(session, user)
+
+
+@router.get("/api/buyer/verification-requests")
+async def my_buyer_verification_requests(user: Buyer, session: DB) -> list[VerificationRequestOut]:
     return await request_service.list_my_requests(session, user)
 
 

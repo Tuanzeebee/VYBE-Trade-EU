@@ -3,6 +3,7 @@ import { createApiClient } from './api/client';
 import type { components } from './api/schema';
 
 export type Rfq = components['schemas']['RfqOut'];
+export type RfqQuota = components['schemas']['RfqQuotaOut'];
 export type RfqInput = components['schemas']['RfqIn'];
 export type RfqStatus = Rfq['status'];
 export type Incoterm = Rfq['incoterms'];
@@ -75,3 +76,20 @@ export async function changeRfqStatus(id: string, status: RfqStatus): Promise<Rf
     return null;
   }
 }
+
+/** Hạn mức RFQ 24 giờ của buyer (U6). null = không tải được (form vẫn gửi bình thường). */
+export async function getRfqQuota(): Promise<RfqQuota | null> {
+  try {
+    const { data, response } = await createApiClient().GET('/api/buyer/rfq-quota');
+    return response.ok && data ? data : null;
+  } catch {
+    return null;
+  }
+}
+
+// U6: khuyến nghị chung cho seller khi buyer chưa xác minh (không phải tư vấn pháp lý).
+export const SAFE_TERMS_ADVICE = [
+  'Đặt cọc 30–50% bằng chuyển khoản (T/T) trước khi sản xuất, phần còn lại trước khi giao bộ chứng từ.',
+  'Hoặc dùng thư tín dụng trả ngay (L/C at sight) do ngân hàng uy tín phát hành.',
+  'Không gửi vận đơn gốc (B/L) trước khi nhận đủ tiền.',
+];

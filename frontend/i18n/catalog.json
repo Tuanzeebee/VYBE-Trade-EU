@@ -12333,5 +12333,135 @@
     "Sourcing needs are invalid. Please check them.",
     "Besoins d'achat invalides. Veuillez vérifier.",
     "調達ニーズが不正です。ご確認ください。"
+  ],
+  "Kiểm tra buyer (KYB nhẹ)": [
+    "Buyer check (light KYB)",
+    "Vérification de l'acheteur (KYB léger)",
+    "バイヤー確認（簡易KYB）"
+  ],
+  "Xác minh buyer là tùy chọn. Đối chiếu mã VAT trên VIES và tên miền email với website. Buyer không cần khai sản phẩm.": [
+    "Buyer verification is optional. Check the VAT number on VIES and compare the email domain with the website. Buyers do not list products.",
+    "La vérification de l'acheteur est facultative. Contrôlez le numéro de TVA sur VIES et comparez le domaine de l'e-mail au site web. Les acheteurs ne déclarent pas de produits.",
+    "バイヤー認証は任意です。VIESでVAT番号を確認し、メールのドメインとウェブサイトを照合してください。バイヤーは製品を登録しません。"
+  ],
+  "Chưa đủ email và website để so tên miền.": [
+    "Not enough email and website data to compare domains.",
+    "E-mail et site web insuffisants pour comparer les domaines.",
+    "ドメインを照合するためのメールとウェブサイトが不足しています。"
+  ],
+  "Tên miền email khớp website.": [
+    "Email domain matches the website.",
+    "Le domaine de l'e-mail correspond au site web.",
+    "メールのドメインがウェブサイトと一致しています。"
+  ],
+  "Tên miền email KHÁC website — cần kiểm tra thêm.": [
+    "Email domain DIFFERS from the website — check further.",
+    "Le domaine de l'e-mail DIFFÈRE du site web — vérifiez davantage.",
+    "メールのドメインがウェブサイトと異なります — 追加確認が必要です。"
+  ],
+  "Tra cứu VAT trên VIES": [
+    "Look up VAT on VIES",
+    "Vérifier la TVA sur VIES",
+    "VIESでVATを照会"
+  ],
+  "Buyer — xác minh tùy chọn": [
+    "Buyer — optional verification",
+    "Acheteur — vérification facultative",
+    "バイヤー — 任意認証"
+  ],
+  "Số đăng ký doanh nghiệp (không bắt buộc)": [
+    "Company registration number (optional)",
+    "Numéro d'immatriculation (facultatif)",
+    "法人登録番号（任意）"
+  ],
+  "Hiệu lực đến": [
+    "Valid until",
+    "Valable jusqu'au",
+    "有効期限"
+  ],
+  "Lý do": [
+    "Reason",
+    "Motif",
+    "理由"
+  ],
+  "Cần lưu mã số VAT hoặc số đăng ký doanh nghiệp để quản trị viên đối chiếu.": [
+    "Save your VAT number or company registration number so an administrator can check it.",
+    "Enregistrez votre numéro de TVA ou d'immatriculation pour qu'un administrateur puisse le vérifier.",
+    "管理者が照合できるよう、VAT番号または法人登録番号を保存してください。"
+  ],
+  "Doanh nghiệp chưa xác minh vẫn gửi được; xác minh (không bắt buộc) để có hạn mức cao hơn.": [
+    "Unverified companies can still send requests; verify (optional) for a higher limit.",
+    "Les entreprises non vérifiées peuvent quand même envoyer des demandes ; vérifiez-vous (facultatif) pour une limite plus élevée.",
+    "未認証の企業も送信できます。認証（任意）すると上限が引き上げられます。"
+  ],
+  "Buyer chưa xác minh doanh nghiệp. Khuyến nghị điều khoản thanh toán an toàn:": [
+    "This buyer has not verified their company. Recommended safe payment terms:",
+    "Cet acheteur n'a pas vérifié son entreprise. Conditions de paiement sûres recommandées :",
+    "このバイヤーは企業認証を受けていません。推奨される安全な支払条件："
+  ],
+  "Đây là khuyến nghị chung, không phải tư vấn pháp lý.": [
+    "This is general guidance, not legal advice.",
+    "Il s'agit d'une recommandation générale, pas d'un conseil juridique.",
+    "これは一般的な推奨であり、法的助言ではありません。"
+  ],
+  "Đặt cọc 30–50% bằng chuyển khoản (T/T) trước khi sản xuất, phần còn lại trước khi giao bộ chứng từ.": [
+    "30–50% deposit by bank transfer (T/T) before production, the balance before releasing the shipping documents.",
+    "Acompte de 30 à 50 % par virement (T/T) avant production, le solde avant la remise des documents.",
+    "生産前に30〜50%を送金（T/T）で前払いし、残金は船積書類の引渡し前に受領。"
+  ],
+  "Hoặc dùng thư tín dụng trả ngay (L/C at sight) do ngân hàng uy tín phát hành.": [
+    "Or use a letter of credit at sight (L/C at sight) issued by a reputable bank.",
+    "Ou utilisez une lettre de crédit à vue (L/C at sight) émise par une banque réputée.",
+    "または信頼できる銀行が発行する一覧払信用状（L/C at sight）を利用。"
+  ],
+  "Không gửi vận đơn gốc (B/L) trước khi nhận đủ tiền.": [
+    "Do not release the original bill of lading (B/L) before full payment.",
+    "Ne remettez pas le connaissement original (B/L) avant paiement intégral.",
+    "全額受領前に船荷証券（B/L）原本を渡さない。"
+  ],
+  "Buyer chưa xác minh": [
+    "Unverified buyer",
+    "Acheteur non vérifié",
+    "未認証バイヤー"
+  ],
+  "Còn {0}/{1} yêu cầu báo giá trong 24 giờ.": [
+    "{0}/{1} quote requests left in the next 24 hours.",
+    "{0}/{1} demandes de devis restantes sur 24 heures.",
+    "24時間以内の見積依頼：残り {0}/{1} 件。"
+  ],
+  "Xác minh doanh nghiệp (không bắt buộc)": [
+    "Company verification (optional)",
+    "Vérification de l'entreprise (facultatif)",
+    "企業認証（任意）"
+  ],
+  "Bạn vẫn xem hồ sơ, nhắn tin và gửi yêu cầu báo giá khi chưa xác minh. Xác minh giúp nhà cung cấp tin tưởng hơn: nhãn \"Doanh nghiệp đã xác minh\" và hạn mức yêu cầu báo giá cao hơn.": [
+    "You can view profiles, message suppliers and send quote requests without verifying. Verification builds supplier trust: a \"Verified business\" label and a higher quote-request limit.",
+    "Vous pouvez consulter les profils, écrire aux fournisseurs et envoyer des demandes de devis sans vérification. La vérification renforce la confiance : badge « Entreprise vérifiée » et limite de demandes plus élevée.",
+    "認証なしでもプロフィール閲覧、メッセージ、見積依頼ができます。認証すると「認証済み企業」ラベルと見積依頼上限の引き上げでサプライヤーの信頼が高まります。"
+  ],
+  "Yêu cầu xác minh đang chờ duyệt": [
+    "Verification request awaiting review",
+    "Demande de vérification en attente",
+    "認証申請は審査待ちです"
+  ],
+  "Quản trị viên đang đối chiếu mã VAT hoặc số đăng ký của bạn. Trong lúc chờ, bạn vẫn dùng mọi tính năng như bình thường.": [
+    "An administrator is checking your VAT or registration number. Meanwhile you can use every feature as usual.",
+    "Un administrateur vérifie votre numéro de TVA ou d'immatriculation. En attendant, toutes les fonctionnalités restent disponibles.",
+    "管理者がVAT番号または登録番号を確認中です。その間もすべての機能を通常どおり利用できます。"
+  ],
+  "Nhà cung cấp thấy nhãn \"Doanh nghiệp đã xác minh\" trên yêu cầu báo giá của bạn.": [
+    "Suppliers see a \"Verified business\" label on your quote requests.",
+    "Les fournisseurs voient le badge « Entreprise vérifiée » sur vos demandes de devis.",
+    "サプライヤーにはあなたの見積依頼に「認証済み企業」ラベルが表示されます。"
+  ],
+  "Xem lý do của quản trị viên, cập nhật thông tin rồi gửi lại.": [
+    "Read the administrator's reason, update your details and resubmit.",
+    "Consultez le motif de l'administrateur, mettez à jour vos informations puis renvoyez.",
+    "管理者の理由を確認し、情報を更新して再申請してください。"
+  ],
+  "Thành phố": [
+    "City",
+    "Ville",
+    "都市"
   ]
 }

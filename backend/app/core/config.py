@@ -23,9 +23,10 @@ class Settings(BaseSettings):
     # Hiệu lực xác minh kể từ ngày duyệt (mặc định 12 tháng, cần PO xác nhận)
     verification_valid_days: int = 365
     # RFQ (F1): giới hạn số RFQ một công ty buyer được gửi trong 24 giờ. Con số do PO chốt —
-    # đây là mặc định tạm; buyer chưa xác minh thấp hơn.
+    # đây là mặc định tạm. U6/ADR-0004: buyer KHÔNG bị chặn sau xác minh; chưa xác minh chỉ có
+    # hạn mức thấp hơn (0 = chặn hẳn, chỉ dùng khi PO yêu cầu).
     rfq_daily_limit_verified: int = 5
-    rfq_daily_limit_unverified: int = 0
+    rfq_daily_limit_unverified: int = 3
     # Email (H2): dev dùng Mailpit; nhà cung cấp thật do Q5 chốt; link thư dựng từ public_base_url
     email_backend: str = "smtp"  # smtp | fake
     smtp_host: str = "localhost"

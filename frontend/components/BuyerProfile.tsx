@@ -4,9 +4,10 @@
 // đây buyer không sửa được gì sau onboarding và nhu cầu chỉ nằm trong trình duyệt.
 import React, { useEffect, useState } from 'react';
 import { useLanguage } from '../context/LanguageContext';
-import { COMPANY_SIZES, COUNTRIES, buyerProfileToCompany, companyToForm, getMyCompany, saveMyCompany } from '../lib/companyApi';
+import { COMPANY_SIZES, COUNTRIES, buyerProfileToCompany, companyToForm, getMyCompany, saveMyCompany, type CompanyOut } from '../lib/companyApi';
 import { BUYER_BUSINESS_TYPES, emptyNeeds, getSourcingNeeds, needsFromServer, saveSourcingNeeds, type NeedsDraft } from '../lib/buyerNeedsApi';
 import BuyerNeedsForm from './BuyerNeedsForm';
+import BuyerVerificationCard from './BuyerVerificationCard';
 
 const INPUT =
   'mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 outline-none focus:border-[#083832] focus:ring-1 focus:ring-[#083832]';
@@ -16,6 +17,7 @@ export default function BuyerProfile() {
   const { tr } = useLanguage();
   const [tab, setTab] = useState<'company' | 'needs'>('company');
   const [profile, setProfile] = useState<Record<string, string> | null>(null);
+  const [company, setCompany] = useState<CompanyOut | null>(null);
   const [needs, setNeeds] = useState<NeedsDraft>(emptyNeeds());
   const [status, setStatus] = useState<{ kind: 'ok' | 'error'; text: string } | null>(null);
   const [busy, setBusy] = useState(false);
@@ -24,6 +26,7 @@ export default function BuyerProfile() {
     let active = true;
     Promise.all([getMyCompany(), getSourcingNeeds()]).then(([company, saved]) => {
       if (!active) return;
+      setCompany(company);
       setProfile(company ? companyToForm(company) : {});
       if (saved) setNeeds(needsFromServer(saved));
     });
@@ -33,13 +36,14 @@ export default function BuyerProfile() {
   }, []);
 
   if (profile === null) return <p className="p-6 text-sm text-slate-600">{tr('Đang tải hồ sơ doanh nghiệp…')}</p>;
+  const reloadCompany = () => void getMyCompany().then((fresh) => fresh && setCompany(fresh));
   const update = (field: string, value: string) => setProfile((p) => ({ ...(p ?? {}), [field]: value }));
 
   async function save() {
     setStatus(null);
     setBusy(true);
     try {
-      await saveMyCompany(buyerProfileToCompany(profile ?? {}));
+      setCompany(await saveMyCompany(buyerProfileToCompany(profile ?? {})));
       await saveSourcingNeeds(needs);
       setStatus({ kind: 'ok', text: 'Đã lưu hồ sơ.' });
     } catch (cause) {
@@ -55,6 +59,7 @@ export default function BuyerProfile() {
         <h1 className="text-2xl font-bold text-slate-900">{tr('Hồ sơ công ty')}</h1>
         <p className="mt-1 text-sm text-slate-600">{tr('Nhu cầu càng rõ, nhà cung cấp phù hợp càng dễ tìm thấy và báo giá đúng cho bạn.')}</p>
       </div>
+      {company && <BuyerVerificationCard company={company} onChanged={reloadCompany} />}
       <div role="tablist" aria-label={tr('Hồ sơ công ty')} className="inline-flex rounded-xl border border-slate-200 bg-white p-1 text-sm font-semibold">
         {(['company', 'needs'] as const).map((key) => (
           <button key={key} type="button" role="tab" aria-selected={tab === key} onClick={() => setTab(key)} className={`rounded-lg px-4 py-2 ${tab === key ? 'bg-[#083832] text-white' : 'text-slate-600'}`}>
@@ -96,6 +101,7 @@ export default function BuyerProfile() {
               <label className={LABEL}>{tr('Số điện thoại')}<input type="tel" className={INPUT} value={profile.phone ?? ''} onChange={(e) => update('phone', e.target.value)} /></label>
               <label className={LABEL}>{tr('Website')}<input type="url" className={INPUT} value={profile.website ?? ''} onChange={(e) => update('website', e.target.value)} /></label>
             </div>
+            <label className={LABEL}>{tr('Số đăng ký doanh nghiệp (không bắt buộc)')}<input className={INPUT} value={profile.registrationNumber ?? ''} onChange={(e) => update('registrationNumber', e.target.value)} placeholder="HRB 12345" /></label>
             <div className="grid gap-5 sm:grid-cols-2">
               <label className={LABEL}>{tr('Mã số VAT (không bắt buộc)')}<input className={INPUT} value={profile.vatNumber ?? ''} onChange={(e) => update('vatNumber', e.target.value)} placeholder="DE123456789" /></label>
               <label className={LABEL}>{tr('Mã EORI (không bắt buộc)')}<input className={INPUT} value={profile.eoriNumber ?? ''} onChange={(e) => update('eoriNumber', e.target.value)} /></label>

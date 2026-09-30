@@ -116,6 +116,7 @@ describe('buyerProfileToCompany — form buyer cũ → CompanyIn', () => {
       contact_name: null,
       city: null,
       phone: null,
+      registration_number: null,
       vat_number: 'DE123456789',
       eori_number: 'DE123456789012',
       procurement_estimate: '500k_2m',

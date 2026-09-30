@@ -11,7 +11,7 @@ from app.modules.auth.service import require_role
 from app.modules.messaging import conversation_service, service
 from app.modules.messaging.conversation_schemas import ConversationOut, MessageIn, MessageOut
 from app.modules.messaging.models import RfqStatus
-from app.modules.messaging.schemas import RfqIn, RfqOut, RfqStatusIn
+from app.modules.messaging.schemas import RfqIn, RfqOut, RfqQuotaOut, RfqStatusIn
 
 router = APIRouter(tags=["messaging"])
 DB = Annotated[AsyncSession, Depends(get_session)]
@@ -23,6 +23,11 @@ Member = Annotated[CurrentUser, Depends(require_role("buyer", "exporter"))]
 @router.post("/api/buyer/rfqs", status_code=status.HTTP_201_CREATED)
 async def create_rfq(data: RfqIn, user: Buyer, session: DB) -> RfqOut:
     return await service.create_rfq(session, user, data)
+
+
+@router.get("/api/buyer/rfq-quota")
+async def rfq_quota(user: Buyer, session: DB) -> RfqQuotaOut:
+    return await service.rfq_quota(session, user)
 
 
 @router.get("/api/me/rfqs")

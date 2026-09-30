@@ -52,7 +52,7 @@ async def _authorize(
     elif decision is Decision.submit:
         allowed = (
             reviewer is not None
-            and reviewer.role == "exporter"
+            and reviewer.role in ("exporter", "buyer")
             and await companies.get_company_id(session, reviewer.id) == company_id
         )
     else:
@@ -77,7 +77,8 @@ async def decide(
     - approve, reject, request_info: chỉ admin, chỉ từ `pending`; hai loại sau bắt buộc có lý do.
     - expire: chỉ hệ thống (reviewer None), chỉ từ `verified` → `unverified` + mức `basic`.
     - level_up / level_down: chỉ hệ thống, công ty `verified`, đổi mức basic ↔ evfta_verified (C6).
-    - submit: chỉ chủ công ty (exporter), từ `unverified` hoặc `rejected` → `pending` (I1).
+    - submit: chỉ chủ công ty (exporter, hoặc buyer xin xác minh tùy chọn B1 — ADR-0004), từ
+      `unverified` hoặc `rejected` → `pending` (I1).
 
     Event được phát SAU commit. commit=False: nếu có `events` thì dồn vào đó để người gọi phát sau
     khi commit; không có thì phát ngay.

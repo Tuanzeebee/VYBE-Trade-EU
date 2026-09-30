@@ -1,6 +1,8 @@
 """Yêu cầu xác minh: exporter nộp, admin xem hàng đợi và quyết định (I1, I2).
 
-Trạng thái xác minh của công ty chỉ đổi qua service.decide(); ở đây chỉ điều phối bản ghi yêu cầu.
+Buyer cũng nộp được (xác minh tùy chọn B1, ADR-0004) nhưng không bao giờ BẮT BUỘC: buyer chưa
+xác minh vẫn xem, nhắn tin và gửi RFQ trong hạn mức. Trạng thái xác minh của công ty chỉ đổi qua
+service.decide(); ở đây chỉ điều phối bản ghi yêu cầu.
 """
 
 import datetime as dt
@@ -46,8 +48,8 @@ def _out(row: VerificationRequest) -> VerificationRequestOut:
     )
 
 
-async def _exporter_company_id(session: AsyncSession, user: CurrentUser) -> uuid.UUID:
-    if user.role != "exporter":
+async def _owner_company_id(session: AsyncSession, user: CurrentUser) -> uuid.UUID:
+    if user.role not in ("exporter", "buyer"):
         raise AppError("forbidden", "Not allowed for this role", 403)
     company_id = await companies.get_company_id(session, user.id)
     if company_id is None:
@@ -55,9 +57,22 @@ async def _exporter_company_id(session: AsyncSession, user: CurrentUser) -> uuid
     return company_id
 
 
+async def _check_buyer_identifiers(session: AsyncSession, company_id: uuid.UUID) -> None:
+    """KYB nhẹ của buyer cần ít nhất một định danh để admin đối chiếu (VIES với VAT, sổ đăng ký)."""
+    company = await companies.get_company_for_review(session, company_id)
+    if not (company.vat_number or company.registration_number):
+        raise AppError(
+            "identifier_required",
+            "Add your VAT number or company registration number before requesting verification",
+            422,
+        )
+
+
 async def submit_request(session: AsyncSession, user: CurrentUser) -> VerificationRequestOut:
     """Chủ công ty nộp yêu cầu xác minh: công ty → pending (qua decide), chụp bằng chứng."""
-    company_id = await _exporter_company_id(session, user)
+    company_id = await _owner_company_id(session, user)
+    if user.role == "buyer":
+        await _check_buyer_identifiers(session, company_id)
     evidence_ids = list(
         await session.scalars(
             select(Evidence.id)
@@ -89,7 +104,7 @@ async def submit_request(session: AsyncSession, user: CurrentUser) -> Verificati
 async def list_my_requests(
     session: AsyncSession, user: CurrentUser
 ) -> list[VerificationRequestOut]:
-    company_id = await _exporter_company_id(session, user)
+    company_id = await _owner_company_id(session, user)
     rows = await session.scalars(
         select(VerificationRequest)
         .where(VerificationRequest.company_id == company_id)

@@ -13,6 +13,59 @@ const STATUS_LABEL: Record<string, string> = {
 };
 
 const NEED_REASON = 'Vui lòng nhập lý do.';
+const VIES_URL = 'https://ec.europa.eu/taxation_customs/vies/';
+
+/** Tên miền email khớp website? null khi thiếu một trong hai (gợi ý cho admin, không tự quyết). */
+export function emailMatchesWebsite(email: string | null | undefined, website: string | null | undefined): boolean | null {
+  const domain = email?.split('@')[1]?.trim().toLowerCase();
+  if (!domain || !website) return null;
+  let host: string;
+  try {
+    host = new URL(/^https?:\/\//i.test(website) ? website : `https://${website}`).hostname.toLowerCase();
+  } catch {
+    return null;
+  }
+  const bare = host.replace(/^www\./, '');
+  return domain === bare || domain.endsWith(`.${bare}`) || bare.endsWith(`.${domain}`);
+}
+
+// U6/ADR-0004: xác minh buyer là tùy chọn — admin đối chiếu định danh, buyer không khai sản phẩm.
+function BuyerKybPanel({ company }: { company: QueueItem['company'] }) {
+  const { tr } = useLanguage();
+  const match = emailMatchesWebsite(company.contact_email, company.website);
+  const rows: [string, string | null | undefined][] = [
+    ['Mã số VAT', company.vat_number],
+    ['Số đăng ký', company.registration_number],
+    ['Mã EORI', company.eori_number],
+    ['Thành phố', company.city],
+    ['Người liên hệ', company.contact_name],
+    ['Email liên hệ', company.contact_email],
+  ];
+  return (
+    <details open role="group" aria-label={tr('Kiểm tra buyer (KYB nhẹ)')} className="mt-3 rounded-xl border border-sky-200 bg-sky-50/50 p-3 text-sm">
+      <summary className="cursor-pointer text-xs font-bold uppercase tracking-wide text-slate-700">{tr('Kiểm tra buyer (KYB nhẹ)')}</summary>
+      <p className="mt-2 text-xs text-slate-600">
+        {tr('Xác minh buyer là tùy chọn. Đối chiếu mã VAT trên VIES và tên miền email với website. Buyer không cần khai sản phẩm.')}
+      </p>
+      <dl className="mt-3 grid gap-x-6 gap-y-2 text-xs sm:grid-cols-2">
+        {rows.map(([label, value]) => (
+          <div key={label}>
+            <dt className="font-semibold text-slate-700">{tr(label)}</dt>
+            <dd className="break-words text-slate-600">{value || '—'}</dd>
+          </div>
+        ))}
+      </dl>
+      <p className="mt-2 text-xs text-slate-700">
+        {match === null
+          ? tr('Chưa đủ email và website để so tên miền.')
+          : tr(match ? 'Tên miền email khớp website.' : 'Tên miền email KHÁC website — cần kiểm tra thêm.')}
+      </p>
+      <a href={VIES_URL} target="_blank" rel="noreferrer" className="mt-2 inline-block text-xs font-semibold text-teal-700 hover:underline">
+        {tr('Tra cứu VAT trên VIES')}
+      </a>
+    </details>
+  );
+}
 
 export default function AdminVerificationQueue() {
   const { tr, language } = useLanguage();
@@ -89,7 +142,12 @@ export default function AdminVerificationQueue() {
           {(items ?? []).map((item) => (
             <li key={item.request_id} aria-label={item.legal_name} className="rounded-2xl border border-slate-200 bg-white p-5">
               <div className="flex flex-wrap items-baseline justify-between gap-2">
-                <h3 className="text-base font-bold text-slate-900">{item.legal_name}</h3>
+                <h3 className="flex flex-wrap items-center gap-2 text-base font-bold text-slate-900">
+                  {item.legal_name}
+                  {item.company.type === 'buyer' && (
+                    <span className="rounded-full bg-sky-100 px-2 py-0.5 text-[11px] font-bold text-sky-800">{tr('Buyer — xác minh tùy chọn')}</span>
+                  )}
+                </h3>
                 <span className="text-xs text-slate-500">
                   {tr('Gửi lúc')} {new Date(item.submitted_at).toLocaleString(language === 'en' ? 'en-GB' : 'vi-VN')}
                 </span>
@@ -137,6 +195,8 @@ export default function AdminVerificationQueue() {
                 </dl>
               </details>
 
+              {item.company.type === 'buyer' && <BuyerKybPanel company={item.company} />}
+              {item.company.type !== 'buyer' && (
               <details open role="group" aria-label={tr('Sản phẩm đã khai')} className="mt-3 rounded-xl border border-slate-200 p-3 text-sm">
                 <summary className="cursor-pointer text-xs font-bold uppercase tracking-wide text-slate-700">
                   {tr('Sản phẩm đã khai')} ({item.products.length})
@@ -160,9 +220,10 @@ export default function AdminVerificationQueue() {
                   </ul>
                 )}
               </details>
+              )}
 
               <div className="mt-4 space-y-3">
-                {item.evidences.length === 0 && <p className="text-xs text-slate-500">{tr('Chưa nộp bằng chứng.')}</p>}
+                {item.evidences.length === 0 && item.company.type !== 'buyer' && <p className="text-xs text-slate-500">{tr('Chưa nộp bằng chứng.')}</p>}
                 {item.evidences.map((e) => (
                   <div key={e.id} className="rounded-xl border border-slate-200 p-3 text-sm">
                     <div className="flex flex-wrap items-center justify-between gap-2">

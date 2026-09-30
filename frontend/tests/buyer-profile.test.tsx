@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { NextIntlClientProvider } from 'next-intl';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import BuyerProfile from '@/components/BuyerProfile';
@@ -20,19 +20,32 @@ const COMPANY = {
   legal_rep_title: null, issuing_authority: null, description_vi: null, description_en: null, logo_key: null,
   offering_type: null, factory_address: null, capacity_value: null, capacity_unit: null, capacity_period: null,
   main_customers: null, location_public: false, facility_codes: [], export_markets: [], languages_spoken: [],
-  company_size: null, procurement_estimate: null, vat_number: null, eori_number: null, sourcing_categories: ['seafood'],
+  company_size: null, procurement_estimate: null, vat_number: 'DE123456789', eori_number: null, sourcing_categories: ['seafood'],
   verification_status: 'unverified', verification_level: 'basic', verified_at: null, expires_at: null,
   profile_completeness_score: '0.00', created_at: '2026-09-29T00:00:00Z', updated_at: '2026-09-29T00:00:00Z',
 };
 
-function serve(calls: { method: string; path: string; body?: unknown }[]) {
+let company: Record<string, unknown> = COMPANY;
+let requests: unknown[] = [];
+
+function serve(calls: { method: string; path: string; body?: unknown }[], over: Record<string, unknown> = {}, history: unknown[] = []) {
+  company = { ...COMPANY, ...over };
+  requests = history;
   vi.stubGlobal(
     'fetch',
     vi.fn(async (req: Request) => {
       const path = new URL(req.url).pathname;
-      const body = ['PUT', 'PATCH', 'POST'].includes(req.method) ? await req.json() : undefined;
+      const raw = await req.text();
+      const body = raw ? JSON.parse(raw) : undefined;
       calls.push({ method: req.method, path, body });
-      if (path === '/api/me/company') return json(200, COMPANY);
+      if (path === '/api/me/company') return json(200, company);
+      if (path === '/api/buyer/verification-requests') {
+        if (req.method === 'POST') {
+          company = { ...company, verification_status: 'pending' };
+          return json(201, { id: 'vr-1', company_id: 'b-1', status: 'pending', evidence_ids: [], submitted_at: '2026-10-01T00:00:00Z', reviewed_at: null, decision_reason: null });
+        }
+        return json(200, requests);
+      }
       if (path === '/api/buyer/sourcing-needs') {
         return json(200, req.method === 'PUT' ? body : { products_text: 'Phi lê cá tra', budget_currency: 'EUR', certifications_wanted: [] });
       }
@@ -67,5 +80,39 @@ describe('Hồ sơ công ty của buyer (U5)', () => {
     expect(await screen.findByRole('status')).toHaveTextContent('Đã lưu hồ sơ');
     await waitFor(() => expect(calls.some((c) => c.method === 'PATCH' && c.path === '/api/me/company')).toBe(true));
     expect(calls.find((c) => c.method === 'PUT')?.body).toMatchObject({ products_text: 'Tôm thẻ đông lạnh' });
+  });
+});
+
+describe('Xác minh buyer tùy chọn (U6)', () => {
+  afterEach(() => vi.unstubAllGlobals());
+
+  it('chưa xác minh: nói rõ không bắt buộc, gửi yêu cầu thì chuyển sang chờ duyệt', async () => {
+    const calls: { method: string; path: string; body?: unknown }[] = [];
+    serve(calls);
+    renderProfile();
+    const card = await screen.findByRole('region', { name: 'Xác minh doanh nghiệp' });
+    expect(card).toHaveTextContent('Xác minh doanh nghiệp (không bắt buộc)');
+    expect(card).toHaveTextContent('Bạn vẫn xem hồ sơ, nhắn tin và gửi yêu cầu báo giá khi chưa xác minh');
+    fireEvent.click(within(card).getByRole('button', { name: 'Gửi yêu cầu xác minh' }));
+    expect(await screen.findByText('Yêu cầu xác minh đang chờ duyệt')).toBeInTheDocument();
+    expect(calls.some((c) => c.method === 'POST' && c.path === '/api/buyer/verification-requests')).toBe(true);
+  });
+
+  it('thiếu VAT và số đăng ký: nút gửi bị khoá kèm hướng dẫn', async () => {
+    serve([], { vat_number: null, registration_number: null });
+    renderProfile();
+    const card = await screen.findByRole('region', { name: 'Xác minh doanh nghiệp' });
+    expect(within(card).getByRole('button', { name: 'Gửi yêu cầu xác minh' })).toBeDisabled();
+    expect(card).toHaveTextContent('Cần lưu mã số VAT hoặc số đăng ký doanh nghiệp');
+  });
+
+  it('bị từ chối: hiện lý do và cho gửi lại', async () => {
+    serve([], { verification_status: 'rejected' }, [
+      { id: 'vr-0', company_id: 'b-1', status: 'rejected', evidence_ids: [], submitted_at: '2026-09-30T00:00:00Z', reviewed_at: '2026-09-30T02:00:00Z', decision_reason: 'VAT không khớp trên VIES' },
+    ]);
+    renderProfile();
+    const card = await screen.findByRole('region', { name: 'Xác minh doanh nghiệp' });
+    expect(await within(card).findByText('VAT không khớp trên VIES')).toBeInTheDocument();
+    expect(within(card).getByRole('button', { name: 'Gửi yêu cầu xác minh' })).toBeEnabled();
   });
 });

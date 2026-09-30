@@ -4769,6 +4769,55 @@
         }
       }
     },
+    "/api/buyer/rfq-quota": {
+      "get": {
+        "tags": [
+          "messaging"
+        ],
+        "summary": "Rfq Quota",
+        "operationId": "rfq_quota_api_buyer_rfq_quota_get",
+        "parameters": [
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RfqQuotaOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/me/rfqs": {
       "get": {
         "tags": [
@@ -6611,6 +6660,106 @@
                     "$ref": "#/components/schemas/VerificationRequestOut"
                   },
                   "title": "Response My Verification Requests Api Exporter Verification Requests Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/buyer/verification-requests": {
+      "post": {
+        "tags": [
+          "verification"
+        ],
+        "summary": "Submit Buyer Verification Request",
+        "operationId": "submit_buyer_verification_request_api_buyer_verification_requests_post",
+        "parameters": [
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerificationRequestOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "verification"
+        ],
+        "summary": "My Buyer Verification Requests",
+        "operationId": "my_buyer_verification_requests_api_buyer_verification_requests_get",
+        "parameters": [
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/VerificationRequestOut"
+                  },
+                  "title": "Response My Buyer Verification Requests Api Buyer Verification Requests Get"
                 }
               }
             }
@@ -13062,6 +13211,10 @@
             "type": "string",
             "title": "Buyer Name"
           },
+          "buyer_verified": {
+            "type": "boolean",
+            "title": "Buyer Verified"
+          },
           "exporter_company_id": {
             "type": "string",
             "format": "uuid",
@@ -13149,6 +13302,7 @@
           "product_name",
           "buyer_company_id",
           "buyer_name",
+          "buyer_verified",
           "exporter_company_id",
           "exporter_name",
           "quantity",
@@ -13165,6 +13319,35 @@
           "updated_at"
         ],
         "title": "RfqOut"
+      },
+      "RfqQuotaOut": {
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "title": "Limit"
+          },
+          "used": {
+            "type": "integer",
+            "title": "Used"
+          },
+          "remaining": {
+            "type": "integer",
+            "title": "Remaining"
+          },
+          "verified": {
+            "type": "boolean",
+            "title": "Verified"
+          }
+        },
+        "type": "object",
+        "required": [
+          "limit",
+          "used",
+          "remaining",
+          "verified"
+        ],
+        "title": "RfqQuotaOut",
+        "description": "Hạn mức RFQ 24 giờ của buyer (U6): buyer chưa xác minh vẫn gửi được, chỉ ít hơn."
       },
       "RfqStatus": {
         "type": "string",

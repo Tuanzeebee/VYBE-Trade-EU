@@ -1,4 +1,5 @@
-// Yêu cầu xác minh phía exporter (I1): xem trạng thái, gửi yêu cầu, xem lý do bị từ chối / yêu cầu bổ sung.
+// Yêu cầu xác minh (I1): xem trạng thái, gửi yêu cầu, xem lý do bị từ chối / yêu cầu bổ sung.
+// Exporter bắt buộc để hiện trong danh bạ; buyer chỉ TÙY CHỌN (U6, ADR-0004).
 import { createApiClient } from './api/client';
 import type { components } from './api/schema';
 
@@ -6,9 +7,13 @@ export type VerificationRequest = components['schemas']['VerificationRequestOut'
 
 const NETWORK = 'Không kết nối được máy chủ. Vui lòng thử lại.';
 
-export async function listMyRequests(): Promise<VerificationRequest[] | null> {
+type Role = 'exporter' | 'buyer';
+
+export async function listMyRequests(role: Role = 'exporter'): Promise<VerificationRequest[] | null> {
   try {
-    const { data, response } = await createApiClient().GET('/api/exporter/verification-requests');
+    const client = createApiClient();
+    const { data, response } =
+      role === 'buyer' ? await client.GET('/api/buyer/verification-requests') : await client.GET('/api/exporter/verification-requests');
     return response.ok && data ? data : null;
   } catch {
     return null;
@@ -17,12 +22,17 @@ export async function listMyRequests(): Promise<VerificationRequest[] | null> {
 
 export class AlreadySubmittedError extends Error {}
 
-export async function submitRequest(): Promise<VerificationRequest> {
+export async function submitRequest(role: Role = 'exporter'): Promise<VerificationRequest> {
   let result;
   try {
-    result = await createApiClient().POST('/api/exporter/verification-requests');
+    const client = createApiClient();
+    result =
+      role === 'buyer' ? await client.POST('/api/buyer/verification-requests') : await client.POST('/api/exporter/verification-requests');
   } catch {
     throw new Error(NETWORK);
+  }
+  if (result.response.status === 422) {
+    throw new Error('Cần lưu mã số VAT hoặc số đăng ký doanh nghiệp để quản trị viên đối chiếu.');
   }
   if (result.response.status === 409) {
     throw new AlreadySubmittedError('Hồ sơ đang chờ duyệt hoặc đã được xác minh, không gửi thêm được.');

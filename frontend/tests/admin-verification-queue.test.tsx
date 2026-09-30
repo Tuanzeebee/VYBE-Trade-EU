@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { NextIntlClientProvider } from 'next-intl';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import AdminVerificationQueue from '@/components/AdminVerificationQueue';
+import AdminVerificationQueue, { emailMatchesWebsite } from '@/components/AdminVerificationQueue';
 import { LanguageProvider } from '@/context/LanguageContext';
 
 vi.mock('next/navigation', async (importOriginal) => ({
@@ -262,5 +262,54 @@ describe('Hàng đợi xác minh — ngày trên giấy tờ do admin nhập (U4
     fireEvent.click(within(row).getByRole('button', { name: /Duyệt bằng chứng/ }));
     await waitFor(() => expect(posts()).toHaveLength(1));
     expect(posts()[0].body).toMatchObject({ decision: 'approve', issued_at: '2026-01-05', expires_at: '2029-01-04' });
+  });
+});
+
+describe('Hàng đợi xác minh — buyer xác minh tùy chọn (U6)', () => {
+  afterEach(() => vi.unstubAllGlobals());
+
+  const buyerItem = () =>
+    item({
+      legal_name: 'Global Foods GmbH',
+      tax_id: null,
+      country: 'DE',
+      evidences: [],
+      products: [],
+      company: {
+        ...item().company,
+        type: 'buyer',
+        legal_name: 'Global Foods GmbH',
+        country: 'DE',
+        vat_number: 'DE123456789',
+        eori_number: null,
+        city: 'Hamburg',
+        contact_name: 'Anna',
+        contact_email: 'anna@globalfoods.de',
+        website: 'https://www.globalfoods.de',
+      },
+    });
+
+  it('buyer: nhãn tùy chọn, bảng KYB nhẹ thay cho danh sách sản phẩm', async () => {
+    serve([buyerItem()]);
+    renderQueue();
+    const row = await screen.findByRole('listitem', { name: /Global Foods GmbH/ });
+    expect(row).toHaveTextContent('Buyer — xác minh tùy chọn');
+    const kyb = within(row).getByRole('group', { name: 'Kiểm tra buyer (KYB nhẹ)' });
+    for (const text of ['DE123456789', 'Hamburg', 'Anna', 'Tên miền email khớp website.']) expect(kyb).toHaveTextContent(text);
+    expect(within(kyb).getByRole('link', { name: 'Tra cứu VAT trên VIES' })).toHaveAttribute('href', expect.stringContaining('ec.europa.eu'));
+    expect(within(row).queryByRole('group', { name: /Sản phẩm đã khai/ })).toBeNull();
+    expect(within(row).queryByText('Chưa nộp bằng chứng.')).toBeNull();
+  });
+});
+
+describe('emailMatchesWebsite (U6)', () => {
+  it.each([
+    ['a@globalfoods.de', 'https://www.globalfoods.de', true],
+    ['a@mail.globalfoods.de', 'globalfoods.de', true],
+    ['a@gmail.com', 'https://globalfoods.de', false],
+    ['a@globalfoods.de', null, null],
+    [null, 'https://globalfoods.de', null],
+  ])('%s vs %s → %s', (email, website, expected) => {
+    expect(emailMatchesWebsite(email, website)).toBe(expected);
   });
 });

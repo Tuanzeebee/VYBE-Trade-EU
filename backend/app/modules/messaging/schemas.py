@@ -67,6 +67,8 @@ class RfqOut(BaseModel):
     product_name: str
     buyer_company_id: uuid.UUID
     buyer_name: str
+    # U6: seller thấy buyer đã xác minh hay chưa để chọn điều khoản thanh toán an toàn.
+    buyer_verified: bool
     exporter_company_id: uuid.UUID
     exporter_name: str
     quantity: str  # chuỗi thập phân, không qua float
@@ -81,6 +83,15 @@ class RfqOut(BaseModel):
     status: RfqStatus
     created_at: dt.datetime
     updated_at: dt.datetime
+
+
+class RfqQuotaOut(BaseModel):
+    """Hạn mức RFQ 24 giờ của buyer (U6): buyer chưa xác minh vẫn gửi được, chỉ ít hơn."""
+
+    limit: int
+    used: int
+    remaining: int
+    verified: bool
 
 
 class RfqSummary(BaseModel):
