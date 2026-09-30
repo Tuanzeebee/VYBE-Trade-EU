@@ -32,6 +32,13 @@ class Settings(BaseSettings):
     smtp_port: int = 1025
     email_from: str = "noreply@evfta.eu"
     public_base_url: str = "http://localhost:3000"
+    # Trợ lý AI (Q5 chưa chốt): fake = giả xác định; ollama = chạy cục bộ, miễn phí (thử đầu).
+    chat_backend: str = "fake"  # fake | ollama
+    embedding_backend: str = "fake"  # fake | ollama
+    ollama_base_url: str = "http://localhost:11434"
+    ollama_chat_model: str = "qwen2.5:7b"
+    ollama_embed_model: str = "bge-m3"  # 1024 chiều, khớp EMBEDDING_DIM
+    ollama_timeout_seconds: float = 120.0
     # Origin của frontend được gọi API kèm cookie
     cors_origins: list[str] = ["http://localhost:3000"]
 

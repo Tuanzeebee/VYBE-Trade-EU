@@ -15,6 +15,9 @@ TEST_DATABASE_URL = os.environ.get(
     "TEST_DATABASE_URL", "postgresql+asyncpg://evfta:evfta@localhost:5432/evfta_test"
 )
 os.environ["DATABASE_URL"] = TEST_DATABASE_URL  # phải đặt trước khi import app
+# Test luôn dùng bản giả của trợ lý AI, không phụ thuộc .env cục bộ (CHAT_BACKEND=ollama...).
+os.environ["CHAT_BACKEND"] = "fake"
+os.environ["EMBEDDING_BACKEND"] = "fake"
 
 
 async def _create_db_if_missing() -> None:

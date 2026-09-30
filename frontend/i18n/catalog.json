@@ -11193,5 +11193,90 @@
     "No data yet. Use Add to get started.",
     "Aucune donnée. Utilisez Ajouter pour commencer.",
     "データがありません。「追加」で始めてください。"
+  ],
+  "Menu buyer": [
+    "Buyer menu",
+    "Menu acheteur",
+    "バイヤーメニュー"
+  ],
+  "BUYER WORKSPACE": [
+    "BUYER WORKSPACE",
+    "ESPACE ACHETEUR",
+    "バイヤーワークスペース"
+  ],
+  "Hồ sơ chưa được xác minh": [
+    "Your profile is not verified yet",
+    "Votre profil n'est pas encore vérifié",
+    "プロフィールは未認証です"
+  ],
+  "Chỉ doanh nghiệp đã xác minh mới hiện trong danh bạ công khai. Bổ sung bằng chứng rồi gửi yêu cầu xác minh.": [
+    "Only verified companies appear in the public directory. Add evidence, then submit a verification request.",
+    "Seules les entreprises vérifiées figurent dans l'annuaire public. Ajoutez des justificatifs, puis soumettez une demande de vérification.",
+    "公開ディレクトリには認証済みの企業のみ掲載されます。証拠書類を追加し、認証申請を送信してください。"
+  ],
+  "Tiếp tục xác minh": [
+    "Continue verification",
+    "Poursuivre la vérification",
+    "認証を続ける"
+  ],
+  "Hồ sơ đang chờ duyệt": [
+    "Your profile is pending review",
+    "Votre profil est en cours de validation",
+    "プロフィールは審査待ちです"
+  ],
+  "Quản trị viên đang xem xét hồ sơ của bạn. Bạn sẽ nhận thông báo và email khi có kết quả.": [
+    "An administrator is reviewing your profile. You will get a notification and an email with the result.",
+    "Un administrateur examine votre profil. Vous recevrez une notification et un e-mail avec le résultat.",
+    "管理者がプロフィールを確認中です。結果は通知とメールでお知らせします。"
+  ],
+  "Xem tiến trình xác minh": [
+    "View verification progress",
+    "Voir l'avancement de la vérification",
+    "認証の進捗を見る"
+  ],
+  "Doanh nghiệp đã được xác minh": [
+    "Your company is verified",
+    "Votre entreprise est vérifiée",
+    "企業は認証済みです"
+  ],
+  "Hồ sơ của bạn đang hiển thị trong danh bạ nhà cung cấp và buyer EU có thể gửi yêu cầu báo giá.": [
+    "Your profile is listed in the supplier directory and EU buyers can send you quotation requests.",
+    "Votre profil figure dans l'annuaire des fournisseurs et les acheteurs de l'UE peuvent vous envoyer des demandes de devis.",
+    "プロフィールはサプライヤーディレクトリに掲載され、EUのバイヤーが見積依頼を送れます。"
+  ],
+  "Xem hồ sơ công khai": [
+    "View public profile",
+    "Voir le profil public",
+    "公開プロフィールを見る"
+  ],
+  "Yêu cầu xác minh chưa được chấp nhận": [
+    "Your verification request was not accepted",
+    "Votre demande de vérification n'a pas été acceptée",
+    "認証申請は承認されませんでした"
+  ],
+  "Xem lý do của quản trị viên, bổ sung hồ sơ hoặc bằng chứng còn thiếu rồi gửi lại.": [
+    "Read the administrator's reason, add the missing profile data or evidence, then resubmit.",
+    "Consultez le motif de l'administrateur, complétez le profil ou les justificatifs manquants, puis renvoyez.",
+    "管理者の理由を確認し、不足している情報や証拠を追加して再申請してください。"
+  ],
+  "Xem lý do và gửi lại": [
+    "See the reason and resubmit",
+    "Voir le motif et renvoyer",
+    "理由を確認して再申請"
+  ],
+  "Bổ sung hồ sơ": [
+    "Complete profile",
+    "Compléter le profil",
+    "プロフィールを補完"
+  ],
+  "Chưa": [
+    "No",
+    "Non",
+    "未"
+  ],
+  "Chờ": [
+    "Pending",
+    "En attente",
+    "待ち"
   ]
 }

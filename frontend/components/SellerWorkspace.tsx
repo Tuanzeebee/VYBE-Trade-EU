@@ -5,6 +5,9 @@
  */
 
 import React, { useEffect, useState } from 'react';
+import { getMyCompany, type CompanyOut } from '../lib/companyApi';
+import NotificationBell from './NotificationBell';
+import VerificationStatusCard, { STATUS_BADGE } from './VerificationStatusCard';
 import type { DemoUser } from '../lib/demoAuth';
 import { formatMoq, formatPrice, getMyProducts, type ProductOut } from '../lib/productsApi';
 import CompletenessCard from './CompletenessCard';
@@ -110,6 +113,15 @@ export default function SellerWorkspace({
   const [activeTab, setActiveTab] = useState<WorkspaceTabId>(initialTab);
   const goTab = (tab: WorkspaceTabId) => (onNavigateTab ? onNavigateTab(tab) : setActiveTab(tab));
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  // Trạng thái thật của công ty trên server (thay cho nhãn L2 cố định trước đây).
+  const [company, setCompany] = useState<CompanyOut | null>(null);
+  useEffect(() => {
+    let active = true;
+    getMyCompany().then((c) => active && setCompany(c));
+    return () => {
+      active = false;
+    };
+  }, []);
   const [activeModal, setActiveModal] = useState<
     'upgrade-l1' | 'upgrade-l2' | 'upgrade-l3' | 'evidence-record' | 'edit-profile' | 'view-doc' | 'public-preview' | 'add-cert' | 'edit-cert' | 'delete-cert' | null
   >(null);
@@ -321,10 +333,13 @@ export default function SellerWorkspace({
     setDeletingCert(null);
   };
 
+  const companyName = company?.legal_name ?? companyProfile.name;
+  const statusBadge = STATUS_BADGE[company?.verification_status ?? 'unverified'];
+
   const navItems: { id: WorkspaceTabId; label: string; icon: typeof Home; badge?: string }[] = [
-              { id: 'profile', label: 'Hồ sơ doanh nghiệp', icon: Building2, badge: 'Đã hoàn tất' },
+              { id: 'profile', label: 'Hồ sơ doanh nghiệp', icon: Building2, badge: company ? `${Math.round(Number(company.profile_completeness_score))}%` : undefined },
               { id: 'licenses', label: 'Tải lên & Quản lý Giấy phép & Chứng nhận', icon: Award, badge: `${certificatesList.length} tài liệu` },
-              { id: 'verification', label: 'Tiến trình xác minh (L0-L3)', icon: ShieldCheck, badge: 'L2' },
+              { id: 'verification', label: 'Xác minh doanh nghiệp', icon: ShieldCheck, badge: statusBadge.short },
               { id: 'overview', label: 'Tổng quan & Chỉ số', icon: Home },
               { id: 'products', label: 'Sản phẩm xuất khẩu', icon: Package, badge: `${productsList.length}` },
               { id: 'rfq', label: 'Cơ hội kết nối B2B', icon: Handshake },
@@ -426,14 +441,11 @@ export default function SellerWorkspace({
                 {tr("VN")}</div>
               <div className="min-w-0">
                 <h4 className="text-xs font-bold text-slate-900 truncate">
-                  {companyProfile.name}
+                  {companyName}
                 </h4>
                 <div className="flex items-center gap-1.5 mt-0.5">
-                  <span className="text-[10px] text-emerald-700 font-bold bg-emerald-100 px-1.5 py-0.2 rounded-sm">
-                    {tr("L2 Verified")}</span>
-                  <span className="text-[10px] text-slate-400">
-                    {tr("MST: ")}{companyProfile.taxCode}
-                  </span>
+                  <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-sm ${statusBadge.tone}`}>
+                    {tr(statusBadge.label)}</span>
                 </div>
               </div>
             </div>
@@ -512,15 +524,7 @@ export default function SellerWorkspace({
                 <span>{tr("Xem trang Buyer (Showcase)")}</span>
               </button>
 
-              {/* Notification Bell */}
-              <button 
-                onClick={() => goTab('notifications')}
-                className="p-1.5 text-slate-600 hover:text-slate-900 transition-colors rounded-full hover:bg-slate-100 cursor-pointer relative"
-                title={tr("Thông báo")}
-              >
-                <Bell className="w-5 h-5 stroke-[1.6]" />
-                <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-emerald-500" />
-              </button>
+              <NotificationBell />
 
               {/* Seller Profile Pill with Dropdown */}
               <div className="relative">
@@ -531,7 +535,7 @@ export default function SellerWorkspace({
                   <div className="w-8 h-8 rounded-full bg-[#083832] text-white text-xs font-bold flex items-center justify-center shrink-0">
                     {tr("VN")}</div>
                   <span className="hidden sm:inline text-xs sm:text-[13px] font-semibold text-slate-800 max-w-[170px] truncate">
-                    {companyProfile.name}
+                    {companyName}
                   </span>
                   <ChevronDown className="w-4 h-4 text-slate-500" />
                 </button>
@@ -539,10 +543,9 @@ export default function SellerWorkspace({
                 {profileDropdownOpen && (
                   <div className="absolute right-0 top-full mt-2 w-64 bg-white rounded-2xl shadow-xl border border-slate-200 py-2 z-50 text-xs text-left animate-in fade-in zoom-in-95 duration-150">
                     <div className="px-4 py-2.5 border-b border-slate-100">
-                      <p className="font-bold text-slate-900 truncate">{companyProfile.name}</p>
-                      <p className="text-slate-500 text-[11px] mt-0.5">{tr("MST: ")}{companyProfile.taxCode}</p>
-                      <span className="inline-block mt-1 px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">
-                        {tr("🛡️ L2 Enhanced Verified")}</span>
+                      <p className="font-bold text-slate-900 truncate">{companyName}</p>
+                      <span className={`inline-block mt-1 px-2 py-0.5 rounded text-[10px] font-bold ${statusBadge.tone}`}>
+                        {tr(statusBadge.label)}</span>
                     </div>
                     <button 
                       onClick={() => {
@@ -1087,7 +1090,12 @@ export default function SellerWorkspace({
           {/* -----------------------------------------------------------------------
               TAB: TỔNG QUAN (OVERVIEW / METRICS)
              ----------------------------------------------------------------------- */}
-          {activeTab === 'overview' && <ExporterDashboard />}
+          {activeTab === 'overview' && (
+            <div className="space-y-6">
+              <VerificationStatusCard company={company} onNavigateTab={goTab} onEditProfile={onNavigateOnboarding} />
+              <ExporterDashboard />
+            </div>
+          )}
 
           {/* -----------------------------------------------------------------------
               TAB: SẢN PHẨM (PRODUCTS)

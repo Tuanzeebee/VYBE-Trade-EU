@@ -1,13 +1,15 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { NextIntlClientProvider } from 'next-intl';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { OnboardingRoute } from '@/components/routes/AccountRoutes';
 import { LanguageProvider } from '@/context/LanguageContext';
+
+const replace = vi.fn();
 
 vi.mock('next/navigation', async (importOriginal) => ({
   ...(await importOriginal<typeof import('next/navigation')>()),
   usePathname: () => window.location.pathname,
-  useRouter: () => ({ push: vi.fn(), replace: vi.fn(), prefetch: vi.fn(), back: vi.fn(), forward: vi.fn(), refresh: vi.fn() }),
+  useRouter: () => ({ push: vi.fn(), replace, prefetch: vi.fn(), back: vi.fn(), forward: vi.fn(), refresh: vi.fn() }),
   useSearchParams: () => new URLSearchParams(),
 }));
 
@@ -63,17 +65,15 @@ function renderBuyerOnboarding() {
   );
 }
 
-const next = () => fireEvent.click(screen.getByRole('button', { name: /Tiếp tục/ }));
-
 describe('route onboarding của buyer dùng dữ liệu server (B2)', () => {
+  beforeEach(() => replace.mockClear());
   afterEach(() => vi.unstubAllGlobals());
 
-  it('nạp hồ sơ buyer đã lưu vào form', async () => {
+  it('buyer đã có hồ sơ trên server (đổi máy) → không phải làm lại onboarding, chuyển về khu vực buyer', async () => {
     serve(BUYER);
     renderBuyerOnboarding();
-    expect(await screen.findByDisplayValue('Global Foods Trading GmbH')).toBeInTheDocument();
-    expect(screen.getByDisplayValue('DE123456789')).toBeInTheDocument();
-    expect((screen.getByRole('combobox', { name: /Quốc gia/ }) as HTMLSelectElement).value).toBe('Germany');
+    await waitFor(() => expect(replace).toHaveBeenCalledWith('/vi/suppliers'));
+    expect(screen.queryByDisplayValue('Global Foods Trading GmbH')).not.toBeInTheDocument();
   });
 
   it('lần đầu (chưa có hồ sơ): form trống, không gọi ghi dữ liệu', async () => {
@@ -82,31 +82,5 @@ describe('route onboarding của buyer dùng dữ liệu server (B2)', () => {
     await screen.findByDisplayValue('alex@globalfoods.de');
     expect(screen.queryByDisplayValue('Global Foods Trading GmbH')).not.toBeInTheDocument();
     expect(calls.filter((c) => c.method !== 'GET')).toEqual([]);
-  });
-
-  it('hoàn tất onboarding: lưu hồ sơ buyer lên server (PATCH vì đã có), gửi nhóm hàng theo mã', async () => {
-    serve(BUYER);
-    renderBuyerOnboarding();
-    await screen.findByDisplayValue('Global Foods Trading GmbH');
-    fireEvent.change(screen.getByRole('combobox', { name: /Khu vực/ }), { target: { value: 'Châu Âu' } });
-    next(); // → bước 2 (nhóm hàng đã có từ server)
-    fireEvent.change(screen.getByLabelText(/Khối lượng dự kiến/), { target: { value: '20' } });
-    fireEvent.change(screen.getByRole('combobox', { name: /Tần suất/ }), { target: { value: 'Hàng quý' } });
-    next(); // → bước 3
-    next(); // → bước 4
-    fireEvent.click(screen.getByRole('checkbox', { name: /Tôi xác nhận/ }));
-    fireEvent.click(screen.getByRole('button', { name: /Hoàn tất/ }));
-    await waitFor(() => expect(calls.some((c) => c.method === 'PATCH')).toBe(true));
-    const saved = calls.find((c) => c.method === 'PATCH')!;
-    expect(saved.path).toBe('/api/me/company');
-    expect(saved.body).toMatchObject({
-      legal_name: 'Global Foods Trading GmbH',
-      country: 'DE',
-      company_size: '51_200',
-      vat_number: 'DE123456789',
-      procurement_estimate: '500k_2m',
-      sourcing_categories: ['agriculture', 'spices'],
-    });
-    expect(saved.body).not.toHaveProperty('export_markets');
   });
 });

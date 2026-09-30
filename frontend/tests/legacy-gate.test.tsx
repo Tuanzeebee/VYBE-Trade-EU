@@ -12,8 +12,18 @@ vi.mock('next/navigation', async (importOriginal) => ({
   useRouter: () => ({ push: vi.fn(), replace, prefetch: vi.fn(), back: vi.fn(), forward: vi.fn(), refresh: vi.fn() }),
 }));
 
-/** Server trả phiên cho /api/me; null = chưa đăng nhập (401). */
-function serverSession(role: 'exporter' | 'buyer' | 'admin' | null, onboarded = false) {
+const json = (status: number, body: unknown) =>
+  new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } });
+
+interface Server {
+  /** Hồ sơ công ty trên server (null = chưa có, trả 404). */
+  company?: Record<string, unknown> | null;
+  /** Sản phẩm của exporter trên server. */
+  products?: unknown[];
+}
+
+/** Server trả phiên cho /api/me; null = chưa đăng nhập (401). Công ty/sản phẩm mặc định chưa có. */
+function serverSession(role: 'exporter' | 'buyer' | 'admin' | null, onboarded = false, server: Server = {}) {
   const id = `u-${role}`;
   if (role && onboarded) {
     localStorage.setItem(
@@ -23,17 +33,17 @@ function serverSession(role: 'exporter' | 'buyer' | 'admin' | null, onboarded = 
   }
   vi.stubGlobal(
     'fetch',
-    vi.fn(async () =>
-      role
-        ? new Response(JSON.stringify({ id, email: `${role}@x.vn`, role, preferred_language: 'vi' }), {
-            status: 200,
-            headers: { 'content-type': 'application/json' },
-          })
-        : new Response(JSON.stringify({ error: { code: 'unauthenticated', message: 'x' } }), {
-            status: 401,
-            headers: { 'content-type': 'application/json' },
-          }),
-    ),
+    vi.fn(async (req: Request) => {
+      const path = new URL(req.url).pathname;
+      if (path === '/api/me') {
+        return role
+          ? json(200, { id, email: `${role}@x.vn`, role, preferred_language: 'vi' })
+          : json(401, { error: { code: 'unauthenticated', message: 'x' } });
+      }
+      if (path === '/api/me/company') return server.company ? json(200, server.company) : json(404, {});
+      if (path === '/api/exporter/products') return json(200, server.products ?? []);
+      return json(404, {});
+    }),
   );
 }
 
@@ -91,6 +101,26 @@ describe('LegacyGate (phiên xác nhận với server)', () => {
     serverSession('buyer', true);
     renderGate('admin', '/admin');
     await waitFor(() => expect(replace).toHaveBeenCalledWith('/vi/suppliers'));
+  });
+
+  it('exporter đổi máy (không còn cờ trình duyệt) nhưng server đã có công ty và sản phẩm → vào workspace, không vào wizard', async () => {
+    serverSession('exporter', false, { company: { id: 'c-1', legal_name: 'Công ty A' }, products: [{ id: 'p-1' }] });
+    renderGate('workspace', '/exporter');
+    expect(await screen.findByText('nội dung u-exporter')).toBeInTheDocument();
+    expect(replace).not.toHaveBeenCalled();
+  });
+
+  it('exporter mới lưu nháp công ty (chưa có sản phẩm) → vẫn về wizard onboarding', async () => {
+    serverSession('exporter', false, { company: { id: 'c-1', legal_name: 'Công ty A' }, products: [] });
+    renderGate('workspace', '/exporter');
+    await waitFor(() => expect(replace).toHaveBeenCalledWith('/vi/exporter/onboarding'));
+  });
+
+  it('buyer đã có công ty trên server → vào thẳng khu vực buyer, không bị đưa tới onboarding', async () => {
+    serverSession('buyer', false, { company: { id: 'c-2', legal_name: 'Global Foods' } });
+    renderGate('buyer-directory', '/suppliers');
+    expect(await screen.findByText('nội dung u-buyer')).toBeInTheDocument();
+    expect(replace).not.toHaveBeenCalled();
   });
 
   it('khách xem trang công khai → hiện ngay, không chuyển hướng', async () => {

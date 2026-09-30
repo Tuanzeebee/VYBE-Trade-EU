@@ -17,6 +17,7 @@ from pathlib import Path
 from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+import app.modules.auth.models  # noqa: F401 — cần bảng users cho khóa ngoại reviewed_by
 from app.core.db import get_sessionmaker
 from app.core.embeddings import EmbeddingModel, get_embedding_model
 from app.modules.catalog.service import normalize_code
@@ -154,8 +155,10 @@ async def _run(parsed: list[tuple[str, ParsedDocument]]) -> list[tuple[str, Inge
     results: list[tuple[str, IngestResult]] = []
     async with get_sessionmaker()() as session:
         for name, doc in parsed:
-            results.append((name, await ingest_document(session, embedder, doc)))
-        await session.commit()
+            result = await ingest_document(session, embedder, doc)
+            await session.commit()  # từng văn bản: lỗi giữa chừng không mất phần đã nhúng
+            print(f"{name}: {result.status} ({result.chunks} đoạn)", flush=True)
+            results.append((name, result))
     return results
 
 
@@ -174,8 +177,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     except ValueError as exc:
         print(f"Lỗi dữ liệu: {exc}", file=sys.stderr)
         return 1
-    for name, result in results:
-        print(f"{name}: {result.status} ({result.chunks} đoạn)")
+    print(f"Xong {len(results)} văn bản.")
     print("Văn bản mới hoặc đã đổi cần admin duyệt trước khi trợ lý dùng.")
     return 0
 

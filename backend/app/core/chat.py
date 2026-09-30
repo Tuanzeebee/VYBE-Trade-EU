@@ -1,6 +1,7 @@
 """Mô hình hội thoại LLM (AGENTS.md §5.5): nghiệp vụ chỉ gọi interface ChatModel.
 
-Nhà cung cấp thật là quyết định Q5 (chưa chốt). Hiện dùng FakeChatModel xác định: trích dẫn đoạn đầu
+Nhà cung cấp thật là quyết định Q5 (chưa chốt). Mặc định FakeChatModel xác định; Ollama cục bộ
+(CHAT_BACKEND=ollama) để thử miễn phí. FakeChatModel: trích dẫn đoạn đầu
 tiên trong prompt. Test tiêm bản giả có kịch bản (bịa trích dẫn, làm theo chỉ dẫn chèn, lỗi...).
 """
 
@@ -8,6 +9,10 @@ import json
 import re
 from collections.abc import Callable
 from typing import Protocol
+
+import httpx
+
+from app.core.config import get_settings
 
 
 class ChatModel(Protocol):
@@ -46,6 +51,45 @@ class FakeChatModel:
         )
 
 
+class OllamaChatModel:
+    """LLM chạy cục bộ qua Ollama. Ép đầu ra JSON (format=json) để khớp định dạng trợ lý cần."""
+
+    def __init__(
+        self,
+        base_url: str,
+        model: str,
+        timeout: float = 120.0,
+        client: httpx.AsyncClient | None = None,
+    ) -> None:
+        self.name = f"ollama:{model}"
+        self._model = model
+        self._client = client or httpx.AsyncClient(base_url=base_url, timeout=timeout)
+
+    async def complete(self, system: str, user: str) -> str:
+        response = await self._client.post(
+            "/api/chat",
+            json={
+                "model": self._model,
+                "stream": False,
+                "format": "json",
+                "options": {"temperature": 0},
+                "messages": [
+                    {"role": "system", "content": system},
+                    {"role": "user", "content": user},
+                ],
+            },
+        )
+        response.raise_for_status()
+        return str(response.json()["message"]["content"])
+
+
 def get_chat_model() -> ChatModel:
-    """Nhà cung cấp thật sẽ chọn theo cấu hình khi Q5 chốt; hiện chỉ có bản giả."""
+    """Chọn theo CHAT_BACKEND: fake (mặc định) hoặc ollama."""
+    settings = get_settings()
+    if settings.chat_backend == "ollama":
+        return OllamaChatModel(
+            settings.ollama_base_url, settings.ollama_chat_model, settings.ollama_timeout_seconds
+        )
+    if settings.chat_backend != "fake":
+        raise ValueError(f"CHAT_BACKEND không hợp lệ: {settings.chat_backend}")
     return FakeChatModel()

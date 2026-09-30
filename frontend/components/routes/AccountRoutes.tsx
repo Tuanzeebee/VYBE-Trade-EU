@@ -22,7 +22,8 @@ const WORKSPACE_TABS: WorkspaceTabId[] = ['verification', 'profile', 'overview',
 
 function useGoHome() {
   const router = useRouter();
-  return (user: DemoUser) => router.push(hrefFor(getUserPage(user), { user }));
+  // Buyer về bảng điều khiển của khung buyer, không về danh bạ công khai.
+  return (user: DemoUser) => router.push(user.role === 'buyer' ? '/buyer' : hrefFor(getUserPage(user), { user }));
 }
 
 function useLogout() {

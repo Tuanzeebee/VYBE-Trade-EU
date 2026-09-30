@@ -5,7 +5,7 @@ import { useLanguage } from '../context/LanguageContext.tsx';
 import LanguageSelect from './LanguageSelect.tsx';
 import { ROLE_LABELS, type DemoUser, getUserPage } from '../lib/demoAuth.ts';
 import NotificationBell from './NotificationBell';
-import { Link } from '../i18n/navigation';
+import { Link, useRouter } from '../i18n/navigation';
 
 export interface HeaderProps {
   currentPage: string;
@@ -27,6 +27,7 @@ export default function Header({
   onOpenNavModal
 }: HeaderProps) {
   const { tr, t } = useLanguage();
+  const router = useRouter();
   const [headerProfileOpen, setHeaderProfileOpen] = useState(false);
 
   const navLinks = [
@@ -133,12 +134,13 @@ export default function Header({
                     </div>
                     <button 
                       onClick={() => { 
-                        onNavigate(getUserPage(user)); 
+                        if (user.role === 'buyer') router.push('/buyer');
+                        else onNavigate(getUserPage(user));
                         setHeaderProfileOpen(false); 
                       }} 
                       className="w-full px-4 py-3 text-left font-semibold text-teal-900 hover:bg-teal-50 cursor-pointer"
                     >
-                      {tr(user.role === 'seller' ? 'Workspace Seller' : user.role === 'admin' ? 'Quản trị hệ thống' : 'Tìm nhà cung cấp')}
+                      {tr(user.role === 'seller' ? 'Workspace Seller' : user.role === 'admin' ? 'Quản trị hệ thống' : 'Bảng điều khiển')}
                     </button>
                     {user.role === 'seller' && (
                       <button 
@@ -153,11 +155,11 @@ export default function Header({
                     )}
                     {user.role === 'buyer' && (
                       <Link
-                        href="/buyer"
+                        href="/suppliers"
                         onClick={() => setHeaderProfileOpen(false)}
                         className="block w-full px-4 py-3 text-left text-slate-600 hover:bg-slate-50"
                       >
-                        {tr("Bảng điều khiển")}
+                        {tr("Tìm nhà cung cấp")}
                       </Link>
                     )}
                     <Link

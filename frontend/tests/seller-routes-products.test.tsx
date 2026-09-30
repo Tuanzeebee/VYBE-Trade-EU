@@ -1,14 +1,14 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { NextIntlClientProvider } from 'next-intl';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { OnboardingRoute, SellerProfileRoute } from '@/components/routes/AccountRoutes';
+import { SellerProfileRoute } from '@/components/routes/AccountRoutes';
 import { LanguageProvider } from '@/context/LanguageContext';
 
 vi.mock('next/navigation', async (importOriginal) => ({
   ...(await importOriginal<typeof import('next/navigation')>()),
   usePathname: () => window.location.pathname,
   useRouter: () => ({ push: vi.fn(), replace: vi.fn(), prefetch: vi.fn(), back: vi.fn(), forward: vi.fn(), refresh: vi.fn() }),
-  useSearchParams: () => new URLSearchParams(),
+  useSearchParams: () => new URLSearchParams(window.location.search),
 }));
 
 const json = (status: number, body: unknown) =>
@@ -123,9 +123,10 @@ describe('route hồ sơ exporter dùng sản phẩm trên server (B5)', () => {
     expect(screen.queryByText(/Robusta/)).not.toBeInTheDocument();
   });
 
-  it('hoàn tất onboarding: lưu công ty trước rồi đồng bộ sản phẩm (PATCH sản phẩm đã có)', async () => {
+  it('cập nhật hồ sơ: lưu công ty trước rồi đồng bộ sản phẩm (PATCH sản phẩm đã có)', async () => {
+    localStorage.setItem('vybe_profiles_v2', JSON.stringify({ 'u-1': { onboardingCompleted: true, onboardingVersion: 2 } }));
     serve({ products: [product('p1', 'Gạo thơm Jasmine')] });
-    renderRoute(<OnboardingRoute />, '/exporter/onboarding');
+    renderRoute(<SellerProfileRoute />, '/exporter/profile?step=1');
     await finishFromStepOne();
     await waitFor(() => expect(calls).toContain('PATCH /api/exporter/products/p1'));
     const iCompany = calls.indexOf('PATCH /api/me/company');
@@ -137,8 +138,9 @@ describe('route hồ sơ exporter dùng sản phẩm trên server (B5)', () => {
   });
 
   it('sản phẩm bị xóa khỏi form thì bị xóa trên server', async () => {
+    localStorage.setItem('vybe_profiles_v2', JSON.stringify({ 'u-1': { onboardingCompleted: true, onboardingVersion: 2 } }));
     serve({ products: [product('p1', 'Gạo thơm Jasmine'), product('p2', 'Cà phê')] });
-    renderRoute(<OnboardingRoute />, '/exporter/onboarding');
+    renderRoute(<SellerProfileRoute />, '/exporter/profile?step=1');
     await screen.findByDisplayValue('Công ty B');
     fireEvent.submit(screen.getByRole('button', { name: /^Tiếp tục$/ }).closest('form') as HTMLFormElement);
     fireEvent.click((await screen.findAllByRole('button', { name: /Xóa sản phẩm/ }))[1]);
@@ -149,14 +151,14 @@ describe('route hồ sơ exporter dùng sản phẩm trên server (B5)', () => {
     expect(calls).toContain('PATCH /api/exporter/products/p1');
   });
 
-  it('server từ chối sản phẩm (422): báo lỗi có tên sản phẩm ngay ở bước 2, không sang bước sau, không đánh dấu hoàn tất', async () => {
+  it('server từ chối sản phẩm (422): báo lỗi có tên sản phẩm ngay ở bước 2, không sang bước sau', async () => {
+    localStorage.setItem('vybe_profiles_v2', JSON.stringify({ 'u-1': { onboardingCompleted: true, onboardingVersion: 2 } }));
     serve({ products: [product('p1', 'Gạo thơm Jasmine')], failProduct: 422 });
-    renderRoute(<OnboardingRoute />, '/exporter/onboarding');
+    renderRoute(<SellerProfileRoute />, '/exporter/profile?step=1');
     await screen.findByDisplayValue('Công ty B');
     fireEvent.submit(screen.getByRole('button', { name: /^Tiếp tục$/ }).closest('form') as HTMLFormElement);
     fireEvent.click(await screen.findByRole('button', { name: /Tiếp tục \(Tải lên giấy phép\)/ }));
     expect(await screen.findByRole('alert')).toHaveTextContent('Sản phẩm "Gạo thơm Jasmine" chưa hợp lệ');
     expect(screen.queryByRole('button', { name: /Tiếp tục \(Xem lại hồ sơ\)/ })).not.toBeInTheDocument();
-    expect(localStorage.getItem('vybe_profiles_v2') ?? '').not.toContain('onboardingCompleted');
   });
 });

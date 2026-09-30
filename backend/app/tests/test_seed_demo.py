@@ -8,8 +8,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.modules.catalog.service import upsert_hs_codes
 from app.modules.companies.tests.helpers import login_as
 from scripts.seed_demo import (
+    BUSINESS_TYPES,
     DEMO_DOMAIN,
     DEMO_PREFIX,
+    INDUSTRIES,
     assert_allowed,
     demo_companies,
     purge,
@@ -35,6 +37,36 @@ def test_demo_data_is_deterministic_and_labelled() -> None:
     assert all(c.email.endswith(f"@{DEMO_DOMAIN}") for c in first)
     assert all("DEMO" in c.description_vi and "DEMO" in c.description_en for c in first)
     assert {c.level.value for c in first} == {"basic", "evfta_verified"}
+
+
+def test_demo_data_covers_every_business_type_and_industry() -> None:
+    rows = demo_companies(60)
+    assert {c.business_type for c in rows} == {"manufacturer", "trader", "both"}
+    assert {c.industry for c in rows} == set(INDUSTRIES)
+    # Mọi tổ hợp loại hình × ngành đều xuất hiện, để lọc kết hợp luôn có kết quả.
+    assert {(c.business_type, c.industry) for c in rows} == {
+        (b, i) for b in BUSINESS_TYPES for i in INDUSTRIES
+    }
+    assert len({c.markets for c in rows}) > 1
+    assert len({c.languages for c in rows}) > 1
+
+
+async def test_seed_products_match_the_industry_of_their_company(
+    api_client: AsyncClient, db_session: AsyncSession
+) -> None:
+    await seed(db_session, 60)
+    mismatched = await one(
+        db_session,
+        """SELECT count(*) FROM products p
+           JOIN companies c ON c.id = p.company_id
+           JOIN hs_codes h ON h.code = p.hs_code
+           WHERE c.industry_sector NOT IN ('handicrafts')
+             AND h.category IS DISTINCT FROM c.industry_sector""",
+    )
+    assert mismatched == 0
+    assert await one(db_session, "SELECT count(DISTINCT business_type) FROM companies") == 3
+    body = (await api_client.get("/api/public/suppliers", params={"category": "seafood"})).json()
+    assert body["total"] >= 5
 
 
 async def test_seed_creates_verified_public_companies_with_products(
@@ -121,3 +153,35 @@ def test_local_dev_and_flagged_staging_are_allowed() -> None:
     assert_allowed("localhost", "evfta", False)
     assert_allowed("127.0.0.1", "evfta_test", False)
     assert_allowed("staging-db.eu", "evfta_staging", True)
+
+
+async def test_seed_pending_fills_the_admin_queue_and_stays_out_of_the_directory(
+    api_client: AsyncClient, db_session: AsyncSession
+) -> None:
+    assert await seed(db_session, 4, pending=True) == 4
+    assert await seed(db_session, 4, pending=True) == 0  # chạy lại không trùng
+    assert await seed(db_session, 6, pending=True) == 2
+    assert (
+        await one(
+            db_session,
+            "SELECT count(*) FROM companies c JOIN verification_requests r ON r.company_id = c.id"
+            " WHERE c.verification_status = 'pending' AND r.status = 'pending'"
+            " AND c.tax_id IS NOT NULL AND c.verified_at IS NULL",
+        )
+        == 6
+    )
+    assert (
+        await one(db_session, "SELECT count(DISTINCT submitted_at) FROM verification_requests") == 6
+    )
+    body = (await api_client.get("/api/public/suppliers")).json()
+    assert body["total"] == 0  # chưa duyệt thì không lộ ra danh bạ công khai
+
+
+async def test_pending_and_verified_demo_coexist_and_purge_clears_requests(
+    db_session: AsyncSession,
+) -> None:
+    await seed(db_session, 5)
+    await seed(db_session, 3, pending=True)
+    assert await one(db_session, "SELECT count(*) FROM companies") == 8
+    assert await purge(db_session) == 8
+    assert await one(db_session, "SELECT count(*) FROM verification_requests") == 0

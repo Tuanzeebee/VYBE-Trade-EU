@@ -116,7 +116,7 @@ export default function RfqInbox({ role }: { role: 'buyer' | 'exporter' }) {
                     </div>
                   </dl>
                   {r.message && <p className="whitespace-pre-line rounded-xl bg-slate-50 p-3">{r.message}</p>}
-                  <Link href={`/conversations?rfq=${r.id}`} className="inline-block text-sm font-semibold text-teal-800 underline">
+                  <Link href={`${role === 'buyer' ? '/buyer/messages' : '/exporter/messages'}?rfq=${r.id}`} className="inline-block text-sm font-semibold text-teal-800 underline">
                     {tr('Mở hội thoại')}
                   </Link>
                   {role === 'exporter' && NEXT_STATUSES[r.status].length > 0 && (

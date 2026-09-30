@@ -2,6 +2,8 @@
 // DemoUser để component cũ không phải sửa. Hồ sơ onboarding (tên, doanh nghiệp, profile) vẫn lưu
 // trên trình duyệt theo id user thật cho tới khi có bảng companies (B1).
 import { createApiClient } from './api/client';
+import { getMyCompany } from './companyApi';
+import { getMyProducts } from './productsApi';
 
 export type Role = 'buyer' | 'seller' | 'admin';
 export type DemoUser = {
@@ -92,6 +94,28 @@ function errorMessage(status: number): string {
   return MESSAGES.invalidInput;
 }
 
+/**
+ * Cờ "đã onboarding" nằm ở trình duyệt nên mất khi đổi máy hoặc xóa cache. Nguồn sự thật là hồ sơ
+ * công ty (và sản phẩm với exporter) trên server: đủ rồi thì không đưa lại vào wizard.
+ */
+async function syncOnboardingFromServer(apiUser: ApiUser): Promise<void> {
+  if (apiUser.role === 'admin') return;
+  const local = readProfiles()[apiUser.id];
+  if (local?.onboardingCompleted && local.onboardingVersion === 2) return;
+  const company = await getMyCompany();
+  if (!company) return;
+  // Exporter mới lưu công ty ở bước 1 của wizard (nháp): phải có thêm sản phẩm mới coi là đã onboarding.
+  if (apiUser.role === 'exporter') {
+    const products = await getMyProducts();
+    if (!products?.length) return;
+  }
+  writeProfile(apiUser.id, {
+    onboardingCompleted: true,
+    onboardingVersion: 2,
+    company: local?.company || company.legal_name,
+  });
+}
+
 /** Hỏi server phiên hiện tại. Hết hạn hoặc không kết nối được → coi như chưa đăng nhập. */
 export async function refreshSession(): Promise<DemoUser | null> {
   try {
@@ -101,6 +125,7 @@ export async function refreshSession(): Promise<DemoUser | null> {
       return null;
     }
     cacheSession(data as ApiUser);
+    await syncOnboardingFromServer(data as ApiUser);
     return merge(data as ApiUser);
   } catch {
     return null;
