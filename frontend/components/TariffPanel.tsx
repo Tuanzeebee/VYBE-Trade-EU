@@ -41,7 +41,7 @@ export default function TariffPanel({ hsCode, variant = 'summary' }: TariffPanel
   }
   if (state.kind === 'error') {
     return (
-      <div role="alert" className={`${box} border-rose-200 bg-rose-50 text-rose-800`}>
+      <div role="status" className={`${box} border-rose-200 bg-rose-50 text-rose-800`}>
         <p>{tr('Không tải được thông tin thuế.')}</p>
         <button type="button" onClick={retry} className="font-semibold underline cursor-pointer">
           {tr('Thử lại')}

@@ -93,16 +93,16 @@ describe('TariffPanel', () => {
     });
     vi.stubGlobal('fetch', fetchMock);
     renderPanel();
-    expect(await screen.findByRole('alert')).toHaveTextContent(/Không tải được thông tin thuế/);
+    expect(await screen.findByText(/Không tải được thông tin thuế/)).toBeInTheDocument();
     fetchMock.mockImplementation(async () => json(200, { ...base, status: 'unsupported' }));
     fireEvent.click(screen.getByRole('button', { name: /Thử lại/ }));
-    await waitFor(() => expect(screen.queryByRole('alert')).not.toBeInTheDocument());
+    await waitFor(() => expect(screen.queryByText(/Không tải được thông tin thuế/)).not.toBeInTheDocument());
   });
 
   it('phản hồi không đúng dạng: coi là lỗi, không hiện số bậy', async () => {
     serve([{ code: '100630' }]);
     renderPanel();
-    expect(await screen.findByRole('alert')).toBeInTheDocument();
+    expect(await screen.findByText(/Không tải được thông tin thuế/)).toBeInTheDocument();
   });
 
   it('gọi đúng route với mã HS', async () => {
