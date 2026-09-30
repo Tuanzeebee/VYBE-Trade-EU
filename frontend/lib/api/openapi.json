@@ -2006,6 +2006,59 @@
         }
       }
     },
+    "/api/public/tariff/options": {
+      "get": {
+        "tags": [
+          "compliance"
+        ],
+        "summary": "Tariff Options",
+        "operationId": "tariff_options_api_public_tariff_options_get",
+        "parameters": [
+          {
+            "name": "hs_code",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 32,
+              "title": "Hs Code"
+            }
+          },
+          {
+            "name": "destination",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z]{2}$",
+              "title": "Destination"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TariffOptionsOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/exporter/tariff-preview": {
       "get": {
         "tags": [
@@ -3303,6 +3356,310 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/DocumentOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/trade-agreements": {
+      "get": {
+        "tags": [
+          "compliance"
+        ],
+        "summary": "List Trade Agreements",
+        "operationId": "list_trade_agreements_api_admin_trade_agreements_get",
+        "parameters": [
+          {
+            "name": "reviewed",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Reviewed"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TradeAgreementOut"
+                  },
+                  "title": "Response List Trade Agreements Api Admin Trade Agreements Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "compliance"
+        ],
+        "summary": "Create Trade Agreement",
+        "operationId": "create_trade_agreement_api_admin_trade_agreements_post",
+        "parameters": [
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TradeAgreementIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TradeAgreementOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/trade-agreements/{agreement_id}": {
+      "patch": {
+        "tags": [
+          "compliance"
+        ],
+        "summary": "Update Trade Agreement",
+        "operationId": "update_trade_agreement_api_admin_trade_agreements__agreement_id__patch",
+        "parameters": [
+          {
+            "name": "agreement_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Agreement Id"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TradeAgreementPatch"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TradeAgreementOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "compliance"
+        ],
+        "summary": "Delete Trade Agreement",
+        "operationId": "delete_trade_agreement_api_admin_trade_agreements__agreement_id__delete",
+        "parameters": [
+          {
+            "name": "agreement_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Agreement Id"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/trade-agreements/{agreement_id}/review": {
+      "post": {
+        "tags": [
+          "compliance"
+        ],
+        "summary": "Review Trade Agreement",
+        "operationId": "review_trade_agreement_api_admin_trade_agreements__agreement_id__review_post",
+        "parameters": [
+          {
+            "name": "agreement_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Agreement Id"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TradeAgreementOut"
                 }
               }
             }
@@ -7782,6 +8139,29 @@
         "type": "object",
         "title": "AdminProductPatch",
         "description": "Kiểm duyệt: sửa chữ, ẩn/hiện. Không đổi mã HS, giá hay MOQ của exporter."
+      },
+      "AgreementOut": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "name_vi": {
+            "type": "string",
+            "title": "Name Vi"
+          },
+          "name_en": {
+            "type": "string",
+            "title": "Name En"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "name_vi",
+          "name_en"
+        ],
+        "title": "AgreementOut"
       },
       "AiQueryOut": {
         "properties": {
@@ -16120,6 +16500,18 @@
               }
             ],
             "title": "Shipments Per Year"
+          },
+          "agreement": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Z0-9_]{2,16}$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Agreement"
           }
         },
         "type": "object",
@@ -16129,7 +16521,7 @@
           "product_value"
         ],
         "title": "TariffIn",
-        "description": "Số tiền nhận dạng CHUỖI JSON (không nhận số) để không bao giờ đi qua float."
+        "description": "Số tiền nhận dạng CHUỖI JSON (không nhận số) để không bao giờ đi qua float.\n\nU12: `destination` là mọi nước ISO-2; `agreement` bỏ trống thì nước EU dùng EVFTA, nước khác\ndùng hiệp định duy nhất có dữ liệu đã duyệt (nhiều hơn một → phải chọn)."
       },
       "TariffLineIn": {
         "properties": {
@@ -16140,6 +16532,11 @@
           "destination": {
             "type": "string",
             "title": "Destination"
+          },
+          "agreement_code": {
+            "type": "string",
+            "title": "Agreement Code",
+            "default": "EVFTA"
           },
           "duty_type": {
             "$ref": "#/components/schemas/DutyType"
@@ -16317,6 +16714,10 @@
             "type": "string",
             "title": "Destination"
           },
+          "agreement_code": {
+            "type": "string",
+            "title": "Agreement Code"
+          },
           "duty_type": {
             "$ref": "#/components/schemas/DutyType"
           },
@@ -16484,6 +16885,7 @@
           "id",
           "hs_code",
           "destination",
+          "agreement_code",
           "duty_type",
           "mfn_rate",
           "mfn_specific",
@@ -16526,6 +16928,17 @@
               }
             ],
             "title": "Destination"
+          },
+          "agreement_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Agreement Code"
           },
           "duty_type": {
             "anyOf": [
@@ -16703,6 +17116,33 @@
         "title": "TariffLinePatch",
         "description": "Mọi trường tùy chọn; chỉ trường được gửi mới đổi (kể cả gửi null để xóa)."
       },
+      "TariffOptionsOut": {
+        "properties": {
+          "hs_code": {
+            "type": "string",
+            "title": "Hs Code"
+          },
+          "destination": {
+            "type": "string",
+            "title": "Destination"
+          },
+          "agreements": {
+            "items": {
+              "$ref": "#/components/schemas/AgreementOut"
+            },
+            "type": "array",
+            "title": "Agreements"
+          }
+        },
+        "type": "object",
+        "required": [
+          "hs_code",
+          "destination",
+          "agreements"
+        ],
+        "title": "TariffOptionsOut",
+        "description": "Lựa chọn cho form tính thuế: hiệp định có dữ liệu cho (mã HS, thị trường)."
+      },
       "TariffOut": {
         "properties": {
           "check_id": {
@@ -16850,6 +17290,40 @@
               }
             ],
             "title": "Condition Note En"
+          },
+          "agreement": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AgreementOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "preferential_rate": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Preferential Rate"
+          },
+          "preferential_duty": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Preferential Duty"
           }
         },
         "type": "object",
@@ -17012,6 +17486,260 @@
         ],
         "title": "TariffPreviewOut",
         "description": "Xem thuế tại sản phẩm (chỉ đọc). `unsupported` và `needs_review` không có con số nào."
+      },
+      "TradeAgreementIn": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "name_vi": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Name Vi"
+          },
+          "name_en": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Name En"
+          },
+          "partners": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "maxItems": 40,
+            "title": "Partners"
+          },
+          "in_force_from": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "In Force From"
+          },
+          "source_url": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 1024
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Url"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 4000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "name_vi",
+          "name_en"
+        ],
+        "title": "TradeAgreementIn"
+      },
+      "TradeAgreementOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "name_vi": {
+            "type": "string",
+            "title": "Name Vi"
+          },
+          "name_en": {
+            "type": "string",
+            "title": "Name En"
+          },
+          "partners": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Partners"
+          },
+          "in_force_from": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "In Force From"
+          },
+          "source_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Url"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "reviewed_by": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reviewed By"
+          },
+          "reviewed_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reviewed At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "code",
+          "name_vi",
+          "name_en",
+          "partners",
+          "in_force_from",
+          "source_url",
+          "note",
+          "reviewed_by",
+          "reviewed_at"
+        ],
+        "title": "TradeAgreementOut"
+      },
+      "TradeAgreementPatch": {
+        "properties": {
+          "name_vi": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name Vi"
+          },
+          "name_en": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name En"
+          },
+          "partners": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array",
+                "maxItems": 40
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Partners"
+          },
+          "in_force_from": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "In Force From"
+          },
+          "source_url": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 1024
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Url"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 4000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "type": "object",
+        "title": "TradeAgreementPatch"
       },
       "UnreadCountOut": {
         "properties": {

@@ -434,6 +434,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/public/tariff/options": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Tariff Options */
+        get: operations["tariff_options_api_public_tariff_options_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/exporter/tariff-preview": {
         parameters: {
             query?: never;
@@ -738,6 +755,59 @@ export interface paths {
         get: operations["get_document_api_exporter_documents__document_id__get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/trade-agreements": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Trade Agreements */
+        get: operations["list_trade_agreements_api_admin_trade_agreements_get"];
+        put?: never;
+        /** Create Trade Agreement */
+        post: operations["create_trade_agreement_api_admin_trade_agreements_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/trade-agreements/{agreement_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete Trade Agreement */
+        delete: operations["delete_trade_agreement_api_admin_trade_agreements__agreement_id__delete"];
+        options?: never;
+        head?: never;
+        /** Update Trade Agreement */
+        patch: operations["update_trade_agreement_api_admin_trade_agreements__agreement_id__patch"];
+        trace?: never;
+    };
+    "/api/admin/trade-agreements/{agreement_id}/review": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Review Trade Agreement */
+        post: operations["review_trade_agreement_api_admin_trade_agreements__agreement_id__review_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1822,6 +1892,15 @@ export interface components {
             is_active?: boolean | null;
             /** Approval Status */
             approval_status?: ("approved" | "hidden") | null;
+        };
+        /** AgreementOut */
+        AgreementOut: {
+            /** Code */
+            code: string;
+            /** Name Vi */
+            name_vi: string;
+            /** Name En */
+            name_en: string;
         };
         /** AiQueryOut */
         AiQueryOut: {
@@ -4202,6 +4281,9 @@ export interface components {
         /**
          * TariffIn
          * @description Số tiền nhận dạng CHUỖI JSON (không nhận số) để không bao giờ đi qua float.
+         *
+         *     U12: `destination` là mọi nước ISO-2; `agreement` bỏ trống thì nước EU dùng EVFTA, nước khác
+         *     dùng hiệp định duy nhất có dữ liệu đã duyệt (nhiều hơn một → phải chọn).
          */
         TariffIn: {
             /** Hs Code */
@@ -4212,6 +4294,8 @@ export interface components {
             product_value: number | string;
             /** Shipments Per Year */
             shipments_per_year?: number | null;
+            /** Agreement */
+            agreement?: string | null;
         };
         /** TariffLineIn */
         TariffLineIn: {
@@ -4219,6 +4303,11 @@ export interface components {
             hs_code: string;
             /** Destination */
             destination: string;
+            /**
+             * Agreement Code
+             * @default EVFTA
+             */
+            agreement_code?: string;
             duty_type: components["schemas"]["DutyType"];
             /** Mfn Rate */
             mfn_rate?: number | string | null;
@@ -4264,6 +4353,8 @@ export interface components {
             hs_code: string;
             /** Destination */
             destination: string;
+            /** Agreement Code */
+            agreement_code: string;
             duty_type: components["schemas"]["DutyType"];
             /** Mfn Rate */
             mfn_rate: string | null;
@@ -4308,6 +4399,8 @@ export interface components {
             hs_code?: string | null;
             /** Destination */
             destination?: string | null;
+            /** Agreement Code */
+            agreement_code?: string | null;
             duty_type?: components["schemas"]["DutyType"] | null;
             /** Mfn Rate */
             mfn_rate?: number | string | null;
@@ -4335,6 +4428,18 @@ export interface components {
             valid_from?: string | null;
             /** Valid Until */
             valid_until?: string | null;
+        };
+        /**
+         * TariffOptionsOut
+         * @description Lựa chọn cho form tính thuế: hiệp định có dữ liệu cho (mã HS, thị trường).
+         */
+        TariffOptionsOut: {
+            /** Hs Code */
+            hs_code: string;
+            /** Destination */
+            destination: string;
+            /** Agreements */
+            agreements: components["schemas"]["AgreementOut"][];
         };
         /** TariffOut */
         TariffOut: {
@@ -4373,6 +4478,11 @@ export interface components {
             quota_note_en: string | null;
             /** Condition Note En */
             condition_note_en: string | null;
+            agreement?: components["schemas"]["AgreementOut"] | null;
+            /** Preferential Rate */
+            preferential_rate?: string | null;
+            /** Preferential Duty */
+            preferential_duty?: string | null;
         };
         /**
          * TariffPreviewOut
@@ -4406,6 +4516,64 @@ export interface components {
             condition_note_en: string | null;
             /** Source Url */
             source_url: string | null;
+        };
+        /** TradeAgreementIn */
+        TradeAgreementIn: {
+            /** Code */
+            code: string;
+            /** Name Vi */
+            name_vi: string;
+            /** Name En */
+            name_en: string;
+            /** Partners */
+            partners?: string[];
+            /** In Force From */
+            in_force_from?: string | null;
+            /** Source Url */
+            source_url?: string | null;
+            /** Note */
+            note?: string | null;
+        };
+        /** TradeAgreementOut */
+        TradeAgreementOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Code */
+            code: string;
+            /** Name Vi */
+            name_vi: string;
+            /** Name En */
+            name_en: string;
+            /** Partners */
+            partners: string[];
+            /** In Force From */
+            in_force_from: string | null;
+            /** Source Url */
+            source_url: string | null;
+            /** Note */
+            note: string | null;
+            /** Reviewed By */
+            reviewed_by: string | null;
+            /** Reviewed At */
+            reviewed_at: string | null;
+        };
+        /** TradeAgreementPatch */
+        TradeAgreementPatch: {
+            /** Name Vi */
+            name_vi?: string | null;
+            /** Name En */
+            name_en?: string | null;
+            /** Partners */
+            partners?: string[] | null;
+            /** In Force From */
+            in_force_from?: string | null;
+            /** Source Url */
+            source_url?: string | null;
+            /** Note */
+            note?: string | null;
         };
         /** UnreadCountOut */
         UnreadCountOut: {
@@ -5628,6 +5796,38 @@ export interface operations {
             };
         };
     };
+    tariff_options_api_public_tariff_options_get: {
+        parameters: {
+            query: {
+                hs_code: string;
+                destination: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TariffOptionsOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     tariff_preview_api_exporter_tariff_preview_get: {
         parameters: {
             query: {
@@ -6355,6 +6555,175 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["DocumentOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_trade_agreements_api_admin_trade_agreements_get: {
+        parameters: {
+            query?: {
+                reviewed?: boolean | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TradeAgreementOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_trade_agreement_api_admin_trade_agreements_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TradeAgreementIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TradeAgreementOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_trade_agreement_api_admin_trade_agreements__agreement_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                agreement_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_trade_agreement_api_admin_trade_agreements__agreement_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                agreement_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TradeAgreementPatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TradeAgreementOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    review_trade_agreement_api_admin_trade_agreements__agreement_id__review_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                agreement_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TradeAgreementOut"];
                 };
             };
             /** @description Validation Error */

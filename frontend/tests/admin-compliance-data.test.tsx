@@ -156,6 +156,7 @@ describe('Dữ liệu tuân thủ (admin)', () => {
       'VAT theo nước',
       'Loại bằng chứng',
       'Luật bằng chứng theo nhóm hàng',
+      'Hiệp định thương mại',
     ]);
   });
 

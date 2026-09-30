@@ -17,6 +17,7 @@ from app.modules.auth.schemas import CurrentUser
 from app.modules.catalog import service as catalog
 from app.modules.companies import service as companies
 from app.modules.compliance.calculators import (
+    EU_MEMBERS,
     CountryTerms,
     Material,
     RooResult,
@@ -32,41 +33,57 @@ from app.modules.compliance.models import (
     ImportCountryTerm,
     ProductSpecificRule,
     TariffLine,
+    TradeAgreement,
 )
 from app.modules.compliance.schemas import (
+    AgreementOut,
     MarketRowOut,
     MarketsIn,
     MarketsOut,
     RooIn,
     RooOut,
     TariffIn,
+    TariffOptionsOut,
     TariffOut,
     TariffPreviewOut,
 )
 
 # EU là liên minh thuế quan: biểu thuế chung lưu ở destination 'EU' (một dòng/HS cho 27 nước).
 UNION_DESTINATION = "EU"
+DEFAULT_AGREEMENT = "EVFTA"
 HEADING_LENGTH = 6  # mã HS 6 số — cấp danh mục và dòng thuế
 # Cơ sở tính chỉ để lấy thuế suất (%); không hiển thị tiền nào ở màn xem thuế.
 _RATE_BASIS = Decimal(100)
 
 
-def _reviewed_lines(hs_code: str, destination: str, on_date: dt.date) -> Select[TariffLine]:
+def destination_key(country: str) -> str:
+    """Nước thành viên EU dùng biểu thuế chung 'EU'; nước khác dùng chính mã ISO-2."""
+    return UNION_DESTINATION if country in EU_MEMBERS else country
+
+
+def _reviewed_lines(
+    hs_code: str, destination: str, on_date: dt.date, agreement: str = DEFAULT_AGREEMENT
+) -> Select[TariffLine]:
     """Dòng thuế ĐÃ DUYỆT và đang hiệu lực vào `on_date` (valid_until là ngày đã hết hiệu lực)."""
     return select(TariffLine).where(
         TariffLine.reviewed_by.is_not(None),
         TariffLine.hs_code == hs_code,
         TariffLine.destination == destination,
+        TariffLine.agreement_code == agreement,
         TariffLine.valid_from <= on_date,
         or_(TariffLine.valid_until.is_(None), TariffLine.valid_until > on_date),
     )
 
 
 async def find_lines(
-    session: AsyncSession, hs_code: str, destination: str, on_date: dt.date
+    session: AsyncSession,
+    hs_code: str,
+    destination: str,
+    on_date: dt.date,
+    agreement: str = DEFAULT_AGREEMENT,
 ) -> list[TariffLine]:
-    """Dòng đã duyệt khớp mã HS + nước đến vào ngày `on_date` (C2 đếm để phát hiện mơ hồ)."""
-    result = await session.scalars(_reviewed_lines(hs_code, destination, on_date))
+    """Dòng đã duyệt khớp mã HS + nước đến + hiệp định vào `on_date` (đếm để phát hiện mơ hồ)."""
+    result = await session.scalars(_reviewed_lines(hs_code, destination, on_date, agreement))
     return list(result)
 
 
@@ -116,15 +133,64 @@ async def _supported_keys(session: AsyncSession, code: str) -> list[str]:
     return keys
 
 
-async def lookup_lines(session: AsyncSession, code: str, on_date: dt.date) -> list[TariffLine]:
+async def lookup_lines(
+    session: AsyncSession,
+    code: str,
+    on_date: dt.date,
+    destination: str = UNION_DESTINATION,
+    agreement: str = DEFAULT_AGREEMENT,
+) -> list[TariffLine]:
     """Dòng thuế đã duyệt cho mã `code`: thử mã 8 số trước, không có thì lùi về nhóm 6 số.
 
     Mã 6 số KHÔNG tự chọn một mã 8 số con (các con có thể khác thuế, vd 081090)."""
     for key in await _supported_keys(session, code):
-        lines = await find_lines(session, key, UNION_DESTINATION, on_date)
+        lines = await find_lines(session, key, destination, on_date, agreement)
         if lines:
             return lines
     return []
+
+
+async def _agreement_out(session: AsyncSession, code: str) -> AgreementOut:
+    row = await session.scalar(select(TradeAgreement).where(TradeAgreement.code == code))
+    if row is None:  # khóa ngoại bảo đảm có; phòng dữ liệu hỏng thì vẫn hiện mã
+        return AgreementOut(code=code, name_vi=code, name_en=code)
+    return AgreementOut(code=row.code, name_vi=row.name_vi, name_en=row.name_en)
+
+
+async def available_agreements(
+    session: AsyncSession, code: str, country: str, on_date: dt.date
+) -> list[AgreementOut]:
+    """Hiệp định có dòng thuế ĐÃ DUYỆT cho (mã HS, thị trường) — nguồn DUY NHẤT để biết hiệp định
+    nào áp dụng (bảng trade_agreements chỉ cho tên hiển thị)."""
+    destination = destination_key(country)
+    codes: list[str] = []
+    for key in await _supported_keys(session, code):
+        found = await session.scalars(
+            select(TariffLine.agreement_code)
+            .where(
+                TariffLine.reviewed_by.is_not(None),
+                TariffLine.hs_code == key,
+                TariffLine.destination == destination,
+                TariffLine.valid_from <= on_date,
+                or_(TariffLine.valid_until.is_(None), TariffLine.valid_until > on_date),
+            )
+            .distinct()
+        )
+        codes.extend(c for c in found if c not in codes)
+    return [await _agreement_out(session, c) for c in sorted(codes)]
+
+
+async def tariff_options(session: AsyncSession, hs_code: str, country: str) -> TariffOptionsOut:
+    code = catalog.normalize_code(hs_code)
+    if code is None:
+        raise AppError("invalid_hs_code", "HS code must be 6 to 8 digits", 422)
+    upper = country.strip().upper()
+    today = dt.datetime.now(dt.UTC).date()
+    return TariffOptionsOut(
+        hs_code=code,
+        destination=upper,
+        agreements=await available_agreements(session, code, upper, today),
+    )
 
 
 async def lookup_rules(
@@ -155,6 +221,7 @@ async def log_check(
     originating_status: str | None = None,
     tariff_line_id: uuid.UUID | None = None,
     rule_id: uuid.UUID | None = None,
+    agreement_code: str | None = None,
 ) -> ComplianceCheck:
     """Nơi DUY NHẤT ghi compliance_checks: đúng một bản ghi cho mỗi lần chạy máy tính, kể cả khách.
 
@@ -175,6 +242,7 @@ async def log_check(
         originating_status=originating_status,
         tariff_line_id=tariff_line_id,
         rule_id=rule_id,
+        agreement_code=agreement_code,
     )
     session.add(row)
     await session.flush()
@@ -251,11 +319,27 @@ def _line_data(line: TariffLine) -> TariffLineData:
 async def calculate_tariff(
     session: AsyncSession, data: TariffIn, user: CurrentUser | None
 ) -> TariffOut:
-    """Máy tính tiết kiệm thuế (C2). Mỗi lần chạy hợp lệ ghi ĐÚNG MỘT compliance_checks."""
+    """Công cụ tính thuế (C2, U12). Mỗi lần chạy hợp lệ ghi ĐÚNG MỘT compliance_checks."""
     code = catalog.normalize_code(data.hs_code)
     if code is None:
         raise AppError("invalid_hs_code", "HS code must be 6 to 8 digits", 422)
-    lines = await lookup_lines(session, code, dt.datetime.now(dt.UTC).date())
+    today = dt.datetime.now(dt.UTC).date()
+    agreement = data.agreement
+    if agreement is None:
+        if data.destination in EU_MEMBERS:
+            agreement = DEFAULT_AGREEMENT
+        else:
+            available = await available_agreements(session, code, data.destination, today)
+            if len(available) > 1:
+                raise AppError(
+                    "agreement_required", "Choose a trade agreement for this market", 422
+                )
+            agreement = available[0].code if available else None
+    lines = (
+        await lookup_lines(session, code, today, destination_key(data.destination), agreement)
+        if agreement
+        else []
+    )
     line = lines[0] if lines else None
     result = tariff_savings(
         None if line is None else _line_data(line),
@@ -276,9 +360,13 @@ async def calculate_tariff(
         evfta_duty_rate=result.evfta_rate,
         savings_amount=result.savings,
         tariff_line_id=line.id if line is not None and len(lines) == 1 else None,
+        agreement_code=agreement if line is not None else None,
     )
     await session.commit()
     return TariffOut(
+        agreement=await _agreement_out(session, agreement) if agreement and line else None,
+        preferential_rate=result.evfta_rate,
+        preferential_duty=result.evfta_duty,
         check_id=str(check.id),
         status=result.status,
         hs_code=code,

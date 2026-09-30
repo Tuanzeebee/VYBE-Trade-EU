@@ -25,17 +25,21 @@ from app.modules.compliance.admin_schemas import (
     RooRulePatch,
     TariffLineIn,
     TariffLinePatch,
+    TradeAgreementIn,
+    TradeAgreementPatch,
 )
 from app.modules.compliance.models import (
     ImportCountryTerm,
     ProductSpecificRule,
     RuleType,
     TariffLine,
+    TradeAgreement,
 )
 
 TARIFF_ENTITY = "tariff_line"
 TERM_ENTITY = "country_term"
 RULE_ENTITY = "roo_rule"
+AGREEMENT_ENTITY = "trade_agreement"
 _WITH_THRESHOLD = (RuleType.MaxNOM, RuleType.CTH_OR_MaxNOM)
 
 
@@ -47,7 +51,7 @@ def _jsonable(value: Any) -> Any:
     return value
 
 
-def _snapshot[Row: (TariffLine, ProductSpecificRule, ImportCountryTerm)](
+def _snapshot[Row: (TariffLine, ProductSpecificRule, ImportCountryTerm, TradeAgreement)](
     row: Row,
 ) -> dict[str, Any]:
     # updated_at do DB tự đặt khi UPDATE nên chưa nạp sau flush — không cần trong audit.
@@ -75,7 +79,7 @@ def _check_threshold(rule_type: RuleType, threshold: Decimal | None) -> None:
         raise AppError("invalid_threshold", "threshold_pct must be empty for this rule_type", 422)
 
 
-async def _get[Row: (TariffLine, ProductSpecificRule, ImportCountryTerm)](
+async def _get[Row: (TariffLine, ProductSpecificRule, ImportCountryTerm, TradeAgreement)](
     session: AsyncSession, model: type[Row], row_id: uuid.UUID
 ) -> Row:
     row = await session.get(model, row_id)
@@ -84,7 +88,7 @@ async def _get[Row: (TariffLine, ProductSpecificRule, ImportCountryTerm)](
     return row
 
 
-async def _save[Row: (TariffLine, ProductSpecificRule, ImportCountryTerm)](
+async def _save[Row: (TariffLine, ProductSpecificRule, ImportCountryTerm, TradeAgreement)](
     session: AsyncSession, row: Row
 ) -> Row:
     await session.commit()
@@ -92,7 +96,7 @@ async def _save[Row: (TariffLine, ProductSpecificRule, ImportCountryTerm)](
     return row
 
 
-async def _create[Row: (TariffLine, ProductSpecificRule, ImportCountryTerm)](
+async def _create[Row: (TariffLine, ProductSpecificRule, ImportCountryTerm, TradeAgreement)](
     session: AsyncSession, actor: CurrentUser, row: Row, entity: str, commit: bool = True
 ) -> Row:
     session.add(row)
@@ -110,7 +114,7 @@ async def _create[Row: (TariffLine, ProductSpecificRule, ImportCountryTerm)](
     return await _save(session, row) if commit else row
 
 
-async def _update[Row: (TariffLine, ProductSpecificRule, ImportCountryTerm)](
+async def _update[Row: (TariffLine, ProductSpecificRule, ImportCountryTerm, TradeAgreement)](
     session: AsyncSession,
     actor: CurrentUser,
     row: Row,
@@ -137,7 +141,7 @@ async def _update[Row: (TariffLine, ProductSpecificRule, ImportCountryTerm)](
     return await _save(session, row) if commit else row
 
 
-async def _review[Row: (TariffLine, ProductSpecificRule, ImportCountryTerm)](
+async def _review[Row: (TariffLine, ProductSpecificRule, ImportCountryTerm, TradeAgreement)](
     session: AsyncSession, actor: CurrentUser, row: Row, entity: str
 ) -> Row:
     before = _snapshot(row)
@@ -157,7 +161,7 @@ async def _review[Row: (TariffLine, ProductSpecificRule, ImportCountryTerm)](
     return await _save(session, row)
 
 
-async def _delete[Row: (TariffLine, ProductSpecificRule, ImportCountryTerm)](
+async def _delete[Row: (TariffLine, ProductSpecificRule, ImportCountryTerm, TradeAgreement)](
     session: AsyncSession, actor: CurrentUser, row: Row, entity: str
 ) -> None:
     if row.reviewed_by is not None:
@@ -199,10 +203,16 @@ async def list_tariff_lines(
     return list(await session.scalars(query))
 
 
+async def _require_agreement(session: AsyncSession, code: str) -> None:
+    if await session.scalar(select(TradeAgreement.id).where(TradeAgreement.code == code)) is None:
+        raise AppError("unknown_agreement", "Trade agreement code is not in the list", 422)
+
+
 async def create_tariff_line(
     session: AsyncSession, actor: CurrentUser, data: TariffLineIn, commit: bool = True
 ) -> TariffLine:
     await _require_hs(session, data.hs_code)
+    await _require_agreement(session, data.agreement_code)
     _check_window(data.valid_from, data.valid_until)
     return await _create(session, actor, TariffLine(**data.model_dump()), TARIFF_ENTITY, commit)
 
@@ -216,11 +226,13 @@ async def update_tariff_line(
 ) -> TariffLine:
     line = await _get(session, TariffLine, line_id)
     fields = patch.model_fields_set
-    required = {"hs_code", "destination", "duty_type", "valid_from"} & fields
+    required = {"hs_code", "destination", "agreement_code", "duty_type", "valid_from"} & fields
     if any(getattr(patch, name) is None for name in required):
         raise AppError("invalid_patch", "Required fields cannot be null", 422)
     if patch.hs_code is not None:
         await _require_hs(session, patch.hs_code)
+    if patch.agreement_code is not None:
+        await _require_agreement(session, patch.agreement_code)
     _check_window(
         patch.valid_from if "valid_from" in fields and patch.valid_from else line.valid_from,
         patch.valid_until if "valid_until" in fields else line.valid_until,
@@ -372,3 +384,52 @@ async def delete_country_term(
     session: AsyncSession, actor: CurrentUser, term_id: uuid.UUID
 ) -> None:
     await _delete(session, actor, await _get(session, ImportCountryTerm, term_id), TERM_ENTITY)
+
+
+# ── Hiệp định thương mại (U12) ─────────────────────────────────────────────
+async def list_agreements(session: AsyncSession, reviewed: bool | None) -> list[TradeAgreement]:
+    query = select(TradeAgreement)
+    if reviewed is not None:
+        query = query.where(
+            TradeAgreement.reviewed_by.is_not(None)
+            if reviewed
+            else TradeAgreement.reviewed_by.is_(None)
+        )
+    return list(await session.scalars(query.order_by(TradeAgreement.code)))
+
+
+async def create_agreement(
+    session: AsyncSession, actor: CurrentUser, data: TradeAgreementIn
+) -> TradeAgreement:
+    if await session.scalar(select(TradeAgreement.id).where(TradeAgreement.code == data.code)):
+        raise AppError("duplicate_agreement", "This agreement code already exists", 409)
+    return await _create(session, actor, TradeAgreement(**data.model_dump()), AGREEMENT_ENTITY)
+
+
+async def update_agreement(
+    session: AsyncSession, actor: CurrentUser, agreement_id: uuid.UUID, patch: TradeAgreementPatch
+) -> TradeAgreement:
+    row = await _get(session, TradeAgreement, agreement_id)
+    required = {"name_vi", "name_en", "partners"} & patch.model_fields_set
+    if any(getattr(patch, name) is None for name in required):
+        raise AppError("invalid_patch", "Required fields cannot be null", 422)
+    return await _update(session, actor, row, patch, AGREEMENT_ENTITY)
+
+
+async def review_agreement(
+    session: AsyncSession, actor: CurrentUser, agreement_id: uuid.UUID
+) -> TradeAgreement:
+    row = await _get(session, TradeAgreement, agreement_id)
+    return await _review(session, actor, row, AGREEMENT_ENTITY)
+
+
+async def delete_agreement(
+    session: AsyncSession, actor: CurrentUser, agreement_id: uuid.UUID
+) -> None:
+    row = await _get(session, TradeAgreement, agreement_id)
+    used = await session.scalar(
+        select(TariffLine.id).where(TariffLine.agreement_code == row.code).limit(1)
+    )
+    if used is not None:
+        raise AppError("agreement_in_use", "Tariff lines still use this agreement", 409)
+    await _delete(session, actor, row, AGREEMENT_ENTITY)

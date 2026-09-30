@@ -75,14 +75,22 @@ const RANKED = (over: Record<string, unknown> = {}) => ({
   ...over,
 });
 
+const EVFTA = { code: 'EVFTA', name_vi: 'Hiệp định EVFTA (Việt Nam – EU)', name_en: 'EU–Vietnam FTA (EVFTA)' };
+let agreementsFor: (destination: string) => unknown[] = () => [EVFTA];
+
 function serve(tariff: () => Response | Promise<Response>, markets: () => Response | Promise<Response> = () => json(200, RANKED())) {
   tariffBodies = [];
   marketBodies = [];
   vi.stubGlobal(
     'fetch',
     vi.fn(async (req: Request) => {
-      const path = new URL(req.url).pathname;
+      const url = new URL(req.url);
+      const path = url.pathname;
       if (path === '/api/public/hs-codes') return json(200, [COFFEE]);
+      if (path === '/api/public/tariff/options') {
+        const destination = url.searchParams.get('destination') ?? '';
+        return json(200, { hs_code: '090111', destination, agreements: agreementsFor(destination) });
+      }
       if (path === '/api/public/tariff') {
         tariffBodies.push(await req.json());
         return tariff();
@@ -140,7 +148,7 @@ describe('Máy tính tiết kiệm thuế (C2)', () => {
     serve(() => json(200, OK));
     renderCalc();
     await pickCoffee();
-    fireEvent.change(screen.getByLabelText(/Nước EU nhập khẩu/), { target: { value: 'FR' } });
+    fireEvent.change(screen.getByLabelText(/Thị trường nhập khẩu/), { target: { value: 'FR' } });
     fillValue(' 10000.50 ');
     fireEvent.change(screen.getByLabelText(/Số lô hàng mỗi năm/), { target: { value: '4' } });
     submit();
@@ -276,10 +284,51 @@ describe('Máy tính tiết kiệm thuế (C2)', () => {
     expect(await screen.findByText(/chưa được hỗ trợ/)).toBeInTheDocument();
   });
 
-  it('có đủ 27 nước EU để chọn', () => {
+  it('có đủ 27 nước EU để chọn, và nhóm thị trường ngoài EU (U12)', () => {
     serve(() => json(200, OK));
     renderCalc();
-    expect(screen.getByLabelText(/Nước EU nhập khẩu/).querySelectorAll('option')).toHaveLength(27);
+    const select = screen.getByLabelText(/Thị trường nhập khẩu/);
+    const groups = select.querySelectorAll('optgroup');
+    expect(groups[0].getAttribute('label')).toBe('Liên minh châu Âu (EU)');
+    expect(groups[0].querySelectorAll('option')).toHaveLength(27);
+    const others = Array.from(groups[1].querySelectorAll('option')).map((o) => o.getAttribute('value'));
+    expect(others).toContain('JP');
+    expect(others).not.toContain('VN');
+  });
+
+  it('U12: thị trường có nhiều hiệp định phải chọn hiệp định; kết quả ghi tên hiệp định', async () => {
+    agreementsFor = (d) =>
+      d === 'JP'
+        ? [
+            { code: 'CPTPP', name_vi: 'Hiệp định CPTPP', name_en: 'CPTPP' },
+            { code: 'VJEPA', name_vi: 'Hiệp định VJEPA (Việt Nam – Nhật Bản)', name_en: 'Vietnam–Japan EPA (VJEPA)' },
+          ]
+        : [EVFTA];
+    serve(() => json(200, { ...OK, destination: 'JP', agreement: { code: 'VJEPA', name_vi: 'Hiệp định VJEPA (Việt Nam – Nhật Bản)', name_en: 'VJEPA' } }));
+    renderCalc();
+    await pickCoffee();
+    fireEvent.change(screen.getByLabelText(/Thị trường nhập khẩu/), { target: { value: 'JP' } });
+    const agreementSelect = await screen.findByLabelText('Hiệp định áp dụng');
+    fillValue('10000');
+    submit();
+    expect((await screen.findByRole('alert')).textContent).toContain('nhiều hiệp định');
+    expect(tariffBodies).toHaveLength(0);
+    fireEvent.change(agreementSelect, { target: { value: 'VJEPA' } });
+    submit();
+    expect(await screen.findByTestId('preferential-label')).toHaveTextContent('Hiệp định VJEPA');
+    expect(tariffBodies[0]).toMatchObject({ destination: 'JP', agreement: 'VJEPA' });
+    expect(screen.queryByRole('button', { name: 'Xem thị trường nên xuất' })).toBeNull(); // xếp hạng chỉ cho EU
+    agreementsFor = () => [EVFTA];
+  });
+
+  it('U12: thị trường chưa có dữ liệu đã duyệt được báo trước', async () => {
+    agreementsFor = (d) => (d === 'US' ? [] : [EVFTA]);
+    serve(() => json(200, OK));
+    renderCalc();
+    await pickCoffee();
+    fireEvent.change(screen.getByLabelText(/Thị trường nhập khẩu/), { target: { value: 'US' } });
+    expect(await screen.findByTestId('no-agreement')).toHaveTextContent('Chưa có dữ liệu thuế đã được chuyên gia duyệt');
+    agreementsFor = () => [EVFTA];
   });
 
   it('bản tiếng Anh dùng nhãn tiếng Anh', () => {

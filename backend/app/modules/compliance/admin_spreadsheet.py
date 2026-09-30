@@ -17,7 +17,6 @@ from app.core.spreadsheet import (
 from app.modules.auth.schemas import CurrentUser
 from app.modules.compliance import admin_service
 from app.modules.compliance.admin_schemas import (
-    DESTINATIONS,
     RooRuleIn,
     RooRulePatch,
     TariffLineIn,
@@ -31,10 +30,12 @@ TARIFF_COLUMNS = (
     Column("hs_code", required=True, help="Mã HS 6–8 số, phải có trong danh mục HS hỗ trợ."),
     Column(
         "destination",
-        "enum",
-        True,
-        tuple(sorted(DESTINATIONS)),
-        "Nước EU đến (ISO-2) hoặc EU = biểu thuế chung của liên minh thuế quan.",
+        required=True,
+        help="EU = biểu thuế chung của liên minh thuế quan; nước khác ghi mã ISO-2 (vd GB, JP).",
+    ),
+    Column(
+        "agreement_code",
+        help="Mã hiệp định (vd EVFTA, UKVFTA, CPTPP). Bỏ trống = EVFTA.",
     ),
     Column(
         "duty_type",
@@ -46,7 +47,11 @@ TARIFF_COLUMNS = (
     ),
     Column("mfn_rate", "decimal", help="Thuế MFN, % (0–100). Bỏ trống nếu không phải ad_valorem."),
     Column("mfn_specific", help="Thuế tuyệt đối/hỗn hợp dạng văn bản (vd '176 EUR/100 kg')."),
-    Column("evfta_rate_current", "decimal", help="Thuế EVFTA hiện hành, % (0–100)."),
+    Column(
+        "evfta_rate_current",
+        "decimal",
+        help="Thuế ưu đãi hiện hành theo hiệp định ở cột agreement_code, % (0–100).",
+    ),
     Column("staging_category", help="Ký hiệu lộ trình cắt giảm (vd A, B5, TRQ)."),
     Column("zero_from", "date", help="Ngày thuế EVFTA về 0% (YYYY-MM-DD)."),
     Column("quota_required", "bool", help="true nếu áp hạn ngạch thuế quan. Mặc định false."),
@@ -138,6 +143,7 @@ async def import_tariff(
             select(TariffLine).where(
                 TariffLine.hs_code == d.hs_code,
                 TariffLine.destination == d.destination,
+                TariffLine.agreement_code == d.agreement_code,
                 TariffLine.valid_from == d.valid_from,
             )
         )
@@ -154,7 +160,7 @@ async def import_tariff(
         TARIFF_COLUMNS,
         read_workbook(data, TARIFF_COLUMNS),
         schema=TariffLineIn,
-        key=lambda d: (d.hs_code, d.destination, d.valid_from),
+        key=lambda d: (d.hs_code, d.destination, d.agreement_code, d.valid_from),
         find=find,
         create=create,
         update=update,

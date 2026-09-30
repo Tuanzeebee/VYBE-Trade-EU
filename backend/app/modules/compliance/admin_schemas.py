@@ -19,6 +19,8 @@ _RATE = re.compile(r"[0-9]{1,3}(\.[0-9]{1,4})?")
 _THRESHOLD = re.compile(r"[0-9]{1,3}(\.[0-9]{1,2})?")
 HUNDRED = Decimal(100)
 DESTINATIONS = EU_MEMBERS | {"EU"}  # 'EU' = biểu thuế chung của liên minh thuế quan
+_ISO2 = re.compile(r"[A-Z]{2}")
+_AGREEMENT = re.compile(r"[A-Z0-9_]{2,16}")
 
 Text = Annotated[str | None, Field(max_length=4000)]
 Url = Annotated[str | None, Field(max_length=1024)]
@@ -43,15 +45,24 @@ def _hs(value: str) -> str:
 
 
 def _destination(value: str) -> str:
+    """U12: 'EU' (biểu thuế chung) hoặc mọi nước nhập khẩu ISO-2 (trừ VN)."""
     upper = value.strip().upper()
-    if upper not in DESTINATIONS:
-        raise ValueError("destination must be an EU member state or 'EU'")
+    if not _ISO2.fullmatch(upper) or upper == "VN":
+        raise ValueError("destination must be 'EU' or an import country (ISO-2)")
+    return upper
+
+
+def _agreement(value: str) -> str:
+    upper = value.strip().upper()
+    if not _AGREEMENT.fullmatch(upper):
+        raise ValueError("agreement_code must be 2-16 characters A-Z, 0-9 or _")
     return upper
 
 
 class TariffLineIn(BaseModel):
     hs_code: str
     destination: str
+    agreement_code: str = "EVFTA"
     duty_type: DutyType
     mfn_rate: Decimal | None = None
     mfn_specific: Annotated[str | None, Field(max_length=255)] = None
@@ -69,6 +80,7 @@ class TariffLineIn(BaseModel):
 
     _hs_code = field_validator("hs_code")(_hs)
     _dest = field_validator("destination")(_destination)
+    _agree = field_validator("agreement_code")(_agreement)
 
     @field_validator("mfn_rate", "evfta_rate_current", mode="before")
     @classmethod
@@ -81,6 +93,7 @@ class TariffLinePatch(BaseModel):
 
     hs_code: str | None = None
     destination: str | None = None
+    agreement_code: str | None = None
     duty_type: DutyType | None = None
     mfn_rate: Decimal | None = None
     mfn_specific: Annotated[str | None, Field(max_length=255)] = None
@@ -106,6 +119,11 @@ class TariffLinePatch(BaseModel):
     def _dest(cls, value: str | None) -> str | None:
         return None if value is None else _destination(value)
 
+    @field_validator("agreement_code")
+    @classmethod
+    def _agree(cls, value: str | None) -> str | None:
+        return None if value is None else _agreement(value)
+
     @field_validator("mfn_rate", "evfta_rate_current", mode="before")
     @classmethod
     def _rate(cls, value: Any) -> Decimal | None:
@@ -118,6 +136,7 @@ class TariffLineOut(BaseModel):
     id: uuid.UUID
     hs_code: str
     destination: str
+    agreement_code: str
     duty_type: DutyType
     mfn_rate: Decimal | None
     mfn_specific: str | None
@@ -261,5 +280,59 @@ class CountryTermOut(BaseModel):
     source: str | None
     valid_from: dt.date
     valid_until: dt.date | None
+    reviewed_by: uuid.UUID | None
+    reviewed_at: dt.datetime | None
+
+
+# ── Hiệp định thương mại (U12) ───────────────────────────────────────────────
+Partners = Annotated[list[str], Field(max_length=40)]
+
+
+def _partners(values: list[str]) -> list[str]:
+    cleaned = [v.strip().upper() for v in values if v.strip()]
+    for v in cleaned:
+        if not _ISO2.fullmatch(v):
+            raise ValueError("partners must be ISO-2 codes or 'EU'")
+    return list(dict.fromkeys(cleaned))
+
+
+class TradeAgreementIn(BaseModel):
+    code: str
+    name_vi: Annotated[str, Field(min_length=1, max_length=255)]
+    name_en: Annotated[str, Field(min_length=1, max_length=255)]
+    partners: Partners = Field(default_factory=list)
+    in_force_from: dt.date | None = None
+    source_url: Url = None
+    note: Text = None
+
+    _code = field_validator("code")(_agreement)
+    _partner_list = field_validator("partners")(_partners)
+
+
+class TradeAgreementPatch(BaseModel):
+    name_vi: Annotated[str | None, Field(min_length=1, max_length=255)] = None
+    name_en: Annotated[str | None, Field(min_length=1, max_length=255)] = None
+    partners: Partners | None = None
+    in_force_from: dt.date | None = None
+    source_url: Url = None
+    note: Text = None
+
+    @field_validator("partners")
+    @classmethod
+    def _partner_list(cls, value: list[str] | None) -> list[str] | None:
+        return None if value is None else _partners(value)
+
+
+class TradeAgreementOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: uuid.UUID
+    code: str
+    name_vi: str
+    name_en: str
+    partners: list[str]
+    in_force_from: dt.date | None
+    source_url: str | None
+    note: str | None
     reviewed_by: uuid.UUID | None
     reviewed_at: dt.datetime | None

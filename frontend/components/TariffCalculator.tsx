@@ -2,18 +2,29 @@
 
 // Công cụ tính thuế (C2; tên mới từ U11 — tên hiệp định chỉ hiện trong kết quả). Khách dùng không cần đăng nhập.
 // unsupported / needs_review KHÔNG hiện con số nào — con số chỉ đến từ dòng thuế đã duyệt (backend).
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import HsCodePicker, { type HsCodeOption } from './HsCodePicker';
 import { useLanguage } from '../context/LanguageContext';
 import MarketRanking from './MarketRanking';
 import { isRooStatus, rankMarkets, type MarketsResult, type RooStatus } from '../lib/marketsApi';
-import { calculateTariff, EU_COUNTRIES, parseAmount, type TariffOutcome, type TariffResult } from '../lib/tariffApi';
+import {
+  calculateTariff,
+  EU_COUNTRIES,
+  fetchTariffOptions,
+  isEuMember,
+  OTHER_MARKETS,
+  parseAmount,
+  type Agreement,
+  type TariffOutcome,
+  type TariffResult,
+} from '../lib/tariffApi';
 
 const MAX_SHIPMENTS = 10000;
 
 const ERRORS = {
   rate_limited: 'Bạn đã tính quá nhiều lần. Vui lòng thử lại sau một phút.',
   invalid: 'Dữ liệu chưa hợp lệ. Vui lòng kiểm tra lại mã HS, nước nhập khẩu và giá trị lô hàng.',
+  agreement_required: 'Thị trường này có nhiều hiệp định. Vui lòng chọn hiệp định áp dụng.',
   network: 'Không kết nối được máy chủ. Vui lòng thử lại.',
 } as const;
 const MISSING_INPUTS = 'Vui lòng bấm Tính tiết kiệm thuế trước khi xem thị trường nên xuất.';
@@ -31,6 +42,7 @@ function Result({ data }: { data: TariffResult }) {
   // Ghi chú là dữ liệu do luật TM nhập (vi); giao diện EN dùng bản EN nếu có, thiếu thì rơi về bản vi.
   const pick = (vi: string | null, en: string | null) => (language === 'en' ? en || vi : vi);
   const notes = [...new Set([pick(data.quota_note, data.quota_note_en), pick(data.condition_note, data.condition_note_en)])].filter(Boolean);
+  const agreementName = data.agreement ? (language === 'en' ? data.agreement.name_en : data.agreement.name_vi) : null;
 
   return (
     <section aria-label={tr('Kết quả')} className="mt-8 rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
@@ -46,8 +58,9 @@ function Result({ data }: { data: TariffResult }) {
               <dd className="text-lg font-bold text-slate-900">{money(data.mfn_duty)}</dd>
             </div>
             <div className="rounded-xl bg-teal-50 p-4">
-              <dt className="text-xs font-semibold text-teal-800">
-                {tr('Thuế EVFTA')} ({percent(data.evfta_rate ?? '0')})
+              <dt className="text-xs font-semibold text-teal-800" data-testid="preferential-label">
+                {tr('Thuế ưu đãi')}
+                {agreementName ? ` · ${agreementName}` : ''} ({percent(data.evfta_rate ?? '0')})
               </dt>
               <dd className="text-lg font-bold text-teal-900">{money(data.evfta_duty)}</dd>
             </div>
@@ -88,7 +101,7 @@ function Result({ data }: { data: TariffResult }) {
 }
 
 export default function TariffCalculator({ initialRoo }: { initialRoo?: RooStatus }) {
-  const { tr } = useLanguage();
+  const { tr, language } = useLanguage();
   const [hs, setHs] = useState<HsCodeOption | null>(null);
   const [destination, setDestination] = useState('DE');
   const [value, setValue] = useState('');
@@ -100,6 +113,24 @@ export default function TariffCalculator({ initialRoo }: { initialRoo?: RooStatu
   const [markets, setMarkets] = useState<MarketsResult | null>(null);
   const [marketsBusy, setMarketsBusy] = useState(false);
   const [submitted, setSubmitted] = useState<Submitted | null>(null);
+  // U12: hiệp định có dữ liệu đã duyệt cho (mã HS, thị trường); nhiều hơn một thì người dùng chọn.
+  const [agreements, setAgreements] = useState<Agreement[] | null>(null);
+  const [agreement, setAgreement] = useState('');
+
+  useEffect(() => {
+    setAgreements(null);
+    setAgreement('');
+    if (!hs) return;
+    let active = true;
+    void fetchTariffOptions(hs.code, destination).then((options) => {
+      if (!active) return;
+      setAgreements(options?.agreements ?? []);
+      if (options && options.agreements.length === 1) setAgreement(options.agreements[0].code);
+    });
+    return () => {
+      active = false;
+    };
+  }, [hs, destination]);
 
   // Đổi mã HS, giá trị hoặc kết quả RoO thì bảng xếp hạng cũ không còn mô tả đầu vào hiện tại.
   const changeHs = (option: HsCodeOption | null) => {
@@ -122,6 +153,7 @@ export default function TariffCalculator({ initialRoo }: { initialRoo?: RooStatu
     setSubmitted(null);
     setError('');
     if (!hs) return setError('Vui lòng chọn mã HS.');
+    if (agreements && agreements.length > 1 && !agreement) return setError(ERRORS.agreement_required);
     const amount = parseAmount(value);
     if (!amount) {
       return setError('Giá trị lô hàng phải là số dương, tối đa 2 chữ số thập phân (ví dụ 10000 hoặc 10000.50).');
@@ -136,6 +168,7 @@ export default function TariffCalculator({ initialRoo }: { initialRoo?: RooStatu
       destination,
       productValue: amount,
       shipmentsPerYear: count,
+      agreement: agreement || undefined,
     });
     setBusy(false);
     if (outcome.ok) {
@@ -173,16 +206,50 @@ export default function TariffCalculator({ initialRoo }: { initialRoo?: RooStatu
         <HsCodePicker label={tr('Sản phẩm (mã HS)')} value={hs} onChange={changeHs} />
         <div>
           <label htmlFor="tariff-destination" className={label}>
-            {tr('Nước EU nhập khẩu')}
+            {tr('Thị trường nhập khẩu')}
           </label>
           <select id="tariff-destination" value={destination} onChange={(e) => setDestination(e.target.value)} className={field}>
-            {EU_COUNTRIES.map((c) => (
-              <option key={c.code} value={c.code}>
-                {c.name}
-              </option>
-            ))}
+            <optgroup label={tr('Liên minh châu Âu (EU)')}>
+              {EU_COUNTRIES.map((c) => (
+                <option key={c.code} value={c.code}>
+                  {tr(c.name)}
+                </option>
+              ))}
+            </optgroup>
+            <optgroup label={tr('Thị trường khác')}>
+              {OTHER_MARKETS.map((c) => (
+                <option key={c.code} value={c.code}>
+                  {tr(c.name)}
+                </option>
+              ))}
+            </optgroup>
           </select>
         </div>
+        {hs && agreements !== null && agreements.length > 1 && (
+          <div>
+            <label htmlFor="tariff-agreement" className={label}>
+              {tr('Hiệp định áp dụng')}
+            </label>
+            <select id="tariff-agreement" value={agreement} onChange={(e) => setAgreement(e.target.value)} className={field}>
+              <option value="">{tr('Chọn hiệp định')}</option>
+              {agreements.map((a) => (
+                <option key={a.code} value={a.code}>
+                  {language === 'en' ? a.name_en : a.name_vi}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+        {hs && agreements !== null && agreements.length === 1 && !isEuMember(destination) && (
+          <p className="text-xs text-slate-600" data-testid="agreement-note">
+            {tr('Hiệp định áp dụng')}: {language === 'en' ? agreements[0].name_en : agreements[0].name_vi}
+          </p>
+        )}
+        {hs && agreements !== null && agreements.length === 0 && (
+          <p role="status" className="rounded-xl bg-amber-50 p-3 text-xs text-amber-900" data-testid="no-agreement">
+            {tr('Chưa có dữ liệu thuế đã được chuyên gia duyệt cho mã HS và thị trường này.')}
+          </p>
+        )}
         <div>
           <label htmlFor="tariff-value" className={label}>
             {tr('Giá trị lô hàng (EUR)')}
@@ -220,7 +287,7 @@ export default function TariffCalculator({ initialRoo }: { initialRoo?: RooStatu
         </button>
       </form>
       {result && <Result data={result} />}
-      {result && result.status === 'ok' && (
+      {result && result.status === 'ok' && (result.agreement?.code ?? 'EVFTA') === 'EVFTA' && (
         <button
           type="button"
           disabled={marketsBusy}

@@ -19,7 +19,7 @@ from sqlalchemy import (
     func,
     text,
 )
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.dialects.postgresql import ARRAY, JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.db import Base
@@ -79,6 +79,7 @@ class ComplianceCheck(Base):
     originating_status: Mapped[str | None] = mapped_column(String(16))
     tariff_line_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("tariff_lines.id"))
     rule_id: Mapped[uuid.UUID | None] = mapped_column(Uuid)
+    agreement_code: Mapped[str | None] = mapped_column(String(16))  # U12
     status: Mapped[str] = mapped_column(String(16))
     created_at: Mapped[dt.datetime] = mapped_column(
         DateTime(timezone=True), server_default=text("clock_timestamp()")
@@ -122,8 +123,45 @@ class Document(Base):
     )
 
 
+class TradeAgreement(Base):
+    """Hiệp định thương mại tự do (U12). Chỉ để hiển thị tên/đối tác: hiệp định nào áp dụng cho một
+    thị trường luôn suy ra từ dòng thuế ĐÃ DUYỆT, không bao giờ từ bảng này."""
+
+    __tablename__ = "trade_agreements"
+    __table_args__ = (
+        CheckConstraint(
+            "(reviewed_by IS NULL) = (reviewed_at IS NULL)", name="reviewed_by_and_at_together"
+        ),
+        CheckConstraint("code ~ '^[A-Z0-9_]{2,16}$'", name="code_format"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, primary_key=True, default=uuid.uuid4, server_default=text("gen_random_uuid()")
+    )
+    code: Mapped[str] = mapped_column(String(16), unique=True)
+    name_vi: Mapped[str] = mapped_column(String(255))
+    name_en: Mapped[str] = mapped_column(String(255))
+    partners: Mapped[list[str]] = mapped_column(
+        ARRAY(String(2)), default=list, server_default=text("'{}'")
+    )
+    in_force_from: Mapped[dt.date | None] = mapped_column(Date)
+    source_url: Mapped[str | None] = mapped_column(String(1024))
+    note: Mapped[str | None] = mapped_column(Text)
+    reviewed_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id"))
+    reviewed_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=text("clock_timestamp()")
+    )
+    updated_at: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+
 class TariffLine(Base):
-    """Dòng thuế EU (MFN / EVFTA) do người duyệt luật TM nhập và duyệt.
+    """Dòng thuế (MFN / thuế ưu đãi theo hiệp định) do người duyệt luật TM nhập và duyệt.
+
+    U12: `agreement_code` (mặc định EVFTA) và `destination` là ISO-2 hoặc 'EU' (biểu thuế chung
+    của liên minh thuế quan). Cột evfta_rate_current giữ tên cũ, nghĩa là thuế ưu đãi của hiệp định.
 
     Dòng chưa có reviewed_by không bao giờ được trả ra ngoài: mọi truy vấn đi qua
     compliance.service._reviewed_lines. Thuế suất là % (numeric, không float).
@@ -147,7 +185,10 @@ class TariffLine(Base):
         Uuid, primary_key=True, default=uuid.uuid4, server_default=text("gen_random_uuid()")
     )
     hs_code: Mapped[str] = mapped_column(ForeignKey("hs_codes.code"), index=True)
-    destination: Mapped[str] = mapped_column(String(2))  # ISO-2 nước EU
+    destination: Mapped[str] = mapped_column(String(2))  # ISO-2 hoặc 'EU'
+    agreement_code: Mapped[str] = mapped_column(
+        ForeignKey("trade_agreements.code"), default="EVFTA", server_default="EVFTA"
+    )
     duty_type: Mapped[DutyType] = mapped_column(Enum(DutyType, name="duty_type"))
     mfn_rate: Mapped[Decimal | None] = mapped_column(Numeric(7, 4))
     mfn_specific: Mapped[str | None] = mapped_column(

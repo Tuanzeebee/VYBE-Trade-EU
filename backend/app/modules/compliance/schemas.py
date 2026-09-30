@@ -26,7 +26,11 @@ def parse_amount(value: Any) -> Decimal:
 
 
 class TariffIn(BaseModel):
-    """Số tiền nhận dạng CHUỖI JSON (không nhận số) để không bao giờ đi qua float."""
+    """Số tiền nhận dạng CHUỖI JSON (không nhận số) để không bao giờ đi qua float.
+
+    U12: `destination` là mọi nước ISO-2; `agreement` bỏ trống thì nước EU dùng EVFTA, nước khác
+    dùng hiệp định duy nhất có dữ liệu đã duyệt (nhiều hơn một → phải chọn).
+    """
 
     model_config = ConfigDict(strict=True)
 
@@ -34,6 +38,7 @@ class TariffIn(BaseModel):
     destination: str
     product_value: Decimal
     shipments_per_year: Annotated[int | None, Field(ge=1, le=10_000)] = None
+    agreement: Annotated[str | None, Field(pattern=r"^[A-Z0-9_]{2,16}$")] = None
 
     @field_validator("product_value", mode="before")
     @classmethod
@@ -44,9 +49,23 @@ class TariffIn(BaseModel):
     @classmethod
     def _destination(cls, value: str) -> str:
         upper = value.strip().upper()
-        if upper not in EU_MEMBERS:
-            raise ValueError("destination must be an EU member state (ISO 3166-1 alpha-2)")
+        if not _COUNTRY.fullmatch(upper) or upper in ("VN", "EU"):
+            raise ValueError("destination must be an import country (ISO 3166-1 alpha-2)")
         return upper
+
+
+class AgreementOut(BaseModel):
+    code: str
+    name_vi: str
+    name_en: str
+
+
+class TariffOptionsOut(BaseModel):
+    """Lựa chọn cho form tính thuế: hiệp định có dữ liệu cho (mã HS, thị trường)."""
+
+    hs_code: str
+    destination: str
+    agreements: list[AgreementOut]
 
 
 class TariffOut(BaseModel):
@@ -66,6 +85,11 @@ class TariffOut(BaseModel):
     condition_note: str | None
     quota_note_en: str | None
     condition_note_en: str | None
+    # U12: hiệp định của kết quả. evfta_rate/evfta_duty giữ tên cũ (tương thích) và bằng
+    # preferential_rate/preferential_duty — thuế ưu đãi theo hiệp định đã chọn.
+    agreement: AgreementOut | None = None
+    preferential_rate: Decimal | None = None
+    preferential_duty: Decimal | None = None
 
 
 class TariffPreviewOut(BaseModel):

@@ -9,6 +9,9 @@ export type EvidenceTypeRow = components['schemas']['EvidenceTypeOut'];
 export type EvidenceRuleRow = components['schemas']['RuleOut'];
 export type TariffLineInput = components['schemas']['TariffLineIn'];
 export type TariffLinePatch = components['schemas']['TariffLinePatch'];
+export type TradeAgreement = components['schemas']['TradeAgreementOut'];
+export type TradeAgreementInput = components['schemas']['TradeAgreementIn'];
+export type TradeAgreementPatch = components['schemas']['TradeAgreementPatch'];
 export type RooRuleInput = components['schemas']['RooRuleIn'];
 export type RooRulePatch = components['schemas']['RooRulePatch'];
 export type EvidenceTypeInput = components['schemas']['EvidenceTypeIn'];
@@ -260,4 +263,17 @@ export const reviewCorpusDocument = (id: string) =>
   act(
     () => createApiClient().POST('/api/admin/corpus-documents/{document_id}/review', { params: { path: { document_id: id } } }),
     { 404: 'Không tìm thấy tài liệu.' },
+  );
+
+// ── Hiệp định thương mại (U12) ──────────────────────────────────────────────
+export const listTradeAgreements = () => read(() => createApiClient().GET('/api/admin/trade-agreements'));
+export const createTradeAgreement = (body: TradeAgreementInput) => save(() => createApiClient().POST('/api/admin/trade-agreements', { body }));
+export const updateTradeAgreement = (id: string, body: TradeAgreementPatch) =>
+  save(() => createApiClient().PATCH('/api/admin/trade-agreements/{agreement_id}', { params: { path: { agreement_id: id } }, body }));
+export const reviewTradeAgreement = (id: string) =>
+  act(() => createApiClient().POST('/api/admin/trade-agreements/{agreement_id}/review', { params: { path: { agreement_id: id } } }), REVIEW_ERRORS);
+export const deleteTradeAgreement = (id: string) =>
+  act(
+    () => createApiClient().DELETE('/api/admin/trade-agreements/{agreement_id}', { params: { path: { agreement_id: id } } }),
+    { 404: 'Không tìm thấy dòng dữ liệu.', 409: 'Hiệp định đã duyệt hoặc còn dòng thuế dùng thì không xóa được.' },
   );

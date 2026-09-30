@@ -13048,5 +13048,130 @@
     "No tariff calculations yet. Use the tariff tool to see your total savings from trade agreements.",
     "Aucun calcul de droits pour l'instant. Utilisez l'outil pour voir vos économies grâce aux accords commerciaux.",
     "関税計算はまだありません。関税計算ツールで貿易協定による削減総額を確認しましょう。"
+  ],
+  "Thuế ưu đãi": [
+    "Preferential duty",
+    "Droit préférentiel",
+    "特恵税率"
+  ],
+  "Thị trường nhập khẩu": [
+    "Import market",
+    "Marché d'importation",
+    "輸入市場"
+  ],
+  "Liên minh châu Âu (EU)": [
+    "European Union (EU)",
+    "Union européenne (UE)",
+    "欧州連合（EU）"
+  ],
+  "Thị trường khác": [
+    "Other markets",
+    "Autres marchés",
+    "その他の市場"
+  ],
+  "Hiệp định áp dụng": [
+    "Applicable agreement",
+    "Accord applicable",
+    "適用協定"
+  ],
+  "Chọn hiệp định": [
+    "Choose an agreement",
+    "Choisir un accord",
+    "協定を選択"
+  ],
+  "Chưa có dữ liệu thuế đã được chuyên gia duyệt cho mã HS và thị trường này.": [
+    "No expert-reviewed tariff data yet for this HS code and market.",
+    "Aucune donnée tarifaire validée par un expert pour ce code SH et ce marché.",
+    "このHSコードと市場について、専門家が確認した関税データはまだありません。"
+  ],
+  "Thị trường này có nhiều hiệp định. Vui lòng chọn hiệp định áp dụng.": [
+    "This market has several agreements. Please choose the applicable one.",
+    "Ce marché relève de plusieurs accords. Choisissez l'accord applicable.",
+    "この市場には複数の協定があります。適用する協定を選択してください。"
+  ],
+  "Hiệp định": [
+    "Agreement",
+    "Accord",
+    "協定"
+  ],
+  "Hiệp định thương mại": [
+    "Trade agreements",
+    "Accords commerciaux",
+    "貿易協定"
+  ],
+  "Nước đối tác": [
+    "Partner countries",
+    "Pays partenaires",
+    "相手国"
+  ],
+  "Hiệu lực từ": [
+    "In force from",
+    "En vigueur depuis",
+    "発効日"
+  ],
+  "Thuế ưu đãi hiện hành (%)": [
+    "Current preferential rate (%)",
+    "Taux préférentiel actuel (%)",
+    "現行特恵税率（%）"
+  ],
+  "Theo hiệp định ở trên; 0–100, tối đa 4 chữ số thập phân.": [
+    "Under the agreement above; 0–100, up to 4 decimals.",
+    "Selon l'accord ci-dessus ; 0–100, 4 décimales max.",
+    "上記の協定に基づく。0〜100、小数点以下4桁まで。"
+  ],
+  "EU = biểu thuế chung của liên minh thuế quan; nước khác nhập mã ISO-2 (vd GB, JP).": [
+    "EU = the customs union's common tariff; for other countries enter the ISO-2 code (e.g. GB, JP).",
+    "EU = tarif commun de l'union douanière ; autres pays : code ISO-2 (ex. GB, JP).",
+    "EU＝関税同盟の共通関税。その他の国はISO-2コード（例：GB、JP）を入力。"
+  ],
+  "Mã hiệp định trong danh sách Hiệp định thương mại (vd EVFTA, UKVFTA, CPTPP).": [
+    "Agreement code from the Trade agreements list (e.g. EVFTA, UKVFTA, CPTPP).",
+    "Code d'accord de la liste Accords commerciaux (ex. EVFTA, UKVFTA, CPTPP).",
+    "貿易協定リストの協定コード（例：EVFTA、UKVFTA、CPTPP）。"
+  ],
+  "Thuế ưu đãi hiện hành theo hiệp định của dòng (mặc định EVFTA), tính bằng %.": [
+    "Current preferential rate under the line's agreement (EVFTA by default), in %.",
+    "Taux préférentiel actuel selon l'accord de la ligne (EVFTA par défaut), en %.",
+    "当該行の協定（既定はEVFTA）に基づく現行特恵税率（%）。"
+  ],
+  "Mã hiệp định (EVFTA, UKVFTA, CPTPP…). Hiệp định áp dụng cho một thị trường chỉ suy ra từ dòng thuế đã duyệt.": [
+    "Agreement code (EVFTA, UKVFTA, CPTPP…). The agreement applied to a market is derived only from reviewed tariff lines.",
+    "Code d'accord (EVFTA, UKVFTA, CPTPP…). L'accord appliqué à un marché ne découle que des lignes tarifaires validées.",
+    "協定コード（EVFTA、UKVFTA、CPTPPなど）。市場に適用される協定は確認済みの関税行からのみ導かれます。"
+  ],
+  "EU nếu áp dụng biểu thuế chung của cả liên minh thuế quan; nước khác dùng mã ISO-2 (GB, JP, KR…).": [
+    "EU for the whole customs union's common tariff; other countries use the ISO-2 code (GB, JP, KR…).",
+    "EU pour le tarif commun de l'union douanière ; autres pays : code ISO-2 (GB, JP, KR…).",
+    "関税同盟全体の共通関税はEU、その他の国はISO-2コード（GB、JP、KRなど）。"
+  ],
+  "Mã hiệp định (chữ in hoa, số, gạch dưới), vd EVFTA, UKVFTA. Không đổi được sau khi tạo.": [
+    "Agreement code (uppercase letters, digits, underscore), e.g. EVFTA, UKVFTA. Cannot be changed after creation.",
+    "Code d'accord (majuscules, chiffres, tiret bas), ex. EVFTA, UKVFTA. Non modifiable après création.",
+    "協定コード（大文字・数字・アンダースコア）、例：EVFTA、UKVFTA。作成後は変更不可。"
+  ],
+  "Mã ISO-2 cách nhau bằng dấu phẩy; EU = liên minh thuế quan. Chỉ để hiển thị — hiệp định áp dụng luôn suy ra từ dòng thuế đã duyệt.": [
+    "ISO-2 codes separated by commas; EU = customs union. Display only — the applicable agreement is always derived from reviewed tariff lines.",
+    "Codes ISO-2 séparés par des virgules ; EU = union douanière. Affichage seulement — l'accord applicable découle toujours des lignes validées.",
+    "カンマ区切りのISO-2コード。EU＝関税同盟。表示用のみで、適用協定は常に確認済みの関税行から導かれます。"
+  ],
+  "Danh sách ban đầu là bản nháp: luật TM rà tên, đối tác, ngày hiệu lực và nguồn rồi bấm duyệt.": [
+    "The initial list is a draft: the trade lawyer checks names, partners, entry-into-force dates and sources, then approves.",
+    "La liste initiale est un brouillon : le juriste vérifie noms, partenaires, dates d'entrée en vigueur et sources, puis valide.",
+    "初期リストは草案です。通商弁護士が名称・相手国・発効日・出典を確認して承認します。"
+  ],
+  "Bản nháp": [
+    "Draft",
+    "Brouillon",
+    "草案"
+  ],
+  "Chữ in hoa, số, gạch dưới (2–16 ký tự).": [
+    "Uppercase letters, digits, underscore (2–16 characters).",
+    "Majuscules, chiffres, tiret bas (2 à 16 caractères).",
+    "大文字・数字・アンダースコア（2〜16文字）。"
+  ],
+  "Mã ISO-2 cách nhau bằng dấu phẩy, vd JP, KR hoặc EU.": [
+    "ISO-2 codes separated by commas, e.g. JP, KR or EU.",
+    "Codes ISO-2 séparés par des virgules, ex. JP, KR ou EU.",
+    "カンマ区切りのISO-2コード、例：JP、KR、EU。"
   ]
 }

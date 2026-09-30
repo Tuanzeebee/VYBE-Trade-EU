@@ -21,6 +21,9 @@ from app.modules.compliance.admin_schemas import (
     TariffLineIn,
     TariffLineOut,
     TariffLinePatch,
+    TradeAgreementIn,
+    TradeAgreementOut,
+    TradeAgreementPatch,
 )
 from app.modules.compliance.schemas import (
     DocumentOut,
@@ -30,6 +33,7 @@ from app.modules.compliance.schemas import (
     RooIn,
     RooOut,
     TariffIn,
+    TariffOptionsOut,
     TariffOut,
     TariffPreviewOut,
 )
@@ -57,6 +61,15 @@ async def calculate_tariff(
     session: Annotated[AsyncSession, Depends(get_session)],
 ) -> TariffOut:
     return await service.calculate_tariff(session, data, user)
+
+
+@router.get("/api/public/tariff/options")
+async def tariff_options(
+    hs_code: Annotated[str, Query(max_length=32)],
+    destination: Annotated[str, Query(pattern=r"^[A-Za-z]{2}$")],
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> TariffOptionsOut:
+    return await service.tariff_options(session, hs_code, destination)
 
 
 @router.get("/api/exporter/tariff-preview")
@@ -216,6 +229,51 @@ async def get_document(
     document_id: uuid.UUID, user: Exporter, session: DB, storage: Store
 ) -> DocumentOut:
     return await documents.get_document(session, user, storage, document_id)
+
+
+# ── Hiệp định thương mại (U12) ───────────────────────────────────────────────
+AdminUser = Annotated[CurrentUser, Depends(require_role("admin"))]
+DBSession = Annotated[AsyncSession, Depends(get_session)]
+
+
+@router.get("/api/admin/trade-agreements")
+async def list_trade_agreements(
+    _: AdminUser, session: DBSession, reviewed: bool | None = None
+) -> list[TradeAgreementOut]:
+    rows = await admin_service.list_agreements(session, reviewed)
+    return [TradeAgreementOut.model_validate(r) for r in rows]
+
+
+@router.post("/api/admin/trade-agreements", status_code=201)
+async def create_trade_agreement(
+    data: TradeAgreementIn, admin: AdminUser, session: DBSession
+) -> TradeAgreementOut:
+    row = await admin_service.create_agreement(session, admin, data)
+    return TradeAgreementOut.model_validate(row)
+
+
+@router.patch("/api/admin/trade-agreements/{agreement_id}")
+async def update_trade_agreement(
+    agreement_id: uuid.UUID, data: TradeAgreementPatch, admin: AdminUser, session: DBSession
+) -> TradeAgreementOut:
+    row = await admin_service.update_agreement(session, admin, agreement_id, data)
+    return TradeAgreementOut.model_validate(row)
+
+
+@router.post("/api/admin/trade-agreements/{agreement_id}/review")
+async def review_trade_agreement(
+    agreement_id: uuid.UUID, admin: AdminUser, session: DBSession
+) -> TradeAgreementOut:
+    row = await admin_service.review_agreement(session, admin, agreement_id)
+    return TradeAgreementOut.model_validate(row)
+
+
+@router.delete("/api/admin/trade-agreements/{agreement_id}", status_code=204)
+async def delete_trade_agreement(
+    agreement_id: uuid.UUID, admin: AdminUser, session: DBSession
+) -> Response:
+    await admin_service.delete_agreement(session, admin, agreement_id)
+    return Response(status_code=204)
 
 
 @router.get("/api/admin/country-terms")

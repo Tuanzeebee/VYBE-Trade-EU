@@ -6,25 +6,30 @@ import {
   createEvidenceType,
   createRooRule,
   createTariffLine,
+  createTradeAgreement,
   deleteCountryTerm,
   deleteEvidenceRule,
   deleteRooRule,
   deleteTariffLine,
+  deleteTradeAgreement,
   listCountryTerms,
   listEvidenceRules,
   listEvidenceTypes,
   listRooRules,
   listTariffLines,
+  listTradeAgreements,
   reviewCountryTerm,
   reviewEvidenceRule,
   reviewEvidenceType,
   reviewRooRule,
   reviewTariffLine,
+  reviewTradeAgreement,
   updateCountryTerm,
   updateEvidenceRule,
   updateEvidenceType,
   updateRooRule,
   updateTariffLine,
+  updateTradeAgreement,
   type CountryTermInput,
   type CountryTermPatch,
   type EvidenceRuleInput,
@@ -35,6 +40,8 @@ import {
   type RooRulePatch,
   type TariffLineInput,
   type TariffLinePatch,
+  type TradeAgreementInput,
+  type TradeAgreementPatch,
 } from '../../lib/adminApi';
 
 export type FieldKind = 'text' | 'textarea' | 'date' | 'bool' | 'decimal' | 'int' | 'select';
@@ -123,9 +130,10 @@ const TARIFF_LEGEND: LegendItem[] = [
   { term: 'specific', text: 'Thuế tuyệt đối: số tiền cố định trên mỗi đơn vị (kg, tấn…), ghi ở trường thuế tuyệt đối. Máy tính không tự quy đổi mà trả về "cần xem xét".' },
   { term: 'mixed', text: 'Thuế hỗn hợp: kết hợp phần trăm và thuế tuyệt đối. Máy tính trả về "cần xem xét".' },
   { term: 'MFN', text: 'Thuế tối huệ quốc áp cho hàng không hưởng ưu đãi EVFTA, tính bằng %.' },
-  { term: 'EVFTA', text: 'Thuế ưu đãi EVFTA hiện hành, tính bằng %.' },
+  { term: 'Thuế ưu đãi', text: 'Thuế ưu đãi hiện hành theo hiệp định của dòng (mặc định EVFTA), tính bằng %.' },
+  { term: 'Hiệp định', text: 'Mã hiệp định (EVFTA, UKVFTA, CPTPP…). Hiệp định áp dụng cho một thị trường chỉ suy ra từ dòng thuế đã duyệt.' },
   { term: 'Hạn ngạch', text: 'Có = hàng chịu hạn ngạch thuế quan. Máy tính trả về "cần xem xét", không trả 0%.' },
-  { term: 'Nơi đến', text: 'Mã ISO-2 của nước EU, hoặc EU nếu áp dụng biểu thuế chung của cả liên minh thuế quan.' },
+  { term: 'Nơi đến', text: 'EU nếu áp dụng biểu thuế chung của cả liên minh thuế quan; nước khác dùng mã ISO-2 (GB, JP, KR…).' },
   { term: 'Từ ngày / Đến ngày', text: 'Ngày bắt đầu hiệu lực và ngày đã hết hiệu lực. Đến ngày để trống nghĩa là không thời hạn.' },
 ];
 
@@ -164,18 +172,31 @@ const validity: Field[] = [
   { key: 'valid_until', label: 'Đến ngày', kind: 'date', help: 'Ngày ĐÃ hết hiệu lực, phải sau Từ ngày. Để trống = không thời hạn.' },
 ];
 
+const AGREEMENT_LEGEND: LegendItem[] = [
+  { term: 'Mã', text: 'Mã hiệp định (chữ in hoa, số, gạch dưới), vd EVFTA, UKVFTA. Không đổi được sau khi tạo.' },
+  { term: 'Nước đối tác', text: 'Mã ISO-2 cách nhau bằng dấu phẩy; EU = liên minh thuế quan. Chỉ để hiển thị — hiệp định áp dụng luôn suy ra từ dòng thuế đã duyệt.' },
+  { term: 'Bản nháp', text: 'Danh sách ban đầu là bản nháp: luật TM rà tên, đối tác, ngày hiệu lực và nguồn rồi bấm duyệt.' },
+];
+
+const splitList = (value: unknown) =>
+  String(value ?? '')
+    .split(',')
+    .map((part) => part.trim())
+    .filter(Boolean);
+
 export const DATASETS: Dataset[] = [
   {
     key: 'tariff',
     label: 'Dòng thuế',
-    columns: ['Mã HS', 'Nơi đến', 'Loại thuế', 'MFN', 'EVFTA', 'Hạn ngạch', 'Từ ngày', 'Đến ngày'],
+    columns: ['Mã HS', 'Nơi đến', 'Hiệp định', 'Loại thuế', 'MFN', 'Thuế ưu đãi', 'Hạn ngạch', 'Từ ngày', 'Đến ngày'],
     fields: [
       { key: 'hs_code', label: 'Mã HS', kind: 'text', required: true, help: '6–8 chữ số, phải có trong danh mục HS.' },
-      { key: 'destination', label: 'Nơi đến', kind: 'select', required: true, options: DESTINATIONS, initial: 'EU' },
+      { key: 'destination', label: 'Nơi đến', kind: 'text', required: true, initial: 'EU', help: 'EU = biểu thuế chung của liên minh thuế quan; nước khác nhập mã ISO-2 (vd GB, JP).' },
+      { key: 'agreement_code', label: 'Hiệp định', kind: 'text', required: true, initial: 'EVFTA', help: 'Mã hiệp định trong danh sách Hiệp định thương mại (vd EVFTA, UKVFTA, CPTPP).' },
       { key: 'duty_type', label: 'Loại thuế', kind: 'select', required: true, options: ['ad_valorem', 'specific', 'mixed'], initial: 'ad_valorem', help: 'Xem chú thích: chỉ ad_valorem cho ra con số thuế.' },
       { key: 'mfn_rate', label: 'MFN (%)', kind: 'decimal', help: '0–100, tối đa 4 chữ số thập phân.' },
       { key: 'mfn_specific', label: 'Thuế tuyệt đối/hỗn hợp', kind: 'text', help: 'Dạng văn bản, vd "176 EUR/100 kg".' },
-      { key: 'evfta_rate_current', label: 'EVFTA hiện hành (%)', kind: 'decimal', help: '0–100, tối đa 4 chữ số thập phân.' },
+      { key: 'evfta_rate_current', label: 'Thuế ưu đãi hiện hành (%)', kind: 'decimal', help: 'Theo hiệp định ở trên; 0–100, tối đa 4 chữ số thập phân.' },
       { key: 'staging_category', label: 'Lộ trình cắt giảm', kind: 'text', help: 'Ký hiệu nhóm cắt giảm, vd A, B5.' },
       { key: 'zero_from', label: 'Ngày về 0%', kind: 'date' },
       { key: 'quota_required', label: 'Hạn ngạch', kind: 'bool', initial: false },
@@ -194,10 +215,11 @@ export const DATASETS: Dataset[] = [
         id: r.id,
         reviewed: r.reviewed_by !== null,
         canDelete: r.reviewed_by === null,
-        cells: [r.hs_code, r.destination, r.duty_type, pct(r.mfn_rate), pct(r.evfta_rate_current), yesNo(r.quota_required), r.valid_from, r.valid_until ?? NO_EXPIRY],
+        cells: [r.hs_code, r.destination, r.agreement_code, r.duty_type, pct(r.mfn_rate), pct(r.evfta_rate_current), yesNo(r.quota_required), r.valid_from, r.valid_until ?? NO_EXPIRY],
         values: {
           hs_code: r.hs_code,
           destination: r.destination,
+          agreement_code: r.agreement_code,
           duty_type: r.duty_type,
           mfn_rate: plain(r.mfn_rate),
           mfn_specific: text(r.mfn_specific),
@@ -213,7 +235,7 @@ export const DATASETS: Dataset[] = [
           valid_from: r.valid_from,
           valid_until: text(r.valid_until),
         },
-        search: searchable(r.hs_code, r.destination, r.duty_type, r.staging_category, r.mfn_specific, r.quota_note, r.condition_note, r.quota_note_en, r.condition_note_en, r.source_url),
+        search: searchable(r.hs_code, r.destination, r.agreement_code, r.duty_type, r.staging_category, r.mfn_specific, r.quota_note, r.condition_note, r.quota_note_en, r.condition_note_en, r.source_url),
       })) ?? null,
     create: (body) => createTariffLine(body as unknown as TariffLineInput),
     update: (id, body) => updateTariffLine(id, body as TariffLinePatch),
@@ -362,6 +384,47 @@ export const DATASETS: Dataset[] = [
     update: (id, body) => updateEvidenceRule(id, body as EvidenceRulePatch),
     review: reviewEvidenceRule,
     remove: deleteEvidenceRule,
+  },
+  {
+    key: 'agreements',
+    label: 'Hiệp định thương mại',
+    columns: ['Mã', 'Tên', 'Nước đối tác', 'Hiệu lực từ'],
+    fields: [
+      { key: 'code', label: 'Mã', kind: 'text', required: true, locked: true, help: 'Chữ in hoa, số, gạch dưới (2–16 ký tự).' },
+      { key: 'name_vi', label: 'Tên (tiếng Việt)', kind: 'text', required: true },
+      { key: 'name_en', label: 'Tên (tiếng Anh)', kind: 'text', required: true },
+      { key: 'partners', label: 'Nước đối tác', kind: 'text', help: 'Mã ISO-2 cách nhau bằng dấu phẩy, vd JP, KR hoặc EU.' },
+      { key: 'in_force_from', label: 'Hiệu lực từ', kind: 'date' },
+      { key: 'source_url', label: 'Nguồn (URL)', kind: 'text' },
+      { key: 'note', label: 'Ghi chú', kind: 'textarea' },
+    ],
+    legend: AGREEMENT_LEGEND,
+    load: async () =>
+      ((await listTradeAgreements()) ?? null)?.map((r) => ({
+        id: r.id,
+        reviewed: r.reviewed_by !== null,
+        canDelete: r.reviewed_by === null,
+        cells: [r.code, r.name_vi, r.partners.join(', '), r.in_force_from ?? '—'],
+        values: {
+          code: r.code,
+          name_vi: r.name_vi,
+          name_en: r.name_en,
+          partners: r.partners.join(', '),
+          in_force_from: text(r.in_force_from),
+          source_url: text(r.source_url),
+          note: text(r.note),
+        },
+        search: searchable(r.code, r.name_vi, r.name_en, r.partners.join(' ')),
+      })) ?? null,
+    create: (body) => createTradeAgreement({ ...body, partners: splitList(body.partners) } as unknown as TradeAgreementInput),
+    update: (id, body) => {
+      const patch: Body = { ...body };
+      delete patch.code;
+      if ('partners' in patch) patch.partners = splitList(patch.partners);
+      return updateTradeAgreement(id, patch as TradeAgreementPatch);
+    },
+    review: reviewTradeAgreement,
+    remove: deleteTradeAgreement,
   },
 ];
 

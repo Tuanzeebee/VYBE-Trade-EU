@@ -181,7 +181,7 @@ async def test_one_bad_row_rejects_whole_file_with_row_numbers(
     file = xlsx(
         T_HEADER,
         ["090121", "EU", "ad_valorem", 7.5, 0, FROM],
-        ["090121", "ZZ", "ad_valorem", 7.5, 0, "2026-02-01"],
+        ["090121", "VNM", "ad_valorem", 7.5, 0, "2026-02-01"],
         ["999999", "EU", "ad_valorem", 7.5, 0, "2026-03-01"],
     )
     body = await upload(admin, TARIFF, file)
