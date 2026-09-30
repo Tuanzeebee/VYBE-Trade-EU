@@ -4,7 +4,7 @@
 // tên, mã HS (bắt buộc), giá, tiền tệ, đơn vị, MOQ, mô tả vi/en, ảnh, hiển thị công khai.
 import React, { useId, useRef, useState } from 'react';
 import { Camera, Plus, X } from 'lucide-react';
-import HsCodePicker from './HsCodePicker';
+import HsCodePicker, { type HsCodeOption } from './HsCodePicker';
 import { useLanguage } from '../context/LanguageContext';
 import {
   CURRENCIES,
@@ -79,13 +79,26 @@ function ProductCard({
   onUpdate: (change: (p: ProductDraft) => ProductDraft) => void;
   onRemove: () => void;
 }) {
-  const { tr } = useLanguage();
+  const { tr, language } = useLanguage();
   const uid = useId();
   const id = (name: string) => `${uid}-${name}`;
   const [uploading, setUploading] = useState(false);
   const [imageError, setImageError] = useState('');
   const set = <K extends keyof ProductDraft>(field: K, value: ProductDraft[K]) =>
     onUpdate((p) => ({ ...p, [field]: value }));
+
+  // Tên đã tự điền từ mã HS gần nhất: chỉ tên còn đúng bằng chuỗi này mới bị thay khi đổi mã HS.
+  const autoName = useRef('');
+
+  function chooseHs(hs: HsCodeOption | null) {
+    onUpdate((p) => {
+      if (hs === null) return { ...p, hs: null };
+      const suggested = (language === 'en' ? hs.name_en : hs.name_vi).slice(0, 255);
+      const replace = p.name.trim() === '' || p.name === autoName.current;
+      if (replace) autoName.current = suggested;
+      return { ...p, hs, name: replace ? suggested : p.name };
+    });
+  }
 
   async function handleFiles(files: FileList | File[] | null) {
     if (!files || files.length === 0) return;
@@ -139,7 +152,7 @@ function ProductCard({
         label={`${tr('Mã HS')} *`}
         required
         value={product.hs}
-        onChange={(hs) => set('hs', hs)}
+        onChange={chooseHs}
       />
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">

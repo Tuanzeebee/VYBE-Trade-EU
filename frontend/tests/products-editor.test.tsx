@@ -29,6 +29,16 @@ const RICE = {
   supported: true,
 };
 
+const COFFEE = {
+  code: '090111',
+  formatted: '0901.11',
+  name_vi: 'Cà phê chưa rang, chưa khử caffeine',
+  name_en: 'Coffee, not roasted, not decaffeinated',
+  chapter: '09',
+  category: 'agriculture',
+  supported: true,
+};
+
 let latest: ProductDraft[] = [];
 
 function Harness({ initial = [] }: { initial?: ProductDraft[] }) {
@@ -201,5 +211,49 @@ describe('ProductsEditor', () => {
     finish({ key: 'k', url: 'u' });
     await waitFor(() => expect(latest[0].images).toHaveLength(1));
     expect(latest[0].name).toBe('Gõ trong lúc chờ');
+  });
+
+  function stubHs(options: unknown[]) {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => new Response(JSON.stringify(options), { status: 200, headers: { 'content-type': 'application/json' } })),
+    );
+  }
+
+  async function pick(query: string, optionName: RegExp) {
+    fireEvent.change(within(card()).getByRole('combobox', { name: /Mã HS/ }), { target: { value: query } });
+    fireEvent.click(await screen.findByRole('option', { name: optionName }));
+  }
+
+  it('chọn mã HS khi ô tên còn trống: tên tự điền bằng tên mã HS', async () => {
+    stubHs([RICE]);
+    render(<Harness initial={[emptyDraft()]} />);
+    await pick('gao', /1006\.30/);
+    expect(latest[0].name).toBe('Gạo xát');
+    expect((within(card()).getByLabelText(/Tên sản phẩm/) as HTMLInputElement).value).toBe('Gạo xát');
+  });
+
+  it('tên seller đã gõ không bị ghi đè khi chọn mã HS', async () => {
+    stubHs([RICE]);
+    render(<Harness initial={[{ ...emptyDraft(), name: 'Gạo ST25' }]} />);
+    await pick('gao', /1006\.30/);
+    expect(latest[0].name).toBe('Gạo ST25');
+  });
+
+  it('đổi sang mã HS khác: tên tự điền đổi theo, nếu seller chưa sửa', async () => {
+    stubHs([RICE, COFFEE]);
+    render(<Harness initial={[emptyDraft()]} />);
+    await pick('gao', /1006\.30/);
+    await pick('ca phe', /0901\.11/);
+    expect(latest[0].name).toBe('Cà phê chưa rang, chưa khử caffeine');
+  });
+
+  it('seller sửa tay tên đã tự điền rồi đổi mã HS: giữ tên seller sửa', async () => {
+    stubHs([RICE, COFFEE]);
+    render(<Harness initial={[emptyDraft()]} />);
+    await pick('gao', /1006\.30/);
+    fireEvent.change(within(card()).getByLabelText(/Tên sản phẩm/), { target: { value: 'Gạo ST25 đặc biệt' } });
+    await pick('ca phe', /0901\.11/);
+    expect(latest[0].name).toBe('Gạo ST25 đặc biệt');
   });
 });
