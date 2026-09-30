@@ -73,6 +73,38 @@ async def find_rules(
     return list(await session.scalars(_reviewed_rules(hs_code, on_date)))
 
 
+async def _supported_keys(session: AsyncSession, code: str) -> list[str]:
+    """Khóa tra cứu theo thứ tự thử: mã nhập rồi nhóm 6 số, chỉ giữ mã trong danh mục hỗ trợ."""
+    keys: list[str] = []
+    for key in dict.fromkeys((code, code[:HEADING_LENGTH])):
+        hs = await catalog.get_hs_code(session, key)
+        if hs is not None and hs.supported:
+            keys.append(key)
+    return keys
+
+
+async def lookup_lines(session: AsyncSession, code: str, on_date: dt.date) -> list[TariffLine]:
+    """Dòng thuế đã duyệt cho mã `code`: thử mã 8 số trước, không có thì lùi về nhóm 6 số.
+
+    Mã 6 số KHÔNG tự chọn một mã 8 số con (các con có thể khác thuế, vd 081090)."""
+    for key in await _supported_keys(session, code):
+        lines = await find_lines(session, key, UNION_DESTINATION, on_date)
+        if lines:
+            return lines
+    return []
+
+
+async def lookup_rules(
+    session: AsyncSession, code: str, on_date: dt.date
+) -> list[ProductSpecificRule]:
+    """Quy tắc xuất xứ đã duyệt cho mã `code`, cùng thứ tự thử như lookup_lines."""
+    for key in await _supported_keys(session, code):
+        rules = await find_rules(session, key, on_date)
+        if rules:
+            return rules
+    return []
+
+
 async def log_check(
     session: AsyncSession,
     *,
@@ -177,12 +209,7 @@ async def calculate_tariff(
     code = catalog.normalize_code(data.hs_code)
     if code is None:
         raise AppError("invalid_hs_code", "HS code must be 6 to 8 digits", 422)
-    heading = code[:HEADING_LENGTH]
-    hs = await catalog.get_hs_code(session, heading)
-    lines: list[TariffLine] = []
-    if hs is not None and hs.supported:  # ngoài danh mục hỗ trợ → unsupported, không tra thuế
-        today = dt.datetime.now(dt.UTC).date()
-        lines = await find_lines(session, heading, UNION_DESTINATION, today)
+    lines = await lookup_lines(session, code, dt.datetime.now(dt.UTC).date())
     line = lines[0] if lines else None
     result = tariff_savings(
         None
@@ -247,11 +274,7 @@ async def calculate_roo(session: AsyncSession, data: RooIn, user: CurrentUser | 
     code = catalog.normalize_code(data.hs_code)
     if code is None:
         raise AppError("invalid_hs_code", "HS code must be 6 to 8 digits", 422)
-    heading = code[:HEADING_LENGTH]
-    hs = await catalog.get_hs_code(session, heading)
-    rules: list[ProductSpecificRule] = []
-    if hs is not None and hs.supported:  # ngoài danh mục hỗ trợ → unsupported
-        rules = await find_rules(session, heading, dt.datetime.now(dt.UTC).date())
+    rules = await lookup_rules(session, code, dt.datetime.now(dt.UTC).date())
     rule = rules[0] if len(rules) == 1 else None
     if len(rules) > 1:
         result = RooResult("inconclusive", reason="ambiguous_rule")
