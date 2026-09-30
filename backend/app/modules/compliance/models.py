@@ -7,12 +7,15 @@ from typing import Any
 from sqlalchemy import (
     Boolean,
     CheckConstraint,
+    Column,
     Date,
     DateTime,
     Enum,
     ForeignKey,
     Numeric,
+    SmallInteger,
     String,
+    Table,
     Text,
     UniqueConstraint,
     Uuid,
@@ -20,7 +23,7 @@ from sqlalchemy import (
     text,
 )
 from sqlalchemy.dialects.postgresql import ARRAY, JSONB
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.db import Base
 
@@ -56,7 +59,8 @@ class ComplianceCheck(Base):
         CheckConstraint("destination_country ~ '^[A-Z]{2}$'", name="destination_iso2"),
         CheckConstraint("product_value IS NULL OR product_value > 0", name="positive_value"),
         CheckConstraint(
-            "(check_type = 'tariff' AND status IN ('ok', 'unsupported', 'needs_review'))"
+            "(check_type = 'tariff'"
+            " AND status IN ('ok', 'unsupported', 'needs_review', 'quota_scenarios'))"
             " OR (check_type = 'roo'"
             " AND status IN ('pass', 'fail', 'inconclusive', 'unsupported'))",
             name="status_matches_type",
@@ -80,6 +84,9 @@ class ComplianceCheck(Base):
     tariff_line_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("tariff_lines.id"))
     rule_id: Mapped[uuid.UUID | None] = mapped_column(Uuid)
     agreement_code: Mapped[str | None] = mapped_column(String(16))  # U12
+    # U13/U14: data_status = reviewed | demo_unreviewed; scenario = đầu vào kịch bản hạn ngạch
+    data_status: Mapped[str | None] = mapped_column(String(24))
+    scenario: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
     status: Mapped[str] = mapped_column(String(16))
     created_at: Mapped[dt.datetime] = mapped_column(
         DateTime(timezone=True), server_default=text("clock_timestamp()")
@@ -296,4 +303,102 @@ class ImportCountryTerm(Base):
     )
     updated_at: Mapped[dt.datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+
+# ── Hạn ngạch thuế quan (U13) ────────────────────────────────────────────────
+tariff_quota_subtypes = Table(
+    "tariff_quota_subtypes",
+    Base.metadata,
+    Column("quota_id", ForeignKey("tariff_quotas.id", ondelete="CASCADE"), primary_key=True),
+    Column("subtype_code", ForeignKey("product_subtypes.code"), primary_key=True),
+)
+
+
+class ProductSubtype(Base):
+    """Phân nhóm sản phẩm do luật TM nhập và duyệt (vd gạo thơm theo danh sách giống). Chưa duyệt
+    thì không bao giờ được đưa ra lựa chọn công khai hay dùng để tính (U14: trừ DEMO khi cờ bật)."""
+
+    __tablename__ = "product_subtypes"
+    __table_args__ = (
+        CheckConstraint("code ~ '^[a-z0-9_]{2,40}$'", name="code_format"),
+        CheckConstraint("hs_prefix ~ '^[0-9]{4,8}$'", name="hs_prefix_format"),
+        CheckConstraint(
+            "(reviewed_by IS NULL) = (reviewed_at IS NULL)", name="reviewed_by_and_at_together"
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, primary_key=True, default=uuid.uuid4, server_default=text("gen_random_uuid()")
+    )
+    code: Mapped[str] = mapped_column(String(40), unique=True)
+    hs_prefix: Mapped[str] = mapped_column(String(8))
+    name_vi: Mapped[str] = mapped_column(String(255))
+    name_en: Mapped[str] = mapped_column(String(255))
+    description_vi: Mapped[str | None] = mapped_column(Text)
+    description_en: Mapped[str | None] = mapped_column(Text)
+    source: Mapped[str | None] = mapped_column(Text)
+    is_demo: Mapped[bool] = mapped_column(Boolean, default=False, server_default=text("false"))
+    reviewed_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id"))
+    reviewed_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=text("clock_timestamp()")
+    )
+    updated_at: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+
+class TariffQuota(Base):
+    """Hạn ngạch thuế quan theo (hiệp định, nơi đến, tiền tố HS). Dòng chưa duyệt không bao giờ được
+    dùng để tính kịch bản (AGENTS.md §6.4 sửa đổi; U14: trừ DEMO khi cờ bật và không phải prod)."""
+
+    __tablename__ = "tariff_quotas"
+    __table_args__ = (
+        CheckConstraint("destination ~ '^[A-Z]{2}$'", name="destination_iso2"),
+        CheckConstraint("hs_prefix ~ '^[0-9]{4,8}$'", name="hs_prefix_format"),
+        CheckConstraint("volume > 0", name="positive_volume"),
+        CheckConstraint("volume_unit IN ('tonne', 'kg', 'piece', 'liter')", name="volume_unit"),
+        CheckConstraint("valid_until IS NULL OR valid_until > valid_from", name="valid_window"),
+        CheckConstraint(
+            "(reviewed_by IS NULL) = (reviewed_at IS NULL)", name="reviewed_by_and_at_together"
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, primary_key=True, default=uuid.uuid4, server_default=text("gen_random_uuid()")
+    )
+    agreement_code: Mapped[str] = mapped_column(ForeignKey("trade_agreements.code"))
+    destination: Mapped[str] = mapped_column(String(2))
+    hs_prefix: Mapped[str] = mapped_column(String(8))
+    quota_code: Mapped[str | None] = mapped_column(String(32))
+    quota_year: Mapped[int | None] = mapped_column(SmallInteger)
+    volume: Mapped[Decimal] = mapped_column(Numeric(14, 3))
+    volume_unit: Mapped[str] = mapped_column(String(16), default="tonne", server_default="tonne")
+    in_quota_duty_type: Mapped[DutyType] = mapped_column(Enum(DutyType, name="duty_type"))
+    in_quota_rate: Mapped[Decimal | None] = mapped_column(Numeric(7, 4))
+    in_quota_specific: Mapped[Decimal | None] = mapped_column(Numeric(12, 4))
+    out_quota_duty_type: Mapped[DutyType] = mapped_column(Enum(DutyType, name="duty_type"))
+    out_quota_rate: Mapped[Decimal | None] = mapped_column(Numeric(7, 4))
+    out_quota_specific: Mapped[Decimal | None] = mapped_column(Numeric(12, 4))
+    specific_unit: Mapped[str | None] = mapped_column(String(16))
+    licence_note_vi: Mapped[str | None] = mapped_column(Text)
+    licence_note_en: Mapped[str | None] = mapped_column(Text)
+    allocation_note_vi: Mapped[str | None] = mapped_column(Text)
+    allocation_note_en: Mapped[str | None] = mapped_column(Text)
+    source_url: Mapped[str | None] = mapped_column(String(1024))
+    valid_from: Mapped[dt.date] = mapped_column(Date)
+    valid_until: Mapped[dt.date | None] = mapped_column(Date)
+    is_demo: Mapped[bool] = mapped_column(Boolean, default=False, server_default=text("false"))
+    reviewed_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id"))
+    reviewed_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=text("clock_timestamp()")
+    )
+    updated_at: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+    eligible_subtypes: Mapped[list[ProductSubtype]] = relationship(
+        secondary=tariff_quota_subtypes, lazy="selectin", order_by=ProductSubtype.code
     )

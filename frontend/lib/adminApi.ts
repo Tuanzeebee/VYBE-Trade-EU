@@ -12,6 +12,10 @@ export type TariffLinePatch = components['schemas']['TariffLinePatch'];
 export type TradeAgreement = components['schemas']['TradeAgreementOut'];
 export type TradeAgreementInput = components['schemas']['TradeAgreementIn'];
 export type TradeAgreementPatch = components['schemas']['TradeAgreementPatch'];
+export type ProductSubtypeInput = components['schemas']['ProductSubtypeIn'];
+export type ProductSubtypePatch = components['schemas']['ProductSubtypePatch'];
+export type TariffQuotaInput = components['schemas']['TariffQuotaIn'];
+export type TariffQuotaPatch = components['schemas']['TariffQuotaPatch'];
 export type RooRuleInput = components['schemas']['RooRuleIn'];
 export type RooRulePatch = components['schemas']['RooRulePatch'];
 export type EvidenceTypeInput = components['schemas']['EvidenceTypeIn'];
@@ -277,3 +281,24 @@ export const deleteTradeAgreement = (id: string) =>
     () => createApiClient().DELETE('/api/admin/trade-agreements/{agreement_id}', { params: { path: { agreement_id: id } } }),
     { 404: 'Không tìm thấy dòng dữ liệu.', 409: 'Hiệp định đã duyệt hoặc còn dòng thuế dùng thì không xóa được.' },
   );
+
+// ── Phân nhóm sản phẩm và hạn ngạch (U13) ────────────────────────────────────
+export const listProductSubtypes = () => read(() => createApiClient().GET('/api/admin/product-subtypes'));
+export const createProductSubtype = (body: ProductSubtypeInput) => save(() => createApiClient().POST('/api/admin/product-subtypes', { body }));
+export const updateProductSubtype = (id: string, body: ProductSubtypePatch) =>
+  save(() => createApiClient().PATCH('/api/admin/product-subtypes/{subtype_id}', { params: { path: { subtype_id: id } }, body }));
+export const reviewProductSubtype = (id: string) =>
+  act(() => createApiClient().POST('/api/admin/product-subtypes/{subtype_id}/review', { params: { path: { subtype_id: id } } }), REVIEW_ERRORS);
+export const deleteProductSubtype = (id: string) =>
+  act(
+    () => createApiClient().DELETE('/api/admin/product-subtypes/{subtype_id}', { params: { path: { subtype_id: id } } }),
+    { 404: 'Không tìm thấy dòng dữ liệu.', 409: 'Phân nhóm đã duyệt hoặc còn trong danh sách đủ điều kiện của hạn ngạch thì không xóa được.' },
+  );
+export const listTariffQuotas = () => read(() => createApiClient().GET('/api/admin/tariff-quotas'));
+export const createTariffQuota = (body: TariffQuotaInput) => save(() => createApiClient().POST('/api/admin/tariff-quotas', { body }));
+export const updateTariffQuota = (id: string, body: TariffQuotaPatch) =>
+  save(() => createApiClient().PATCH('/api/admin/tariff-quotas/{quota_id}', { params: { path: { quota_id: id } }, body }));
+export const reviewTariffQuota = (id: string) =>
+  act(() => createApiClient().POST('/api/admin/tariff-quotas/{quota_id}/review', { params: { path: { quota_id: id } } }), REVIEW_ERRORS);
+export const deleteTariffQuota = (id: string) =>
+  act(() => createApiClient().DELETE('/api/admin/tariff-quotas/{quota_id}', { params: { path: { quota_id: id } } }), DELETE_ERRORS);

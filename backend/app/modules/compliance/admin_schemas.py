@@ -7,7 +7,7 @@ import datetime as dt
 import re
 import uuid
 from decimal import Decimal
-from typing import Annotated, Any
+from typing import Annotated, Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
@@ -334,5 +334,211 @@ class TradeAgreementOut(BaseModel):
     in_force_from: dt.date | None
     source_url: str | None
     note: str | None
+    reviewed_by: uuid.UUID | None
+    reviewed_at: dt.datetime | None
+
+
+# ── Phân nhóm sản phẩm và hạn ngạch (U13) ──────────────────────────────────
+_SUBTYPE = re.compile(r"[a-z0-9_]{2,40}")
+_PREFIX = re.compile(r"[0-9]{4,8}")
+_SPECIFIC = re.compile(r"[0-9]{1,8}(\.[0-9]{1,4})?")
+_VOLUME = re.compile(r"[0-9]{1,11}(\.[0-9]{1,3})?")
+VolumeUnit = Literal["tonne", "kg", "piece", "liter"]
+
+
+def _subtype_code(value: str) -> str:
+    code = value.strip().lower()
+    if not _SUBTYPE.fullmatch(code):
+        raise ValueError("code must be 2-40 characters a-z, 0-9 or _")
+    return code
+
+
+def _hs_prefix(value: str) -> str:
+    digits = re.sub(r"[\s.]", "", value)
+    if not _PREFIX.fullmatch(digits):
+        raise ValueError("hs_prefix must be 4 to 8 digits")
+    return digits
+
+
+def _decimal(value: Any, pattern: re.Pattern[str], name: str) -> Decimal | None:
+    if value is None:
+        return None
+    if not isinstance(value, str) or not pattern.fullmatch(value):
+        raise ValueError(f"{name} must be a decimal string")
+    return Decimal(value)
+
+
+class ProductSubtypeIn(BaseModel):
+    code: str
+    hs_prefix: str
+    name_vi: Annotated[str, Field(min_length=1, max_length=255)]
+    name_en: Annotated[str, Field(min_length=1, max_length=255)]
+    description_vi: Text = None
+    description_en: Text = None
+    source: Text = None
+
+    _code = field_validator("code")(_subtype_code)
+    _prefix = field_validator("hs_prefix")(_hs_prefix)
+
+
+class ProductSubtypePatch(BaseModel):
+    hs_prefix: str | None = None
+    name_vi: Annotated[str | None, Field(min_length=1, max_length=255)] = None
+    name_en: Annotated[str | None, Field(min_length=1, max_length=255)] = None
+    description_vi: Text = None
+    description_en: Text = None
+    source: Text = None
+
+    @field_validator("hs_prefix")
+    @classmethod
+    def _prefix(cls, value: str | None) -> str | None:
+        return None if value is None else _hs_prefix(value)
+
+
+class ProductSubtypeOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: uuid.UUID
+    code: str
+    hs_prefix: str
+    name_vi: str
+    name_en: str
+    description_vi: str | None
+    description_en: str | None
+    source: str | None
+    is_demo: bool
+    reviewed_by: uuid.UUID | None
+    reviewed_at: dt.datetime | None
+
+
+class _QuotaFields(BaseModel):
+    in_quota_rate: Decimal | None = None
+    in_quota_specific: Decimal | None = None
+    out_quota_rate: Decimal | None = None
+    out_quota_specific: Decimal | None = None
+
+    @field_validator("in_quota_rate", "out_quota_rate", mode="before")
+    @classmethod
+    def _rate(cls, value: Any) -> Decimal | None:
+        return _percentage(value, _RATE)
+
+    @field_validator("in_quota_specific", "out_quota_specific", mode="before")
+    @classmethod
+    def _specific(cls, value: Any) -> Decimal | None:
+        return _decimal(value, _SPECIFIC, "specific duty")
+
+
+class TariffQuotaIn(_QuotaFields):
+    agreement_code: str = "EVFTA"
+    destination: str
+    hs_prefix: str
+    quota_code: Annotated[str | None, Field(max_length=32)] = None
+    quota_year: Annotated[int | None, Field(ge=2000, le=2100)] = None
+    volume: Decimal
+    volume_unit: VolumeUnit = "tonne"
+    in_quota_duty_type: DutyType
+    out_quota_duty_type: DutyType
+    specific_unit: VolumeUnit | None = None
+    licence_note_vi: Text = None
+    licence_note_en: Text = None
+    allocation_note_vi: Text = None
+    allocation_note_en: Text = None
+    source_url: Url = None
+    valid_from: dt.date
+    valid_until: dt.date | None = None
+    eligible_subtypes: Annotated[list[str], Field(max_length=50)] = Field(default_factory=list)
+
+    _agree = field_validator("agreement_code")(_agreement)
+    _dest = field_validator("destination")(_destination)
+    _prefix = field_validator("hs_prefix")(_hs_prefix)
+
+    @field_validator("volume", mode="before")
+    @classmethod
+    def _volume(cls, value: Any) -> Decimal:
+        number = _decimal(value, _VOLUME, "volume")
+        if number is None or number <= 0:
+            raise ValueError("volume must be greater than 0")
+        return number
+
+    @field_validator("eligible_subtypes")
+    @classmethod
+    def _subtypes(cls, values: list[str]) -> list[str]:
+        return list(dict.fromkeys(_subtype_code(v) for v in values))
+
+
+class TariffQuotaPatch(_QuotaFields):
+    agreement_code: str | None = None
+    destination: str | None = None
+    hs_prefix: str | None = None
+    quota_code: Annotated[str | None, Field(max_length=32)] = None
+    quota_year: Annotated[int | None, Field(ge=2000, le=2100)] = None
+    volume: Decimal | None = None
+    volume_unit: VolumeUnit | None = None
+    in_quota_duty_type: DutyType | None = None
+    out_quota_duty_type: DutyType | None = None
+    specific_unit: VolumeUnit | None = None
+    licence_note_vi: Text = None
+    licence_note_en: Text = None
+    allocation_note_vi: Text = None
+    allocation_note_en: Text = None
+    source_url: Url = None
+    valid_from: dt.date | None = None
+    valid_until: dt.date | None = None
+    eligible_subtypes: Annotated[list[str] | None, Field(max_length=50)] = None
+
+    @field_validator("agreement_code")
+    @classmethod
+    def _agree(cls, value: str | None) -> str | None:
+        return None if value is None else _agreement(value)
+
+    @field_validator("destination")
+    @classmethod
+    def _dest(cls, value: str | None) -> str | None:
+        return None if value is None else _destination(value)
+
+    @field_validator("hs_prefix")
+    @classmethod
+    def _prefix(cls, value: str | None) -> str | None:
+        return None if value is None else _hs_prefix(value)
+
+    @field_validator("volume", mode="before")
+    @classmethod
+    def _volume(cls, value: Any) -> Decimal | None:
+        number = _decimal(value, _VOLUME, "volume")
+        if number is not None and number <= 0:
+            raise ValueError("volume must be greater than 0")
+        return number
+
+    @field_validator("eligible_subtypes")
+    @classmethod
+    def _subtypes(cls, values: list[str] | None) -> list[str] | None:
+        return None if values is None else list(dict.fromkeys(_subtype_code(v) for v in values))
+
+
+class TariffQuotaOut(BaseModel):
+    id: uuid.UUID
+    agreement_code: str
+    destination: str
+    hs_prefix: str
+    quota_code: str | None
+    quota_year: int | None
+    volume: Decimal
+    volume_unit: str
+    in_quota_duty_type: DutyType
+    in_quota_rate: Decimal | None
+    in_quota_specific: Decimal | None
+    out_quota_duty_type: DutyType
+    out_quota_rate: Decimal | None
+    out_quota_specific: Decimal | None
+    specific_unit: str | None
+    licence_note_vi: str | None
+    licence_note_en: str | None
+    allocation_note_vi: str | None
+    allocation_note_en: str | None
+    source_url: str | None
+    valid_from: dt.date
+    valid_until: dt.date | None
+    eligible_subtypes: list[str]
+    is_demo: bool
     reviewed_by: uuid.UUID | None
     reviewed_at: dt.datetime | None

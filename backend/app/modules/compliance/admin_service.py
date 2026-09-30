@@ -21,18 +21,26 @@ from app.modules.catalog import service as catalog
 from app.modules.compliance.admin_schemas import (
     CountryTermIn,
     CountryTermPatch,
+    ProductSubtypeIn,
+    ProductSubtypePatch,
     RooRuleIn,
     RooRulePatch,
     TariffLineIn,
     TariffLinePatch,
+    TariffQuotaIn,
+    TariffQuotaOut,
+    TariffQuotaPatch,
     TradeAgreementIn,
     TradeAgreementPatch,
 )
 from app.modules.compliance.models import (
+    DutyType,
     ImportCountryTerm,
     ProductSpecificRule,
+    ProductSubtype,
     RuleType,
     TariffLine,
+    TariffQuota,
     TradeAgreement,
 )
 
@@ -40,7 +48,20 @@ TARIFF_ENTITY = "tariff_line"
 TERM_ENTITY = "country_term"
 RULE_ENTITY = "roo_rule"
 AGREEMENT_ENTITY = "trade_agreement"
+SUBTYPE_ENTITY = "product_subtype"
+QUOTA_ENTITY = "tariff_quota"
 _WITH_THRESHOLD = (RuleType.MaxNOM, RuleType.CTH_OR_MaxNOM)
+
+
+# Các bảng dữ liệu tuân thủ dùng chung luồng thêm / sửa / duyệt / xoá có audit.
+type ComplianceRow = (
+    TariffLine
+    | ProductSpecificRule
+    | ImportCountryTerm
+    | TradeAgreement
+    | ProductSubtype
+    | TariffQuota
+)
 
 
 def _jsonable(value: Any) -> Any:
@@ -51,7 +72,7 @@ def _jsonable(value: Any) -> Any:
     return value
 
 
-def _snapshot[Row: (TariffLine, ProductSpecificRule, ImportCountryTerm, TradeAgreement)](
+def _snapshot[Row: ComplianceRow](
     row: Row,
 ) -> dict[str, Any]:
     # updated_at do DB tự đặt khi UPDATE nên chưa nạp sau flush — không cần trong audit.
@@ -79,7 +100,7 @@ def _check_threshold(rule_type: RuleType, threshold: Decimal | None) -> None:
         raise AppError("invalid_threshold", "threshold_pct must be empty for this rule_type", 422)
 
 
-async def _get[Row: (TariffLine, ProductSpecificRule, ImportCountryTerm, TradeAgreement)](
+async def _get[Row: ComplianceRow](
     session: AsyncSession, model: type[Row], row_id: uuid.UUID
 ) -> Row:
     row = await session.get(model, row_id)
@@ -88,15 +109,13 @@ async def _get[Row: (TariffLine, ProductSpecificRule, ImportCountryTerm, TradeAg
     return row
 
 
-async def _save[Row: (TariffLine, ProductSpecificRule, ImportCountryTerm, TradeAgreement)](
-    session: AsyncSession, row: Row
-) -> Row:
+async def _save[Row: ComplianceRow](session: AsyncSession, row: Row) -> Row:
     await session.commit()
     await session.refresh(row)
     return row
 
 
-async def _create[Row: (TariffLine, ProductSpecificRule, ImportCountryTerm, TradeAgreement)](
+async def _create[Row: ComplianceRow](
     session: AsyncSession, actor: CurrentUser, row: Row, entity: str, commit: bool = True
 ) -> Row:
     session.add(row)
@@ -114,7 +133,7 @@ async def _create[Row: (TariffLine, ProductSpecificRule, ImportCountryTerm, Trad
     return await _save(session, row) if commit else row
 
 
-async def _update[Row: (TariffLine, ProductSpecificRule, ImportCountryTerm, TradeAgreement)](
+async def _update[Row: ComplianceRow](
     session: AsyncSession,
     actor: CurrentUser,
     row: Row,
@@ -141,7 +160,7 @@ async def _update[Row: (TariffLine, ProductSpecificRule, ImportCountryTerm, Trad
     return await _save(session, row) if commit else row
 
 
-async def _review[Row: (TariffLine, ProductSpecificRule, ImportCountryTerm, TradeAgreement)](
+async def _review[Row: ComplianceRow](
     session: AsyncSession, actor: CurrentUser, row: Row, entity: str
 ) -> Row:
     before = _snapshot(row)
@@ -161,7 +180,7 @@ async def _review[Row: (TariffLine, ProductSpecificRule, ImportCountryTerm, Trad
     return await _save(session, row)
 
 
-async def _delete[Row: (TariffLine, ProductSpecificRule, ImportCountryTerm, TradeAgreement)](
+async def _delete[Row: ComplianceRow](
     session: AsyncSession, actor: CurrentUser, row: Row, entity: str
 ) -> None:
     if row.reviewed_by is not None:
@@ -433,3 +452,159 @@ async def delete_agreement(
     if used is not None:
         raise AppError("agreement_in_use", "Tariff lines still use this agreement", 409)
     await _delete(session, actor, row, AGREEMENT_ENTITY)
+
+
+# ── Phân nhóm sản phẩm (U13) ─────────────────────────────────────────────────
+async def list_subtypes(session: AsyncSession, reviewed: bool | None) -> list[ProductSubtype]:
+    query = select(ProductSubtype)
+    if reviewed is not None:
+        query = query.where(
+            ProductSubtype.reviewed_by.is_not(None)
+            if reviewed
+            else ProductSubtype.reviewed_by.is_(None)
+        )
+    return list(
+        await session.scalars(query.order_by(ProductSubtype.hs_prefix, ProductSubtype.code))
+    )
+
+
+async def create_subtype(
+    session: AsyncSession, actor: CurrentUser, data: ProductSubtypeIn
+) -> ProductSubtype:
+    if await session.scalar(select(ProductSubtype.id).where(ProductSubtype.code == data.code)):
+        raise AppError("duplicate_subtype", "This subtype code already exists", 409)
+    return await _create(session, actor, ProductSubtype(**data.model_dump()), SUBTYPE_ENTITY)
+
+
+async def update_subtype(
+    session: AsyncSession, actor: CurrentUser, subtype_id: uuid.UUID, patch: ProductSubtypePatch
+) -> ProductSubtype:
+    row = await _get(session, ProductSubtype, subtype_id)
+    required = {"hs_prefix", "name_vi", "name_en"} & patch.model_fields_set
+    if any(getattr(patch, name) is None for name in required):
+        raise AppError("invalid_patch", "Required fields cannot be null", 422)
+    return await _update(session, actor, row, patch, SUBTYPE_ENTITY)
+
+
+async def review_subtype(
+    session: AsyncSession, actor: CurrentUser, subtype_id: uuid.UUID
+) -> ProductSubtype:
+    return await _review(
+        session, actor, await _get(session, ProductSubtype, subtype_id), SUBTYPE_ENTITY
+    )
+
+
+async def delete_subtype(session: AsyncSession, actor: CurrentUser, subtype_id: uuid.UUID) -> None:
+    row = await _get(session, ProductSubtype, subtype_id)
+    used = await session.scalar(
+        select(TariffQuota.id)
+        .where(TariffQuota.eligible_subtypes.any(ProductSubtype.code == row.code))
+        .limit(1)
+    )
+    if used is not None:
+        raise AppError("subtype_in_use", "A quota still lists this subtype as eligible", 409)
+    await _delete(session, actor, row, SUBTYPE_ENTITY)
+
+
+# ── Hạn ngạch (U13) ──────────────────────────────────────────────────────────
+def quota_out(row: TariffQuota) -> TariffQuotaOut:
+    return TariffQuotaOut(
+        **{
+            c.name: getattr(row, c.name)
+            for c in TariffQuota.__table__.columns
+            if c.name not in ("created_at", "updated_at")
+        },
+        eligible_subtypes=[s.code for s in row.eligible_subtypes],
+    )
+
+
+def _check_quota_duties(row: TariffQuota) -> None:
+    for side in ("in_quota", "out_quota"):
+        duty_type = getattr(row, f"{side}_duty_type")
+        if duty_type is DutyType.ad_valorem and getattr(row, f"{side}_rate") is None:
+            raise AppError("invalid_quota", f"{side}_rate is required for ad_valorem", 422)
+        if duty_type is DutyType.specific and (
+            getattr(row, f"{side}_specific") is None or row.specific_unit is None
+        ):
+            raise AppError(
+                "invalid_quota", f"{side}_specific and specific_unit are required for specific", 422
+            )
+
+
+async def _subtypes_by_code(session: AsyncSession, codes: list[str]) -> list[ProductSubtype]:
+    rows = list(await session.scalars(select(ProductSubtype).where(ProductSubtype.code.in_(codes))))
+    missing = set(codes) - {r.code for r in rows}
+    if missing:
+        raise AppError("unknown_subtype", f"Unknown subtype codes: {sorted(missing)}", 422)
+    return rows
+
+
+async def list_quotas(session: AsyncSession, reviewed: bool | None) -> list[TariffQuota]:
+    query = select(TariffQuota)
+    if reviewed is not None:
+        query = query.where(
+            TariffQuota.reviewed_by.is_not(None) if reviewed else TariffQuota.reviewed_by.is_(None)
+        )
+    return list(
+        await session.scalars(
+            query.order_by(
+                TariffQuota.hs_prefix, TariffQuota.agreement_code, TariffQuota.valid_from
+            )
+        )
+    )
+
+
+async def create_quota(
+    session: AsyncSession, actor: CurrentUser, data: TariffQuotaIn
+) -> TariffQuota:
+    await _require_agreement(session, data.agreement_code)
+    _check_window(data.valid_from, data.valid_until)
+    values = data.model_dump(exclude={"eligible_subtypes"})
+    row = TariffQuota(**values)
+    row.eligible_subtypes = await _subtypes_by_code(session, data.eligible_subtypes)
+    _check_quota_duties(row)
+    return await _create(session, actor, row, QUOTA_ENTITY)
+
+
+async def update_quota(
+    session: AsyncSession, actor: CurrentUser, quota_id: uuid.UUID, patch: TariffQuotaPatch
+) -> TariffQuota:
+    row = await _get(session, TariffQuota, quota_id)
+    fields = patch.model_fields_set
+    required = {
+        "agreement_code",
+        "destination",
+        "hs_prefix",
+        "volume",
+        "volume_unit",
+        "in_quota_duty_type",
+        "out_quota_duty_type",
+        "valid_from",
+        "eligible_subtypes",
+    } & fields
+    if any(getattr(patch, name) is None for name in required):
+        raise AppError("invalid_patch", "Required fields cannot be null", 422)
+    if patch.agreement_code is not None:
+        await _require_agreement(session, patch.agreement_code)
+    _check_window(
+        patch.valid_from if "valid_from" in fields and patch.valid_from else row.valid_from,
+        patch.valid_until if "valid_until" in fields else row.valid_until,
+    )
+    if patch.eligible_subtypes is not None:
+        row.eligible_subtypes = await _subtypes_by_code(session, patch.eligible_subtypes)
+    scalar_patch = patch.model_copy()
+    scalar_patch.__pydantic_fields_set__ = fields - {"eligible_subtypes"}
+    for name in scalar_patch.model_fields_set:
+        setattr(row, name, getattr(patch, name))
+    _check_quota_duties(row)
+    return await _update(session, actor, row, scalar_patch, QUOTA_ENTITY)
+
+
+async def review_quota(
+    session: AsyncSession, actor: CurrentUser, quota_id: uuid.UUID
+) -> TariffQuota:
+    return await _review(session, actor, await _get(session, TariffQuota, quota_id), QUOTA_ENTITY)
+
+
+async def delete_quota(session: AsyncSession, actor: CurrentUser, quota_id: uuid.UUID) -> None:
+    await _delete(session, actor, await _get(session, TariffQuota, quota_id), QUOTA_ENTITY)

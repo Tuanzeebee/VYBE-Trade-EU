@@ -14,7 +14,11 @@ import {
   isEuMember,
   OTHER_MARKETS,
   parseAmount,
+  QUOTA_CONDITIONS,
+  QUOTA_REVIEW_MESSAGES,
   type Agreement,
+  type QuotaAllocated,
+  type Subtype,
   type TariffOutcome,
   type TariffResult,
 } from '../lib/tariffApi';
@@ -34,6 +38,77 @@ type Submitted = { hsCode: string; amount: string; roo: RooStatus | '' };
 
 /** '12.0000' → '12%' (bỏ số 0 thừa; chỉ để hiển thị). */
 const percent = (rate: string) => `${Number(rate)}%`;
+
+// U13: kịch bản trong / ngoài hạn ngạch — luôn kèm điều kiện, không trình bày như 0% vô điều kiện.
+function QuotaScenarios({ data }: { data: TariffResult }) {
+  const { tr, language } = useLanguage();
+  const money = (value: string) =>
+    new Intl.NumberFormat(language === 'en' ? 'en-GB' : 'vi-VN', { style: 'currency', currency: 'EUR' }).format(Number(value));
+  const pick = (vi: string | null | undefined, en: string | null | undefined) => (language === 'en' ? en || vi : vi);
+  const unit = data.quota?.specific_unit === 'tonne' ? tr('tấn') : (data.quota?.specific_unit ?? '');
+  const scenarios = data.scenarios ?? [];
+  const label = (kind: string) => tr(kind === 'in_quota' ? 'Trong hạn ngạch' : 'Ngoài hạn ngạch');
+  const basis = (s: (typeof scenarios)[number]) =>
+    s.duty_type === 'specific' && s.specific !== null ? `${Number(s.specific)} EUR/${unit}` : percent(s.rate ?? '0');
+  const licence = pick(data.quota?.licence_note_vi, data.quota?.licence_note_en);
+  const allocation = pick(data.quota?.allocation_note_vi, data.quota?.allocation_note_en);
+
+  return (
+    <div data-testid="quota-scenarios">
+      <p className="text-sm font-semibold text-slate-600">{tr('Kịch bản hạn ngạch thuế quan')}</p>
+      {data.subtype && (
+        <p className="mt-1 text-xs text-slate-600">
+          {tr('Phân nhóm')}: {language === 'en' ? data.subtype.name_en : data.subtype.name_vi}
+          {data.quantity ? ` · ${tr('Khối lượng')}: ${data.quantity} ${unit}` : ''}
+        </p>
+      )}
+      <table className="mt-4 w-full text-left text-sm">
+        <thead>
+          <tr className="text-xs text-slate-500">
+            <th className="py-2 font-semibold">{tr('Kịch bản')}</th>
+            <th className="py-2 font-semibold">{tr('Mức thuế')}</th>
+            <th className="py-2 text-right font-semibold">{tr('Tiền thuế')}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {scenarios.map((s) => (
+            <tr key={s.kind} className="border-t border-slate-100" data-testid={`scenario-${s.kind}`}>
+              <td className="py-2 font-semibold text-slate-900">{label(s.kind)}</td>
+              <td className="py-2 text-slate-700">{basis(s)}</td>
+              <td className="py-2 text-right font-bold text-slate-900">{money(s.duty)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      {data.savings !== null && (
+        <p className="mt-3 text-sm text-slate-800">
+          {tr('Chênh lệch nếu được phân bổ hạn ngạch')}: <strong>{money(data.savings)}</strong>
+        </p>
+      )}
+      {data.quota_allocated === 'no' && (
+        <p className="mt-2 rounded-lg bg-amber-50 p-2 text-xs text-amber-900">{tr('Bạn cho biết chưa được phân bổ hạn ngạch: lô hàng sẽ chịu thuế ngoài hạn ngạch.')}</p>
+      )}
+      {data.quota_allocated === 'unknown' && (
+        <p className="mt-2 rounded-lg bg-amber-50 p-2 text-xs text-amber-900">{tr('Chưa rõ đã được phân bổ hạn ngạch hay chưa: hãy xác nhận với nhà nhập khẩu trước khi chốt giá.')}</p>
+      )}
+      <h3 className="mt-4 text-xs font-bold uppercase tracking-wide text-slate-700">{tr('Điều kiện áp dụng')}</h3>
+      <ul className="mt-1 list-disc space-y-1 pl-5 text-xs text-slate-700" data-testid="quota-conditions">
+        {(data.conditions ?? []).map((c) => (
+          <li key={c}>{tr(QUOTA_CONDITIONS[c] ?? c)}</li>
+        ))}
+      </ul>
+      {data.quota && (
+        <p className="mt-3 text-xs text-slate-600">
+          {tr('Hạn ngạch')}: {Number(data.quota.volume).toLocaleString(language === 'en' ? 'en-GB' : 'vi-VN')} {data.quota.volume_unit === 'tonne' ? tr('tấn') : data.quota.volume_unit}
+          {data.quota.quota_year ? ` / ${data.quota.quota_year}` : ''}
+          {data.quota.quota_code ? ` · ${data.quota.quota_code}` : ''}
+        </p>
+      )}
+      {licence && <p className="mt-1 text-xs text-slate-600">{licence}</p>}
+      {allocation && <p className="mt-1 text-xs text-slate-600">{allocation}</p>}
+    </div>
+  );
+}
 
 function Result({ data }: { data: TariffResult }) {
   const { tr, language } = useLanguage();
@@ -77,9 +152,13 @@ function Result({ data }: { data: TariffResult }) {
           {tr('Mã HS này chưa được hỗ trợ. Vui lòng liên hệ để được tư vấn.')}
         </p>
       )}
+      {data.status === 'quota_scenarios' && <QuotaScenarios data={data} />}
       {data.status === 'needs_review' && (
-        <p className="text-base font-semibold text-amber-800">
-          {tr('Trường hợp này cần kiểm tra thêm (ví dụ hạn ngạch hoặc thuế tuyệt đối), nên chúng tôi không đưa ra con số.')}
+        <p className="text-base font-semibold text-amber-800" data-testid="review-message">
+          {tr(
+            (data.review_reason && QUOTA_REVIEW_MESSAGES[data.review_reason]) ||
+              'Trường hợp này cần kiểm tra thêm (ví dụ hạn ngạch hoặc thuế tuyệt đối), nên chúng tôi không đưa ra con số.',
+          )}
         </p>
       )}
       {notes.map((note) => (
@@ -116,21 +195,35 @@ export default function TariffCalculator({ initialRoo }: { initialRoo?: RooStatu
   // U12: hiệp định có dữ liệu đã duyệt cho (mã HS, thị trường); nhiều hơn một thì người dùng chọn.
   const [agreements, setAgreements] = useState<Agreement[] | null>(null);
   const [agreement, setAgreement] = useState('');
+  // U13: hàng có hạn ngạch đã duyệt → hỏi phân nhóm, đã được phân bổ chưa, khối lượng.
+  const [subtypes, setSubtypes] = useState<Subtype[]>([]);
+  const [quotaAgreements, setQuotaAgreements] = useState<string[]>([]);
+  const [subtype, setSubtype] = useState('');
+  const [allocated, setAllocated] = useState<QuotaAllocated | ''>('');
+  const [quantity, setQuantity] = useState('');
 
   useEffect(() => {
     setAgreements(null);
     setAgreement('');
+    setSubtypes([]);
+    setQuotaAgreements([]);
+    setSubtype('');
     if (!hs) return;
     let active = true;
     void fetchTariffOptions(hs.code, destination).then((options) => {
       if (!active) return;
       setAgreements(options?.agreements ?? []);
+      setSubtypes(options?.subtypes ?? []);
+      setQuotaAgreements(options?.quota_agreements ?? []);
       if (options && options.agreements.length === 1) setAgreement(options.agreements[0].code);
     });
     return () => {
       active = false;
     };
   }, [hs, destination]);
+
+  const effectiveAgreement = agreement || (isEuMember(destination) ? 'EVFTA' : '');
+  const hasQuota = Boolean(hs) && effectiveAgreement !== '' && quotaAgreements.includes(effectiveAgreement);
 
   // Đổi mã HS, giá trị hoặc kết quả RoO thì bảng xếp hạng cũ không còn mô tả đầu vào hiện tại.
   const changeHs = (option: HsCodeOption | null) => {
@@ -158,6 +251,8 @@ export default function TariffCalculator({ initialRoo }: { initialRoo?: RooStatu
     if (!amount) {
       return setError('Giá trị lô hàng phải là số dương, tối đa 2 chữ số thập phân (ví dụ 10000 hoặc 10000.50).');
     }
+    const qty = quantity.trim() === '' ? undefined : parseAmount(quantity);
+    if (qty === null) return setError('Khối lượng phải là số dương, tối đa 2 chữ số thập phân.');
     const count = shipments.trim() === '' ? undefined : Number(shipments);
     if (count !== undefined && !(Number.isInteger(count) && count >= 1 && count <= MAX_SHIPMENTS)) {
       return setError('Số lô hàng mỗi năm phải là số nguyên từ 1 đến 10000.');
@@ -169,6 +264,9 @@ export default function TariffCalculator({ initialRoo }: { initialRoo?: RooStatu
       productValue: amount,
       shipmentsPerYear: count,
       agreement: agreement || undefined,
+      subtypeCode: hasQuota ? subtype || undefined : undefined,
+      quantity: hasQuota ? qty : undefined,
+      quotaAllocated: hasQuota ? allocated || undefined : undefined,
     });
     setBusy(false);
     if (outcome.ok) {
@@ -244,6 +342,48 @@ export default function TariffCalculator({ initialRoo }: { initialRoo?: RooStatu
           <p className="text-xs text-slate-600" data-testid="agreement-note">
             {tr('Hiệp định áp dụng')}: {language === 'en' ? agreements[0].name_en : agreements[0].name_vi}
           </p>
+        )}
+        {hasQuota && (
+          <fieldset className="space-y-4 rounded-2xl border border-amber-200 bg-amber-50/60 p-4" data-testid="quota-fields">
+            <legend className="px-1 text-sm font-bold text-amber-900">{tr('Mặt hàng có hạn ngạch thuế quan')}</legend>
+            <div>
+              <label htmlFor="tariff-subtype" className={label}>
+                {tr('Phân nhóm hàng')}
+              </label>
+              <select id="tariff-subtype" value={subtype} onChange={(e) => setSubtype(e.target.value)} className={field}>
+                <option value="">{tr('Chọn phân nhóm')}</option>
+                {subtypes.map((s) => (
+                  <option key={s.code} value={s.code}>
+                    {language === 'en' ? s.name_en : s.name_vi}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <fieldset>
+              <legend className={label}>{tr('Bạn đã được phân bổ hạn ngạch chưa?')}</legend>
+              <div className="mt-2 flex flex-wrap gap-3 text-sm">
+                {(
+                  [
+                    ['yes', 'Đã được phân bổ'],
+                    ['no', 'Chưa'],
+                    ['unknown', 'Không rõ'],
+                  ] as const
+                ).map(([code, text]) => (
+                  <label key={code} className="flex items-center gap-2">
+                    <input type="radio" name="quota-allocated" checked={allocated === code} onChange={() => setAllocated(code)} />
+                    {tr(text)}
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+            <div>
+              <label htmlFor="tariff-quantity" className={label}>
+                {tr('Khối lượng lô hàng (tấn)')}
+              </label>
+              <input id="tariff-quantity" inputMode="decimal" value={quantity} onChange={(e) => setQuantity(e.target.value)} className={field} />
+              <p className="mt-1 text-xs text-slate-600">{tr('Cần khi thuế tính theo khối lượng (thuế tuyệt đối).')}</p>
+            </div>
+          </fieldset>
         )}
         {hs && agreements !== null && agreements.length === 0 && (
           <p role="status" className="rounded-xl bg-amber-50 p-3 text-xs text-amber-900" data-testid="no-agreement">

@@ -157,6 +157,8 @@ describe('Dữ liệu tuân thủ (admin)', () => {
       'Loại bằng chứng',
       'Luật bằng chứng theo nhóm hàng',
       'Hiệp định thương mại',
+      'Phân nhóm sản phẩm',
+      'Hạn ngạch thuế quan',
     ]);
   });
 

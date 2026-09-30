@@ -3677,6 +3677,614 @@
         }
       }
     },
+    "/api/admin/product-subtypes": {
+      "get": {
+        "tags": [
+          "compliance"
+        ],
+        "summary": "List Product Subtypes",
+        "operationId": "list_product_subtypes_api_admin_product_subtypes_get",
+        "parameters": [
+          {
+            "name": "reviewed",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Reviewed"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProductSubtypeOut"
+                  },
+                  "title": "Response List Product Subtypes Api Admin Product Subtypes Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "compliance"
+        ],
+        "summary": "Create Product Subtype",
+        "operationId": "create_product_subtype_api_admin_product_subtypes_post",
+        "parameters": [
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProductSubtypeIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductSubtypeOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/product-subtypes/{subtype_id}": {
+      "patch": {
+        "tags": [
+          "compliance"
+        ],
+        "summary": "Update Product Subtype",
+        "operationId": "update_product_subtype_api_admin_product_subtypes__subtype_id__patch",
+        "parameters": [
+          {
+            "name": "subtype_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Subtype Id"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProductSubtypePatch"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductSubtypeOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "compliance"
+        ],
+        "summary": "Delete Product Subtype",
+        "operationId": "delete_product_subtype_api_admin_product_subtypes__subtype_id__delete",
+        "parameters": [
+          {
+            "name": "subtype_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Subtype Id"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/product-subtypes/{subtype_id}/review": {
+      "post": {
+        "tags": [
+          "compliance"
+        ],
+        "summary": "Review Product Subtype",
+        "operationId": "review_product_subtype_api_admin_product_subtypes__subtype_id__review_post",
+        "parameters": [
+          {
+            "name": "subtype_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Subtype Id"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductSubtypeOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/tariff-quotas": {
+      "get": {
+        "tags": [
+          "compliance"
+        ],
+        "summary": "List Tariff Quotas",
+        "operationId": "list_tariff_quotas_api_admin_tariff_quotas_get",
+        "parameters": [
+          {
+            "name": "reviewed",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Reviewed"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TariffQuotaOut"
+                  },
+                  "title": "Response List Tariff Quotas Api Admin Tariff Quotas Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "compliance"
+        ],
+        "summary": "Create Tariff Quota",
+        "operationId": "create_tariff_quota_api_admin_tariff_quotas_post",
+        "parameters": [
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TariffQuotaIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TariffQuotaOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/tariff-quotas/{quota_id}": {
+      "patch": {
+        "tags": [
+          "compliance"
+        ],
+        "summary": "Update Tariff Quota",
+        "operationId": "update_tariff_quota_api_admin_tariff_quotas__quota_id__patch",
+        "parameters": [
+          {
+            "name": "quota_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Quota Id"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TariffQuotaPatch"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TariffQuotaOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "compliance"
+        ],
+        "summary": "Delete Tariff Quota",
+        "operationId": "delete_tariff_quota_api_admin_tariff_quotas__quota_id__delete",
+        "parameters": [
+          {
+            "name": "quota_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Quota Id"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/tariff-quotas/{quota_id}/review": {
+      "post": {
+        "tags": [
+          "compliance"
+        ],
+        "summary": "Review Tariff Quota",
+        "operationId": "review_tariff_quota_api_admin_tariff_quotas__quota_id__review_post",
+        "parameters": [
+          {
+            "name": "quota_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Quota Id"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TariffQuotaOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/admin/country-terms": {
       "get": {
         "tags": [
@@ -13273,6 +13881,254 @@
         "title": "ProductPatch",
         "description": "Chỉ các trường gửi lên mới được sửa; image_keys gửi lên thay thế toàn bộ ảnh."
       },
+      "ProductSubtypeIn": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "hs_prefix": {
+            "type": "string",
+            "title": "Hs Prefix"
+          },
+          "name_vi": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Name Vi"
+          },
+          "name_en": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Name En"
+          },
+          "description_vi": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 4000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description Vi"
+          },
+          "description_en": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 4000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description En"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 4000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "hs_prefix",
+          "name_vi",
+          "name_en"
+        ],
+        "title": "ProductSubtypeIn"
+      },
+      "ProductSubtypeOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "hs_prefix": {
+            "type": "string",
+            "title": "Hs Prefix"
+          },
+          "name_vi": {
+            "type": "string",
+            "title": "Name Vi"
+          },
+          "name_en": {
+            "type": "string",
+            "title": "Name En"
+          },
+          "description_vi": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description Vi"
+          },
+          "description_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description En"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          },
+          "is_demo": {
+            "type": "boolean",
+            "title": "Is Demo"
+          },
+          "reviewed_by": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reviewed By"
+          },
+          "reviewed_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reviewed At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "code",
+          "hs_prefix",
+          "name_vi",
+          "name_en",
+          "description_vi",
+          "description_en",
+          "source",
+          "is_demo",
+          "reviewed_by",
+          "reviewed_at"
+        ],
+        "title": "ProductSubtypeOut"
+      },
+      "ProductSubtypePatch": {
+        "properties": {
+          "hs_prefix": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hs Prefix"
+          },
+          "name_vi": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name Vi"
+          },
+          "name_en": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name En"
+          },
+          "description_vi": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 4000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description Vi"
+          },
+          "description_en": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 4000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description En"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 4000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          }
+        },
+        "type": "object",
+        "title": "ProductSubtypePatch"
+      },
       "ProfileViewerOut": {
         "properties": {
           "legal_name": {
@@ -13958,6 +14814,122 @@
           "products"
         ],
         "title": "QueueItem"
+      },
+      "QuotaInfoOut": {
+        "properties": {
+          "quota_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quota Code"
+          },
+          "quota_year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quota Year"
+          },
+          "volume": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Volume"
+          },
+          "volume_unit": {
+            "type": "string",
+            "title": "Volume Unit"
+          },
+          "specific_unit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Specific Unit"
+          },
+          "licence_note_vi": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Licence Note Vi"
+          },
+          "licence_note_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Licence Note En"
+          },
+          "allocation_note_vi": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Allocation Note Vi"
+          },
+          "allocation_note_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Allocation Note En"
+          },
+          "source_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Url"
+          }
+        },
+        "type": "object",
+        "required": [
+          "quota_code",
+          "quota_year",
+          "volume",
+          "volume_unit",
+          "specific_unit",
+          "licence_note_vi",
+          "licence_note_en",
+          "allocation_note_vi",
+          "allocation_note_en",
+          "source_url"
+        ],
+        "title": "QuotaInfoOut",
+        "description": "Thông tin hạn ngạch đã duyệt (hiển thị kèm kịch bản)."
       },
       "QuoteDecisionIn": {
         "properties": {
@@ -15559,6 +16531,65 @@
         ],
         "title": "SavingsTile"
       },
+      "ScenarioOut": {
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "in_quota",
+              "out_of_quota"
+            ],
+            "title": "Kind"
+          },
+          "duty_type": {
+            "type": "string",
+            "enum": [
+              "ad_valorem",
+              "specific",
+              "mixed"
+            ],
+            "title": "Duty Type"
+          },
+          "rate": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rate"
+          },
+          "specific": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Specific"
+          },
+          "duty": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Duty"
+          }
+        },
+        "type": "object",
+        "required": [
+          "kind",
+          "duty_type",
+          "rate",
+          "specific",
+          "duty"
+        ],
+        "title": "ScenarioOut"
+      },
       "ServiceOfferingIn": {
         "properties": {
           "category_code": {
@@ -16174,6 +17205,53 @@
         "title": "StatsOut",
         "description": "Số liệu dashboard nội bộ."
       },
+      "SubtypeOut": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "name_vi": {
+            "type": "string",
+            "title": "Name Vi"
+          },
+          "name_en": {
+            "type": "string",
+            "title": "Name En"
+          },
+          "description_vi": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description Vi"
+          },
+          "description_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description En"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "name_vi",
+          "name_en",
+          "description_vi",
+          "description_en"
+        ],
+        "title": "SubtypeOut"
+      },
       "SupplierBrief": {
         "properties": {
           "slug": {
@@ -16512,6 +17590,49 @@
               }
             ],
             "title": "Agreement"
+          },
+          "subtype_code": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[a-z0-9_]{2,40}$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Subtype Code"
+          },
+          "quantity": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quantity"
+          },
+          "quota_allocated": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "yes",
+                  "no",
+                  "unknown"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quota Allocated"
           }
         },
         "type": "object",
@@ -17132,6 +18253,20 @@
             },
             "type": "array",
             "title": "Agreements"
+          },
+          "subtypes": {
+            "items": {
+              "$ref": "#/components/schemas/SubtypeOut"
+            },
+            "type": "array",
+            "title": "Subtypes"
+          },
+          "quota_agreements": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Quota Agreements"
           }
         },
         "type": "object",
@@ -17141,7 +18276,7 @@
           "agreements"
         ],
         "title": "TariffOptionsOut",
-        "description": "Lựa chọn cho form tính thuế: hiệp định có dữ liệu cho (mã HS, thị trường)."
+        "description": "Lựa chọn cho form tính thuế: hiệp định có dữ liệu cho (mã HS, thị trường); U13: phân nhóm\nđã duyệt của mã HS và các hiệp định có hạn ngạch đã duyệt."
       },
       "TariffOut": {
         "properties": {
@@ -17154,7 +18289,8 @@
             "enum": [
               "ok",
               "unsupported",
-              "needs_review"
+              "needs_review",
+              "quota_scenarios"
             ],
             "title": "Status"
           },
@@ -17324,6 +18460,101 @@
               }
             ],
             "title": "Preferential Duty"
+          },
+          "data_status": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "reviewed",
+                  "demo_unreviewed"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data Status"
+          },
+          "review_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Review Reason"
+          },
+          "scenarios": {
+            "items": {
+              "$ref": "#/components/schemas/ScenarioOut"
+            },
+            "type": "array",
+            "title": "Scenarios"
+          },
+          "quota": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/QuotaInfoOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "subtype": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SubtypeOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "subtypes": {
+            "items": {
+              "$ref": "#/components/schemas/SubtypeOut"
+            },
+            "type": "array",
+            "title": "Subtypes"
+          },
+          "conditions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Conditions"
+          },
+          "quantity": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quantity"
+          },
+          "quota_allocated": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "yes",
+                  "no",
+                  "unknown"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quota Allocated"
           }
         },
         "type": "object",
@@ -17486,6 +18717,795 @@
         ],
         "title": "TariffPreviewOut",
         "description": "Xem thuế tại sản phẩm (chỉ đọc). `unsupported` và `needs_review` không có con số nào."
+      },
+      "TariffQuotaIn": {
+        "properties": {
+          "in_quota_rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "In Quota Rate"
+          },
+          "in_quota_specific": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "In Quota Specific"
+          },
+          "out_quota_rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Out Quota Rate"
+          },
+          "out_quota_specific": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Out Quota Specific"
+          },
+          "agreement_code": {
+            "type": "string",
+            "title": "Agreement Code",
+            "default": "EVFTA"
+          },
+          "destination": {
+            "type": "string",
+            "title": "Destination"
+          },
+          "hs_prefix": {
+            "type": "string",
+            "title": "Hs Prefix"
+          },
+          "quota_code": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 32
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quota Code"
+          },
+          "quota_year": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 2100,
+                "minimum": 2000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quota Year"
+          },
+          "volume": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              }
+            ],
+            "title": "Volume"
+          },
+          "volume_unit": {
+            "type": "string",
+            "enum": [
+              "tonne",
+              "kg",
+              "piece",
+              "liter"
+            ],
+            "title": "Volume Unit",
+            "default": "tonne"
+          },
+          "in_quota_duty_type": {
+            "$ref": "#/components/schemas/DutyType"
+          },
+          "out_quota_duty_type": {
+            "$ref": "#/components/schemas/DutyType"
+          },
+          "specific_unit": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "tonne",
+                  "kg",
+                  "piece",
+                  "liter"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Specific Unit"
+          },
+          "licence_note_vi": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 4000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Licence Note Vi"
+          },
+          "licence_note_en": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 4000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Licence Note En"
+          },
+          "allocation_note_vi": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 4000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Allocation Note Vi"
+          },
+          "allocation_note_en": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 4000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Allocation Note En"
+          },
+          "source_url": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 1024
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Url"
+          },
+          "valid_from": {
+            "type": "string",
+            "format": "date",
+            "title": "Valid From"
+          },
+          "valid_until": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Valid Until"
+          },
+          "eligible_subtypes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "maxItems": 50,
+            "title": "Eligible Subtypes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "destination",
+          "hs_prefix",
+          "volume",
+          "in_quota_duty_type",
+          "out_quota_duty_type",
+          "valid_from"
+        ],
+        "title": "TariffQuotaIn"
+      },
+      "TariffQuotaOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "agreement_code": {
+            "type": "string",
+            "title": "Agreement Code"
+          },
+          "destination": {
+            "type": "string",
+            "title": "Destination"
+          },
+          "hs_prefix": {
+            "type": "string",
+            "title": "Hs Prefix"
+          },
+          "quota_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quota Code"
+          },
+          "quota_year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quota Year"
+          },
+          "volume": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Volume"
+          },
+          "volume_unit": {
+            "type": "string",
+            "title": "Volume Unit"
+          },
+          "in_quota_duty_type": {
+            "$ref": "#/components/schemas/DutyType"
+          },
+          "in_quota_rate": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "In Quota Rate"
+          },
+          "in_quota_specific": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "In Quota Specific"
+          },
+          "out_quota_duty_type": {
+            "$ref": "#/components/schemas/DutyType"
+          },
+          "out_quota_rate": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Out Quota Rate"
+          },
+          "out_quota_specific": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Out Quota Specific"
+          },
+          "specific_unit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Specific Unit"
+          },
+          "licence_note_vi": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Licence Note Vi"
+          },
+          "licence_note_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Licence Note En"
+          },
+          "allocation_note_vi": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Allocation Note Vi"
+          },
+          "allocation_note_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Allocation Note En"
+          },
+          "source_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Url"
+          },
+          "valid_from": {
+            "type": "string",
+            "format": "date",
+            "title": "Valid From"
+          },
+          "valid_until": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Valid Until"
+          },
+          "eligible_subtypes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Eligible Subtypes"
+          },
+          "is_demo": {
+            "type": "boolean",
+            "title": "Is Demo"
+          },
+          "reviewed_by": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reviewed By"
+          },
+          "reviewed_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reviewed At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "agreement_code",
+          "destination",
+          "hs_prefix",
+          "quota_code",
+          "quota_year",
+          "volume",
+          "volume_unit",
+          "in_quota_duty_type",
+          "in_quota_rate",
+          "in_quota_specific",
+          "out_quota_duty_type",
+          "out_quota_rate",
+          "out_quota_specific",
+          "specific_unit",
+          "licence_note_vi",
+          "licence_note_en",
+          "allocation_note_vi",
+          "allocation_note_en",
+          "source_url",
+          "valid_from",
+          "valid_until",
+          "eligible_subtypes",
+          "is_demo",
+          "reviewed_by",
+          "reviewed_at"
+        ],
+        "title": "TariffQuotaOut"
+      },
+      "TariffQuotaPatch": {
+        "properties": {
+          "in_quota_rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "In Quota Rate"
+          },
+          "in_quota_specific": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "In Quota Specific"
+          },
+          "out_quota_rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Out Quota Rate"
+          },
+          "out_quota_specific": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Out Quota Specific"
+          },
+          "agreement_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Agreement Code"
+          },
+          "destination": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Destination"
+          },
+          "hs_prefix": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hs Prefix"
+          },
+          "quota_code": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 32
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quota Code"
+          },
+          "quota_year": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 2100,
+                "minimum": 2000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quota Year"
+          },
+          "volume": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Volume"
+          },
+          "volume_unit": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "tonne",
+                  "kg",
+                  "piece",
+                  "liter"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Volume Unit"
+          },
+          "in_quota_duty_type": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DutyType"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "out_quota_duty_type": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DutyType"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "specific_unit": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "tonne",
+                  "kg",
+                  "piece",
+                  "liter"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Specific Unit"
+          },
+          "licence_note_vi": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 4000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Licence Note Vi"
+          },
+          "licence_note_en": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 4000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Licence Note En"
+          },
+          "allocation_note_vi": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 4000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Allocation Note Vi"
+          },
+          "allocation_note_en": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 4000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Allocation Note En"
+          },
+          "source_url": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 1024
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Url"
+          },
+          "valid_from": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Valid From"
+          },
+          "valid_until": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Valid Until"
+          },
+          "eligible_subtypes": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array",
+                "maxItems": 50
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Eligible Subtypes"
+          }
+        },
+        "type": "object",
+        "title": "TariffQuotaPatch"
       },
       "TradeAgreementIn": {
         "properties": {

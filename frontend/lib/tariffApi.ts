@@ -6,6 +6,27 @@ import { COUNTRIES } from './companyApi';
 export type TariffResult = components['schemas']['TariffOut'];
 export type TariffOptions = components['schemas']['TariffOptionsOut'];
 export type Agreement = components['schemas']['AgreementOut'];
+export type Subtype = components['schemas']['SubtypeOut'];
+export type QuotaAllocated = 'yes' | 'no' | 'unknown';
+
+// U13: lý do "cần xem xét" của hàng có hạn ngạch → câu hướng dẫn (không có con số nào).
+export const QUOTA_REVIEW_MESSAGES: Record<string, string> = {
+  no_quota_data: 'Chưa có dữ liệu hạn ngạch đã được chuyên gia duyệt cho mặt hàng này, nên chúng tôi không đưa ra con số.',
+  subtype_required: 'Mặt hàng này có hạn ngạch thuế quan. Chọn phân nhóm hàng để xem kịch bản trong / ngoài hạn ngạch.',
+  subtype_not_eligible:
+    'Phân nhóm này không thuộc danh sách đủ điều kiện hạn ngạch đã duyệt (ví dụ giống gạo chưa có trong danh sách). Trường hợp này cần chuyên gia xem xét.',
+  quantity_required: 'Thuế ngoài hạn ngạch là thuế tuyệt đối theo khối lượng. Nhập khối lượng lô hàng để tính.',
+  mixed_duty: 'Mặt hàng áp thuế hỗn hợp, cần chuyên gia xem xét.',
+  data_anomaly: 'Dữ liệu hạn ngạch bất thường, cần chuyên gia kiểm tra lại.',
+};
+
+// Điều kiện luôn đi kèm kịch bản hạn ngạch — không bao giờ là "0% vô điều kiện".
+export const QUOTA_CONDITIONS: Record<string, string> = {
+  origin: 'Hàng đạt quy tắc xuất xứ của hiệp định và có chứng từ chứng nhận xuất xứ hợp lệ.',
+  allocation: 'Thuế trong hạn ngạch chỉ áp dụng khi lô hàng được phân bổ hạn ngạch (còn hạn ngạch tại thời điểm nhập khẩu); nếu không, áp thuế ngoài hạn ngạch.',
+  subtype: 'Hàng đúng phân nhóm đủ điều kiện đã chọn.',
+  licence: 'Có giấy phép / chứng nhận theo yêu cầu của hạn ngạch (xem ghi chú bên dưới).',
+};
 
 // 27 nước thành viên EU (danh sách trùng backend calculators.EU_MEMBERS).
 const EU_CODES = 'AT BE BG HR CY CZ DK EE FI FR DE GR HU IE IT LV LT LU MT NL PL PT RO SK SI ES SE'.split(' ');
@@ -43,6 +64,9 @@ export async function calculateTariff(input: {
   productValue: string;
   shipmentsPerYear?: number;
   agreement?: string;
+  subtypeCode?: string;
+  quantity?: string;
+  quotaAllocated?: QuotaAllocated;
 }): Promise<TariffOutcome> {
   try {
     const { data, error, response } = await createApiClient().POST('/api/public/tariff', {
@@ -52,6 +76,9 @@ export async function calculateTariff(input: {
         product_value: input.productValue,
         ...(input.shipmentsPerYear ? { shipments_per_year: input.shipmentsPerYear } : {}),
         ...(input.agreement ? { agreement: input.agreement } : {}),
+        ...(input.subtypeCode ? { subtype_code: input.subtypeCode } : {}),
+        ...(input.quantity ? { quantity: input.quantity } : {}),
+        ...(input.quotaAllocated ? { quota_allocated: input.quotaAllocated } : {}),
       },
     });
     if (response.status === 429) return { ok: false, error: 'rate_limited' };

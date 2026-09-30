@@ -814,6 +814,112 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/product-subtypes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Product Subtypes */
+        get: operations["list_product_subtypes_api_admin_product_subtypes_get"];
+        put?: never;
+        /** Create Product Subtype */
+        post: operations["create_product_subtype_api_admin_product_subtypes_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/product-subtypes/{subtype_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete Product Subtype */
+        delete: operations["delete_product_subtype_api_admin_product_subtypes__subtype_id__delete"];
+        options?: never;
+        head?: never;
+        /** Update Product Subtype */
+        patch: operations["update_product_subtype_api_admin_product_subtypes__subtype_id__patch"];
+        trace?: never;
+    };
+    "/api/admin/product-subtypes/{subtype_id}/review": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Review Product Subtype */
+        post: operations["review_product_subtype_api_admin_product_subtypes__subtype_id__review_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/tariff-quotas": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Tariff Quotas */
+        get: operations["list_tariff_quotas_api_admin_tariff_quotas_get"];
+        put?: never;
+        /** Create Tariff Quota */
+        post: operations["create_tariff_quota_api_admin_tariff_quotas_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/tariff-quotas/{quota_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete Tariff Quota */
+        delete: operations["delete_tariff_quota_api_admin_tariff_quotas__quota_id__delete"];
+        options?: never;
+        head?: never;
+        /** Update Tariff Quota */
+        patch: operations["update_tariff_quota_api_admin_tariff_quotas__quota_id__patch"];
+        trace?: never;
+    };
+    "/api/admin/tariff-quotas/{quota_id}/review": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Review Tariff Quota */
+        post: operations["review_tariff_quota_api_admin_tariff_quotas__quota_id__review_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/country-terms": {
         parameters: {
             query?: never;
@@ -3295,6 +3401,66 @@ export interface components {
             /** Price Tiers */
             price_tiers?: components["schemas"]["PriceTierIn"][] | null;
         };
+        /** ProductSubtypeIn */
+        ProductSubtypeIn: {
+            /** Code */
+            code: string;
+            /** Hs Prefix */
+            hs_prefix: string;
+            /** Name Vi */
+            name_vi: string;
+            /** Name En */
+            name_en: string;
+            /** Description Vi */
+            description_vi?: string | null;
+            /** Description En */
+            description_en?: string | null;
+            /** Source */
+            source?: string | null;
+        };
+        /** ProductSubtypeOut */
+        ProductSubtypeOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Code */
+            code: string;
+            /** Hs Prefix */
+            hs_prefix: string;
+            /** Name Vi */
+            name_vi: string;
+            /** Name En */
+            name_en: string;
+            /** Description Vi */
+            description_vi: string | null;
+            /** Description En */
+            description_en: string | null;
+            /** Source */
+            source: string | null;
+            /** Is Demo */
+            is_demo: boolean;
+            /** Reviewed By */
+            reviewed_by: string | null;
+            /** Reviewed At */
+            reviewed_at: string | null;
+        };
+        /** ProductSubtypePatch */
+        ProductSubtypePatch: {
+            /** Hs Prefix */
+            hs_prefix?: string | null;
+            /** Name Vi */
+            name_vi?: string | null;
+            /** Name En */
+            name_en?: string | null;
+            /** Description Vi */
+            description_vi?: string | null;
+            /** Description En */
+            description_en?: string | null;
+            /** Source */
+            source?: string | null;
+        };
         /**
          * ProfileViewerOut
          * @description Một buyer đã xác minh (không ẩn danh) đã xem hồ sơ trong khoảng thời gian.
@@ -3525,6 +3691,32 @@ export interface components {
             company: components["schemas"]["CompanyOut"];
             /** Products */
             products: components["schemas"]["ReviewProductOut"][];
+        };
+        /**
+         * QuotaInfoOut
+         * @description Thông tin hạn ngạch đã duyệt (hiển thị kèm kịch bản).
+         */
+        QuotaInfoOut: {
+            /** Quota Code */
+            quota_code: string | null;
+            /** Quota Year */
+            quota_year: number | null;
+            /** Volume */
+            volume: string;
+            /** Volume Unit */
+            volume_unit: string;
+            /** Specific Unit */
+            specific_unit: string | null;
+            /** Licence Note Vi */
+            licence_note_vi: string | null;
+            /** Licence Note En */
+            licence_note_en: string | null;
+            /** Allocation Note Vi */
+            allocation_note_vi: string | null;
+            /** Allocation Note En */
+            allocation_note_en: string | null;
+            /** Source Url */
+            source_url: string | null;
         };
         /** QuoteDecisionIn */
         QuoteDecisionIn: {
@@ -4042,6 +4234,25 @@ export interface components {
             /** Empty Hint Key */
             empty_hint_key?: string | null;
         };
+        /** ScenarioOut */
+        ScenarioOut: {
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "in_quota" | "out_of_quota";
+            /**
+             * Duty Type
+             * @enum {string}
+             */
+            duty_type: "ad_valorem" | "specific" | "mixed";
+            /** Rate */
+            rate: string | null;
+            /** Specific */
+            specific: string | null;
+            /** Duty */
+            duty: string;
+        };
         /** ServiceOfferingIn */
         ServiceOfferingIn: {
             /** Category Code */
@@ -4185,6 +4396,19 @@ export interface components {
             /** Avg Confidence */
             avg_confidence: number | null;
         };
+        /** SubtypeOut */
+        SubtypeOut: {
+            /** Code */
+            code: string;
+            /** Name Vi */
+            name_vi: string;
+            /** Name En */
+            name_en: string;
+            /** Description Vi */
+            description_vi: string | null;
+            /** Description En */
+            description_en: string | null;
+        };
         /** SupplierBrief */
         SupplierBrief: {
             /** Slug */
@@ -4296,6 +4520,12 @@ export interface components {
             shipments_per_year?: number | null;
             /** Agreement */
             agreement?: string | null;
+            /** Subtype Code */
+            subtype_code?: string | null;
+            /** Quantity */
+            quantity?: number | string | null;
+            /** Quota Allocated */
+            quota_allocated?: ("yes" | "no" | "unknown") | null;
         };
         /** TariffLineIn */
         TariffLineIn: {
@@ -4431,7 +4661,8 @@ export interface components {
         };
         /**
          * TariffOptionsOut
-         * @description Lựa chọn cho form tính thuế: hiệp định có dữ liệu cho (mã HS, thị trường).
+         * @description Lựa chọn cho form tính thuế: hiệp định có dữ liệu cho (mã HS, thị trường); U13: phân nhóm
+         *     đã duyệt của mã HS và các hiệp định có hạn ngạch đã duyệt.
          */
         TariffOptionsOut: {
             /** Hs Code */
@@ -4440,6 +4671,10 @@ export interface components {
             destination: string;
             /** Agreements */
             agreements: components["schemas"]["AgreementOut"][];
+            /** Subtypes */
+            subtypes?: components["schemas"]["SubtypeOut"][];
+            /** Quota Agreements */
+            quota_agreements?: string[];
         };
         /** TariffOut */
         TariffOut: {
@@ -4449,7 +4684,7 @@ export interface components {
              * Status
              * @enum {string}
              */
-            status: "ok" | "unsupported" | "needs_review";
+            status: "ok" | "unsupported" | "needs_review" | "quota_scenarios";
             /** Hs Code */
             hs_code: string;
             /** Hs Formatted */
@@ -4483,6 +4718,22 @@ export interface components {
             preferential_rate?: string | null;
             /** Preferential Duty */
             preferential_duty?: string | null;
+            /** Data Status */
+            data_status?: ("reviewed" | "demo_unreviewed") | null;
+            /** Review Reason */
+            review_reason?: string | null;
+            /** Scenarios */
+            scenarios?: components["schemas"]["ScenarioOut"][];
+            quota?: components["schemas"]["QuotaInfoOut"] | null;
+            subtype?: components["schemas"]["SubtypeOut"] | null;
+            /** Subtypes */
+            subtypes?: components["schemas"]["SubtypeOut"][];
+            /** Conditions */
+            conditions?: string[];
+            /** Quantity */
+            quantity?: string | null;
+            /** Quota Allocated */
+            quota_allocated?: ("yes" | "no" | "unknown") | null;
         };
         /**
          * TariffPreviewOut
@@ -4516,6 +4767,165 @@ export interface components {
             condition_note_en: string | null;
             /** Source Url */
             source_url: string | null;
+        };
+        /** TariffQuotaIn */
+        TariffQuotaIn: {
+            /** In Quota Rate */
+            in_quota_rate?: number | string | null;
+            /** In Quota Specific */
+            in_quota_specific?: number | string | null;
+            /** Out Quota Rate */
+            out_quota_rate?: number | string | null;
+            /** Out Quota Specific */
+            out_quota_specific?: number | string | null;
+            /**
+             * Agreement Code
+             * @default EVFTA
+             */
+            agreement_code?: string;
+            /** Destination */
+            destination: string;
+            /** Hs Prefix */
+            hs_prefix: string;
+            /** Quota Code */
+            quota_code?: string | null;
+            /** Quota Year */
+            quota_year?: number | null;
+            /** Volume */
+            volume: number | string;
+            /**
+             * Volume Unit
+             * @default tonne
+             * @enum {string}
+             */
+            volume_unit?: "tonne" | "kg" | "piece" | "liter";
+            in_quota_duty_type: components["schemas"]["DutyType"];
+            out_quota_duty_type: components["schemas"]["DutyType"];
+            /** Specific Unit */
+            specific_unit?: ("tonne" | "kg" | "piece" | "liter") | null;
+            /** Licence Note Vi */
+            licence_note_vi?: string | null;
+            /** Licence Note En */
+            licence_note_en?: string | null;
+            /** Allocation Note Vi */
+            allocation_note_vi?: string | null;
+            /** Allocation Note En */
+            allocation_note_en?: string | null;
+            /** Source Url */
+            source_url?: string | null;
+            /**
+             * Valid From
+             * Format: date
+             */
+            valid_from: string;
+            /** Valid Until */
+            valid_until?: string | null;
+            /** Eligible Subtypes */
+            eligible_subtypes?: string[];
+        };
+        /** TariffQuotaOut */
+        TariffQuotaOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Agreement Code */
+            agreement_code: string;
+            /** Destination */
+            destination: string;
+            /** Hs Prefix */
+            hs_prefix: string;
+            /** Quota Code */
+            quota_code: string | null;
+            /** Quota Year */
+            quota_year: number | null;
+            /** Volume */
+            volume: string;
+            /** Volume Unit */
+            volume_unit: string;
+            in_quota_duty_type: components["schemas"]["DutyType"];
+            /** In Quota Rate */
+            in_quota_rate: string | null;
+            /** In Quota Specific */
+            in_quota_specific: string | null;
+            out_quota_duty_type: components["schemas"]["DutyType"];
+            /** Out Quota Rate */
+            out_quota_rate: string | null;
+            /** Out Quota Specific */
+            out_quota_specific: string | null;
+            /** Specific Unit */
+            specific_unit: string | null;
+            /** Licence Note Vi */
+            licence_note_vi: string | null;
+            /** Licence Note En */
+            licence_note_en: string | null;
+            /** Allocation Note Vi */
+            allocation_note_vi: string | null;
+            /** Allocation Note En */
+            allocation_note_en: string | null;
+            /** Source Url */
+            source_url: string | null;
+            /**
+             * Valid From
+             * Format: date
+             */
+            valid_from: string;
+            /** Valid Until */
+            valid_until: string | null;
+            /** Eligible Subtypes */
+            eligible_subtypes: string[];
+            /** Is Demo */
+            is_demo: boolean;
+            /** Reviewed By */
+            reviewed_by: string | null;
+            /** Reviewed At */
+            reviewed_at: string | null;
+        };
+        /** TariffQuotaPatch */
+        TariffQuotaPatch: {
+            /** In Quota Rate */
+            in_quota_rate?: number | string | null;
+            /** In Quota Specific */
+            in_quota_specific?: number | string | null;
+            /** Out Quota Rate */
+            out_quota_rate?: number | string | null;
+            /** Out Quota Specific */
+            out_quota_specific?: number | string | null;
+            /** Agreement Code */
+            agreement_code?: string | null;
+            /** Destination */
+            destination?: string | null;
+            /** Hs Prefix */
+            hs_prefix?: string | null;
+            /** Quota Code */
+            quota_code?: string | null;
+            /** Quota Year */
+            quota_year?: number | null;
+            /** Volume */
+            volume?: number | string | null;
+            /** Volume Unit */
+            volume_unit?: ("tonne" | "kg" | "piece" | "liter") | null;
+            in_quota_duty_type?: components["schemas"]["DutyType"] | null;
+            out_quota_duty_type?: components["schemas"]["DutyType"] | null;
+            /** Specific Unit */
+            specific_unit?: ("tonne" | "kg" | "piece" | "liter") | null;
+            /** Licence Note Vi */
+            licence_note_vi?: string | null;
+            /** Licence Note En */
+            licence_note_en?: string | null;
+            /** Allocation Note Vi */
+            allocation_note_vi?: string | null;
+            /** Allocation Note En */
+            allocation_note_en?: string | null;
+            /** Source Url */
+            source_url?: string | null;
+            /** Valid From */
+            valid_from?: string | null;
+            /** Valid Until */
+            valid_until?: string | null;
+            /** Eligible Subtypes */
+            eligible_subtypes?: string[] | null;
         };
         /** TradeAgreementIn */
         TradeAgreementIn: {
@@ -6724,6 +7134,344 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["TradeAgreementOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_product_subtypes_api_admin_product_subtypes_get: {
+        parameters: {
+            query?: {
+                reviewed?: boolean | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductSubtypeOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_product_subtype_api_admin_product_subtypes_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProductSubtypeIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductSubtypeOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_product_subtype_api_admin_product_subtypes__subtype_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                subtype_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_product_subtype_api_admin_product_subtypes__subtype_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                subtype_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProductSubtypePatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductSubtypeOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    review_product_subtype_api_admin_product_subtypes__subtype_id__review_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                subtype_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductSubtypeOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_tariff_quotas_api_admin_tariff_quotas_get: {
+        parameters: {
+            query?: {
+                reviewed?: boolean | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TariffQuotaOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_tariff_quota_api_admin_tariff_quotas_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TariffQuotaIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TariffQuotaOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_tariff_quota_api_admin_tariff_quotas__quota_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                quota_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_tariff_quota_api_admin_tariff_quotas__quota_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                quota_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TariffQuotaPatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TariffQuotaOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    review_tariff_quota_api_admin_tariff_quotas__quota_id__review_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                quota_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TariffQuotaOut"];
                 };
             };
             /** @description Validation Error */

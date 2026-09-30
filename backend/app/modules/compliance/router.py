@@ -15,12 +15,18 @@ from app.modules.compliance.admin_schemas import (
     CountryTermIn,
     CountryTermOut,
     CountryTermPatch,
+    ProductSubtypeIn,
+    ProductSubtypeOut,
+    ProductSubtypePatch,
     RooRuleIn,
     RooRuleOut,
     RooRulePatch,
     TariffLineIn,
     TariffLineOut,
     TariffLinePatch,
+    TariffQuotaIn,
+    TariffQuotaOut,
+    TariffQuotaPatch,
     TradeAgreementIn,
     TradeAgreementOut,
     TradeAgreementPatch,
@@ -273,6 +279,86 @@ async def delete_trade_agreement(
     agreement_id: uuid.UUID, admin: AdminUser, session: DBSession
 ) -> Response:
     await admin_service.delete_agreement(session, admin, agreement_id)
+    return Response(status_code=204)
+
+
+# ── Phân nhóm sản phẩm và hạn ngạch (U13) ──────────────────────────────────
+@router.get("/api/admin/product-subtypes")
+async def list_product_subtypes(
+    _: AdminUser, session: DBSession, reviewed: bool | None = None
+) -> list[ProductSubtypeOut]:
+    return [
+        ProductSubtypeOut.model_validate(r)
+        for r in await admin_service.list_subtypes(session, reviewed)
+    ]
+
+
+@router.post("/api/admin/product-subtypes", status_code=201)
+async def create_product_subtype(
+    data: ProductSubtypeIn, admin: AdminUser, session: DBSession
+) -> ProductSubtypeOut:
+    return ProductSubtypeOut.model_validate(
+        await admin_service.create_subtype(session, admin, data)
+    )
+
+
+@router.patch("/api/admin/product-subtypes/{subtype_id}")
+async def update_product_subtype(
+    subtype_id: uuid.UUID, data: ProductSubtypePatch, admin: AdminUser, session: DBSession
+) -> ProductSubtypeOut:
+    row = await admin_service.update_subtype(session, admin, subtype_id, data)
+    return ProductSubtypeOut.model_validate(row)
+
+
+@router.post("/api/admin/product-subtypes/{subtype_id}/review")
+async def review_product_subtype(
+    subtype_id: uuid.UUID, admin: AdminUser, session: DBSession
+) -> ProductSubtypeOut:
+    row = await admin_service.review_subtype(session, admin, subtype_id)
+    return ProductSubtypeOut.model_validate(row)
+
+
+@router.delete("/api/admin/product-subtypes/{subtype_id}", status_code=204)
+async def delete_product_subtype(
+    subtype_id: uuid.UUID, admin: AdminUser, session: DBSession
+) -> Response:
+    await admin_service.delete_subtype(session, admin, subtype_id)
+    return Response(status_code=204)
+
+
+@router.get("/api/admin/tariff-quotas")
+async def list_tariff_quotas(
+    _: AdminUser, session: DBSession, reviewed: bool | None = None
+) -> list[TariffQuotaOut]:
+    return [admin_service.quota_out(r) for r in await admin_service.list_quotas(session, reviewed)]
+
+
+@router.post("/api/admin/tariff-quotas", status_code=201)
+async def create_tariff_quota(
+    data: TariffQuotaIn, admin: AdminUser, session: DBSession
+) -> TariffQuotaOut:
+    return admin_service.quota_out(await admin_service.create_quota(session, admin, data))
+
+
+@router.patch("/api/admin/tariff-quotas/{quota_id}")
+async def update_tariff_quota(
+    quota_id: uuid.UUID, data: TariffQuotaPatch, admin: AdminUser, session: DBSession
+) -> TariffQuotaOut:
+    return admin_service.quota_out(await admin_service.update_quota(session, admin, quota_id, data))
+
+
+@router.post("/api/admin/tariff-quotas/{quota_id}/review")
+async def review_tariff_quota(
+    quota_id: uuid.UUID, admin: AdminUser, session: DBSession
+) -> TariffQuotaOut:
+    return admin_service.quota_out(await admin_service.review_quota(session, admin, quota_id))
+
+
+@router.delete("/api/admin/tariff-quotas/{quota_id}", status_code=204)
+async def delete_tariff_quota(
+    quota_id: uuid.UUID, admin: AdminUser, session: DBSession
+) -> Response:
+    await admin_service.delete_quota(session, admin, quota_id)
     return Response(status_code=204)
 
 

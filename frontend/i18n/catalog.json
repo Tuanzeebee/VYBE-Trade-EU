@@ -13173,5 +13173,315 @@
     "ISO-2 codes separated by commas, e.g. JP, KR or EU.",
     "Codes ISO-2 séparés par des virgules, ex. JP, KR ou EU.",
     "カンマ区切りのISO-2コード、例：JP、KR、EU。"
+  ],
+  "Kịch bản hạn ngạch thuế quan": [
+    "Tariff-rate quota scenarios",
+    "Scénarios de contingent tarifaire",
+    "関税割当のシナリオ"
+  ],
+  "Phân nhóm": [
+    "Subtype",
+    "Sous-catégorie",
+    "区分"
+  ],
+  "Kịch bản": [
+    "Scenario",
+    "Scénario",
+    "シナリオ"
+  ],
+  "Mức thuế": [
+    "Duty rate",
+    "Taux de droit",
+    "税率"
+  ],
+  "Tiền thuế": [
+    "Duty amount",
+    "Montant des droits",
+    "関税額"
+  ],
+  "Chênh lệch nếu được phân bổ hạn ngạch": [
+    "Difference if the quota is allocated",
+    "Écart si le contingent est attribué",
+    "割当を受けた場合の差額"
+  ],
+  "Bạn cho biết chưa được phân bổ hạn ngạch: lô hàng sẽ chịu thuế ngoài hạn ngạch.": [
+    "You said the quota has not been allocated: the shipment will pay the out-of-quota duty.",
+    "Vous indiquez que le contingent n'est pas attribué : l'envoi paiera le droit hors contingent.",
+    "割当を受けていないとのことです。この貨物には割当外の関税が課されます。"
+  ],
+  "Chưa rõ đã được phân bổ hạn ngạch hay chưa: hãy xác nhận với nhà nhập khẩu trước khi chốt giá.": [
+    "Not sure whether the quota is allocated: confirm with the importer before fixing the price.",
+    "Attribution du contingent incertaine : confirmez avec l'importateur avant de fixer le prix.",
+    "割当の有無が不明です。価格を確定する前に輸入者に確認してください。"
+  ],
+  "Mặt hàng có hạn ngạch thuế quan": [
+    "This product has a tariff-rate quota",
+    "Ce produit est soumis à un contingent tarifaire",
+    "この品目には関税割当があります"
+  ],
+  "Phân nhóm hàng": [
+    "Product subtype",
+    "Sous-catégorie de produit",
+    "製品区分"
+  ],
+  "Chọn phân nhóm": [
+    "Choose a subtype",
+    "Choisir une sous-catégorie",
+    "区分を選択"
+  ],
+  "Bạn đã được phân bổ hạn ngạch chưa?": [
+    "Has the quota been allocated to you?",
+    "Le contingent vous a-t-il été attribué ?",
+    "関税割当を受けていますか？"
+  ],
+  "Khối lượng lô hàng (tấn)": [
+    "Shipment quantity (tonnes)",
+    "Quantité de l'envoi (tonnes)",
+    "貨物数量（トン）"
+  ],
+  "Cần khi thuế tính theo khối lượng (thuế tuyệt đối).": [
+    "Needed when the duty is charged by weight (specific duty).",
+    "Nécessaire lorsque le droit est calculé au poids (droit spécifique).",
+    "重量による課税（従量税）の場合に必要です。"
+  ],
+  "Trong hạn ngạch": [
+    "In quota",
+    "Dans le contingent",
+    "割当内"
+  ],
+  "Ngoài hạn ngạch": [
+    "Out of quota",
+    "Hors contingent",
+    "割当外"
+  ],
+  "Đã được phân bổ": [
+    "Allocated",
+    "Attribué",
+    "割当済み"
+  ],
+  "Không rõ": [
+    "Not sure",
+    "Je ne sais pas",
+    "不明"
+  ],
+  "Chưa có dữ liệu hạn ngạch đã được chuyên gia duyệt cho mặt hàng này, nên chúng tôi không đưa ra con số.": [
+    "There is no expert-reviewed quota data for this product yet, so we do not show figures.",
+    "Aucune donnée de contingent validée par un expert pour ce produit : nous n'affichons pas de chiffres.",
+    "この品目について専門家が確認した割当データがないため、数値は表示しません。"
+  ],
+  "Mặt hàng này có hạn ngạch thuế quan. Chọn phân nhóm hàng để xem kịch bản trong / ngoài hạn ngạch.": [
+    "This product has a tariff-rate quota. Choose a product subtype to see in-quota and out-of-quota scenarios.",
+    "Ce produit est soumis à un contingent tarifaire. Choisissez une sous-catégorie pour voir les scénarios dans / hors contingent.",
+    "この品目には関税割当があります。製品区分を選ぶと割当内／割当外のシナリオを確認できます。"
+  ],
+  "Phân nhóm này không thuộc danh sách đủ điều kiện hạn ngạch đã duyệt (ví dụ giống gạo chưa có trong danh sách). Trường hợp này cần chuyên gia xem xét.": [
+    "This subtype is not on the reviewed list eligible for the quota (for example a rice variety not yet listed). An expert needs to review this case.",
+    "Cette sous-catégorie ne figure pas sur la liste validée éligible au contingent (ex. une variété de riz non listée). Un expert doit examiner ce cas.",
+    "この区分は確認済みの割当対象リストにありません（例：未掲載の米の品種）。専門家の確認が必要です。"
+  ],
+  "Thuế ngoài hạn ngạch là thuế tuyệt đối theo khối lượng. Nhập khối lượng lô hàng để tính.": [
+    "The out-of-quota duty is a specific duty by weight. Enter the shipment quantity to calculate it.",
+    "Le droit hors contingent est un droit spécifique au poids. Saisissez la quantité de l'envoi.",
+    "割当外の関税は重量による従量税です。貨物数量を入力してください。"
+  ],
+  "Mặt hàng áp thuế hỗn hợp, cần chuyên gia xem xét.": [
+    "This product has a mixed duty; an expert needs to review it.",
+    "Ce produit est soumis à un droit mixte ; un expert doit l'examiner.",
+    "この品目は混合税のため、専門家の確認が必要です。"
+  ],
+  "Dữ liệu hạn ngạch bất thường, cần chuyên gia kiểm tra lại.": [
+    "The quota data looks abnormal; an expert needs to check it.",
+    "Les données de contingent semblent anormales ; un expert doit les vérifier.",
+    "割当データに異常があるため、専門家の再確認が必要です。"
+  ],
+  "Hàng đạt quy tắc xuất xứ của hiệp định và có chứng từ chứng nhận xuất xứ hợp lệ.": [
+    "The goods meet the agreement's rules of origin and have valid proof of origin.",
+    "Les marchandises respectent les règles d'origine de l'accord et disposent d'une preuve d'origine valide.",
+    "協定の原産地規則を満たし、有効な原産地証明書類があること。"
+  ],
+  "Thuế trong hạn ngạch chỉ áp dụng khi lô hàng được phân bổ hạn ngạch (còn hạn ngạch tại thời điểm nhập khẩu); nếu không, áp thuế ngoài hạn ngạch.": [
+    "The in-quota duty applies only if the shipment is allocated quota (quota still available at import); otherwise the out-of-quota duty applies.",
+    "Le droit contingentaire ne s'applique que si l'envoi obtient une part du contingent (encore disponible à l'importation) ; sinon, le droit hors contingent s'applique.",
+    "割当内税率は貨物が割当を受けた場合（輸入時に割当枠が残っている場合）のみ適用され、そうでなければ割当外税率が適用されます。"
+  ],
+  "Hàng đúng phân nhóm đủ điều kiện đã chọn.": [
+    "The goods match the selected eligible subtype.",
+    "Les marchandises correspondent à la sous-catégorie éligible choisie.",
+    "貨物が選択した対象区分に該当すること。"
+  ],
+  "Có giấy phép / chứng nhận theo yêu cầu của hạn ngạch (xem ghi chú bên dưới).": [
+    "Licences / certificates required by the quota are in place (see note below).",
+    "Licences / certificats exigés par le contingent disponibles (voir la note ci-dessous).",
+    "割当で求められる許可・証明書があること（下記の注記参照）。"
+  ],
+  "Phân nhóm sản phẩm": [
+    "Product subtypes",
+    "Sous-catégories de produits",
+    "製品区分"
+  ],
+  "Hạn ngạch thuế quan": [
+    "Tariff-rate quotas",
+    "Contingents tarifaires",
+    "関税割当"
+  ],
+  "Tiền tố HS": [
+    "HS prefix",
+    "Préfixe SH",
+    "HS接頭辞"
+  ],
+  "Chữ thường, số, gạch dưới.": [
+    "Lowercase letters, digits, underscore.",
+    "Minuscules, chiffres, tiret bas.",
+    "小文字・数字・アンダースコア。"
+  ],
+  "4–8 chữ số, vd 1006 hoặc 100630.": [
+    "4–8 digits, e.g. 1006 or 100630.",
+    "4 à 8 chiffres, ex. 1006 ou 100630.",
+    "4〜8桁、例：1006、100630。"
+  ],
+  "Vd danh sách giống đủ điều kiện.": [
+    "e.g. the list of eligible varieties.",
+    "ex. liste des variétés éligibles.",
+    "例：対象品種のリスト。"
+  ],
+  "Số hạn ngạch": [
+    "Quota number",
+    "Numéro de contingent",
+    "割当番号"
+  ],
+  "Số thứ tự hạn ngạch (order number) nếu có.": [
+    "Quota order number, if any.",
+    "Numéro d'ordre du contingent, le cas échéant.",
+    "割当の整理番号（ある場合）。"
+  ],
+  "Năm": [
+    "Year",
+    "Année",
+    "年"
+  ],
+  "Khối lượng hạn ngạch": [
+    "Quota volume",
+    "Volume du contingent",
+    "割当数量"
+  ],
+  "Loại thuế trong hạn ngạch": [
+    "In-quota duty type",
+    "Type de droit contingentaire",
+    "割当内の税の種類"
+  ],
+  "Thuế trong hạn ngạch (%)": [
+    "In-quota duty (%)",
+    "Droit contingentaire (%)",
+    "割当内税率（%）"
+  ],
+  "Thuế tuyệt đối trong hạn ngạch (EUR/đơn vị)": [
+    "In-quota specific duty (EUR/unit)",
+    "Droit spécifique contingentaire (EUR/unité)",
+    "割当内の従量税（EUR/単位）"
+  ],
+  "Loại thuế ngoài hạn ngạch": [
+    "Out-of-quota duty type",
+    "Type de droit hors contingent",
+    "割当外の税の種類"
+  ],
+  "Thuế ngoài hạn ngạch (%)": [
+    "Out-of-quota duty (%)",
+    "Droit hors contingent (%)",
+    "割当外税率（%）"
+  ],
+  "Thuế tuyệt đối ngoài hạn ngạch (EUR/đơn vị)": [
+    "Out-of-quota specific duty (EUR/unit)",
+    "Droit spécifique hors contingent (EUR/unité)",
+    "割当外の従量税（EUR/単位）"
+  ],
+  "Đơn vị thuế tuyệt đối": [
+    "Specific duty unit",
+    "Unité du droit spécifique",
+    "従量税の単位"
+  ],
+  "Bắt buộc khi có thuế tuyệt đối.": [
+    "Required when there is a specific duty.",
+    "Obligatoire en cas de droit spécifique.",
+    "従量税がある場合は必須。"
+  ],
+  "Phân nhóm đủ điều kiện": [
+    "Eligible subtypes",
+    "Sous-catégories éligibles",
+    "対象区分"
+  ],
+  "Mã phân nhóm cách nhau bằng dấu phẩy.": [
+    "Subtype codes separated by commas.",
+    "Codes de sous-catégorie séparés par des virgules.",
+    "カンマ区切りの区分コード。"
+  ],
+  "Giấy phép / chứng nhận (tiếng Việt)": [
+    "Licences / certificates (Vietnamese)",
+    "Licences / certificats (vietnamien)",
+    "許可・証明書（ベトナム語）"
+  ],
+  "Giấy phép / chứng nhận (tiếng Anh)": [
+    "Licences / certificates (English)",
+    "Licences / certificats (anglais)",
+    "許可・証明書（英語）"
+  ],
+  "Cách phân bổ (tiếng Việt)": [
+    "Allocation method (Vietnamese)",
+    "Méthode d'attribution (vietnamien)",
+    "割当方法（ベトナム語）"
+  ],
+  "Cách phân bổ (tiếng Anh)": [
+    "Allocation method (English)",
+    "Méthode d'attribution (anglais)",
+    "割当方法（英語）"
+  ],
+  "Chữ thường, số, gạch dưới (vd rice_fragrant_listed). Không đổi được sau khi tạo.": [
+    "Lowercase letters, digits, underscore (e.g. rice_fragrant_listed). Cannot be changed after creation.",
+    "Minuscules, chiffres, tiret bas (ex. rice_fragrant_listed). Non modifiable après création.",
+    "小文字・数字・アンダースコア（例：rice_fragrant_listed）。作成後は変更不可。"
+  ],
+  "4–8 chữ số; phân nhóm áp cho mọi mã HS bắt đầu bằng tiền tố này (vd 1006).": [
+    "4–8 digits; the subtype applies to every HS code starting with this prefix (e.g. 1006).",
+    "4 à 8 chiffres ; la sous-catégorie s'applique à tout code SH commençant par ce préfixe (ex. 1006).",
+    "4〜8桁。この接頭辞で始まるすべてのHSコードに適用（例：1006）。"
+  ],
+  "Đủ điều kiện": [
+    "Eligible",
+    "Éligible",
+    "対象"
+  ],
+  "Phân nhóm chỉ đủ điều kiện khi được liệt kê trong dòng Hạn ngạch đã duyệt. Giống ngoài danh sách (vd ST25 khi chưa được xác nhận) → \"cần xem xét\".": [
+    "A subtype is eligible only when listed on a reviewed quota line. Varieties not on the list (e.g. ST25 until confirmed) → \"needs review\".",
+    "Une sous-catégorie n'est éligible que si elle figure sur une ligne de contingent validée. Variétés hors liste (ex. ST25 tant que non confirmée) → « à examiner ».",
+    "区分は確認済みの割当行に記載されている場合のみ対象。リスト外の品種（例：確認前のST25）→「要確認」。"
+  ],
+  "Thuế trong / ngoài hạn ngạch": [
+    "In-quota / out-of-quota duty",
+    "Droit dans / hors contingent",
+    "割当内／割当外の関税"
+  ],
+  "ad_valorem: nhập % ; specific: nhập số tiền EUR trên một đơn vị (Đơn vị thuế tuyệt đối). mixed → công cụ trả \"cần xem xét\".": [
+    "ad_valorem: enter %; specific: enter EUR per unit (Specific duty unit). mixed → the tool returns \"needs review\".",
+    "ad_valorem : saisir % ; specific : saisir EUR par unité (Unité du droit spécifique). mixed → l'outil renvoie « à examiner ».",
+    "ad_valorem：%を入力、specific：単位あたりEURを入力（従量税の単位）。mixed→ツールは「要確認」を返します。"
+  ],
+  "Mã phân nhóm cách nhau bằng dấu phẩy. Chỉ phân nhóm đã duyệt trong danh sách này mới có kịch bản.": [
+    "Subtype codes separated by commas. Only reviewed subtypes on this list get scenarios.",
+    "Codes de sous-catégorie séparés par des virgules. Seules les sous-catégories validées de cette liste ont des scénarios.",
+    "カンマ区切りの区分コード。このリストにある確認済み区分のみシナリオが表示されます。"
+  ],
+  "Sửa đổi §6.4": [
+    "§6.4 amendment",
+    "Amendement §6.4",
+    "§6.4の改正"
+  ],
+  "Kịch bản hạn ngạch cần luật TM ký sửa đổi AGENTS.md §6.4 trước khi dùng dữ liệu thật ở production.": [
+    "Quota scenarios require the trade lawyer to sign the AGENTS.md §6.4 amendment before real data is used in production.",
+    "Les scénarios de contingent exigent que le juriste signe l'amendement AGENTS.md §6.4 avant d'utiliser des données réelles en production.",
+    "割当シナリオは、本番で実データを使う前に通商弁護士がAGENTS.md §6.4の改正に署名する必要があります。"
+  ],
+  "Có = hàng chịu hạn ngạch thuế quan. Công cụ chỉ tính kịch bản trong / ngoài hạn ngạch khi có dòng Hạn ngạch và phân nhóm đủ điều kiện đã duyệt; còn lại trả \"cần xem xét\", không trả 0%.": [
+    "Yes = the goods are subject to a tariff-rate quota. The tool only calculates in/out-of-quota scenarios when a reviewed quota line and eligible subtype exist; otherwise it returns \"needs review\", never 0%.",
+    "Oui = marchandises soumises à un contingent tarifaire. L'outil ne calcule les scénarios que si une ligne de contingent et une sous-catégorie éligible validées existent ; sinon « à examiner », jamais 0 %.",
+    "はい＝関税割当の対象。確認済みの割当行と対象区分がある場合のみ割当内／外のシナリオを計算し、それ以外は「要確認」を返し、0%は返しません。"
   ]
 }

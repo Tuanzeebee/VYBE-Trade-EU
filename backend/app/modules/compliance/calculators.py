@@ -312,3 +312,119 @@ def roo_verdict(
         None if nom is None else HUNDRED - nom,
         "insufficient_data" if status == "inconclusive" else None,
     )
+
+
+# ── Hạn ngạch thuế quan (U13, AGENTS.md §6.4 sửa đổi) ─────────────────────────
+
+QuotaStatus = Literal["quota_scenarios", "needs_review"]
+QuotaReviewReason = Literal[
+    "no_quota_data",  # không có (hoặc không duy nhất một) dòng hạn ngạch đã duyệt
+    "subtype_required",  # người dùng chưa chọn phân nhóm hàng
+    "subtype_not_eligible",  # phân nhóm ngoài danh sách đủ điều kiện đã duyệt (vd ST25)
+    "quantity_required",  # thuế tuyệt đối cần khối lượng người dùng nhập
+    "mixed_duty",  # thuế hỗn hợp: không tính
+    "data_anomaly",  # thuế trong hạn ngạch cao hơn ngoài hạn ngạch
+]
+
+
+@dataclass(frozen=True)
+class QuotaDuty:
+    duty_type: DutyType
+    rate: Decimal | None = None  # % khi ad_valorem
+    specific: Decimal | None = None  # tiền / đơn vị (specific_unit) khi specific
+
+
+@dataclass(frozen=True)
+class QuotaData:
+    """Một dòng tariff_quotas ĐÃ DUYỆT (hoặc DEMO khi cờ bật — U14)."""
+
+    in_quota: QuotaDuty
+    out_quota: QuotaDuty
+    specific_unit: str | None = None
+
+
+@dataclass(frozen=True)
+class Scenario:
+    kind: Literal["in_quota", "out_of_quota"]
+    duty_type: DutyType
+    rate: Decimal | None
+    specific: Decimal | None
+    duty: Decimal
+
+
+@dataclass(frozen=True)
+class QuotaResult:
+    """`needs_review` KHÔNG có con số nào (scenarios rỗng, savings None)."""
+
+    status: QuotaStatus
+    review_reason: QuotaReviewReason | None = None
+    scenarios: tuple[Scenario, ...] = ()
+    savings: Decimal | None = None  # ngoài hạn ngạch − trong hạn ngạch
+
+
+def _quota_duty(duty: QuotaDuty, product_value: Decimal, quantity: Decimal | None) -> Decimal:
+    if duty.duty_type is DutyType.ad_valorem and duty.rate is not None:
+        return _money(product_value * duty.rate / HUNDRED)
+    if duty.duty_type is DutyType.specific and duty.specific is not None and quantity is not None:
+        return _money(duty.specific * quantity)
+    raise ValueError("duty cannot be computed")  # người gọi đã loại các ca này
+
+
+def quota_scenarios(
+    quotas_found: int,
+    quota: QuotaData | None,
+    *,
+    subtype_chosen: bool,
+    subtype_eligible: bool,
+    product_value: Decimal,
+    quantity: Decimal | None,
+) -> QuotaResult:
+    """Kịch bản trong / ngoài hạn ngạch cho một lô hàng.
+
+    Chỉ trả số khi: đúng MỘT hạn ngạch đã duyệt khớp, người dùng chọn phân nhóm và phân nhóm nằm
+    trong danh sách đủ điều kiện đã duyệt, không có thuế hỗn hợp, có khối lượng khi có thuế
+    tuyệt đối.
+    Kịch bản luôn đi kèm điều kiện (giao diện hiện) — không bao giờ là "0% vô điều kiện".
+    """
+    if quotas_found != 1 or quota is None:
+        return QuotaResult("needs_review", "no_quota_data")
+    if not subtype_chosen:
+        return QuotaResult("needs_review", "subtype_required")
+    if not subtype_eligible:
+        return QuotaResult("needs_review", "subtype_not_eligible")
+    duties = (quota.in_quota, quota.out_quota)
+    if any(d.duty_type is DutyType.mixed for d in duties):
+        return QuotaResult("needs_review", "mixed_duty")
+    incomplete = any(
+        (d.duty_type is DutyType.ad_valorem and d.rate is None)
+        or (d.duty_type is DutyType.specific and (d.specific is None or not quota.specific_unit))
+        for d in duties
+    )
+    if incomplete:
+        return QuotaResult("needs_review", "no_quota_data")
+    if any(d.duty_type is DutyType.specific for d in duties) and quantity is None:
+        return QuotaResult("needs_review", "quantity_required")
+    in_duty = _quota_duty(quota.in_quota, product_value, quantity)
+    out_duty = _quota_duty(quota.out_quota, product_value, quantity)
+    if in_duty > out_duty:
+        return QuotaResult("needs_review", "data_anomaly")
+    return QuotaResult(
+        "quota_scenarios",
+        scenarios=(
+            Scenario(
+                "in_quota",
+                quota.in_quota.duty_type,
+                quota.in_quota.rate,
+                quota.in_quota.specific,
+                in_duty,
+            ),
+            Scenario(
+                "out_of_quota",
+                quota.out_quota.duty_type,
+                quota.out_quota.rate,
+                quota.out_quota.specific,
+                out_duty,
+            ),
+        ),
+        savings=out_duty - in_duty,
+    )

@@ -8,7 +8,7 @@ from collections.abc import AsyncIterator
 from decimal import Decimal
 from typing import Any
 
-from sqlalchemy import Select, func, or_, select
+from sqlalchemy import Select, func, literal, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.audit import record
@@ -20,9 +20,13 @@ from app.modules.compliance.calculators import (
     EU_MEMBERS,
     CountryTerms,
     Material,
+    QuotaData,
+    QuotaDuty,
+    QuotaResult,
     RooResult,
     RuleData,
     TariffLineData,
+    quota_scenarios,
     rank_markets,
     roo_verdict,
     tariff_savings,
@@ -32,7 +36,9 @@ from app.modules.compliance.models import (
     ComplianceCheck,
     ImportCountryTerm,
     ProductSpecificRule,
+    ProductSubtype,
     TariffLine,
+    TariffQuota,
     TradeAgreement,
 )
 from app.modules.compliance.schemas import (
@@ -40,8 +46,11 @@ from app.modules.compliance.schemas import (
     MarketRowOut,
     MarketsIn,
     MarketsOut,
+    QuotaInfoOut,
     RooIn,
     RooOut,
+    ScenarioOut,
+    SubtypeOut,
     TariffIn,
     TariffOptionsOut,
     TariffOut,
@@ -180,16 +189,90 @@ async def available_agreements(
     return [await _agreement_out(session, c) for c in sorted(codes)]
 
 
+def _prefix_of(code: str, column: Any) -> Any:
+    """`column` (tiền tố HS 4–8 số) là tiền tố của mã `code`."""
+    return literal(code).like(func.concat(column, "%"))
+
+
+def _reviewed_quotas(
+    code: str, destination: str, agreement: str, on_date: dt.date
+) -> Select[TariffQuota]:
+    """Hạn ngạch ĐÃ DUYỆT, đang hiệu lực, khớp (hiệp định, nơi đến, tiền tố HS)."""
+    return select(TariffQuota).where(
+        TariffQuota.reviewed_by.is_not(None),
+        TariffQuota.agreement_code == agreement,
+        TariffQuota.destination == destination,
+        _prefix_of(code, TariffQuota.hs_prefix),
+        TariffQuota.valid_from <= on_date,
+        or_(TariffQuota.valid_until.is_(None), TariffQuota.valid_until > on_date),
+    )
+
+
+def _reviewed_subtypes(code: str) -> Select[ProductSubtype]:
+    """Phân nhóm ĐÃ DUYỆT áp cho mã `code` (tiền tố HS khớp)."""
+    return (
+        select(ProductSubtype)
+        .where(ProductSubtype.reviewed_by.is_not(None), _prefix_of(code, ProductSubtype.hs_prefix))
+        .order_by(ProductSubtype.code)
+    )
+
+
+def _subtype_out(row: ProductSubtype) -> SubtypeOut:
+    return SubtypeOut(
+        code=row.code,
+        name_vi=row.name_vi,
+        name_en=row.name_en,
+        description_vi=row.description_vi,
+        description_en=row.description_en,
+    )
+
+
+def _quota_data(row: TariffQuota) -> QuotaData:
+    return QuotaData(
+        QuotaDuty(row.in_quota_duty_type, row.in_quota_rate, row.in_quota_specific),
+        QuotaDuty(row.out_quota_duty_type, row.out_quota_rate, row.out_quota_specific),
+        row.specific_unit,
+    )
+
+
+def _quota_info(row: TariffQuota) -> QuotaInfoOut:
+    return QuotaInfoOut(
+        quota_code=row.quota_code,
+        quota_year=row.quota_year,
+        volume=row.volume,
+        volume_unit=row.volume_unit,
+        specific_unit=row.specific_unit,
+        licence_note_vi=row.licence_note_vi,
+        licence_note_en=row.licence_note_en,
+        allocation_note_vi=row.allocation_note_vi,
+        allocation_note_en=row.allocation_note_en,
+        source_url=row.source_url,
+    )
+
+
 async def tariff_options(session: AsyncSession, hs_code: str, country: str) -> TariffOptionsOut:
     code = catalog.normalize_code(hs_code)
     if code is None:
         raise AppError("invalid_hs_code", "HS code must be 6 to 8 digits", 422)
     upper = country.strip().upper()
     today = dt.datetime.now(dt.UTC).date()
+    agreements = await available_agreements(session, code, upper, today)
+    quota_agreements = [
+        a.code
+        for a in agreements
+        if await session.scalar(
+            _reviewed_quotas(code, destination_key(upper), a.code, today)
+            .with_only_columns(TariffQuota.id)
+            .limit(1)
+        )
+    ]
+    subtypes = list(await session.scalars(_reviewed_subtypes(code))) if quota_agreements else []
     return TariffOptionsOut(
         hs_code=code,
         destination=upper,
-        agreements=await available_agreements(session, code, upper, today),
+        agreements=agreements,
+        subtypes=[_subtype_out(s) for s in subtypes],
+        quota_agreements=quota_agreements,
     )
 
 
@@ -222,6 +305,8 @@ async def log_check(
     tariff_line_id: uuid.UUID | None = None,
     rule_id: uuid.UUID | None = None,
     agreement_code: str | None = None,
+    data_status: str | None = None,
+    scenario: dict[str, Any] | None = None,
 ) -> ComplianceCheck:
     """Nơi DUY NHẤT ghi compliance_checks: đúng một bản ghi cho mỗi lần chạy máy tính, kể cả khách.
 
@@ -243,6 +328,8 @@ async def log_check(
         tariff_line_id=tariff_line_id,
         rule_id=rule_id,
         agreement_code=agreement_code,
+        data_status=data_status,
+        scenario=scenario,
     )
     session.add(row)
     await session.flush()
@@ -347,28 +434,94 @@ async def calculate_tariff(
         data.product_value,
         data.shipments_per_year,
     )
+    # U13 (AGENTS.md §6.4 sửa đổi): dòng có hạn ngạch → kịch bản chỉ khi có hạn ngạch và phân nhóm
+    # đủ điều kiện ĐÃ DUYỆT; còn lại giữ needs_review của tariff_savings (không số).
+    quota: TariffQuota | None = None
+    quota_result: QuotaResult | None = None
+    subtypes: list[ProductSubtype] = []
+    if line is not None and len(lines) == 1 and line.quota_required and agreement:
+        quotas = list(
+            await session.scalars(
+                _reviewed_quotas(code, destination_key(data.destination), agreement, today)
+            )
+        )
+        quota = quotas[0] if len(quotas) == 1 else None
+        eligible = (
+            {s.code for s in quota.eligible_subtypes if s.reviewed_by is not None}
+            if quota is not None
+            else set()
+        )
+        quota_result = quota_scenarios(
+            len(quotas),
+            None if quota is None else _quota_data(quota),
+            subtype_chosen=data.subtype_code is not None,
+            subtype_eligible=data.subtype_code in eligible,
+            product_value=data.product_value,
+            quantity=data.quantity,
+        )
+        subtypes = list(await session.scalars(_reviewed_subtypes(code)))
+    status = quota_result.status if quota_result is not None else result.status
+    scenarios = quota_result.scenarios if quota_result is not None else ()
+    quota_savings = quota_result.savings if quota_result is not None else None
+    data_status = "reviewed" if line is not None else None
+    chosen = next((s for s in subtypes if s.code == data.subtype_code), None)
+    conditions: list[str] = []
+    if status == "quota_scenarios" and quota is not None:
+        conditions = ["origin", "allocation", "subtype"]
+        if quota.licence_note_vi or quota.licence_note_en:
+            conditions.append("licence")
     company_id = await companies.get_company_id(session, user.id) if user else None
     check = await log_check(
         session,
         check_type=CheckType.tariff,
         hs_code=code,
         destination_country=data.destination,
-        status=result.status,
+        status=status,
         company_id=company_id,
         product_value=data.product_value,
         mfn_duty_rate=result.mfn_rate,
         evfta_duty_rate=result.evfta_rate,
-        savings_amount=result.savings,
+        savings_amount=result.savings if quota_result is None else quota_savings,
         tariff_line_id=line.id if line is not None and len(lines) == 1 else None,
         agreement_code=agreement if line is not None else None,
+        data_status=data_status,
+        scenario=(
+            {
+                "subtype_code": data.subtype_code,
+                "quantity": None if data.quantity is None else str(data.quantity),
+                "quota_allocated": data.quota_allocated,
+                "quota_id": None if quota is None else str(quota.id),
+                "review_reason": quota_result.review_reason,
+            }
+            if quota_result is not None
+            else None
+        ),
     )
     await session.commit()
     return TariffOut(
+        data_status=data_status,
+        review_reason=None if quota_result is None else quota_result.review_reason,
+        scenarios=[
+            ScenarioOut(
+                kind=s.kind,
+                duty_type=s.duty_type.value,
+                rate=s.rate,
+                specific=s.specific,
+                duty=s.duty,
+            )
+            for s in scenarios
+        ],
+        quota=_quota_info(quota) if quota is not None and status == "quota_scenarios" else None,
+        subtype=None if chosen is None else _subtype_out(chosen),
+        subtypes=[_subtype_out(s) for s in subtypes],
+        conditions=conditions,
+        quantity=data.quantity if quota_result is not None else None,
+        quota_allocated=data.quota_allocated if quota_result is not None else None,
         agreement=await _agreement_out(session, agreement) if agreement and line else None,
         preferential_rate=result.evfta_rate,
         preferential_duty=result.evfta_duty,
         check_id=str(check.id),
-        status=result.status,
+        status=status,
         hs_code=code,
         hs_formatted=catalog.format_code(code),
         destination=data.destination,
@@ -377,7 +530,7 @@ async def calculate_tariff(
         evfta_rate=result.evfta_rate,
         mfn_duty=result.mfn_duty,
         evfta_duty=result.evfta_duty,
-        savings=result.savings,
+        savings=result.savings if quota_result is None else quota_savings,
         annual_savings=result.annual_savings,
         quota_note=result.quota_note,
         condition_note=result.condition_note,

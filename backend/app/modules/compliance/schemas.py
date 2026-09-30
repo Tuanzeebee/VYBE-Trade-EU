@@ -39,6 +39,16 @@ class TariffIn(BaseModel):
     product_value: Decimal
     shipments_per_year: Annotated[int | None, Field(ge=1, le=10_000)] = None
     agreement: Annotated[str | None, Field(pattern=r"^[A-Z0-9_]{2,16}$")] = None
+    # U13: hàng có hạn ngạch — phân nhóm, khối lượng (theo đơn vị thuế tuyệt đối, thường là tấn)
+    # và câu trả lời "đã được phân bổ hạn ngạch chưa" (chỉ để hiển thị, không đổi con số).
+    subtype_code: Annotated[str | None, Field(pattern=r"^[a-z0-9_]{2,40}$")] = None
+    quantity: Decimal | None = None
+    quota_allocated: Literal["yes", "no", "unknown"] | None = None
+
+    @field_validator("quantity", mode="before")
+    @classmethod
+    def _quantity(cls, value: Any) -> Decimal | None:
+        return None if value is None else parse_amount(value)
 
     @field_validator("product_value", mode="before")
     @classmethod
@@ -60,17 +70,51 @@ class AgreementOut(BaseModel):
     name_en: str
 
 
+class SubtypeOut(BaseModel):
+    code: str
+    name_vi: str
+    name_en: str
+    description_vi: str | None
+    description_en: str | None
+
+
+class QuotaInfoOut(BaseModel):
+    """Thông tin hạn ngạch đã duyệt (hiển thị kèm kịch bản)."""
+
+    quota_code: str | None
+    quota_year: int | None
+    volume: Decimal
+    volume_unit: str
+    specific_unit: str | None
+    licence_note_vi: str | None
+    licence_note_en: str | None
+    allocation_note_vi: str | None
+    allocation_note_en: str | None
+    source_url: str | None
+
+
+class ScenarioOut(BaseModel):
+    kind: Literal["in_quota", "out_of_quota"]
+    duty_type: Literal["ad_valorem", "specific", "mixed"]
+    rate: Decimal | None
+    specific: Decimal | None
+    duty: Decimal
+
+
 class TariffOptionsOut(BaseModel):
-    """Lựa chọn cho form tính thuế: hiệp định có dữ liệu cho (mã HS, thị trường)."""
+    """Lựa chọn cho form tính thuế: hiệp định có dữ liệu cho (mã HS, thị trường); U13: phân nhóm
+    đã duyệt của mã HS và các hiệp định có hạn ngạch đã duyệt."""
 
     hs_code: str
     destination: str
     agreements: list[AgreementOut]
+    subtypes: list[SubtypeOut] = Field(default_factory=list)
+    quota_agreements: list[str] = Field(default_factory=list)
 
 
 class TariffOut(BaseModel):
     check_id: str
-    status: Literal["ok", "unsupported", "needs_review"]
+    status: Literal["ok", "unsupported", "needs_review", "quota_scenarios"]
     hs_code: str
     hs_formatted: str
     destination: str
@@ -90,6 +134,16 @@ class TariffOut(BaseModel):
     agreement: AgreementOut | None = None
     preferential_rate: Decimal | None = None
     preferential_duty: Decimal | None = None
+    # U13: kịch bản hạn ngạch. needs_review có review_reason (mã) nhưng KHÔNG có con số.
+    data_status: Literal["reviewed", "demo_unreviewed"] | None = None
+    review_reason: str | None = None
+    scenarios: list[ScenarioOut] = Field(default_factory=list)
+    quota: QuotaInfoOut | None = None
+    subtype: SubtypeOut | None = None
+    subtypes: list[SubtypeOut] = Field(default_factory=list)
+    conditions: list[str] = Field(default_factory=list)  # origin | allocation | subtype | licence
+    quantity: Decimal | None = None
+    quota_allocated: Literal["yes", "no", "unknown"] | None = None
 
 
 class TariffPreviewOut(BaseModel):
