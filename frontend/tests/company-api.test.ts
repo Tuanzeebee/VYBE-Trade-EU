@@ -184,6 +184,54 @@ describe('saveMyCompany', () => {
     );
   });
 
+  describe('thị trường xuất khẩu khi PATCH (dữ liệu cũ giữ nguyên)', () => {
+    async function patchBody(loaded: string[], profileMarkets: string) {
+      let sent: Record<string, unknown> | null = null;
+      vi.stubGlobal(
+        'fetch',
+        vi.fn(async (req: Request) => {
+          if (req.method === 'GET') return json(200, { ...COMPANY, export_markets: loaded });
+          sent = (await req.json()) as Record<string, unknown>;
+          return json(200, COMPANY);
+        }),
+      );
+      await saveMyCompany(profileToCompany({ companyName: 'Công ty A', markets: profileMarkets }));
+      return sent as Record<string, unknown> | null;
+    }
+
+    it('không đổi lựa chọn (chỉ có dòng cũ US/JP) → không gửi export_markets', async () => {
+      const body = await patchBody(['US', 'JP'], 'US,JP');
+      expect(body).not.toBeNull();
+      expect(body).not.toHaveProperty('export_markets');
+    });
+
+    it('không đổi lựa chọn EU (kèm dòng cũ US) → không gửi export_markets', async () => {
+      expect(await patchBody(['EU', 'DE', 'US'], 'EU,DE,US')).not.toHaveProperty('export_markets');
+    });
+
+    it('người dùng đổi lựa chọn → chỉ gửi mã EU', async () => {
+      expect((await patchBody(['US'], 'US,FR'))?.export_markets).toEqual(['FR']);
+    });
+
+    it('bỏ hết thị trường EU đã chọn → gửi danh sách rỗng để xóa', async () => {
+      expect((await patchBody(['EU', 'US'], ''))?.export_markets).toEqual([]);
+    });
+
+    it('tạo mới (POST) vẫn gửi export_markets', async () => {
+      let sent: Record<string, unknown> | null = null;
+      vi.stubGlobal(
+        'fetch',
+        vi.fn(async (req: Request) => {
+          if (req.method === 'GET') return json(404, {});
+          sent = (await req.json()) as Record<string, unknown>;
+          return json(201, COMPANY);
+        }),
+      );
+      await saveMyCompany(profileToCompany({ companyName: 'A', markets: 'FR' }));
+      expect((sent as Record<string, unknown> | null)?.export_markets).toEqual(['FR']);
+    });
+  });
+
   it('getMyCompany: 404 → null', async () => {
     vi.stubGlobal('fetch', vi.fn(async () => json(404, {})));
     expect(await getMyCompany()).toBeNull();

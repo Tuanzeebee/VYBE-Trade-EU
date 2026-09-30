@@ -230,15 +230,30 @@ export async function getMyCompany(): Promise<CompanyOut | null> {
   }
 }
 
+/**
+ * Body PATCH: bỏ export_markets khi người dùng không đổi lựa chọn thị trường, để dòng cũ ngoài EU
+ * (US, JP…) được giữ nguyên. Form chỉ hiện các mã EU, nên so lựa chọn với phần EU của dữ liệu đã tải.
+ */
+function withoutUnchangedMarkets(body: CompanyIn, loaded: CompanyOut): CompanyIn {
+  if (body.export_markets === undefined || loaded.type !== 'exporter') return body;
+  const shown = new Set(loaded.export_markets.filter((m) => EXPORT_MARKETS.some((x) => x.code === m)));
+  const chosen = new Set(body.export_markets);
+  const unchanged = shown.size === chosen.size && [...chosen].every((m) => shown.has(m));
+  if (!unchanged) return body;
+  const { export_markets: _kept, ...rest } = body;
+  return rest;
+}
+
 /** Tạo hồ sơ nếu chưa có, ngược lại cập nhật. */
 export async function saveMyCompany(body: CompanyIn): Promise<CompanyOut> {
   const api = createApiClient();
   let result: { data?: CompanyOut; response: Response };
   try {
     const existing = await api.GET('/api/me/company');
-    result = existing.response.ok
-      ? await api.PATCH('/api/me/company', { body })
-      : await api.POST('/api/me/company', { body });
+    result =
+      existing.response.ok && existing.data
+        ? await api.PATCH('/api/me/company', { body: withoutUnchangedMarkets(body, existing.data) })
+        : await api.POST('/api/me/company', { body });
   } catch {
     throw new Error(NETWORK);
   }
