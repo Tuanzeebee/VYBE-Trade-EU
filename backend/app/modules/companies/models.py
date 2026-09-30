@@ -18,6 +18,7 @@ from sqlalchemy import (
     func,
     text,
 )
+from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.db import Base
@@ -40,6 +41,45 @@ class VerificationLevel(StrEnum):
     evfta_verified = "evfta_verified"
 
 
+class OfferingType(StrEnum):
+    """Seller cung cấp (U2): sản phẩm, dịch vụ (logistics, hải quan, kế toán-thuế…) hoặc cả hai."""
+
+    products = "products"
+    services = "services"
+    both = "both"
+
+
+class FacilityCodeType(StrEnum):
+    growing_area = "growing_area"  # mã số vùng trồng (PUC)
+    packing_facility = "packing_facility"  # mã số cơ sở đóng gói (PHC)
+    establishment = "establishment"  # mã cơ sở được EU cấp phép (TRACES-NT, thủy sản/thực phẩm)
+    other = "other"
+
+
+class IndustryCategory(Base):
+    """Ngành hàng (U2) — dữ liệu; companies.industry_sector và nhóm hàng buyer tham chiếu tới."""
+
+    __tablename__ = "industries"
+
+    code: Mapped[str] = mapped_column(String(32), primary_key=True)
+    name_vi: Mapped[str] = mapped_column(String(120))
+    name_en: Mapped[str] = mapped_column(String(120))
+    sort_order: Mapped[int] = mapped_column(SmallInteger, default=0, server_default=text("0"))
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, server_default=text("true"))
+
+
+class ServiceCategory(Base):
+    """Loại dịch vụ của nhà cung cấp dịch vụ (U2) — dữ liệu, admin thêm được mà không cần deploy."""
+
+    __tablename__ = "service_categories"
+
+    code: Mapped[str] = mapped_column(String(32), primary_key=True)
+    name_vi: Mapped[str] = mapped_column(String(120))
+    name_en: Mapped[str] = mapped_column(String(120))
+    sort_order: Mapped[int] = mapped_column(SmallInteger, default=0, server_default=text("0"))
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, server_default=text("true"))
+
+
 class Company(Base):
     __tablename__ = "companies"
     __table_args__ = (
@@ -55,6 +95,15 @@ class Company(Base):
             "id",
             postgresql_where=text("verification_status = 'verified' AND NOT is_hidden"),
         ),
+        CheckConstraint(
+            "offering_type IN ('products', 'services', 'both')", name="offering_type_known"
+        ),
+        CheckConstraint(
+            "capacity_period IS NULL OR capacity_period IN ('month', 'year')",
+            name="capacity_period_known",
+        ),
+        CheckConstraint("capacity_value IS NULL OR capacity_value > 0", name="capacity_positive"),
+        CheckConstraint("(latitude IS NULL) = (longitude IS NULL)", name="lat_lng_together"),
     )
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
@@ -69,15 +118,39 @@ class Company(Base):
     tax_id: Mapped[str | None] = mapped_column(String(32))
     business_type: Mapped[str | None] = mapped_column(String(64))
     country: Mapped[str] = mapped_column(String(2), index=True)
-    industry_sector: Mapped[str | None] = mapped_column(String(32), index=True)
+    industry_sector: Mapped[str | None] = mapped_column(
+        String(32), ForeignKey("industries.code", ondelete="RESTRICT"), index=True
+    )
+    # Ngành "Khác": tên ngành do doanh nghiệp tự ghi.
+    industry_other: Mapped[str | None] = mapped_column(String(120))
     founded_year: Mapped[int | None] = mapped_column(SmallInteger)
     address: Mapped[str | None] = mapped_column(String(500))
     website: Mapped[str | None] = mapped_column(String(255))
     contact_email: Mapped[str | None] = mapped_column(String(320))
+    phone: Mapped[str | None] = mapped_column(String(40))
+    # Người đại diện pháp luật và cơ quan cấp ĐKKD — lưu đúng như in trên giấy tờ (U2).
+    legal_rep_name: Mapped[str | None] = mapped_column(String(255))
+    legal_rep_title: Mapped[str | None] = mapped_column(String(120))
+    issuing_authority: Mapped[str | None] = mapped_column(String(255))
     description_vi: Mapped[str | None] = mapped_column(Text)
     description_en: Mapped[str | None] = mapped_column(Text)
     logo_key: Mapped[str | None] = mapped_column(String(255))
-    # Chỉ buyer dùng (B2)
+    # Seller (U2): sản phẩm / dịch vụ / cả hai; năng lực nhà máy; khách hàng chính (tùy chọn)
+    offering_type: Mapped[str] = mapped_column(
+        String(16), default=OfferingType.products.value, server_default=OfferingType.products.value
+    )
+    factory_address: Mapped[str | None] = mapped_column(String(500))
+    capacity_value: Mapped[Decimal | None] = mapped_column(Numeric(14, 2))
+    capacity_unit: Mapped[str | None] = mapped_column(String(32))
+    capacity_period: Mapped[str | None] = mapped_column(String(8))
+    main_customers: Mapped[str | None] = mapped_column(Text)
+    # Toạ độ cho bản đồ hồ sơ: chỉ job geocode ghi (U21); chỉ hiện chính xác khi owner đồng ý.
+    latitude: Mapped[Decimal | None] = mapped_column(Numeric(9, 6))
+    longitude: Mapped[Decimal | None] = mapped_column(Numeric(9, 6))
+    location_public: Mapped[bool] = mapped_column(
+        Boolean, default=False, server_default=text("false")
+    )
+    # Quy mô nhân sự: buyer (B2) và seller (U2) đều dùng
     company_size: Mapped[str | None] = mapped_column(String(16))
     procurement_estimate: Mapped[str | None] = mapped_column(String(16))
     vat_number: Mapped[str | None] = mapped_column(String(32))
@@ -115,6 +188,68 @@ class Company(Base):
         lazy="selectin",
         order_by="CompanySourcingCategory.category",
     )
+    facility_codes: Mapped[list["CompanyFacilityCode"]] = relationship(
+        cascade="all, delete-orphan",
+        lazy="selectin",
+        order_by="[CompanyFacilityCode.code_type, CompanyFacilityCode.code]",
+    )
+
+
+class CompanyFacilityCode(Base):
+    """Mã vùng trồng, mã cơ sở đóng gói, mã cơ sở được EU cấp phép… doanh nghiệp tự khai (U2).
+
+    Tự khai — kiểm chéo ở U22, đối chiếu danh sách TRACES-NT ở U21; không tự làm tăng cấp xác minh.
+    """
+
+    __tablename__ = "company_facility_codes"
+    __table_args__ = (
+        UniqueConstraint("company_id", "code_type", "code"),
+        CheckConstraint(
+            "code_type IN ('growing_area', 'packing_facility', 'establishment', 'other')",
+            name="code_type_known",
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    company_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("companies.id", ondelete="CASCADE"), index=True
+    )
+    code_type: Mapped[str] = mapped_column(String(24))
+    code: Mapped[str] = mapped_column(String(64))
+
+
+class CompanyServiceOffering(Base):
+    """Dịch vụ của nhà cung cấp dịch vụ (U2): loại dịch vụ, mô tả, phạm vi nước phục vụ."""
+
+    __tablename__ = "company_service_offerings"
+    __table_args__ = (
+        Index(
+            "ix_company_service_offerings_title_trgm",
+            text("immutable_unaccent(lower(title)) gin_trgm_ops"),
+            postgresql_using="gin",
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    company_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("companies.id", ondelete="CASCADE"), index=True
+    )
+    category_code: Mapped[str] = mapped_column(
+        String(32), ForeignKey("service_categories.code", ondelete="RESTRICT"), index=True
+    )
+    title: Mapped[str] = mapped_column(String(255))
+    description_vi: Mapped[str | None] = mapped_column(Text)
+    description_en: Mapped[str | None] = mapped_column(Text)
+    coverage_countries: Mapped[list[str]] = mapped_column(
+        ARRAY(String(2)), default=list, server_default=text("'{}'")
+    )
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, server_default=text("true"))
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=text("clock_timestamp()")
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
 
 
 class CompanyExportMarket(Base):
@@ -147,7 +282,12 @@ class CompanySourcingCategory(Base):
     company_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("companies.id", ondelete="CASCADE"), primary_key=True
     )
-    category: Mapped[str] = mapped_column(String(32), primary_key=True, index=True)
+    category: Mapped[str] = mapped_column(
+        String(32),
+        ForeignKey("industries.code", ondelete="RESTRICT"),
+        primary_key=True,
+        index=True,
+    )
 
 
 class ApprovalStatus(StrEnum):

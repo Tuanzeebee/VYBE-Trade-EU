@@ -8,8 +8,9 @@ from app.core.db import get_session
 from app.core.storage import Storage, get_storage
 from app.modules.auth.schemas import CurrentUser
 from app.modules.auth.service import require_role
-from app.modules.companies import product_service, service
+from app.modules.companies import offering_service, product_service, service
 from app.modules.companies.schemas import (
+    CatalogItemOut,
     CompanyIn,
     CompanyOut,
     CompanyPatch,
@@ -20,6 +21,9 @@ from app.modules.companies.schemas import (
     ProductOut,
     ProductPatch,
     PublicCompanyOut,
+    ServiceOfferingIn,
+    ServiceOfferingOut,
+    ServiceOfferingPatch,
 )
 
 router = APIRouter(tags=["companies"])
@@ -95,7 +99,46 @@ async def delete_product(product_id: uuid.UUID, user: Exporter, session: DB) -> 
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
+@router.get("/api/exporter/services")
+async def list_services(user: Exporter, session: DB) -> list[ServiceOfferingOut]:
+    return await offering_service.list_my_services(session, user)
+
+
+@router.post("/api/exporter/services", status_code=status.HTTP_201_CREATED)
+async def create_service(
+    data: ServiceOfferingIn, user: Exporter, session: DB
+) -> ServiceOfferingOut:
+    return await offering_service.create_service(session, user, data)
+
+
+@router.patch("/api/exporter/services/{service_id}")
+async def update_service(
+    service_id: uuid.UUID, data: ServiceOfferingPatch, user: Exporter, session: DB
+) -> ServiceOfferingOut:
+    return await offering_service.update_service(session, user, service_id, data)
+
+
+@router.delete(
+    "/api/exporter/services/{service_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    response_class=Response,
+)
+async def delete_service(service_id: uuid.UUID, user: Exporter, session: DB) -> Response:
+    await offering_service.delete_service(session, user, service_id)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
 # Công khai (khách xem hồ sơ nhà xuất khẩu). Rate limit áp ở J1 cho toàn bộ /api/public/*.
 @router.get("/api/public/companies/{slug}")
 async def public_company(slug: str, session: DB, storage: Store) -> PublicCompanyOut:
     return await product_service.get_public_profile(session, storage, slug)
+
+
+@router.get("/api/public/industries")
+async def industries(session: DB) -> list[CatalogItemOut]:
+    return await offering_service.list_industries(session)
+
+
+@router.get("/api/public/service-categories")
+async def service_categories(session: DB) -> list[CatalogItemOut]:
+    return await offering_service.list_service_categories(session)

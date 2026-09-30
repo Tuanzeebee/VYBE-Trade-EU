@@ -36,6 +36,14 @@ COVERED = {
         "delete",
     ): "companies: test_products_api (sản phẩm của người khác 404)",
     (
+        "/api/exporter/services/{service_id}",
+        "patch",
+    ): "companies: test_other_seller_cannot_touch_my_service",
+    (
+        "/api/exporter/services/{service_id}",
+        "delete",
+    ): "companies: test_other_seller_cannot_touch_my_service",
+    (
         "/api/exporter/rfqs/{rfq_id}/status",
         "patch",
     ): "messaging: test_only_recipient_exporter_changes_status",

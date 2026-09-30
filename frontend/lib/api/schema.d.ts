@@ -278,6 +278,42 @@ export interface paths {
         patch: operations["update_product_api_exporter_products__product_id__patch"];
         trace?: never;
     };
+    "/api/exporter/services": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Services */
+        get: operations["list_services_api_exporter_services_get"];
+        put?: never;
+        /** Create Service */
+        post: operations["create_service_api_exporter_services_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/exporter/services/{service_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete Service */
+        delete: operations["delete_service_api_exporter_services__service_id__delete"];
+        options?: never;
+        head?: never;
+        /** Update Service */
+        patch: operations["update_service_api_exporter_services__service_id__patch"];
+        trace?: never;
+    };
     "/api/public/companies/{slug}": {
         parameters: {
             query?: never;
@@ -287,6 +323,40 @@ export interface paths {
         };
         /** Public Company */
         get: operations["public_company_api_public_companies__slug__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/public/industries": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Industries */
+        get: operations["industries_api_public_industries_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/public/service-categories": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Service Categories */
+        get: operations["service_categories_api_public_service_categories_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1720,6 +1790,18 @@ export interface components {
             recently_viewed: components["schemas"]["SupplierListTile"];
             new_verified: components["schemas"]["SupplierListTile"];
         };
+        /**
+         * CatalogItemOut
+         * @description Một dòng danh mục (ngành hàng, loại dịch vụ) — tên hai ngôn ngữ lấy từ DB.
+         */
+        CatalogItemOut: {
+            /** Code */
+            code: string;
+            /** Name Vi */
+            name_vi: string;
+            /** Name En */
+            name_en: string;
+        };
         /** ChecklistItem */
         ChecklistItem: {
             /** Type Code */
@@ -1763,7 +1845,9 @@ export interface components {
             /** Business Type */
             business_type?: string | null;
             /** Industry Sector */
-            industry_sector?: ("agriculture" | "seafood" | "food_beverage" | "textiles" | "handicrafts" | "spices") | null;
+            industry_sector?: ("agriculture" | "fruits_vegetables" | "coffee_tea" | "seafood" | "food_beverage" | "spices" | "textiles" | "handicrafts" | "other") | null;
+            /** Industry Other */
+            industry_other?: string | null;
             /** Founded Year */
             founded_year?: number | null;
             /** Address */
@@ -1772,10 +1856,32 @@ export interface components {
             website?: string | null;
             /** Contact Email */
             contact_email?: string | null;
+            /** Phone */
+            phone?: string | null;
+            /** Legal Rep Name */
+            legal_rep_name?: string | null;
+            /** Legal Rep Title */
+            legal_rep_title?: string | null;
+            /** Issuing Authority */
+            issuing_authority?: string | null;
             /** Description Vi */
             description_vi?: string | null;
             /** Description En */
             description_en?: string | null;
+            /** Offering Type */
+            offering_type?: ("products" | "services" | "both") | null;
+            /** Factory Address */
+            factory_address?: string | null;
+            /** Capacity Value */
+            capacity_value?: number | string | null;
+            /** Capacity Unit */
+            capacity_unit?: ("kg" | "tonne" | "piece" | "carton" | "liter" | "container_20ft" | "container_40ft") | null;
+            /** Capacity Period */
+            capacity_period?: ("month" | "year") | null;
+            /** Main Customers */
+            main_customers?: string | null;
+            /** Location Public */
+            location_public?: boolean | null;
             /** Company Size */
             company_size?: ("1_10" | "11_50" | "51_200" | "201_500" | "gt_500") | null;
             /** Procurement Estimate */
@@ -1796,7 +1902,9 @@ export interface components {
             /** Languages Spoken */
             languages_spoken?: string[];
             /** Sourcing Categories */
-            sourcing_categories?: ("agriculture" | "seafood" | "food_beverage" | "textiles" | "handicrafts" | "spices")[];
+            sourcing_categories?: ("agriculture" | "fruits_vegetables" | "coffee_tea" | "seafood" | "food_beverage" | "spices" | "textiles" | "handicrafts" | "other")[];
+            /** Facility Codes */
+            facility_codes?: components["schemas"]["FacilityCodeIn"][];
         };
         /** CompanyOut */
         CompanyOut: {
@@ -1824,6 +1932,8 @@ export interface components {
             country: string;
             /** Industry Sector */
             industry_sector: string | null;
+            /** Industry Other */
+            industry_other: string | null;
             /** Founded Year */
             founded_year: number | null;
             /** Address */
@@ -1832,12 +1942,36 @@ export interface components {
             website: string | null;
             /** Contact Email */
             contact_email: string | null;
+            /** Phone */
+            phone: string | null;
+            /** Legal Rep Name */
+            legal_rep_name: string | null;
+            /** Legal Rep Title */
+            legal_rep_title: string | null;
+            /** Issuing Authority */
+            issuing_authority: string | null;
             /** Description Vi */
             description_vi: string | null;
             /** Description En */
             description_en: string | null;
             /** Logo Key */
             logo_key: string | null;
+            /** Offering Type */
+            offering_type: ("products" | "services" | "both") | null;
+            /** Factory Address */
+            factory_address: string | null;
+            /** Capacity Value */
+            capacity_value: string | null;
+            /** Capacity Unit */
+            capacity_unit: string | null;
+            /** Capacity Period */
+            capacity_period: string | null;
+            /** Main Customers */
+            main_customers: string | null;
+            /** Location Public */
+            location_public: boolean;
+            /** Facility Codes */
+            facility_codes: components["schemas"]["FacilityCodeOut"][];
             /** Export Markets */
             export_markets: string[];
             /** Languages Spoken */
@@ -1891,7 +2025,9 @@ export interface components {
             /** Business Type */
             business_type?: string | null;
             /** Industry Sector */
-            industry_sector?: ("agriculture" | "seafood" | "food_beverage" | "textiles" | "handicrafts" | "spices") | null;
+            industry_sector?: ("agriculture" | "fruits_vegetables" | "coffee_tea" | "seafood" | "food_beverage" | "spices" | "textiles" | "handicrafts" | "other") | null;
+            /** Industry Other */
+            industry_other?: string | null;
             /** Founded Year */
             founded_year?: number | null;
             /** Address */
@@ -1900,10 +2036,32 @@ export interface components {
             website?: string | null;
             /** Contact Email */
             contact_email?: string | null;
+            /** Phone */
+            phone?: string | null;
+            /** Legal Rep Name */
+            legal_rep_name?: string | null;
+            /** Legal Rep Title */
+            legal_rep_title?: string | null;
+            /** Issuing Authority */
+            issuing_authority?: string | null;
             /** Description Vi */
             description_vi?: string | null;
             /** Description En */
             description_en?: string | null;
+            /** Offering Type */
+            offering_type?: ("products" | "services" | "both") | null;
+            /** Factory Address */
+            factory_address?: string | null;
+            /** Capacity Value */
+            capacity_value?: number | string | null;
+            /** Capacity Unit */
+            capacity_unit?: ("kg" | "tonne" | "piece" | "carton" | "liter" | "container_20ft" | "container_40ft") | null;
+            /** Capacity Period */
+            capacity_period?: ("month" | "year") | null;
+            /** Main Customers */
+            main_customers?: string | null;
+            /** Location Public */
+            location_public?: boolean | null;
             /** Company Size */
             company_size?: ("1_10" | "11_50" | "51_200" | "201_500" | "gt_500") | null;
             /** Procurement Estimate */
@@ -1921,7 +2079,9 @@ export interface components {
             /** Languages Spoken */
             languages_spoken?: string[] | null;
             /** Sourcing Categories */
-            sourcing_categories?: ("agriculture" | "seafood" | "food_beverage" | "textiles" | "handicrafts" | "spices")[] | null;
+            sourcing_categories?: ("agriculture" | "fruits_vegetables" | "coffee_tea" | "seafood" | "food_beverage" | "spices" | "textiles" | "handicrafts" | "other")[] | null;
+            /** Facility Codes */
+            facility_codes?: components["schemas"]["FacilityCodeIn"][] | null;
             /** Logo Key */
             logo_key?: string | null;
         };
@@ -2378,6 +2538,23 @@ export interface components {
             verification: components["schemas"]["VerificationTile"];
             tariff_savings: components["schemas"]["SavingsTile"];
             copilot: components["schemas"]["CopilotTile"];
+        };
+        /** FacilityCodeIn */
+        FacilityCodeIn: {
+            /**
+             * Code Type
+             * @enum {string}
+             */
+            code_type: "growing_area" | "packing_facility" | "establishment" | "other";
+            /** Code */
+            code: string;
+        };
+        /** FacilityCodeOut */
+        FacilityCodeOut: {
+            /** Code Type */
+            code_type: string;
+            /** Code */
+            code: string;
         };
         /** FeedbackIn */
         FeedbackIn: {
@@ -3299,6 +3476,68 @@ export interface components {
             data: components["schemas"]["SavingsData"] | null;
             /** Empty Hint Key */
             empty_hint_key?: string | null;
+        };
+        /** ServiceOfferingIn */
+        ServiceOfferingIn: {
+            /** Category Code */
+            category_code: string;
+            /** Title */
+            title: string;
+            /** Description Vi */
+            description_vi?: string | null;
+            /** Description En */
+            description_en?: string | null;
+            /** Coverage Countries */
+            coverage_countries?: string[];
+            /**
+             * Is Active
+             * @default true
+             */
+            is_active?: boolean;
+        };
+        /** ServiceOfferingOut */
+        ServiceOfferingOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Category Code */
+            category_code: string;
+            /** Category Name Vi */
+            category_name_vi: string;
+            /** Category Name En */
+            category_name_en: string;
+            /** Title */
+            title: string;
+            /** Description Vi */
+            description_vi: string | null;
+            /** Description En */
+            description_en: string | null;
+            /** Coverage Countries */
+            coverage_countries: string[];
+            /** Is Active */
+            is_active: boolean;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
+        /** ServiceOfferingPatch */
+        ServiceOfferingPatch: {
+            /** Category Code */
+            category_code?: string | null;
+            /** Title */
+            title?: string | null;
+            /** Description Vi */
+            description_vi?: string | null;
+            /** Description En */
+            description_en?: string | null;
+            /** Coverage Countries */
+            coverage_countries?: string[] | null;
+            /** Is Active */
+            is_active?: boolean | null;
         };
         /**
          * StatsOut
@@ -4416,6 +4655,140 @@ export interface operations {
             };
         };
     };
+    list_services_api_exporter_services_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ServiceOfferingOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_service_api_exporter_services_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ServiceOfferingIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ServiceOfferingOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_service_api_exporter_services__service_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                service_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_service_api_exporter_services__service_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                service_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ServiceOfferingPatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ServiceOfferingOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     public_company_api_public_companies__slug__get: {
         parameters: {
             query?: never;
@@ -4443,6 +4816,46 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    industries_api_public_industries_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CatalogItemOut"][];
+                };
+            };
+        };
+    };
+    service_categories_api_public_service_categories_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CatalogItemOut"][];
                 };
             };
         };

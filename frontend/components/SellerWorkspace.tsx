@@ -85,7 +85,7 @@ export default function SellerWorkspace({
               { id: 'licenses', label: 'Tải lên & Quản lý Giấy phép & Chứng nhận', icon: Award },
               { id: 'verification', label: 'Xác minh doanh nghiệp', icon: ShieldCheck, badge: statusBadge.short },
               { id: 'overview', label: 'Tổng quan & Chỉ số', icon: Home },
-              { id: 'products', label: 'Sản phẩm xuất khẩu', icon: Package, badge: `${productsList.length}` },
+              { id: 'products', label: 'Sản phẩm cung cấp', icon: Package, badge: `${productsList.length}` },
               { id: 'rfq', label: 'Cơ hội kết nối B2B', icon: Handshake },
               { id: 'messages', label: 'Tin nhắn', icon: MessageSquare },
               { id: 'notifications', label: 'Thông báo', icon: Bell }
@@ -231,7 +231,7 @@ export default function SellerWorkspace({
                 {tr(activeTab === 'licenses' && 'Tải lên & Quản lý Giấy phép & Chứng nhận')}
                 {tr(activeTab === 'verification' && 'Xác minh doanh nghiệp')}
                 {tr(activeTab === 'overview' && 'Tổng quan & Chỉ số tăng trưởng')}
-                {tr(activeTab === 'products' && 'Quản lý Sản phẩm xuất khẩu')}
+                {tr(activeTab === 'products' && 'Quản lý sản phẩm cung cấp')}
                 {tr(activeTab === 'rfq' && 'Cơ hội kết nối & Báo giá B2B')}
                 {tr(activeTab === 'messages' && 'Tin nhắn với buyer')}
                 {tr(activeTab === 'notifications' && 'Thông báo hệ thống')}
@@ -443,7 +443,7 @@ export default function SellerWorkspace({
             <div className="space-y-4 text-left animate-in fade-in duration-200">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-lg font-bold text-slate-900">{tr("Danh mục sản phẩm xuất khẩu")}</h3>
+                  <h3 className="text-lg font-bold text-slate-900">{tr("Danh mục sản phẩm cung cấp")}</h3>
                   <p className="text-xs text-slate-500 mt-0.5">{tr("Các mặt hàng chính đã được đối soát thông số kỹ thuật và bao bì xuất khẩu")}</p>
                 </div>
                 <button 

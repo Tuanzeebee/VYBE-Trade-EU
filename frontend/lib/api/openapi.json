@@ -1407,6 +1407,235 @@
         }
       }
     },
+    "/api/exporter/services": {
+      "get": {
+        "tags": [
+          "companies"
+        ],
+        "summary": "List Services",
+        "operationId": "list_services_api_exporter_services_get",
+        "parameters": [
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ServiceOfferingOut"
+                  },
+                  "title": "Response List Services Api Exporter Services Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "companies"
+        ],
+        "summary": "Create Service",
+        "operationId": "create_service_api_exporter_services_post",
+        "parameters": [
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ServiceOfferingIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceOfferingOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/exporter/services/{service_id}": {
+      "patch": {
+        "tags": [
+          "companies"
+        ],
+        "summary": "Update Service",
+        "operationId": "update_service_api_exporter_services__service_id__patch",
+        "parameters": [
+          {
+            "name": "service_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Service Id"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ServiceOfferingPatch"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceOfferingOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "companies"
+        ],
+        "summary": "Delete Service",
+        "operationId": "delete_service_api_exporter_services__service_id__delete",
+        "parameters": [
+          {
+            "name": "service_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Service Id"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/public/companies/{slug}": {
       "get": {
         "tags": [
@@ -1442,6 +1671,56 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/public/industries": {
+      "get": {
+        "tags": [
+          "companies"
+        ],
+        "summary": "Industries",
+        "operationId": "industries_api_public_industries_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CatalogItemOut"
+                  },
+                  "type": "array",
+                  "title": "Response Industries Api Public Industries Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/public/service-categories": {
+      "get": {
+        "tags": [
+          "companies"
+        ],
+        "summary": "Service Categories",
+        "operationId": "service_categories_api_public_service_categories_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CatalogItemOut"
+                  },
+                  "type": "array",
+                  "title": "Response Service Categories Api Public Service Categories Get"
                 }
               }
             }
@@ -7140,6 +7419,30 @@
         ],
         "title": "BuyerDashboard"
       },
+      "CatalogItemOut": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "name_vi": {
+            "type": "string",
+            "title": "Name Vi"
+          },
+          "name_en": {
+            "type": "string",
+            "title": "Name En"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "name_vi",
+          "name_en"
+        ],
+        "title": "CatalogItemOut",
+        "description": "Một dòng danh mục (ngành hàng, loại dịch vụ) — tên hai ngôn ngữ lấy từ DB."
+      },
       "ChecklistItem": {
         "properties": {
           "type_code": {
@@ -7277,11 +7580,14 @@
                 "type": "string",
                 "enum": [
                   "agriculture",
+                  "fruits_vegetables",
+                  "coffee_tea",
                   "seafood",
                   "food_beverage",
+                  "spices",
                   "textiles",
                   "handicrafts",
-                  "spices"
+                  "other"
                 ]
               },
               {
@@ -7289,6 +7595,18 @@
               }
             ],
             "title": "Industry Sector"
+          },
+          "industry_other": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Industry Other"
           },
           "founded_year": {
             "anyOf": [
@@ -7337,6 +7655,54 @@
             ],
             "title": "Contact Email"
           },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[0-9+().\\s-]{6,40}$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "legal_rep_name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Legal Rep Name"
+          },
+          "legal_rep_title": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Legal Rep Title"
+          },
+          "issuing_authority": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Issuing Authority"
+          },
           "description_vi": {
             "anyOf": [
               {
@@ -7360,6 +7726,108 @@
               }
             ],
             "title": "Description En"
+          },
+          "offering_type": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "products",
+                  "services",
+                  "both"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Offering Type"
+          },
+          "factory_address": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Factory Address"
+          },
+          "capacity_value": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,12}|(?=[\\d.]{1,15}0*$)\\d{0,12}\\.\\d{0,2}0*$)"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Capacity Value"
+          },
+          "capacity_unit": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "kg",
+                  "tonne",
+                  "piece",
+                  "carton",
+                  "liter",
+                  "container_20ft",
+                  "container_40ft"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Capacity Unit"
+          },
+          "capacity_period": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "month",
+                  "year"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Capacity Period"
+          },
+          "main_customers": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Main Customers"
+          },
+          "location_public": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location Public"
           },
           "company_size": {
             "anyOf": [
@@ -7436,7 +7904,7 @@
           "export_markets": {
             "items": {
               "type": "string",
-              "pattern": "^(EU|AT|BE|BG|HR|CY|CZ|DK|EE|FI|FR|DE|GR|HU|IE|IT|LV|LT|LU|MT|NL|PL|PT|RO|SK|SI|ES|SE)$"
+              "pattern": "^(EU|ASEAN|[A-Z]{2})$"
             },
             "type": "array",
             "maxItems": 50,
@@ -7456,16 +7924,27 @@
               "type": "string",
               "enum": [
                 "agriculture",
+                "fruits_vegetables",
+                "coffee_tea",
                 "seafood",
                 "food_beverage",
+                "spices",
                 "textiles",
                 "handicrafts",
-                "spices"
+                "other"
               ]
             },
             "type": "array",
             "maxItems": 20,
             "title": "Sourcing Categories"
+          },
+          "facility_codes": {
+            "items": {
+              "$ref": "#/components/schemas/FacilityCodeIn"
+            },
+            "type": "array",
+            "maxItems": 30,
+            "title": "Facility Codes"
           }
         },
         "type": "object",
@@ -7545,6 +8024,17 @@
             ],
             "title": "Industry Sector"
           },
+          "industry_other": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Industry Other"
+          },
           "founded_year": {
             "anyOf": [
               {
@@ -7589,6 +8079,50 @@
             ],
             "title": "Contact Email"
           },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "legal_rep_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Legal Rep Name"
+          },
+          "legal_rep_title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Legal Rep Title"
+          },
+          "issuing_authority": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Issuing Authority"
+          },
           "description_vi": {
             "anyOf": [
               {
@@ -7621,6 +8155,89 @@
               }
             ],
             "title": "Logo Key"
+          },
+          "offering_type": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "products",
+                  "services",
+                  "both"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Offering Type"
+          },
+          "factory_address": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Factory Address"
+          },
+          "capacity_value": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Capacity Value"
+          },
+          "capacity_unit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Capacity Unit"
+          },
+          "capacity_period": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Capacity Period"
+          },
+          "main_customers": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Main Customers"
+          },
+          "location_public": {
+            "type": "boolean",
+            "title": "Location Public"
+          },
+          "facility_codes": {
+            "items": {
+              "$ref": "#/components/schemas/FacilityCodeOut"
+            },
+            "type": "array",
+            "title": "Facility Codes"
           },
           "export_markets": {
             "items": {
@@ -7756,13 +8373,26 @@
           "business_type",
           "country",
           "industry_sector",
+          "industry_other",
           "founded_year",
           "address",
           "website",
           "contact_email",
+          "phone",
+          "legal_rep_name",
+          "legal_rep_title",
+          "issuing_authority",
           "description_vi",
           "description_en",
           "logo_key",
+          "offering_type",
+          "factory_address",
+          "capacity_value",
+          "capacity_unit",
+          "capacity_period",
+          "main_customers",
+          "location_public",
+          "facility_codes",
           "export_markets",
           "languages_spoken",
           "company_size",
@@ -7824,11 +8454,14 @@
                 "type": "string",
                 "enum": [
                   "agriculture",
+                  "fruits_vegetables",
+                  "coffee_tea",
                   "seafood",
                   "food_beverage",
+                  "spices",
                   "textiles",
                   "handicrafts",
-                  "spices"
+                  "other"
                 ]
               },
               {
@@ -7836,6 +8469,18 @@
               }
             ],
             "title": "Industry Sector"
+          },
+          "industry_other": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Industry Other"
           },
           "founded_year": {
             "anyOf": [
@@ -7884,6 +8529,54 @@
             ],
             "title": "Contact Email"
           },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[0-9+().\\s-]{6,40}$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "legal_rep_name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Legal Rep Name"
+          },
+          "legal_rep_title": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Legal Rep Title"
+          },
+          "issuing_authority": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Issuing Authority"
+          },
           "description_vi": {
             "anyOf": [
               {
@@ -7907,6 +8600,108 @@
               }
             ],
             "title": "Description En"
+          },
+          "offering_type": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "products",
+                  "services",
+                  "both"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Offering Type"
+          },
+          "factory_address": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Factory Address"
+          },
+          "capacity_value": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,12}|(?=[\\d.]{1,15}0*$)\\d{0,12}\\.\\d{0,2}0*$)"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Capacity Value"
+          },
+          "capacity_unit": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "kg",
+                  "tonne",
+                  "piece",
+                  "carton",
+                  "liter",
+                  "container_20ft",
+                  "container_40ft"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Capacity Unit"
+          },
+          "capacity_period": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "month",
+                  "year"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Capacity Period"
+          },
+          "main_customers": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Main Customers"
+          },
+          "location_public": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location Public"
           },
           "company_size": {
             "anyOf": [
@@ -7998,7 +8793,7 @@
               {
                 "items": {
                   "type": "string",
-                  "pattern": "^(EU|AT|BE|BG|HR|CY|CZ|DK|EE|FI|FR|DE|GR|HU|IE|IT|LV|LT|LU|MT|NL|PL|PT|RO|SK|SI|ES|SE)$"
+                  "pattern": "^(EU|ASEAN|[A-Z]{2})$"
                 },
                 "type": "array",
                 "maxItems": 50
@@ -8032,11 +8827,14 @@
                   "type": "string",
                   "enum": [
                     "agriculture",
+                    "fruits_vegetables",
+                    "coffee_tea",
                     "seafood",
                     "food_beverage",
+                    "spices",
                     "textiles",
                     "handicrafts",
-                    "spices"
+                    "other"
                   ]
                 },
                 "type": "array",
@@ -8047,6 +8845,21 @@
               }
             ],
             "title": "Sourcing Categories"
+          },
+          "facility_codes": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/FacilityCodeIn"
+                },
+                "type": "array",
+                "maxItems": 30
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Facility Codes"
           },
           "logo_key": {
             "anyOf": [
@@ -9502,6 +10315,50 @@
           "copilot"
         ],
         "title": "ExporterDashboard"
+      },
+      "FacilityCodeIn": {
+        "properties": {
+          "code_type": {
+            "type": "string",
+            "enum": [
+              "growing_area",
+              "packing_facility",
+              "establishment",
+              "other"
+            ],
+            "title": "Code Type"
+          },
+          "code": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Code"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code_type",
+          "code"
+        ],
+        "title": "FacilityCodeIn"
+      },
+      "FacilityCodeOut": {
+        "properties": {
+          "code_type": {
+            "type": "string",
+            "title": "Code Type"
+          },
+          "code": {
+            "type": "string",
+            "title": "Code"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code_type",
+          "code"
+        ],
+        "title": "FacilityCodeOut"
       },
       "FeedbackIn": {
         "properties": {
@@ -12505,6 +13362,224 @@
           "data"
         ],
         "title": "SavingsTile"
+      },
+      "ServiceOfferingIn": {
+        "properties": {
+          "category_code": {
+            "type": "string",
+            "pattern": "^[a-z_]{2,32}$",
+            "title": "Category Code"
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Title"
+          },
+          "description_vi": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 5000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description Vi"
+          },
+          "description_en": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 5000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description En"
+          },
+          "coverage_countries": {
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Z]{2}$"
+            },
+            "type": "array",
+            "maxItems": 60,
+            "title": "Coverage Countries"
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active",
+            "default": true
+          }
+        },
+        "type": "object",
+        "required": [
+          "category_code",
+          "title"
+        ],
+        "title": "ServiceOfferingIn"
+      },
+      "ServiceOfferingOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "category_code": {
+            "type": "string",
+            "title": "Category Code"
+          },
+          "category_name_vi": {
+            "type": "string",
+            "title": "Category Name Vi"
+          },
+          "category_name_en": {
+            "type": "string",
+            "title": "Category Name En"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "description_vi": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description Vi"
+          },
+          "description_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description En"
+          },
+          "coverage_countries": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Coverage Countries"
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "category_code",
+          "category_name_vi",
+          "category_name_en",
+          "title",
+          "description_vi",
+          "description_en",
+          "coverage_countries",
+          "is_active",
+          "created_at"
+        ],
+        "title": "ServiceOfferingOut"
+      },
+      "ServiceOfferingPatch": {
+        "properties": {
+          "category_code": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[a-z_]{2,32}$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category Code"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          },
+          "description_vi": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 5000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description Vi"
+          },
+          "description_en": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 5000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description En"
+          },
+          "coverage_countries": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string",
+                  "pattern": "^[A-Z]{2}$"
+                },
+                "type": "array",
+                "maxItems": 60
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Coverage Countries"
+          },
+          "is_active": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Active"
+          }
+        },
+        "type": "object",
+        "title": "ServiceOfferingPatch"
       },
       "StatsOut": {
         "properties": {

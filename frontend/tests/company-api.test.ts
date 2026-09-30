@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
+  authorityDisplay,
   BUSINESS_MODELS,
   companyToForm,
   EXPORT_MARKETS,
@@ -30,6 +31,20 @@ const COMPANY = {
   description_vi: 'Gạo',
   description_en: 'Rice',
   logo_key: null,
+  industry_other: null,
+  phone: null,
+  legal_rep_name: null,
+  legal_rep_title: null,
+  issuing_authority: null,
+  offering_type: 'products',
+  factory_address: null,
+  capacity_value: null,
+  capacity_unit: null,
+  capacity_period: null,
+  main_customers: null,
+  location_public: false,
+  facility_codes: [],
+  company_size: null,
   export_markets: ['EU', 'DE'],
   languages_spoken: ['en', 'vi'],
   verification_status: 'unverified',
@@ -87,18 +102,102 @@ describe('profileToCompany — form onboarding cũ → CompanyIn', () => {
       description_vi: 'Gạo',
       description_en: null,
       industry_sector: 'agriculture',
+      industry_other: null,
+      phone: null,
+      legal_rep_name: null,
+      legal_rep_title: null,
+      issuing_authority: null,
+      offering_type: 'products',
+      factory_address: null,
+      capacity_value: null,
+      capacity_unit: null,
+      capacity_period: null,
+      company_size: null,
+      main_customers: null,
+      facility_codes: [],
       languages_spoken: ['vi', 'en'],
       export_markets: ['EU', 'DE'],
     });
   });
 
+  it('U2: sản phẩm/dịch vụ, người đại diện, năng lực và mã cơ sở', () => {
+    const body = profileToCompany({
+      companyName: 'A',
+      country: 'TH',
+      offeringType: 'both',
+      legalRepName: ' Nguyễn Văn Trí ',
+      legalRepTitle: 'Giám đốc',
+      phone: '+84 28 3829 9842',
+      issuingAuthority: 'Sở Kế hoạch và Đầu tư TP. HCM',
+      capacityValue: '1500,5',
+      capacityUnit: 'tonne',
+      capacityPeriod: 'month',
+      staffSize: '51_200',
+      growingAreaCodes: 'VN-DL-1, VN-DL-2; VN-DL-1',
+      packingCodes: '',
+      establishmentCodes: 'DL 123',
+      industrySector: 'seafood',
+      industryOther: 'bỏ vì không chọn Khác',
+    });
+    expect(body).toMatchObject({
+      country: 'TH',
+      offering_type: 'both',
+      legal_rep_name: 'Nguyễn Văn Trí',
+      issuing_authority: 'Sở Kế hoạch và Đầu tư TP. HCM',
+      capacity_value: '1500.5',
+      capacity_unit: 'tonne',
+      capacity_period: 'month',
+      company_size: '51_200',
+      industry_other: null,
+      facility_codes: [
+        { code_type: 'growing_area', code: 'VN-DL-1' },
+        { code_type: 'growing_area', code: 'VN-DL-2' },
+        { code_type: 'establishment', code: 'DL 123' },
+      ],
+    });
+  });
+
+  it('U2: sản lượng không hợp lệ → không gửi cả đơn vị lẫn kỳ; ngành Khác giữ tên tự ghi', () => {
+    const body = profileToCompany({ companyName: 'A', capacityValue: 'nhiều', industrySector: 'other', industryOther: 'Dược liệu' });
+    expect([body.capacity_value, body.capacity_unit, body.capacity_period]).toEqual([null, null, null]);
+    expect(body.industry_other).toBe('Dược liệu');
+  });
+
   it('thị trường xuất khẩu lấy từ ô chọn cấp công ty (mã), bỏ mã lạ; không đọc thị trường cũ theo sản phẩm', () => {
-    expect(profileToCompany({ companyName: 'A', markets: 'FR, XX1, US, ASEAN,,' }).export_markets).toEqual(['FR']);
+    expect(profileToCompany({ companyName: 'A', markets: 'FR, XX1, US, ASEAN,,' }).export_markets).toEqual(['FR', 'US', 'ASEAN']);
     expect(profileToCompany({ companyName: 'A', market: 'Châu Âu (EU), Nhật Bản' }).export_markets).toEqual([]);
   });
 
   it('năm thành lập không phải số → null (server không nhận chuỗi)', () => {
     expect(profileToCompany({ companyName: 'A', establishedYear: 'khoảng 2010' }).founded_year).toBeNull();
+  });
+});
+
+describe('companyToForm — trường U2', () => {
+  it('đổi ngược mã cơ sở, năng lực và loại hình cung cấp', () => {
+    const form = companyToForm({
+      ...COMPANY,
+      offering_type: 'services',
+      country: 'TH',
+      capacity_value: '1500.00',
+      capacity_unit: 'kg',
+      capacity_period: 'month',
+      facility_codes: [
+        { code_type: 'growing_area', code: 'A' },
+        { code_type: 'growing_area', code: 'B' },
+        { code_type: 'establishment', code: 'DL 1' },
+      ],
+    } as never);
+    expect(form).toMatchObject({
+      offeringType: 'services',
+      country: 'TH',
+      capacityValue: '1500.00',
+      capacityUnit: 'kg',
+      capacityPeriod: 'month',
+      growingAreaCodes: 'A, B',
+      packingCodes: '',
+      establishmentCodes: 'DL 1',
+    });
   });
 });
 
@@ -118,30 +217,42 @@ describe('companyToForm — dữ liệu server → giá trị ban đầu của f
   });
 });
 
-describe('EXPORT_MARKETS', () => {
-  it('chỉ gồm EU và 27 nước thành viên EU, không trùng, mã hợp lệ với backend', () => {
+describe('EXPORT_MARKETS (U2: không giới hạn ở EU)', () => {
+  it('gồm khối EU/ASEAN và các nước lớn ngoài EU, không trùng, không có Việt Nam, mã hợp lệ với backend', () => {
     const codes = EXPORT_MARKETS.map((m) => m.code);
-    expect(codes).toContain('EU');
-    expect(codes).toHaveLength(28);
+    for (const code of ['EU', 'ASEAN', 'DE', 'US', 'JP', 'KR', 'CN', 'AU']) expect(codes).toContain(code);
+    expect(codes).not.toContain('VN');
     expect(new Set(codes).size).toBe(codes.length);
-    expect(codes).not.toContain('US');
-    expect(codes).not.toContain('JP');
-    expect(codes.filter((c) => !/^(EU|[A-Z]{2})$/.test(c))).toEqual([]);
+    expect(codes.filter((c) => !/^(EU|ASEAN|[A-Z]{2})$/.test(c))).toEqual([]);
     expect(EXPORT_MARKETS.every((m) => m.label.trim() !== '')).toBe(true);
   });
 });
 
 describe('INDUSTRIES', () => {
-  it('khớp 6 nhóm ngành backend nhận', () => {
+  it('khớp bảng industries của backend, có "Khác"', () => {
     expect(INDUSTRIES.map((i) => i.code)).toEqual([
       'agriculture',
+      'fruits_vegetables',
+      'coffee_tea',
       'seafood',
       'food_beverage',
+      'spices',
       'textiles',
       'handicrafts',
-      'spices',
+      'other',
     ]);
   });
+});
+
+describe('authorityDisplay — Sở KH&ĐT đã hợp nhất vào Sở Tài chính (01/03/2025)', () => {
+  it.each([
+    ['Sở Kế hoạch và Đầu tư TP. Hồ Chí Minh', 'Sở Tài chính TP. Hồ Chí Minh', true],
+    ['Sở Kế hoạch & Đầu tư Đà Nẵng', 'Sở Tài chính Đà Nẵng', true],
+    ['Sở KH&ĐT Hà Nội', 'Sở Tài chính Hà Nội', true],
+    ['Sở Tài chính Cần Thơ', 'Sở Tài chính Cần Thơ', false],
+    ['Handelsregister Hamburg', 'Handelsregister Hamburg', false],
+    ['', '', false],
+  ])('%s → %s', (raw, text, renamed) => expect(authorityDisplay(raw)).toEqual({ text, renamed }));
 });
 
 describe('saveMyCompany', () => {
@@ -209,8 +320,8 @@ describe('saveMyCompany', () => {
       expect(await patchBody(['EU', 'DE', 'US'], 'EU,DE,US')).not.toHaveProperty('export_markets');
     });
 
-    it('người dùng đổi lựa chọn → chỉ gửi mã EU', async () => {
-      expect((await patchBody(['US'], 'US,FR'))?.export_markets).toEqual(['FR']);
+    it('người dùng đổi lựa chọn → gửi đúng lựa chọn mới (mọi nước)', async () => {
+      expect((await patchBody(['US'], 'US,FR'))?.export_markets).toEqual(['US', 'FR']);
     });
 
     it('bỏ hết thị trường EU đã chọn → gửi danh sách rỗng để xóa', async () => {

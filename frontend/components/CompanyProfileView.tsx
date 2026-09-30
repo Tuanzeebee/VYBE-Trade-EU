@@ -4,12 +4,25 @@
 // sản phẩm, trạng thái xác minh. Trường chưa khai báo hiện "Chưa khai báo" kèm lối sửa, không bao giờ điền
 // số hay chứng nhận mẫu (demo 30/9: khách thấy điểm 96/100 và "L2" giả trên màn hình này).
 import React, { useEffect, useState } from 'react';
-import { Award, Building2, ChevronRight, Edit3, ExternalLink, Eye, Globe2, Package, ShieldCheck } from 'lucide-react';
+import { Award, Briefcase, Building2, ChevronRight, Edit3, ExternalLink, Eye, Globe2, Package, ShieldCheck } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { Link } from '../i18n/navigation';
-import { BUSINESS_MODELS, INDUSTRIES, STAFF_LANGUAGES, countryName, type CompanyOut } from '../lib/companyApi';
+import {
+  BUSINESS_MODELS,
+  COMPANY_SIZES,
+  FACILITY_CODE_TYPES,
+  INDUSTRIES,
+  OFFERING_TYPES,
+  STAFF_LANGUAGES,
+  authorityDisplay,
+  countryName,
+  offersProducts,
+  offersServices,
+  type CompanyOut,
+} from '../lib/companyApi';
 import { listEvidence, type Evidence } from '../lib/evidenceApi';
-import { formatMoq, formatPrice, type ProductOut } from '../lib/productsApi';
+import { UNITS, formatMoq, formatPrice, type ProductOut } from '../lib/productsApi';
+import { getMyServices, type ServiceOffering } from '../lib/servicesApi';
 import CompletenessCard from './CompletenessCard';
 import { STATUS_BADGE } from './VerificationStatusCard';
 import type { WorkspaceTabId } from './SellerWorkspace';
@@ -44,6 +57,8 @@ function Field({ label, value, mono = false }: { label: string; value: React.Rea
 export default function CompanyProfileView({ company, products, onEdit, onNavigateTab }: Props) {
   const { tr, language } = useLanguage();
   const [evidence, setEvidence] = useState<Evidence[] | null | 'error'>(null);
+  const [services, setServices] = useState<ServiceOffering[]>([]);
+  const providesServices = offersServices(company?.offering_type ?? undefined);
   useEffect(() => {
     let active = true;
     listEvidence().then((list) => active && setEvidence(list ?? 'error'));
@@ -51,6 +66,14 @@ export default function CompanyProfileView({ company, products, onEdit, onNaviga
       active = false;
     };
   }, []);
+  useEffect(() => {
+    if (!providesServices) return;
+    let active = true;
+    getMyServices().then((list) => active && setServices(list ?? []));
+    return () => {
+      active = false;
+    };
+  }, [providesServices]);
 
   if (!company) {
     return (
@@ -66,7 +89,18 @@ export default function CompanyProfileView({ company, products, onEdit, onNaviga
   const status = STATUS_BADGE[company.verification_status];
   const isVerified = company.verification_status === 'verified';
   const businessModel = BUSINESS_MODELS.find((m) => m.code === company.business_type)?.label;
-  const industry = INDUSTRIES.find((i) => i.code === company.industry_sector)?.label;
+  const industry =
+    company.industry_sector === 'other' && company.industry_other
+      ? company.industry_other
+      : INDUSTRIES.find((i) => i.code === company.industry_sector)?.label;
+  const offering = OFFERING_TYPES.find((o) => o.code === company.offering_type)?.label;
+  const authority = authorityDisplay(company.issuing_authority);
+  const staffSize = COMPANY_SIZES.find((c) => c.code === company.company_size)?.label;
+  const unitLabel = UNITS.find((u) => u.code === company.capacity_unit)?.label ?? company.capacity_unit ?? '';
+  const capacity = company.capacity_value
+    ? `${Number(company.capacity_value).toLocaleString('vi-VN')} ${tr(unitLabel)} / ${tr(company.capacity_period === 'month' ? 'tháng' : 'năm')}`
+    : null;
+  const sellsProducts = offersProducts(company.offering_type ?? undefined);
   const description = (language === 'en' ? company.description_en || company.description_vi : company.description_vi || company.description_en) ?? '';
   const languages = company.languages_spoken.map((code) => STAFF_LANGUAGES.find((l) => l.code === code)?.label ?? code);
   const productList = Array.isArray(products) ? products : [];
@@ -131,7 +165,25 @@ export default function CompanyProfileView({ company, products, onEdit, onNaviga
               <Field label="Mã số thuế" value={company.tax_id} mono />
               <Field label="Mô hình kinh doanh" value={businessModel ? tr(businessModel) : null} />
               <Field label="Địa chỉ trụ sở" value={company.address} />
+              <Field
+                label="Người đại diện pháp luật"
+                value={company.legal_rep_name ? [company.legal_rep_name, company.legal_rep_title].filter(Boolean).join(' — ') : null}
+              />
+              <Field
+                label="Cơ quan cấp ĐKKD"
+                value={
+                  authority.text ? (
+                    <span>
+                      {authority.text}
+                      {authority.renamed && (
+                        <span className="block text-[11px] font-normal text-slate-500">{tr(`Trên giấy tờ: ${company.issuing_authority}`)}</span>
+                      )}
+                    </span>
+                  ) : null
+                }
+              />
               <Field label="Email liên hệ" value={company.contact_email} />
+              <Field label="Số điện thoại" value={company.phone} />
               <Field
                 label="Website"
                 value={
@@ -152,7 +204,15 @@ export default function CompanyProfileView({ company, products, onEdit, onNaviga
               <h2 id="profile-capability" className="text-sm font-bold text-slate-900">{tr('Năng lực & thị trường')}</h2>
             </header>
             <dl className="text-xs leading-relaxed">
+              <Field label="Doanh nghiệp cung cấp" value={offering ? tr(offering) : null} />
               <Field label="Ngành hàng" value={industry ? tr(industry) : null} />
+              {sellsProducts && <Field label="Sản lượng có thể cung cấp" value={capacity} />}
+              <Field label="Quy mô nhân sự" value={staffSize ? tr(staffSize) : null} />
+              {sellsProducts && <Field label="Địa chỉ nhà máy / kho" value={company.factory_address} />}
+              {FACILITY_CODE_TYPES.map((type) => {
+                const codes = (company.facility_codes ?? []).filter((c) => c.code_type === type.code).map((c) => c.code);
+                return codes.length > 0 ? <Field key={type.code} label={type.label} value={codes.join(', ')} mono /> : null;
+              })}
               <Field
                 label="Thị trường đã xuất khẩu"
                 value={
@@ -168,8 +228,38 @@ export default function CompanyProfileView({ company, products, onEdit, onNaviga
                 }
               />
               <Field label="Ngôn ngữ làm việc" value={languages.length > 0 ? languages.map((l) => tr(l)).join(', ') : null} />
+              {company.main_customers && <Field label="Khách hàng chính" value={company.main_customers} />}
             </dl>
           </section>
+
+          {providesServices && (
+            <section aria-labelledby="profile-services" className="p-6 sm:p-7 rounded-3xl bg-white border border-slate-200/80 shadow-xs">
+              <header className="flex items-center justify-between border-b border-slate-100 pb-4 mb-3">
+                <div className="flex items-center gap-2.5">
+                  <Briefcase className="w-4 h-4 text-teal-700" />
+                  <h2 id="profile-services" className="text-sm font-bold text-slate-900">{tr('Dịch vụ cung cấp')}</h2>
+                </div>
+                <button type="button" onClick={() => onEdit(2)} className="text-xs font-semibold text-teal-700 hover:text-teal-900 cursor-pointer">
+                  {tr('Sửa')}
+                </button>
+              </header>
+              {services.length === 0 ? (
+                <p className="text-xs text-slate-600">{tr('Chưa có dịch vụ. Thêm ít nhất một dịch vụ để buyer và nhà xuất khẩu tìm thấy bạn.')}</p>
+              ) : (
+                <ul className="space-y-2">
+                  {services.map((service) => (
+                    <li key={service.id} className="p-3 rounded-2xl bg-slate-50 border border-slate-200/80">
+                      <p className="text-xs font-bold text-slate-900">{service.title}</p>
+                      <p className="text-[11px] text-slate-500 mt-0.5">
+                        {language === 'vi' ? service.category_name_vi : service.category_name_en}
+                        {service.coverage_countries.length > 0 && ` • ${service.coverage_countries.map((c) => tr(countryName(c))).join(', ')}`}
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          )}
 
           <section aria-labelledby="profile-about" className="p-6 rounded-3xl bg-white border border-slate-200/80 shadow-xs">
             <h2 id="profile-about" className="text-xs font-bold text-slate-900 mb-2 uppercase tracking-wider">{tr('Giới thiệu doanh nghiệp')}</h2>

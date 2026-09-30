@@ -14,7 +14,12 @@ from app.modules.companies.completeness import (
     build_facts,
     compute_score,
 )
-from app.modules.companies.models import Company, CompletenessWeight, Product
+from app.modules.companies.models import (
+    Company,
+    CompanyServiceOffering,
+    CompletenessWeight,
+    Product,
+)
 
 # Số bằng chứng đã nộp và còn hạn do module verification cung cấp (đảo phụ thuộc: companies không
 # import verification). verification đăng ký ở lúc import; chưa đăng ký thì coi như 0.
@@ -37,7 +42,9 @@ async def _weight_rows(session: AsyncSession, company: Company) -> list[WeightRo
     return [WeightRow(r.field_key, r.group_key, r.weight, r.is_enabled) for r in rows]
 
 
-def _company_facts(company: Company, evidence_count: int) -> CompanyFacts:
+def _company_facts(
+    company: Company, evidence_count: int, services: list[CompanyServiceOffering]
+) -> CompanyFacts:
     return CompanyFacts(
         type=company.type.value,
         country=company.country,
@@ -58,7 +65,26 @@ def _company_facts(company: Company, evidence_count: int) -> CompanyFacts:
         languages=[lang.lang for lang in company.languages],
         sourcing_categories=[c.category for c in company.sourcing_categories],
         evidence_count=evidence_count,
+        offering_type=company.offering_type,
+        service_count=len(services),
+        service_description_max=max(
+            (
+                max(len((s.description_vi or "").strip()), len((s.description_en or "").strip()))
+                for s in services
+            ),
+            default=0,
+        ),
     )
+
+
+async def _active_services(session: AsyncSession, company: Company) -> list[CompanyServiceOffering]:
+    rows = await session.scalars(
+        select(CompanyServiceOffering).where(
+            CompanyServiceOffering.company_id == company.id,
+            CompanyServiceOffering.is_active.is_(True),
+        )
+    )
+    return list(rows)
 
 
 async def _product_facts(session: AsyncSession, company: Company) -> list[ProductFacts]:
@@ -81,7 +107,8 @@ async def _product_facts(session: AsyncSession, company: Company) -> list[Produc
 async def compute_for(session: AsyncSession, company: Company) -> CompletenessResult:
     evidence_count = await _evidence_counter(session, company.id) if _evidence_counter else 0
     facts = build_facts(
-        _company_facts(company, evidence_count), await _product_facts(session, company)
+        _company_facts(company, evidence_count, await _active_services(session, company)),
+        await _product_facts(session, company),
     )
     return compute_score(facts, await _weight_rows(session, company))
 

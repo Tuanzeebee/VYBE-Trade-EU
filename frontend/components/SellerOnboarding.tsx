@@ -6,9 +6,25 @@
 
 import React, { useEffect, useState } from 'react';
 import type { DemoUser } from '../lib/demoAuth';
-import { BUSINESS_MODELS, EXPORT_MARKETS, INDUSTRIES, STAFF_LANGUAGES, logoFileError, uploadCompanyLogo } from '../lib/companyApi';
-import { draftToBody, type ProductDraft } from '../lib/productsApi';
+import {
+  BUSINESS_MODELS,
+  COMPANY_SIZES,
+  COUNTRIES,
+  EXPORT_MARKETS,
+  FACILITY_CODE_TYPES,
+  INDUSTRIES,
+  OFFERING_TYPES,
+  STAFF_LANGUAGES,
+  authorityDisplay,
+  logoFileError,
+  offersProducts,
+  offersServices,
+  uploadCompanyLogo,
+} from '../lib/companyApi';
+import { UNITS, draftToBody, type ProductDraft } from '../lib/productsApi';
+import { serviceDraftToBody, type ServiceDraft } from '../lib/servicesApi';
 import ProductsEditor from './ProductsEditor';
+import ServicesEditor from './ServicesEditor';
 import LanguageSelect from './LanguageSelect';
 import { 
   ArrowRight, 
@@ -43,11 +59,15 @@ import EvidenceManager from "./EvidenceManager";
 interface SellerOnboardingProps {
   account?: DemoUser;
   initialStep?: number;
-  onComplete?: (profile: Record<string, string>, products: ProductDraft[]) => void | Promise<void>;
+  onComplete?: (profile: Record<string, string>, products: ProductDraft[], services: ServiceDraft[]) => void | Promise<void>;
   /** Lưu nháp công ty lên server khi rời bước 1 (A2). Lỗi → ở lại bước 1. */
   onSaveCompany?: (profile: Record<string, string>) => Promise<void>;
   /** Lưu nháp sản phẩm lên server khi rời bước 2 (A2). Lỗi → ở lại bước 2. */
   onSaveProducts?: (products: ProductDraft[]) => Promise<void>;
+  /** Lưu nháp dịch vụ (nhà cung cấp dịch vụ, U2) khi rời bước 2. */
+  onSaveServices?: (services: ServiceDraft[]) => Promise<void>;
+  /** Dịch vụ đã lưu trên server, đổi sang bản nháp. */
+  initialServices?: ServiceDraft[];
   /** Giá trị ban đầu của bước 1 lấy từ server (trang sửa hồ sơ). */
   initialCompany?: Record<string, string>;
   /** Sản phẩm đã lưu trên server (B5), đổi sang bản nháp. */
@@ -57,7 +77,7 @@ interface SellerOnboardingProps {
   onNavigateWorkspace?: (tab?: 'profile' | 'verification') => void;
 }
 
-export default function SellerOnboarding({ account, initialStep = 2, initialCompany, initialProducts, onComplete, onSaveCompany, onSaveProducts, onLogout, onNavigateHome, onNavigateWorkspace }: SellerOnboardingProps) {
+export default function SellerOnboarding({ account, initialStep = 2, initialCompany, initialProducts, initialServices, onComplete, onSaveCompany, onSaveProducts, onSaveServices, onLogout, onNavigateHome, onNavigateWorkspace }: SellerOnboardingProps) {
   const { tr, language } = useLanguage();
   const [currentStep, setCurrentStep] = useState<number>(initialStep);
   const [submitError, setSubmitError] = useState('');
@@ -66,6 +86,7 @@ export default function SellerOnboarding({ account, initialStep = 2, initialComp
 
   // Step 2: sản phẩm (B5) — bản nháp trong form, lưu lên server khi hoàn tất.
   const [products, setProducts] = useState<ProductDraft[]>(initialProducts ?? []);
+  const [services, setServices] = useState<ServiceDraft[]>(initialServices ?? []);
   const [productError, setProductError] = useState('');
 
   // Form State for Step 1: Thông tin doanh nghiệp
@@ -84,8 +105,28 @@ export default function SellerOnboarding({ account, initialStep = 2, initialComp
     descriptionEn: '',
     markets: '',
     logoKey: '',
+    // U2: sản phẩm / dịch vụ, người đại diện, cơ quan cấp, năng lực — chỉ hỏi vừa đủ.
+    offeringType: 'products',
+    country: 'VN',
+    phone: '',
+    legalRepName: '',
+    legalRepTitle: '',
+    issuingAuthority: '',
+    industryOther: '',
+    factoryAddress: '',
+    capacityValue: '',
+    capacityUnit: 'tonne',
+    capacityPeriod: 'year',
+    staffSize: '',
+    mainCustomers: '',
+    growingAreaCodes: '',
+    packingCodes: '',
+    establishmentCodes: '',
     ...initialCompany
   });
+  const sellsProducts = offersProducts(formData.offeringType);
+  const sellsServices = offersServices(formData.offeringType);
+  const authority = authorityDisplay(formData.issuingAuthority);
 
   // Logo (bước 1): công ty chưa có trên server khi vừa chọn file nên giữ file ở đây, tải lên sau khi lưu bước 1.
   const [logoFile, setLogoFile] = useState<File | null>(null);
@@ -121,16 +162,21 @@ export default function SellerOnboarding({ account, initialStep = 2, initialComp
   const [agreeCommitment, setAgreeCommitment] = useState(false);
 
   const goToLicenses = async () => {
-    if (products.length === 0) { setProductError('Vui lòng thêm ít nhất một sản phẩm.'); return; }
+    if (sellsProducts && products.length === 0) { setProductError('Vui lòng thêm ít nhất một sản phẩm.'); return; }
+    if (sellsServices && services.length === 0) { setProductError('Vui lòng thêm ít nhất một dịch vụ.'); return; }
     try {
-      products.forEach((p) => draftToBody(p));
+      if (sellsProducts) products.forEach((p) => draftToBody(p));
+      if (sellsServices) services.forEach((s) => serviceDraftToBody(s));
     } catch (cause) {
       setProductError(cause instanceof Error ? cause.message : 'Sản phẩm chưa hợp lệ. Vui lòng kiểm tra lại.');
       return;
     }
     setProductError('');
     try {
-      await onSaveProducts?.(products);
+      // Năng lực, thị trường, mã cơ sở nằm ở bước 2 nhưng thuộc hồ sơ công ty: lưu cùng lúc.
+      await onSaveCompany?.(buildProfile());
+      if (sellsProducts) await onSaveProducts?.(products);
+      if (sellsServices) await onSaveServices?.(services);
     } catch (cause) {
       setProductError(cause instanceof Error ? cause.message : 'Không thể lưu sản phẩm. Vui lòng thử lại.');
       return;
@@ -138,7 +184,7 @@ export default function SellerOnboarding({ account, initialStep = 2, initialComp
     setCurrentStep(3);
   };
 
-  const buildProfile = (): Record<string, string> => ({ ...formData, country: 'Việt Nam',
+  const buildProfile = (): Record<string, string> => ({ ...formData,
     interest: [...new Set(products.map((p) => p.hs?.formatted ?? ''))].filter(Boolean).join(', '),
     products: JSON.stringify(products.map((p) => ({ name: p.name }))), agreeCommitment: String(agreeCommitment) });
 
@@ -154,7 +200,7 @@ export default function SellerOnboarding({ account, initialStep = 2, initialComp
         setLogoFile(null);
         profile = { ...profile, logoKey };
       }
-      await onComplete(profile, products);
+      await onComplete(profile, sellsProducts ? products : [], sellsServices ? services : []);
     } catch (cause) { setSubmitError(cause instanceof Error ? cause.message : 'Không thể lưu hồ sơ. Vui lòng thử lại.'); }
   };
 
@@ -326,7 +372,7 @@ export default function SellerOnboarding({ account, initialStep = 2, initialComp
             <span className={`text-xs sm:text-[13px] font-medium ${
               currentStep === 2 ? 'text-slate-900 font-bold border-b-2 border-[#083832] pb-0.5' : 'text-slate-500'
             }`}>
-              {tr("Sản phẩm & năng lực")}</span>
+              {tr("Sản phẩm, dịch vụ & năng lực")}</span>
           </div>
 
           {/* Arrow Divider */}
@@ -484,7 +530,7 @@ export default function SellerOnboarding({ account, initialStep = 2, initialComp
                 <div className="flex items-center justify-between flex-wrap gap-2 mb-1">
                   <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
                     {tr(currentStep === 1 && "Thông tin doanh nghiệp")}
-                    {tr(currentStep === 2 && "Sản phẩm & năng lực sản xuất")}
+                    {tr(currentStep === 2 && "Sản phẩm, dịch vụ & năng lực")}
                     {tr(currentStep === 3 && "Tải lên giấy phép & chứng nhận")}
                     {tr(currentStep === 4 && "Xem lại & hoàn tất hồ sơ")}
                   </h2>
@@ -493,7 +539,7 @@ export default function SellerOnboarding({ account, initialStep = 2, initialComp
                 </div>
                 <p className="text-xs sm:text-sm text-slate-500 font-normal">
                   {tr(currentStep === 1 && "Cung cấp thông tin cơ bản về doanh nghiệp của bạn.")}
-                  {tr(currentStep === 2 && "Khai báo danh mục sản phẩm, năng lực cung ứng và quy mô xuất khẩu.")}
+                  {tr(currentStep === 2 && "Khai báo sản phẩm hoặc dịch vụ bạn cung cấp và năng lực đáp ứng đơn hàng.")}
                   {tr(currentStep === 3 && "Tải lên giấy phép và chứng nhận để quản trị viên xác minh doanh nghiệp.")}
                   {tr(currentStep === 4 && "Kiểm tra lại toàn bộ dữ liệu trước khi gửi hồ sơ vào hàng đợi thẩm định của VYBE Trade.")}
                 </p>
@@ -502,6 +548,32 @@ export default function SellerOnboarding({ account, initialStep = 2, initialComp
               {/* Step 1 Form Body */}
               {currentStep === 1 && (
                 <form onSubmit={handleNextStep} className="space-y-4 sm:space-y-5">
+
+                  {/* U2: hỏi trước bước 2 — bán sản phẩm hay cung cấp dịch vụ */}
+                  <fieldset>
+                    <legend className="block text-xs sm:text-[13px] font-semibold text-slate-800 mb-1.5">{tr("Doanh nghiệp của bạn cung cấp *")}</legend>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                      {OFFERING_TYPES.map((option) => (
+                        <label
+                          key={option.code}
+                          className={`flex items-start gap-2.5 rounded-xl border p-3 cursor-pointer ${formData.offeringType === option.code ? 'border-[#083832] bg-teal-50/60' : 'border-slate-200 bg-white hover:bg-slate-50'}`}
+                        >
+                          <input
+                            type="radio"
+                            name="offering-type"
+                            value={option.code}
+                            checked={formData.offeringType === option.code}
+                            onChange={() => setFormData({ ...formData, offeringType: option.code })}
+                            className="mt-0.5 accent-[#083832]"
+                          />
+                          <span>
+                            <span className="block text-xs sm:text-sm font-bold text-slate-900">{tr(option.label)}</span>
+                            <span className="block text-[11px] text-slate-500 mt-0.5">{tr(option.hint)}</span>
+                          </span>
+                        </label>
+                      ))}
+                    </div>
+                  </fieldset>
 
                   {/* Logo công ty */}
                   <div>
@@ -564,11 +636,11 @@ export default function SellerOnboarding({ account, initialStep = 2, initialComp
                     {/* Mô hình kinh doanh * */}
                     <div>
                       <label htmlFor="company-business-model" className="block text-xs sm:text-[13px] font-semibold text-slate-800 mb-1.5">
-                        {tr("Mô hình kinh doanh *")}</label>
+                        {tr(sellsProducts ? "Mô hình kinh doanh *" : "Mô hình kinh doanh")}</label>
                       <div className="relative">
-                        <select 
+                        <select
                           id="company-business-model"
-                          required
+                          required={sellsProducts}
                           value={formData.businessType}
                           onChange={(e) => setFormData({ ...formData, businessType: e.target.value })}
                           className="w-full px-4 py-2.5 rounded-xl border border-slate-200/90 bg-white text-xs sm:text-sm text-slate-900 focus:outline-none focus:border-[#083832] focus:ring-1 focus:ring-[#083832] appearance-none cursor-pointer pr-10"
@@ -583,11 +655,10 @@ export default function SellerOnboarding({ account, initialStep = 2, initialComp
                     {/* Năm thành lập * */}
                     <div>
                       <label className="block text-xs sm:text-[13px] font-semibold text-slate-800 mb-1.5">
-                        {tr("Năm thành lập *")}</label>
+                        {tr("Năm thành lập")}</label>
                       <div className="relative">
-                        <input 
+                        <input
                           type="number"
-                          required
                           min="1950"
                           max="2026"
                           value={formData.establishedYear}
@@ -613,6 +684,76 @@ export default function SellerOnboarding({ account, initialStep = 2, initialComp
                       placeholder={tr("Nhập địa chỉ đầy đủ")}
                       className="w-full px-4 py-2.5 rounded-xl border border-slate-200/90 bg-white text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#083832] focus:ring-1 focus:ring-[#083832] transition-colors"
                     />
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor="company-country" className="block text-xs sm:text-[13px] font-semibold text-slate-800 mb-1.5">{tr("Quốc gia *")}</label>
+                      <select
+                        id="company-country"
+                        required
+                        value={formData.country}
+                        onChange={(e) => setFormData({ ...formData, country: e.target.value })}
+                        className="w-full px-4 py-2.5 rounded-xl border border-slate-200/90 bg-white text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#083832] focus:ring-1 focus:ring-[#083832] transition-colors"
+                      >
+                        {COUNTRIES.slice().sort((a, b) => (a.code === 'VN' ? -1 : b.code === 'VN' ? 1 : a.name.localeCompare(b.name))).map((c) => (
+                          <option key={c.code} value={c.code}>{tr(c.name)}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label htmlFor="company-phone" className="block text-xs sm:text-[13px] font-semibold text-slate-800 mb-1.5">{tr("Số điện thoại")}</label>
+                      <input
+                        id="company-phone"
+                        type="tel"
+                        value={formData.phone}
+                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                        placeholder={tr("Ví dụ: +84 28 3829 9842")}
+                        className="w-full px-4 py-2.5 rounded-xl border border-slate-200/90 bg-white text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#083832] focus:ring-1 focus:ring-[#083832] transition-colors"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor="company-legal-rep" className="block text-xs sm:text-[13px] font-semibold text-slate-800 mb-1.5">{tr("Người đại diện pháp luật")}</label>
+                      <input
+                        id="company-legal-rep"
+                        value={formData.legalRepName}
+                        maxLength={255}
+                        onChange={(e) => setFormData({ ...formData, legalRepName: e.target.value })}
+                        placeholder={tr("Họ và tên như trên giấy ĐKKD")}
+                        className="w-full px-4 py-2.5 rounded-xl border border-slate-200/90 bg-white text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#083832] focus:ring-1 focus:ring-[#083832] transition-colors"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="company-legal-rep-title" className="block text-xs sm:text-[13px] font-semibold text-slate-800 mb-1.5">{tr("Chức vụ")}</label>
+                      <input
+                        id="company-legal-rep-title"
+                        value={formData.legalRepTitle}
+                        maxLength={120}
+                        onChange={(e) => setFormData({ ...formData, legalRepTitle: e.target.value })}
+                        placeholder={tr("Ví dụ: Giám đốc")}
+                        className="w-full px-4 py-2.5 rounded-xl border border-slate-200/90 bg-white text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#083832] focus:ring-1 focus:ring-[#083832] transition-colors"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label htmlFor="company-issuing-authority" className="block text-xs sm:text-[13px] font-semibold text-slate-800 mb-1.5">{tr("Cơ quan cấp đăng ký kinh doanh")}</label>
+                    <input
+                      id="company-issuing-authority"
+                      value={formData.issuingAuthority}
+                      maxLength={255}
+                      onChange={(e) => setFormData({ ...formData, issuingAuthority: e.target.value })}
+                      placeholder={tr("Ghi đúng như trên giấy đăng ký kinh doanh")}
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200/90 bg-white text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#083832] focus:ring-1 focus:ring-[#083832] transition-colors"
+                    />
+                    {authority.renamed && (
+                      <p className="mt-1 text-[11px] text-teal-800">
+                        {tr("Từ 01/03/2025, Sở Kế hoạch và Đầu tư đã hợp nhất vào Sở Tài chính. Hồ sơ công khai sẽ hiển thị:")} <strong>{authority.text}</strong>
+                      </p>
+                    )}
                   </div>
 
                   {/* Field 6 & 7: Website & Email liên hệ * (2 Cols) */}
@@ -661,6 +802,16 @@ export default function SellerOnboarding({ account, initialStep = 2, initialComp
                         <option value="">{tr("Chọn ngành hàng")}</option>
                         {INDUSTRIES.map((industry) => <option key={industry.code} value={industry.code}>{tr(industry.label)}</option>)}
                       </select>
+                      {formData.industrySector === 'other' && (
+                        <input
+                          aria-label={tr("Tên ngành hàng khác")}
+                          value={formData.industryOther}
+                          maxLength={120}
+                          onChange={(e) => setFormData({ ...formData, industryOther: e.target.value })}
+                          placeholder={tr("Ví dụ: Dược liệu")}
+                          className="mt-2 w-full px-4 py-2.5 rounded-xl border border-slate-200/90 bg-white text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#083832] focus:ring-1 focus:ring-[#083832] transition-colors"
+                        />
+                      )}
                     </div>
                     <fieldset>
                       <legend className="block text-xs sm:text-[13px] font-semibold text-slate-800 mb-1.5">
@@ -708,24 +859,6 @@ export default function SellerOnboarding({ account, initialStep = 2, initialComp
                     </div>
                   </div>
 
-                  <fieldset>
-                    <legend className="block text-xs sm:text-[13px] font-semibold text-slate-800 mb-1.5">
-                      {tr("Thị trường xuất khẩu đã phục vụ")}</legend>
-                    <div className="flex flex-wrap gap-x-4 gap-y-2 pt-1">
-                      {EXPORT_MARKETS.map((market) => (
-                        <label key={market.code} className="inline-flex items-center gap-1.5 text-xs sm:text-sm text-slate-700 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={exportMarkets.includes(market.code)}
-                            onChange={() => toggleMarket(market.code)}
-                            className="accent-[#083832]"
-                          />
-                          {tr(market.label)}
-                        </label>
-                      ))}
-                    </div>
-                  </fieldset>
-
                   {submitError && <p role="alert" className="rounded-xl bg-rose-50 p-3 text-sm text-rose-700">{tr(submitError)}</p>}
                   {/* Submit Button Row (Aligned to Bottom Right) */}
                   <div className="pt-3 flex justify-end">
@@ -741,25 +874,145 @@ export default function SellerOnboarding({ account, initialStep = 2, initialComp
                 </form>
               )}
 
-              {/* Step 2 Form Body (Sản phẩm xuất khẩu - Matching UI Screenshot) */}
+              {/* Bước 2: sản phẩm, dịch vụ và năng lực (U2) */}
               {currentStep === 2 && (
                 <div className="space-y-5">
                   
                   {/* Top Header Row: Title, Subtitle, and + Thêm sản phẩm Button */}
-                  <div className="flex items-start justify-between flex-wrap gap-3 pb-1 border-b border-slate-100">
-                    <div>
-                      <h3 className="text-lg sm:text-xl font-bold text-slate-900">
-                        {tr("Sản phẩm xuất khẩu")}</h3>
-                      <p className="text-xs sm:text-[13px] text-slate-500 mt-0.5 font-normal">
-                        {tr("Mỗi sản phẩm cần có mã HS. Buyer tìm thấy bạn qua mã HS, giá và MOQ.")}</p>
-                    </div>
+                  {sellsProducts && (
+                    <>
+                      <div className="flex items-start justify-between flex-wrap gap-3 pb-1 border-b border-slate-100">
+                        <div>
+                          <h3 className="text-lg sm:text-xl font-bold text-slate-900">
+                            {tr("Sản phẩm cung cấp")}</h3>
+                          <p className="text-xs sm:text-[13px] text-slate-500 mt-0.5 font-normal">
+                            {tr("Gõ tên sản phẩm, hệ thống gợi ý mã HS. Buyer tìm thấy bạn qua tên sản phẩm, giá và MOQ.")}</p>
+                        </div>
+                      </div>
 
-                  </div>
+                      <ProductsEditor
+                        products={products}
+                        onChange={(next) => { setProducts(next); setProductError(''); }}
+                      />
 
-                  <ProductsEditor
-                    products={products}
-                    onChange={(next) => { setProducts(next); setProductError(''); }}
-                  />
+                      <section aria-labelledby="capacity-heading" className="rounded-2xl border border-slate-200 bg-slate-50/60 p-4 sm:p-5 space-y-4">
+                        <div>
+                          <h3 id="capacity-heading" className="text-sm sm:text-base font-bold text-slate-900">{tr("Năng lực đáp ứng")}</h3>
+                          <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5">{tr("Không bắt buộc, nhưng buyer cần biết bạn đáp ứng được đơn lớn đến đâu.")}</p>
+                        </div>
+                        <div>
+                          <label htmlFor="factory-address" className="block text-xs sm:text-[13px] font-semibold text-slate-800 mb-1.5">{tr("Địa chỉ nhà máy / kho")}</label>
+                          <input
+                            id="factory-address"
+                            value={formData.factoryAddress}
+                            maxLength={500}
+                            onChange={(e) => setFormData({ ...formData, factoryAddress: e.target.value })}
+                            className="w-full px-4 py-2.5 rounded-xl border border-slate-200/90 bg-white text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#083832] focus:ring-1 focus:ring-[#083832] transition-colors"
+                          />
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
+                          <div className="sm:col-span-2">
+                            <label htmlFor="capacity-value" className="block text-xs sm:text-[13px] font-semibold text-slate-800 mb-1.5">{tr("Sản lượng có thể cung cấp")}</label>
+                            <input
+                              id="capacity-value"
+                              inputMode="decimal"
+                              value={formData.capacityValue}
+                              onChange={(e) => setFormData({ ...formData, capacityValue: e.target.value })}
+                              placeholder={tr("Ví dụ: 1500")}
+                              className="w-full px-4 py-2.5 rounded-xl border border-slate-200/90 bg-white text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#083832] focus:ring-1 focus:ring-[#083832] transition-colors"
+                            />
+                          </div>
+                          <div>
+                            <label htmlFor="capacity-unit" className="block text-xs sm:text-[13px] font-semibold text-slate-800 mb-1.5">{tr("Đơn vị")}</label>
+                            <select
+                              id="capacity-unit"
+                              value={formData.capacityUnit}
+                              onChange={(e) => setFormData({ ...formData, capacityUnit: e.target.value })}
+                              className="w-full px-4 py-2.5 rounded-xl border border-slate-200/90 bg-white text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#083832] focus:ring-1 focus:ring-[#083832] transition-colors"
+                            >
+                              {UNITS.map((u) => <option key={u.code} value={u.code}>{tr(u.label)}</option>)}
+                            </select>
+                          </div>
+                          <div>
+                            <label htmlFor="capacity-period" className="block text-xs sm:text-[13px] font-semibold text-slate-800 mb-1.5">{tr("Mỗi")}</label>
+                            <select
+                              id="capacity-period"
+                              value={formData.capacityPeriod}
+                              onChange={(e) => setFormData({ ...formData, capacityPeriod: e.target.value })}
+                              className="w-full px-4 py-2.5 rounded-xl border border-slate-200/90 bg-white text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#083832] focus:ring-1 focus:ring-[#083832] transition-colors"
+                            >
+                              <option value="year">{tr("năm")}</option>
+                              <option value="month">{tr("tháng")}</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div>
+                          <label htmlFor="staff-size" className="block text-xs sm:text-[13px] font-semibold text-slate-800 mb-1.5">{tr("Quy mô nhân sự")}</label>
+                          <select
+                            id="staff-size"
+                            value={formData.staffSize}
+                            onChange={(e) => setFormData({ ...formData, staffSize: e.target.value })}
+                            className="w-full px-4 py-2.5 rounded-xl border border-slate-200/90 bg-white text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#083832] focus:ring-1 focus:ring-[#083832] transition-colors"
+                          >
+                            <option value="">{tr("Chọn quy mô")}</option>
+                            {COMPANY_SIZES.map((size) => <option key={size.code} value={size.code}>{tr(size.label)}</option>)}
+                          </select>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                          {FACILITY_CODE_TYPES.map((type) => (
+                            <div key={type.code}>
+                              <label htmlFor={`facility-${type.code}`} className="block text-xs sm:text-[13px] font-semibold text-slate-800 mb-1.5">{tr(type.label)}</label>
+                              <input
+                                id={`facility-${type.code}`}
+                                value={formData[type.field]}
+                                onChange={(e) => setFormData({ ...formData, [type.field]: e.target.value })}
+                                placeholder={tr("Nhiều mã cách nhau bằng dấu phẩy")}
+                                className="w-full px-4 py-2.5 rounded-xl border border-slate-200/90 bg-white text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#083832] focus:ring-1 focus:ring-[#083832] transition-colors"
+                              />
+                            </div>
+                          ))}
+                        </div>
+                        <fieldset>
+                          <legend className="block text-xs sm:text-[13px] font-semibold text-slate-800 mb-1.5">{tr("Thị trường đã xuất khẩu")}</legend>
+                          <div className="flex flex-wrap gap-x-4 gap-y-2 pt-1 max-h-40 overflow-y-auto">
+                            {EXPORT_MARKETS.map((market) => (
+                              <label key={market.code} className="inline-flex items-center gap-1.5 text-xs sm:text-sm text-slate-700 cursor-pointer">
+                                <input
+                                  type="checkbox"
+                                  checked={exportMarkets.includes(market.code)}
+                                  onChange={() => toggleMarket(market.code)}
+                                  className="accent-[#083832]"
+                                />
+                                {tr(market.label)}
+                              </label>
+                            ))}
+                          </div>
+                        </fieldset>
+                        <div>
+                          <label htmlFor="main-customers" className="block text-xs sm:text-[13px] font-semibold text-slate-800 mb-1.5">{tr("Khách hàng chính (không bắt buộc)")}</label>
+                          <textarea
+                            id="main-customers"
+                            rows={2}
+                            maxLength={2000}
+                            value={formData.mainCustomers}
+                            onChange={(e) => setFormData({ ...formData, mainCustomers: e.target.value })}
+                            placeholder={tr("Ví dụ: nhà nhập khẩu tại Hamburg (từ 2021). Tên khách hàng giúp buyer tin hồ sơ hơn.")}
+                            className="w-full px-4 py-2.5 rounded-xl border border-slate-200/90 bg-white text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#083832] focus:ring-1 focus:ring-[#083832] transition-colors"
+                          />
+                        </div>
+                      </section>
+                    </>
+                  )}
+
+                  {sellsServices && (
+                    <section aria-labelledby="services-heading" className="space-y-3">
+                      <div className="pb-1 border-b border-slate-100">
+                        <h3 id="services-heading" className="text-lg sm:text-xl font-bold text-slate-900">{tr("Dịch vụ cung cấp")}</h3>
+                        <p className="text-xs sm:text-[13px] text-slate-500 mt-0.5">{tr("Giấy phép hành nghề (nếu có) nộp ở bước tiếp theo để được xác minh.")}</p>
+                      </div>
+                      <ServicesEditor services={services} onChange={(next) => { setServices(next); setProductError(''); }} />
+                    </section>
+                  )}
                   {productError && <p role="alert" className="rounded-xl bg-rose-50 p-3 text-sm text-rose-700">{tr(productError)}</p>}
 
                   {/* Navigation Buttons: Quay lại & Tiếp tục */}
@@ -837,7 +1090,7 @@ export default function SellerOnboarding({ account, initialStep = 2, initialComp
                     <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2.5">
                       <div className="flex items-center justify-between border-b border-slate-200/60 pb-2">
                         <span className="font-bold text-slate-900 text-xs sm:text-[13px]">
-                          {tr("2. Sản phẩm & Năng lực (")}{tr(products.length)} {tr(" sản phẩm)")}</span>
+                          {tr(`2. Sản phẩm & dịch vụ (${products.length} sản phẩm, ${services.length} dịch vụ)`)}</span>
                         <button 
                           onClick={() => setCurrentStep(2)} 
                           className="text-[11px] text-teal-700 font-semibold hover:underline cursor-pointer"
@@ -845,6 +1098,9 @@ export default function SellerOnboarding({ account, initialStep = 2, initialComp
                           {tr("Sửa")}</button>
                       </div>
                       <div className="space-y-2 text-[11px] text-slate-700">
+                        {services.map((s, index) => (
+                          <div key={s.id ?? `service-${index}`} className="p-2 rounded-xl bg-white border border-slate-200/60 font-bold text-slate-900">{s.title}</div>
+                        ))}
                         {products.map(p => (
                           <div key={p.key} className="flex items-center justify-between flex-wrap gap-1 p-2 rounded-xl bg-white border border-slate-200/60">
                             <div className="flex items-center gap-2">
@@ -933,7 +1189,7 @@ export default function SellerOnboarding({ account, initialStep = 2, initialComp
             
             <h3 className="text-xl font-bold text-slate-900 mb-2">{tr("Hồ sơ đã được lưu.")}</h3>
             <p className="text-xs sm:text-sm text-slate-600 mb-6 leading-relaxed max-w-md mx-auto">
-              {tr("Hồ sơ doanh nghiệp, sản phẩm xuất khẩu và bằng chứng đã nộp đã được ghi nhận. Quản trị viên sẽ xem xét bằng chứng của bạn.")}</p>
+              {tr("Hồ sơ doanh nghiệp, sản phẩm, dịch vụ và bằng chứng đã nộp đã được ghi nhận. Quản trị viên sẽ xem xét bằng chứng của bạn.")}</p>
 
             <div className="space-y-2.5">
               <button 

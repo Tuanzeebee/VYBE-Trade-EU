@@ -19,14 +19,43 @@ const businessModel = (value: string | undefined) =>
   BUSINESS_MODELS.find((m) => m.code === value?.trim())?.code ?? null;
 
 // Nhãn tiếng Việt lấy từ CATEGORIES cũ; mã khớp backend (schemas.Industry).
+// Khớp bảng industries ở backend (migration 0030); luôn có "Khác" cho thứ nằm ngoài danh mục.
 export const INDUSTRIES: { code: Industry; label: string }[] = [
   { code: 'agriculture', label: 'Nông sản' },
+  { code: 'fruits_vegetables', label: 'Rau quả' },
+  { code: 'coffee_tea', label: 'Cà phê & chè' },
   { code: 'seafood', label: 'Thủy sản' },
   { code: 'food_beverage', label: 'Thực phẩm & Đồ uống' },
+  { code: 'spices', label: 'Gia vị & Hương liệu' },
   { code: 'textiles', label: 'Dệt may' },
   { code: 'handicrafts', label: 'Thủ công mỹ nghệ' },
-  { code: 'spices', label: 'Gia vị & Hương liệu' },
+  { code: 'other', label: 'Khác' },
 ];
+
+// Seller cung cấp gì (U2) — hỏi ngay bước 1 để bước 2 hỏi đúng thứ cần hỏi.
+export type OfferingType = 'products' | 'services' | 'both';
+export const OFFERING_TYPES: { code: OfferingType; label: string; hint: string }[] = [
+  { code: 'products', label: 'Sản phẩm', hint: 'Nông sản, thủy sản, thực phẩm, hàng hóa…' },
+  { code: 'services', label: 'Dịch vụ', hint: 'Logistics, hải quan, kế toán-thuế, kiểm nghiệm…' },
+  { code: 'both', label: 'Cả hai', hint: 'Vừa bán sản phẩm vừa cung cấp dịch vụ' },
+];
+export const offersProducts = (value: string | undefined) => value !== 'services';
+export const offersServices = (value: string | undefined) => value === 'services' || value === 'both';
+
+// Cơ quan cấp ĐKKD: từ 01/03/2025 Sở Kế hoạch và Đầu tư hợp nhất vào Sở Tài chính. Dữ liệu lưu đúng
+// như in trên giấy tờ; chỉ phần hiển thị dùng tên hiện hành để khách không thấy tên cơ quan không còn.
+const OLD_AUTHORITY = /S[ởo]\s*(K[ếe]\s*ho[ạa]ch\s*(v[àa]|&)\s*[ĐD][ầa]u\s*t[ưu]|KH\s*&\s*[ĐD]T|KH[ĐD]T)/i;
+export function authorityDisplay(value: string | null | undefined): { text: string; renamed: boolean } {
+  const raw = (value ?? '').trim();
+  if (!raw) return { text: '', renamed: false };
+  return OLD_AUTHORITY.test(raw) ? { text: raw.replace(OLD_AUTHORITY, 'Sở Tài chính'), renamed: true } : { text: raw, renamed: false };
+}
+
+export const FACILITY_CODE_TYPES = [
+  { code: 'growing_area', label: 'Mã số vùng trồng', field: 'growingAreaCodes' },
+  { code: 'packing_facility', label: 'Mã số cơ sở đóng gói', field: 'packingCodes' },
+  { code: 'establishment', label: 'Mã cơ sở được EU cấp phép (thủy sản, thực phẩm)', field: 'establishmentCodes' },
+] as const;
 
 // Ngôn ngữ nhân viên sử dụng (ISO-639-1) — nhãn hiển thị qua tr().
 export const STAFF_LANGUAGES: { code: string; label: string }[] = [
@@ -68,6 +97,18 @@ const blank = (value: string | undefined) => {
   return trimmed === '' ? null : trimmed;
 };
 
+const splitCodes = (value: string | undefined) =>
+  [...new Set((value ?? '').split(/[,;\n]/).map((c) => c.trim()).filter(Boolean))];
+
+function facilityCodes(profile: Record<string, string>): NonNullable<CompanyIn['facility_codes']> {
+  return FACILITY_CODE_TYPES.flatMap((type) => splitCodes(profile[type.field]).map((code) => ({ code_type: type.code, code })));
+}
+
+const decimalOrNull = (value: string | undefined) => {
+  const text = (value ?? '').trim().replace(',', '.');
+  return /^\d+(\.\d{1,2})?$/.test(text) && Number(text) > 0 ? text : null;
+};
+
 /** Form onboarding cũ (mọi giá trị là chuỗi) → body CompanyIn. */
 export function profileToCompany(profile: Record<string, string>): CompanyIn {
   const year = Number(profile.establishedYear);
@@ -84,14 +125,27 @@ export function profileToCompany(profile: Record<string, string>): CompanyIn {
     // Ở Việt Nam mã số doanh nghiệp trên giấy ĐKKD trùng mã số thuế.
     registration_number: blank(profile.registrationNumber) ?? taxId,
     business_type: businessModel(profile.businessType),
-    country: 'VN',
+    country: countryCode(profile.country ?? '') ?? 'VN',
     founded_year: Number.isInteger(year) && profile.establishedYear?.trim() ? year : null,
     address: blank(profile.headquartersAddress),
     website: blank(profile.website),
     contact_email: blank(profile.contactEmail),
+    phone: blank(profile.phone),
+    legal_rep_name: blank(profile.legalRepName),
+    legal_rep_title: blank(profile.legalRepTitle),
+    issuing_authority: blank(profile.issuingAuthority),
     description_vi: blank(profile.descriptionVi),
     description_en: blank(profile.descriptionEn),
     industry_sector: (blank(profile.industrySector) as Industry | null) ?? null,
+    industry_other: profile.industrySector === 'other' ? blank(profile.industryOther) : null,
+    offering_type: (['products', 'services', 'both'].includes(profile.offeringType ?? '') ? profile.offeringType : 'products') as OfferingType,
+    factory_address: blank(profile.factoryAddress),
+    capacity_value: decimalOrNull(profile.capacityValue),
+    capacity_unit: decimalOrNull(profile.capacityValue) ? ((blank(profile.capacityUnit) ?? 'tonne') as NonNullable<CompanyIn['capacity_unit']>) : null,
+    capacity_period: decimalOrNull(profile.capacityValue) ? ((profile.capacityPeriod === 'month' ? 'month' : 'year') as 'month' | 'year') : null,
+    company_size: (blank(profile.staffSize) as CompanyIn['company_size']) ?? null,
+    main_customers: blank(profile.mainCustomers),
+    facility_codes: facilityCodes(profile),
     languages_spoken: [...new Set(languages)],
     export_markets: [...new Set(markets)],
     // Chỉ gửi khi đã có khóa để PATCH không xóa logo cũ.
@@ -115,16 +169,22 @@ export const COUNTRIES: { code: string; name: string }[] = [
   { code: 'GB', name: 'United Kingdom' }, { code: 'CH', name: 'Switzerland' }, { code: 'NO', name: 'Norway' },
   { code: 'US', name: 'United States' }, { code: 'CA', name: 'Canada' }, { code: 'AU', name: 'Australia' },
   { code: 'JP', name: 'Japan' }, { code: 'KR', name: 'South Korea' }, { code: 'SG', name: 'Singapore' },
-  { code: 'AE', name: 'United Arab Emirates' },
+  { code: 'AE', name: 'United Arab Emirates' }, { code: 'CN', name: 'China' }, { code: 'TW', name: 'Taiwan' },
+  { code: 'HK', name: 'Hong Kong' }, { code: 'IN', name: 'India' }, { code: 'TH', name: 'Thailand' },
+  { code: 'ID', name: 'Indonesia' }, { code: 'MY', name: 'Malaysia' }, { code: 'PH', name: 'Philippines' },
+  { code: 'KH', name: 'Cambodia' }, { code: 'LA', name: 'Laos' }, { code: 'NZ', name: 'New Zealand' },
+  { code: 'MX', name: 'Mexico' }, { code: 'SA', name: 'Saudi Arabia' }, { code: 'VN', name: 'Việt Nam' },
 ];
 
 const EU_CODES = 'AT BE BG HR CY CZ DK EE FI FR DE GR HU IE IT LV LT LU MT NL PL PT RO SK SI ES SE'.split(' ');
 
-// Thị trường xuất khẩu đã phục vụ (cấp công ty): EU nói chung hoặc từng nước thành viên EU (khớp backend).
+// Thị trường xuất khẩu đã phục vụ (cấp công ty, U2): khối EU / ASEAN hoặc từng nước — không giới hạn ở EU.
 export const EXPORT_MARKETS: { code: string; label: string }[] = [
   { code: 'EU', label: 'Châu Âu (EU)' },
-  ...COUNTRIES.filter((c) => EU_CODES.includes(c.code)).map((c) => ({ code: c.code, label: c.name })),
+  { code: 'ASEAN', label: 'ASEAN' },
+  ...COUNTRIES.filter((c) => c.code !== 'VN').map((c) => ({ code: c.code, label: c.name })),
 ];
+export const isEuCountry = (code: string) => EU_CODES.includes(code);
 
 /** Tên nước (hoặc mã) → mã ISO-2. Không có trong danh sách → null. */
 export function countryCode(nameOrCode: string): string | null {
@@ -212,6 +272,25 @@ export function companyToForm(company: CompanyOut): Record<string, string> {
     descriptionVi: company.description_vi ?? '',
     descriptionEn: company.description_en ?? '',
     industrySector: company.industry_sector ?? '',
+    industryOther: company.industry_other ?? '',
+    country: company.country,
+    phone: company.phone ?? '',
+    legalRepName: company.legal_rep_name ?? '',
+    legalRepTitle: company.legal_rep_title ?? '',
+    issuingAuthority: company.issuing_authority ?? '',
+    offeringType: company.offering_type ?? 'products',
+    factoryAddress: company.factory_address ?? '',
+    capacityValue: company.capacity_value ?? '',
+    capacityUnit: company.capacity_unit ?? 'tonne',
+    capacityPeriod: company.capacity_period ?? 'year',
+    staffSize: company.company_size ?? '',
+    mainCustomers: company.main_customers ?? '',
+    ...Object.fromEntries(
+      FACILITY_CODE_TYPES.map((type) => [
+        type.field,
+        (company.facility_codes ?? []).filter((c) => c.code_type === type.code).map((c) => c.code).join(', '),
+      ]),
+    ),
     languages: company.languages_spoken.join(','),
     markets: company.export_markets.join(','),
     logoKey: company.logo_key ?? '',
@@ -231,8 +310,8 @@ export async function getMyCompany(): Promise<CompanyOut | null> {
 }
 
 /**
- * Body PATCH: bỏ export_markets khi người dùng không đổi lựa chọn thị trường, để dòng cũ ngoài EU
- * (US, JP…) được giữ nguyên. Form chỉ hiện các mã EU, nên so lựa chọn với phần EU của dữ liệu đã tải.
+ * Body PATCH: bỏ export_markets khi người dùng không đổi lựa chọn thị trường, để mã cũ không có trong
+ * danh sách của form được giữ nguyên. So lựa chọn với phần dữ liệu đã tải mà form hiển thị được.
  */
 function withoutUnchangedMarkets(body: CompanyIn, loaded: CompanyOut): CompanyIn {
   if (body.export_markets === undefined || loaded.type !== 'exporter') return body;

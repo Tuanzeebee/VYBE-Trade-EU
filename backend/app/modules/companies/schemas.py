@@ -14,21 +14,36 @@ from pydantic import (
     model_validator,
 )
 
-# Tạm theo 6 nhóm ngành của giao diện cũ; B4 chuyển sang nhóm hàng theo mã HS.
-Industry = Literal["agriculture", "seafood", "food_beverage", "textiles", "handicrafts", "spices"]
-CountryCode = Annotated[str, StringConstraints(pattern=r"^[A-Z]{2}$")]
-MarketCode = Annotated[str, StringConstraints(pattern=r"^(EU|ASEAN|[A-Z]{2})$")]
-# Thị trường xuất khẩu GHI MỚI chỉ gồm EU hoặc một nước thành viên EU (27 nước, ISO-2).
-# MarketCode ở trên giữ để ĐỌC/lọc dữ liệu cũ (US, JP…) đã nằm trong DB.
-ExportMarketCode = Annotated[
-    str,
-    StringConstraints(
-        pattern=r"^(EU|AT|BE|BG|HR|CY|CZ|DK|EE|FI|FR|DE|GR|HU|IE|IT|LV|LT|LU|MT|NL|PL|PT|RO|SK|SI|ES|SE)$"
-    ),
+# Ngành hàng: khớp bảng industries (migration 0030, có "other"); test giữ hai danh sách trùng nhau.
+Industry = Literal[
+    "agriculture",
+    "fruits_vegetables",
+    "coffee_tea",
+    "seafood",
+    "food_beverage",
+    "spices",
+    "textiles",
+    "handicrafts",
+    "other",
 ]
+CountryCode = Annotated[str, StringConstraints(pattern=r"^[A-Z]{2}$")]
+# Thị trường đã xuất khẩu: mọi nước (ISO-2) hoặc khối EU / ASEAN. Demo 30/9: khách yêu cầu không
+# giới hạn ở EU — exporter Việt Nam bán đi Mỹ, Nhật, Hàn… cũng là năng lực buyer cần thấy.
+MarketCode = Annotated[str, StringConstraints(pattern=r"^(EU|ASEAN|[A-Z]{2})$")]
+ExportMarketCode = MarketCode
 LangCode = Annotated[str, StringConstraints(pattern=r"^[a-z]{2}$")]
-# Trường chỉ buyer dùng (B2). Giá trị cố định để lọc/ghép được.
+# Quy mô nhân sự: buyer (B2) và seller (U2). Giá trị cố định để lọc/ghép được.
 CompanySize = Literal["1_10", "11_50", "51_200", "201_500", "gt_500"]
+OfferingType = Literal["products", "services", "both"]
+FacilityCodeType = Literal["growing_area", "packing_facility", "establishment", "other"]
+CapacityUnit = Literal[
+    "kg", "tonne", "piece", "carton", "liter", "container_20ft", "container_40ft"
+]
+CapacityPeriod = Literal["month", "year"]
+Capacity = Annotated[Decimal, Field(gt=0, max_digits=14, decimal_places=2)]
+Phone = Annotated[str, StringConstraints(strip_whitespace=True, pattern=r"^[0-9+().\s-]{6,40}$")]
+ShortText = Annotated[str, StringConstraints(strip_whitespace=True, max_length=255)]
+Title = Annotated[str, StringConstraints(strip_whitespace=True, max_length=120)]
 ProcurementEstimate = Literal["lt_100k", "100k_500k", "500k_2m", "2m_10m", "gt_10m"]  # EUR/năm
 
 
@@ -53,17 +68,50 @@ Website = Annotated[str, StringConstraints(max_length=255), AfterValidator(_chec
 Text = Annotated[str, StringConstraints(max_length=5000)]
 
 
+class FacilityCodeIn(BaseModel):
+    code_type: FacilityCodeType
+    code: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=64)]
+
+
+class FacilityCodeOut(BaseModel):
+    code_type: str
+    code: str
+
+
+def _unique_facility_codes(values: list[FacilityCodeIn] | None) -> list[FacilityCodeIn] | None:
+    if values is None:
+        return None
+    seen: dict[tuple[str, str], FacilityCodeIn] = {}
+    for v in values:
+        seen.setdefault((v.code_type, v.code), v)
+    return list(seen.values())
+
+
 class _CompanyFields(BaseModel):
     registration_number: Annotated[str, StringConstraints(max_length=64)] | None = None
     tax_id: Annotated[str, StringConstraints(max_length=32)] | None = None
     business_type: Annotated[str, StringConstraints(max_length=64)] | None = None
     industry_sector: Industry | None = None
+    industry_other: Title | None = None
     founded_year: Year | None = None
     address: Annotated[str, StringConstraints(max_length=500)] | None = None
     website: Website | None = None
     contact_email: EmailStr | None = None
+    phone: Phone | None = None
+    legal_rep_name: ShortText | None = None
+    legal_rep_title: Title | None = None
+    # Lưu đúng như in trên ĐKKD; giao diện hiển thị tên cơ quan hiện hành (Sở KH&ĐT → Sở Tài chính).
+    issuing_authority: ShortText | None = None
     description_vi: Text | None = None
     description_en: Text | None = None
+    # Seller (U2)
+    offering_type: OfferingType | None = None
+    factory_address: Annotated[str, StringConstraints(max_length=500)] | None = None
+    capacity_value: Capacity | None = None
+    capacity_unit: CapacityUnit | None = None
+    capacity_period: CapacityPeriod | None = None
+    main_customers: Annotated[str, StringConstraints(max_length=2000)] | None = None
+    location_public: bool | None = None
     company_size: CompanySize | None = None
     procurement_estimate: ProcurementEstimate | None = None
     vat_number: Annotated[str, StringConstraints(max_length=32)] | None = None
@@ -78,8 +126,10 @@ class CompanyIn(_CompanyFields):
     export_markets: list[ExportMarketCode] = Field(default_factory=list, max_length=50)
     languages_spoken: list[LangCode] = Field(default_factory=list, max_length=20)
     sourcing_categories: list[Industry] = Field(default_factory=list, max_length=20)
+    facility_codes: list[FacilityCodeIn] = Field(default_factory=list, max_length=30)
 
     _uniq = field_validator("export_markets", "languages_spoken", "sourcing_categories")(_unique)
+    _uniq_codes = field_validator("facility_codes")(_unique_facility_codes)
 
 
 class CompanyPatch(_CompanyFields):
@@ -93,9 +143,11 @@ class CompanyPatch(_CompanyFields):
     export_markets: list[ExportMarketCode] | None = Field(default=None, max_length=50)
     languages_spoken: list[LangCode] | None = Field(default=None, max_length=20)
     sourcing_categories: list[Industry] | None = Field(default=None, max_length=20)
+    facility_codes: list[FacilityCodeIn] | None = Field(default=None, max_length=30)
     logo_key: Annotated[str, StringConstraints(max_length=255)] | None = None
 
     _uniq = field_validator("export_markets", "languages_spoken", "sourcing_categories")(_unique)
+    _uniq_codes = field_validator("facility_codes")(_unique_facility_codes)
 
 
 class CompanyOut(BaseModel):
@@ -108,13 +160,27 @@ class CompanyOut(BaseModel):
     business_type: str | None
     country: str
     industry_sector: str | None
+    industry_other: str | None
     founded_year: int | None
     address: str | None
     website: str | None
     contact_email: str | None
+    phone: str | None
+    legal_rep_name: str | None
+    legal_rep_title: str | None
+    issuing_authority: str | None
     description_vi: str | None
     description_en: str | None
     logo_key: str | None
+    # Chỉ seller: None với buyer.
+    offering_type: Literal["products", "services", "both"] | None
+    factory_address: str | None
+    capacity_value: Decimal | None
+    capacity_unit: str | None
+    capacity_period: str | None
+    main_customers: str | None
+    location_public: bool
+    facility_codes: list[FacilityCodeOut]
     export_markets: list[str]
     languages_spoken: list[str]
     company_size: str | None
@@ -447,3 +513,53 @@ class PublicCompanyRef(BaseModel):
     legal_name: str
     country: str
     verified_at: datetime | None
+
+
+# ── Danh mục và dịch vụ của nhà cung cấp dịch vụ (U2) ─────────────────────────────────────
+CategoryCode = Annotated[str, StringConstraints(pattern=r"^[a-z_]{2,32}$")]
+
+
+class CatalogItemOut(BaseModel):
+    """Một dòng danh mục (ngành hàng, loại dịch vụ) — tên hai ngôn ngữ lấy từ DB."""
+
+    code: str
+    name_vi: str
+    name_en: str
+
+
+class ServiceOfferingIn(BaseModel):
+    category_code: CategoryCode
+    title: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=255)]
+    description_vi: Text | None = None
+    description_en: Text | None = None
+    coverage_countries: list[CountryCode] = Field(default_factory=list, max_length=60)
+    is_active: bool = True
+
+    _uniq = field_validator("coverage_countries")(_unique)
+
+
+class ServiceOfferingPatch(BaseModel):
+    category_code: CategoryCode | None = None
+    title: (
+        Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=255)]
+        | None
+    ) = None
+    description_vi: Text | None = None
+    description_en: Text | None = None
+    coverage_countries: list[CountryCode] | None = Field(default=None, max_length=60)
+    is_active: bool | None = None
+
+    _uniq = field_validator("coverage_countries")(_unique)
+
+
+class ServiceOfferingOut(BaseModel):
+    id: uuid.UUID
+    category_code: str
+    category_name_vi: str
+    category_name_en: str
+    title: str
+    description_vi: str | None
+    description_en: str | None
+    coverage_countries: list[str]
+    is_active: bool
+    created_at: datetime

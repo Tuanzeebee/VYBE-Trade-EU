@@ -31,6 +31,19 @@ const company = (over: Partial<CompanyOut> = {}): CompanyOut => ({
   description_vi: 'Nhà máy xay xát gạo thơm.',
   description_en: null,
   logo_key: null,
+  industry_other: null,
+  phone: null,
+  legal_rep_name: null,
+  legal_rep_title: null,
+  issuing_authority: null,
+  offering_type: 'products',
+  factory_address: null,
+  capacity_value: null,
+  capacity_unit: null,
+  capacity_period: null,
+  main_customers: null,
+  location_public: false,
+  facility_codes: [],
   export_markets: ['DE'],
   languages_spoken: ['vi', 'en'],
   company_size: null,
@@ -88,7 +101,7 @@ describe('CompanyProfileView — chỉ dữ liệu thật (U1)', () => {
     serve();
     renderView(company({ website: null }));
     const legal = (await screen.findByRole('heading', { name: 'Thông tin pháp lý & liên hệ' })).closest('section') as HTMLElement;
-    expect(within(legal).getByText('Chưa khai báo')).toBeInTheDocument();
+    expect(within(legal).getAllByText('Chưa khai báo').length).toBeGreaterThan(0);
   });
 
   it('chưa xác minh: không có lối xem hồ sơ công khai', async () => {

@@ -1,48 +1,45 @@
-"""export_markets: ghi mới chỉ nhận EU hoặc nước thành viên EU; dữ liệu cũ vẫn đọc được."""
+"""export_markets (U2): mọi nước (ISO-2) hoặc khối EU / ASEAN — không còn giới hạn ở EU.
 
-import uuid
+Demo 30/9/2026: khách yêu cầu thị trường xuất khẩu không giới hạn ở châu Âu; exporter bán đi Mỹ,
+Nhật, Hàn… là năng lực buyer cần thấy.
+"""
 
 import pytest
 from httpx import AsyncClient
-from sqlalchemy import text
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.modules.companies.tests.helpers import company_body, login_as
 
 URL = "/api/me/company"
 
 
-@pytest.mark.parametrize("market", ["US", "JP", "ASEAN", "CN", "GB", "XX", "de"])
-async def test_non_eu_market_is_rejected_on_create(api_client: AsyncClient, market: str) -> None:
-    await login_as(api_client, "exporter", "exp@x.vn")
-    r = await api_client.post(URL, json=company_body(export_markets=[market]))
-    assert r.status_code == 422
-
-
-@pytest.mark.parametrize("markets", [["EU"], ["DE", "FR", "NL"], ["EU", "IE"]])
-async def test_eu_markets_are_accepted(api_client: AsyncClient, markets: list[str]) -> None:
+@pytest.mark.parametrize(
+    "markets", [["EU"], ["DE", "FR", "NL"], ["US", "JP", "KR"], ["ASEAN", "CN", "GB"]]
+)
+async def test_any_market_is_accepted(api_client: AsyncClient, markets: list[str]) -> None:
     await login_as(api_client, "exporter", "exp@x.vn")
     r = await api_client.post(URL, json=company_body(export_markets=markets))
     assert r.status_code == 201, r.text
     assert sorted(r.json()["export_markets"]) == sorted(markets)
 
 
-async def test_non_eu_market_is_rejected_on_update(api_client: AsyncClient) -> None:
+@pytest.mark.parametrize("market", ["de", "Germany", "E", "EUR", ""])
+async def test_malformed_market_is_rejected(api_client: AsyncClient, market: str) -> None:
     await login_as(api_client, "exporter", "exp@x.vn")
-    assert (await api_client.post(URL, json=company_body(export_markets=["DE"]))).status_code == 201
-    r = await api_client.patch(URL, json={"export_markets": ["US"]})
+    r = await api_client.post(URL, json=company_body(export_markets=[market]))
     assert r.status_code == 422
 
 
-async def test_legacy_non_eu_market_survives_unrelated_update(
-    api_client: AsyncClient, db_session: AsyncSession
-) -> None:
+async def test_markets_can_be_replaced_on_update(api_client: AsyncClient) -> None:
     await login_as(api_client, "exporter", "exp@x.vn")
-    created = (await api_client.post(URL, json=company_body(export_markets=["DE"]))).json()
-    await db_session.execute(
-        text("UPDATE company_export_markets SET market = 'US' WHERE company_id = :c"),
-        {"c": uuid.UUID(created["id"])},
-    )
+    assert (await api_client.post(URL, json=company_body(export_markets=["DE"]))).status_code == 201
+    r = await api_client.patch(URL, json={"export_markets": ["US", "DE"]})
+    assert r.status_code == 200, r.text
+    assert r.json()["export_markets"] == ["DE", "US"]
+
+
+async def test_unrelated_update_keeps_markets(api_client: AsyncClient) -> None:
+    await login_as(api_client, "exporter", "exp@x.vn")
+    await api_client.post(URL, json=company_body(export_markets=["US"]))
     r = await api_client.patch(URL, json={"description_en": "Still fine."})
     assert r.status_code == 200, r.text
     assert r.json()["export_markets"] == ["US"]

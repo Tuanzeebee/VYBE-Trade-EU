@@ -11438,5 +11438,310 @@
     "Upload licences and certificates so our team can verify your company.",
     "Téléversez licences et certificats pour que notre équipe vérifie votre entreprise.",
     "許可証と認証をアップロードすると、運営チームが企業を認証します。"
+  ],
+  "Dịch vụ cung cấp": [
+    "Services offered",
+    "Services proposés",
+    "提供サービス"
+  ],
+  "Chưa có dịch vụ. Thêm ít nhất một dịch vụ để buyer và nhà xuất khẩu tìm thấy bạn.": [
+    "No services yet. Add at least one service so buyers and exporters can find you.",
+    "Aucun service pour l'instant. Ajoutez au moins un service pour que les acheteurs et exportateurs vous trouvent.",
+    "サービスがまだありません。バイヤーや輸出企業に見つけてもらうため、少なくとも1つ追加してください。"
+  ],
+  "Sản phẩm, dịch vụ & năng lực": [
+    "Products, services & capacity",
+    "Produits, services et capacités",
+    "製品・サービス・供給能力"
+  ],
+  "Doanh nghiệp của bạn cung cấp *": [
+    "Your company offers *",
+    "Votre entreprise propose *",
+    "貴社が提供するもの *"
+  ],
+  "Ví dụ: +84 28 3829 9842": [
+    "e.g. +84 28 3829 9842",
+    "ex. +84 28 3829 9842",
+    "例: +84 28 3829 9842"
+  ],
+  "Người đại diện pháp luật": [
+    "Legal representative",
+    "Représentant légal",
+    "法定代表者"
+  ],
+  "Họ và tên như trên giấy ĐKKD": [
+    "Full name as on the business registration",
+    "Nom complet tel qu'indiqué sur l'enregistrement",
+    "登記証明書に記載の氏名"
+  ],
+  "Chức vụ": [
+    "Position",
+    "Fonction",
+    "役職"
+  ],
+  "Ví dụ: Giám đốc": [
+    "e.g. Director",
+    "ex. Directeur",
+    "例: 代表取締役"
+  ],
+  "Cơ quan cấp đăng ký kinh doanh": [
+    "Business registration authority",
+    "Autorité d'enregistrement",
+    "事業登録の発行機関"
+  ],
+  "Ghi đúng như trên giấy đăng ký kinh doanh": [
+    "Enter exactly as printed on the business registration",
+    "Saisir exactement comme sur l'enregistrement",
+    "事業登録証明書の記載どおりに入力"
+  ],
+  "Từ 01/03/2025, Sở Kế hoạch và Đầu tư đã hợp nhất vào Sở Tài chính. Hồ sơ công khai sẽ hiển thị:": [
+    "Since 1 March 2025 the Department of Planning and Investment has merged into the Department of Finance. Your public profile will show:",
+    "Depuis le 1er mars 2025, le Département du Plan et de l'Investissement a fusionné avec le Département des Finances. Votre profil public affichera :",
+    "2025年3月1日より計画投資局は財務局に統合されました。公開プロフィールには次のように表示されます:"
+  ],
+  "Tên ngành hàng khác": [
+    "Other industry name",
+    "Nom de l'autre secteur",
+    "その他の業種名"
+  ],
+  "Ví dụ: Dược liệu": [
+    "e.g. Medicinal herbs",
+    "ex. Plantes médicinales",
+    "例: 薬用植物"
+  ],
+  "Gõ tên sản phẩm, hệ thống gợi ý mã HS. Buyer tìm thấy bạn qua tên sản phẩm, giá và MOQ.": [
+    "Type the product name and we suggest the HS code. Buyers find you by product name, price and MOQ.",
+    "Saisissez le nom du produit, nous suggérons le code SH. Les acheteurs vous trouvent par nom de produit, prix et MOQ.",
+    "製品名を入力するとHSコードを提案します。バイヤーは製品名・価格・MOQで検索します。"
+  ],
+  "Năng lực đáp ứng": [
+    "Supply capacity",
+    "Capacité d'approvisionnement",
+    "供給能力"
+  ],
+  "Không bắt buộc, nhưng buyer cần biết bạn đáp ứng được đơn lớn đến đâu.": [
+    "Optional, but buyers need to know how large an order you can handle.",
+    "Facultatif, mais les acheteurs veulent savoir quelle taille de commande vous pouvez honorer.",
+    "任意ですが、バイヤーはどの規模の注文に対応できるかを知りたがっています。"
+  ],
+  "Địa chỉ nhà máy / kho": [
+    "Factory / warehouse address",
+    "Adresse de l'usine / de l'entrepôt",
+    "工場・倉庫の所在地"
+  ],
+  "Sản lượng có thể cung cấp": [
+    "Available supply volume",
+    "Volume disponible",
+    "供給可能量"
+  ],
+  "Ví dụ: 1500": [
+    "e.g. 1500",
+    "ex. 1500",
+    "例: 1500"
+  ],
+  "Mỗi": [
+    "Per",
+    "Par",
+    "期間"
+  ],
+  "năm": [
+    "year",
+    "an",
+    "年"
+  ],
+  "tháng": [
+    "month",
+    "mois",
+    "月"
+  ],
+  "Quy mô nhân sự": [
+    "Staff size",
+    "Effectif",
+    "従業員規模"
+  ],
+  "Chọn quy mô": [
+    "Select size",
+    "Choisir l'effectif",
+    "規模を選択"
+  ],
+  "Nhiều mã cách nhau bằng dấu phẩy": [
+    "Separate multiple codes with commas",
+    "Séparez plusieurs codes par des virgules",
+    "複数のコードはカンマで区切ってください"
+  ],
+  "Khách hàng chính (không bắt buộc)": [
+    "Main customers (optional)",
+    "Principaux clients (facultatif)",
+    "主要顧客（任意）"
+  ],
+  "Ví dụ: nhà nhập khẩu tại Hamburg (từ 2021). Tên khách hàng giúp buyer tin hồ sơ hơn.": [
+    "e.g. an importer in Hamburg (since 2021). Naming customers makes your profile more credible to buyers.",
+    "ex. un importateur à Hambourg (depuis 2021). Citer vos clients rend votre profil plus crédible.",
+    "例: ハンブルクの輸入業者（2021年から）。顧客名があるとプロフィールの信頼性が高まります。"
+  ],
+  "Giấy phép hành nghề (nếu có) nộp ở bước tiếp theo để được xác minh.": [
+    "Upload any professional licences in the next step to get verified.",
+    "Téléversez vos licences professionnelles à l'étape suivante pour être vérifié.",
+    "業務許可証がある場合は、次のステップでアップロードして認証を受けてください。"
+  ],
+  "Hồ sơ doanh nghiệp, sản phẩm, dịch vụ và bằng chứng đã nộp đã được ghi nhận. Quản trị viên sẽ xem xét bằng chứng của bạn.": [
+    "Your company profile, products, services and evidence have been saved. Our team will review your evidence.",
+    "Votre profil, vos produits, services et justificatifs ont été enregistrés. Notre équipe examinera vos justificatifs.",
+    "企業プロフィール、製品、サービス、証拠書類を保存しました。運営チームが証拠を確認します。"
+  ],
+  "Danh mục sản phẩm cung cấp": [
+    "Product catalogue",
+    "Catalogue de produits",
+    "製品カタログ"
+  ],
+  "Loại dịch vụ *": [
+    "Service type *",
+    "Type de service *",
+    "サービスの種類 *"
+  ],
+  "Chọn loại dịch vụ": [
+    "Select a service type",
+    "Choisir un type de service",
+    "サービスの種類を選択"
+  ],
+  "Tên dịch vụ *": [
+    "Service name *",
+    "Nom du service *",
+    "サービス名 *"
+  ],
+  "Ví dụ: Khai báo hải quan hàng nông sản tại cảng Cát Lái": [
+    "e.g. Customs declarations for agricultural exports at Cat Lai port",
+    "ex. Déclarations en douane pour exportations agricoles au port de Cat Lai",
+    "例: カットライ港での農産物輸出の通関申告"
+  ],
+  "Mô tả ngắn": [
+    "Short description",
+    "Description courte",
+    "簡単な説明"
+  ],
+  "Bạn làm gì, cho ai, thời gian xử lý bao lâu.": [
+    "What you do, for whom, and how long it takes.",
+    "Ce que vous faites, pour qui et en combien de temps.",
+    "何を、誰のために、どのくらいの期間で行うか。"
+  ],
+  "Nước phục vụ": [
+    "Countries served",
+    "Pays desservis",
+    "対応国"
+  ],
+  "Giữ Ctrl (hoặc Cmd) để chọn nhiều nước.": [
+    "Hold Ctrl (or Cmd) to select several countries.",
+    "Maintenez Ctrl (ou Cmd) pour sélectionner plusieurs pays.",
+    "複数の国を選ぶには Ctrl（または Cmd）を押したまま選択してください。"
+  ],
+  "Xóa dịch vụ": [
+    "Remove service",
+    "Supprimer le service",
+    "サービスを削除"
+  ],
+  "Thêm dịch vụ": [
+    "Add service",
+    "Ajouter un service",
+    "サービスを追加"
+  ],
+  "Dịch vụ": [
+    "Services",
+    "Services",
+    "サービス"
+  ],
+  "Cả hai": [
+    "Both",
+    "Les deux",
+    "両方"
+  ],
+  "Nông sản, thủy sản, thực phẩm, hàng hóa…": [
+    "Agricultural, seafood, food and other goods…",
+    "Produits agricoles, de la mer, alimentaires, marchandises…",
+    "農産物・水産物・食品・その他の商品…"
+  ],
+  "Logistics, hải quan, kế toán-thuế, kiểm nghiệm…": [
+    "Logistics, customs, accounting & tax, testing…",
+    "Logistique, douane, comptabilité et fiscalité, analyses…",
+    "物流・通関・会計税務・検査…"
+  ],
+  "Vừa bán sản phẩm vừa cung cấp dịch vụ": [
+    "You sell products and provide services",
+    "Vous vendez des produits et fournissez des services",
+    "製品の販売とサービス提供の両方"
+  ],
+  "Mã số vùng trồng": [
+    "Growing area code",
+    "Code de zone de culture",
+    "栽培地域コード"
+  ],
+  "Mã số cơ sở đóng gói": [
+    "Packing facility code",
+    "Code de station de conditionnement",
+    "包装施設コード"
+  ],
+  "Mã cơ sở được EU cấp phép (thủy sản, thực phẩm)": [
+    "EU-approved establishment number (seafood, food)",
+    "N° d'établissement agréé UE (produits de la mer, alimentaires)",
+    "EU認可施設番号（水産物・食品）"
+  ],
+  "Rau quả": [
+    "Fruits & vegetables",
+    "Fruits et légumes",
+    "青果"
+  ],
+  "Cà phê & chè": [
+    "Coffee & tea",
+    "Café et thé",
+    "コーヒー・茶"
+  ],
+  "Doanh nghiệp cung cấp": [
+    "Company offers",
+    "L'entreprise propose",
+    "提供内容"
+  ],
+  "Cơ quan cấp ĐKKD": [
+    "Registration authority",
+    "Autorité d'enregistrement",
+    "登録発行機関"
+  ],
+  "Khách hàng chính": [
+    "Main customers",
+    "Principaux clients",
+    "主要顧客"
+  ],
+  "Trên giấy tờ: {0}": [
+    "On the document: {0}",
+    "Sur le document : {0}",
+    "書類上の記載: {0}"
+  ],
+  "Dịch vụ {0}": [
+    "Service {0}",
+    "Service {0}",
+    "サービス {0}"
+  ],
+  "2. Sản phẩm & dịch vụ ({0} sản phẩm, {1} dịch vụ)": [
+    "2. Products & services ({0} products, {1} services)",
+    "2. Produits et services ({0} produits, {1} services)",
+    "2. 製品・サービス（製品 {0} 件、サービス {1} 件）"
+  ],
+  "Không lưu được dịch vụ \"{0}\". Vui lòng kiểm tra lại.": [
+    "Could not save service \"{0}\". Please check it.",
+    "Impossible d'enregistrer le service « {0} ». Veuillez vérifier.",
+    "サービス「{0}」を保存できませんでした。内容をご確認ください。"
+  ],
+  "Vui lòng thêm ít nhất một dịch vụ.": [
+    "Please add at least one service.",
+    "Veuillez ajouter au moins un service.",
+    "少なくとも1つのサービスを追加してください。"
+  ],
+  "Vui lòng chọn loại dịch vụ.": [
+    "Please select a service type.",
+    "Veuillez choisir un type de service.",
+    "サービスの種類を選択してください。"
+  ],
+  "Vui lòng nhập tên dịch vụ.": [
+    "Please enter a service name.",
+    "Veuillez saisir le nom du service.",
+    "サービス名を入力してください。"
   ]
 }

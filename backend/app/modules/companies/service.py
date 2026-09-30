@@ -21,9 +21,11 @@ from app.modules.companies.events import CompanyUpdated
 from app.modules.companies.models import (
     Company,
     CompanyExportMarket,
+    CompanyFacilityCode,
     CompanyLanguage,
     CompanySourcingCategory,
     CompanyType,
+    OfferingType,
     VerificationLevel,
     VerificationStatus,
 )
@@ -51,14 +53,25 @@ _EXTENSIONS = {
 _UPLOAD_FOLDERS = {"logo": "logos", "product_image": "products", "evidence": "evidence"}
 _ALLOWED_ROLES = {"exporter": CompanyType.exporter, "buyer": CompanyType.buyer}
 # Trường chỉ một loại công ty được đặt; loại kia gửi giá trị thật → 422.
-_ONLY_EXPORTER = ("export_markets", "languages_spoken")
+# Quy mô nhân sự (company_size) nay dùng cho cả seller (U2).
+_ONLY_EXPORTER = (
+    "export_markets",
+    "languages_spoken",
+    "offering_type",
+    "factory_address",
+    "capacity_value",
+    "capacity_unit",
+    "capacity_period",
+    "main_customers",
+    "facility_codes",
+)
 _ONLY_BUYER = (
-    "company_size",
     "procurement_estimate",
     "vat_number",
     "eori_number",
     "sourcing_categories",
 )
+_LIST_FIELDS = ("export_markets", "languages_spoken", "sourcing_categories", "facility_codes")
 
 
 def slugify(name: str) -> str:
@@ -87,6 +100,12 @@ def _to_out(company: Company) -> CompanyOut:
             "export_markets": [m.market for m in company.export_markets],
             "languages_spoken": [lang.lang for lang in company.languages],
             "sourcing_categories": [c.category for c in company.sourcing_categories],
+            "facility_codes": [
+                {"code_type": f.code_type, "code": f.code} for f in company.facility_codes
+            ],
+            "offering_type": (
+                company.offering_type if company.type is CompanyType.exporter else None
+            ),
         }
     )
 
@@ -383,9 +402,20 @@ def _set_lists(company: Company, values: dict[str, Any]) -> None:
         company.languages = [CompanyLanguage(lang=lang) for lang in langs]
     if (cats := values.pop("sourcing_categories", None)) is not None:
         company.sourcing_categories = [CompanySourcingCategory(category=c) for c in cats]
+    if (codes := values.pop("facility_codes", None)) is not None:
+        company.facility_codes = [
+            CompanyFacilityCode(code_type=c["code_type"], code=c["code"]) for c in codes
+        ]
+
+
+def _normalize(company: Company) -> None:
+    """Tên ngành tự ghi chỉ có nghĩa khi chọn ngành "Khác"."""
+    if company.industry_sector != "other":
+        company.industry_other = None
 
 
 async def _save(session: AsyncSession, company: Company) -> CompanyOut:
+    _normalize(company)
     await session.flush()
     await completeness_service.refresh_score(session, company)  # cùng transaction với thay đổi
     await session.commit()
@@ -417,10 +447,13 @@ async def create_company(session: AsyncSession, user: CurrentUser, data: Company
         raise AppError("company_exists", "Company profile already exists", 409)
     values: dict[str, Any] = data.model_dump()
     _reject_foreign_fields(company_type, values)
-    lists = {
-        key: values.pop(key)
-        for key in ("export_markets", "languages_spoken", "sourcing_categories")
-    }
+    lists = {key: values.pop(key) for key in _LIST_FIELDS}
+    if company_type is CompanyType.exporter and values.get("offering_type") is None:
+        values["offering_type"] = OfferingType.products.value
+    if values.get("offering_type") is None:
+        values.pop("offering_type")
+    if values.get("location_public") is None:
+        values.pop("location_public")
     company = Company(
         owner_user_id=user.id,
         type=company_type,
@@ -441,7 +474,7 @@ async def update_company(
     logo_key = changes.get("logo_key")
     if logo_key is not None and not logo_key.startswith(f"logos/{company.id}/"):
         raise AppError("invalid_logo_key", "Logo does not belong to this company", 422)
-    for field in ("legal_name", "country"):
+    for field in ("legal_name", "country", "offering_type", "location_public"):
         if field in changes and changes[field] is None:
             raise AppError("invalid_field", f"{field} cannot be empty", 422)
     _set_lists(company, changes)

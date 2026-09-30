@@ -81,7 +81,6 @@ async def test_buyer_cannot_set_exporter_only_fields(
 @pytest.mark.parametrize(
     "foreign",
     [
-        {"company_size": "1_10"},
         {"procurement_estimate": "gt_10m"},
         {"vat_number": "DE123456789"},
         {"sourcing_categories": ["agriculture"]},
