@@ -27,6 +27,30 @@ async def test_rice_found_by_name_or_code(seeded: AsyncSession, q: str) -> None:
     assert codes == ["100630"], codes
 
 
+@pytest.mark.parametrize(("q", "expected"), [("30617", "030617"), ("3061792", "03061792")])
+async def test_code_missing_its_leading_zero_is_still_found(
+    seeded: AsyncSession, q: str, expected: str
+) -> None:
+    """Bảng tính hay làm mất số 0 đầu của mã chương 01–09 (03061792 → 3061792)."""
+    await upsert_hs_codes(
+        seeded,
+        [
+            HsCodeIn(
+                code="03061792",
+                name_vi="Tôm chi Penaeus",
+                name_en="Shrimps",
+                is_calculator_supported=True,
+            )
+        ],
+    )
+    assert expected in await _codes(seeded, q)
+
+
+async def test_short_digit_prefix_is_not_padded(seeded: AsyncSession) -> None:
+    """Chỉ mã đủ độ dài (5 hoặc 7 số) mới được bù số 0; tiền tố ngắn giữ nghĩa cũ."""
+    assert await _codes(seeded, "306") == []
+
+
 @pytest.mark.parametrize("q", ["tom dong lanh", "tôm đông lạnh", "lanh dong tom", "frozen shrimps"])
 async def test_multi_word_queries_ignore_order_and_accents(seeded: AsyncSession, q: str) -> None:
     assert "030617" in await _codes(seeded, q)
