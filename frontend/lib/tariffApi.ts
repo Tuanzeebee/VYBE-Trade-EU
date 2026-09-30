@@ -1,4 +1,4 @@
-// Máy tính tiết kiệm thuế (C2): gọi POST /api/public/tariff. Số tiền luôn là CHUỖI, không qua float.
+// Công cụ tính thuế (C2): gọi POST /api/public/tariff. Số tiền luôn là CHUỖI, không qua float.
 import { createApiClient } from './api/client';
 import type { components } from './api/schema';
 import { COUNTRIES } from './companyApi';

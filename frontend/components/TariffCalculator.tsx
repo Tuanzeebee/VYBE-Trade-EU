@@ -1,6 +1,6 @@
 'use client';
 
-// Máy tính tiết kiệm thuế EVFTA (C2). Khách dùng không cần đăng nhập.
+// Công cụ tính thuế (C2; tên mới từ U11 — tên hiệp định chỉ hiện trong kết quả). Khách dùng không cần đăng nhập.
 // unsupported / needs_review KHÔNG hiện con số nào — con số chỉ đến từ dòng thuế đã duyệt (backend).
 import React, { useState } from 'react';
 import HsCodePicker, { type HsCodeOption } from './HsCodePicker';
@@ -165,9 +165,9 @@ export default function TariffCalculator({ initialRoo }: { initialRoo?: RooStatu
 
   return (
     <div className="mx-auto max-w-2xl px-5 py-10 sm:px-8">
-      <h1 className="text-2xl font-extrabold text-slate-900 sm:text-3xl">{tr('Máy tính tiết kiệm thuế EVFTA')}</h1>
+      <h1 className="text-2xl font-extrabold text-slate-900 sm:text-3xl">{tr('Công cụ tính thuế')}</h1>
       <p className="mt-2 text-sm text-slate-600">
-        {tr('Nhập mã HS, nước EU nhập khẩu và giá trị lô hàng để ước tính thuế nhập khẩu tiết kiệm được nhờ EVFTA.')}
+        {tr('Nhập mã HS, thị trường nhập khẩu và giá trị lô hàng để ước tính thuế nhập khẩu và khoản tiết kiệm nhờ hiệp định thương mại tự do (FTA).')}
       </p>
       <form onSubmit={submit} noValidate className="mt-8 space-y-5">
         <HsCodePicker label={tr('Sản phẩm (mã HS)')} value={hs} onChange={changeHs} />

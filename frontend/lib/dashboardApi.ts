@@ -60,7 +60,7 @@ export const HINTS: Record<string, string> = {
   no_profile_views: 'Chưa có ai xem hồ sơ. Hoàn thiện hồ sơ và xác minh để buyer tìm thấy bạn.',
   no_rfqs_received: 'Chưa có yêu cầu báo giá. Buyer sẽ gửi khi thấy sản phẩm của bạn trong danh bạ.',
   start_verification: 'Doanh nghiệp chưa được xác minh. Gửi yêu cầu xác minh để xuất hiện trong danh bạ.',
-  no_tariff_runs: 'Chưa có lần tính thuế nào. Dùng máy tính thuế để thấy tổng tiền tiết kiệm nhờ EVFTA.',
+  no_tariff_runs: 'Chưa có lần tính thuế nào. Dùng công cụ tính thuế để thấy tổng tiền tiết kiệm nhờ hiệp định thương mại.',
   no_copilot_questions: 'Bạn chưa hỏi trợ lý tuân thủ. Đặt câu hỏi đầu tiên để nhận trả lời có trích dẫn.',
   saved_searches_coming_soon: 'Tính năng lưu tìm kiếm sắp ra mắt. Trong lúc này hãy dùng danh bạ để tìm nhà cung cấp.',
   no_rfqs_sent: 'Bạn chưa gửi yêu cầu báo giá. Tìm nhà cung cấp trong danh bạ và gửi yêu cầu đầu tiên.',

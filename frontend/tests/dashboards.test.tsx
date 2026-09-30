@@ -79,7 +79,7 @@ describe('Dashboard exporter (G1)', () => {
     expect(tile('Yêu cầu báo giá')).toHaveTextContent('Global Foods GmbH');
     expect(tile('Xác minh doanh nghiệp')).toHaveTextContent('Đã xác minh');
     expect(tile('Xác minh doanh nghiệp')).toHaveTextContent('93');
-    expect(tile('Tiết kiệm thuế nhờ EVFTA').textContent).toMatch(/300[.,]75/);
+    expect(tile('Tiết kiệm thuế ước tính').textContent).toMatch(/300[.,]75/);
     expect(tile('Câu hỏi gần đây cho trợ lý')).toHaveTextContent('Gạo ST25 có hạn ngạch không?');
     expect(screen.queryByRole('note')).toBeNull(); // không ô nào cần hướng dẫn
   });
@@ -91,7 +91,7 @@ describe('Dashboard exporter (G1)', () => {
     expect(within(tile('Lượt xem hồ sơ tuần này')).getByRole('note')).toHaveTextContent('Chưa có ai xem hồ sơ');
     expect(within(tile('Yêu cầu báo giá')).getByRole('note')).toHaveTextContent('Chưa có yêu cầu báo giá');
     expect(within(tile('Xác minh doanh nghiệp')).getByRole('note')).toHaveTextContent('Gửi yêu cầu xác minh');
-    expect(within(tile('Tiết kiệm thuế nhờ EVFTA')).getByRole('note')).toHaveTextContent('Dùng máy tính thuế');
+    expect(within(tile('Tiết kiệm thuế ước tính')).getByRole('note')).toHaveTextContent('Dùng công cụ tính thuế');
     expect(within(tile('Câu hỏi gần đây cho trợ lý')).getByRole('note')).toHaveTextContent('Bạn chưa hỏi trợ lý');
     expect(screen.getAllByRole('note')).toHaveLength(5);
   });

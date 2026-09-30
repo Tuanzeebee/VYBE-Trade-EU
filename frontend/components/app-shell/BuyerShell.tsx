@@ -24,7 +24,7 @@ export const BUYER_NAV = [
 ] as const;
 
 const TOOLS = [
-  { href: '/tools/tariff', label: 'Máy tính thuế EVFTA', icon: Calculator },
+  { href: '/tools/tariff', label: 'Công cụ tính thuế', icon: Calculator },
   { href: '/copilot', label: 'Trợ lý AI tuân thủ', icon: Bot },
 ] as const;
 

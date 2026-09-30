@@ -1,6 +1,6 @@
 'use client';
 
-// Ô chọn mã HS có gợi ý (B4). Dùng chung cho sản phẩm, máy tính thuế/xuất xứ, bộ lọc danh bạ.
+// Ô chọn mã HS có gợi ý (B4). Dùng chung cho sản phẩm, công cụ tính thuế/xuất xứ, bộ lọc danh bạ.
 import React, { useEffect, useId, useState } from 'react';
 import { createApiClient } from '../lib/api/client';
 import type { components } from '../lib/api/schema';

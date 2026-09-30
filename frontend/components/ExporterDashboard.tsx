@@ -107,7 +107,7 @@ export default function ExporterDashboard() {
         )}
       </DashboardTile>
 
-      <DashboardTile title="Tiết kiệm thuế nhờ EVFTA" hint={data.tariff_savings.empty_hint_key}>
+      <DashboardTile title="Tiết kiệm thuế ước tính" hint={data.tariff_savings.empty_hint_key}>
         {data.tariff_savings.data && data.tariff_savings.data.runs > 0 && (
           <>
             <p className={big}>{money(data.tariff_savings.data.total_eur)}</p>
@@ -117,7 +117,7 @@ export default function ExporterDashboard() {
           </>
         )}
         <Link href="/tools/tariff" className="mt-2 inline-block text-sm font-semibold text-teal-800 underline">
-          {tr('Mở máy tính thuế')}
+          {tr('Mở công cụ tính thuế')}
         </Link>
       </DashboardTile>
 

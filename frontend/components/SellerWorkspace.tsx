@@ -101,7 +101,7 @@ export default function SellerWorkspace({
               { id: 'notifications', label: 'Thông báo', icon: Bell }
             ];
   const toolLinks = [
-    { href: '/tools/tariff', label: 'Máy tính thuế EVFTA', icon: Calculator },
+    { href: '/tools/tariff', label: 'Công cụ tính thuế', icon: Calculator },
     { href: '/tools/origin', label: 'Quy tắc xuất xứ & EUR.1 nháp', icon: FileSignature },
     { href: '/copilot', label: 'Trợ lý AI tuân thủ', icon: Bot },
   ] as const;

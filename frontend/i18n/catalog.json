@@ -13023,5 +13023,30 @@
     "Show the exact factory address on the public profile map",
     "Afficher l'adresse exacte de l'usine sur la carte du profil public",
     "公開プロフィールの地図に工場の正確な住所を表示する"
+  ],
+  "Công cụ tính thuế": [
+    "Tariff tool",
+    "Outil de calcul des droits",
+    "関税計算ツール"
+  ],
+  "Mở công cụ tính thuế": [
+    "Open the tariff tool",
+    "Ouvrir l'outil de calcul des droits",
+    "関税計算ツールを開く"
+  ],
+  "Tiết kiệm thuế ước tính": [
+    "Estimated duty savings",
+    "Économies de droits estimées",
+    "推定関税削減額"
+  ],
+  "Nhập mã HS, thị trường nhập khẩu và giá trị lô hàng để ước tính thuế nhập khẩu và khoản tiết kiệm nhờ hiệp định thương mại tự do (FTA).": [
+    "Enter the HS code, import market and shipment value to estimate import duty and the savings from free trade agreements (FTAs).",
+    "Saisissez le code SH, le marché d'importation et la valeur de l'envoi pour estimer les droits à l'importation et les économies grâce aux accords de libre-échange (ALE).",
+    "HSコード、輸入市場、貨物価額を入力すると、輸入関税と自由貿易協定（FTA）による削減額を試算できます。"
+  ],
+  "Chưa có lần tính thuế nào. Dùng công cụ tính thuế để thấy tổng tiền tiết kiệm nhờ hiệp định thương mại.": [
+    "No tariff calculations yet. Use the tariff tool to see your total savings from trade agreements.",
+    "Aucun calcul de droits pour l'instant. Utilisez l'outil pour voir vos économies grâce aux accords commerciaux.",
+    "関税計算はまだありません。関税計算ツールで貿易協定による削減総額を確認しましょう。"
   ]
 }
