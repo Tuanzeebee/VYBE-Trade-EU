@@ -3,7 +3,7 @@
 // Thuế MFN so với EVFTA của một mã HS, hiện tại sản phẩm. Chỉ đọc số liệu đã được người duyệt luật TM duyệt.
 import React, { useCallback, useEffect, useState } from 'react';
 import { useLanguage } from '../context/LanguageContext';
-import { getTariffPreview, type TariffPreview } from '../lib/tariffPreviewApi';
+import { getTariffPreview, parseRate, type TariffPreview } from '../lib/tariffPreviewApi';
 
 interface TariffPanelProps {
   hsCode: string;
@@ -13,7 +13,7 @@ interface TariffPanelProps {
 
 type State = { kind: 'loading' } | { kind: 'error' } | { kind: 'ready'; data: TariffPreview };
 
-const pct = (value: string) => `${Number(value)}%`;
+const pct = (value: number) => `${value}%`;
 
 export default function TariffPanel({ hsCode, variant = 'summary' }: TariffPanelProps) {
   const { tr, language } = useLanguage();
@@ -39,7 +39,10 @@ export default function TariffPanel({ hsCode, variant = 'summary' }: TariffPanel
   if (state.kind === 'loading') {
     return <p role="status" className={box}>{tr('Đang tra thuế…')}</p>;
   }
-  if (state.kind === 'error') {
+  const mfnRate = state.kind === 'ready' && state.data.status === 'ok' ? parseRate(state.data.mfn_rate) : null;
+  const evftaRate = state.kind === 'ready' && state.data.status === 'ok' ? parseRate(state.data.evfta_rate) : null;
+  const badOk = state.kind === 'ready' && state.data.status === 'ok' && (mfnRate === null || evftaRate === null);
+  if (state.kind === 'error' || badOk) {
     return (
       <div role="status" className={`${box} border-rose-200 bg-rose-50 text-rose-800`}>
         <p>{tr('Không tải được thông tin thuế.')}</p>
@@ -72,16 +75,14 @@ export default function TariffPanel({ hsCode, variant = 'summary' }: TariffPanel
     );
   }
 
-  const mfn = Number(d.mfn_rate);
-  const evfta = Number(d.evfta_rate);
   return (
     <div role="status" className={box}>
       <p className="font-semibold text-slate-900">
-        <span>MFN {pct(d.mfn_rate ?? '0')}</span>
+        <span>MFN {pct(mfnRate as number)}</span>
         {' → '}
-        <span>EVFTA {pct(d.evfta_rate ?? '0')}</span>
+        <span>EVFTA {pct(evftaRate as number)}</span>
         <span className="ml-2 font-normal text-teal-800">
-          {tr('Giảm')} {Number((mfn - evfta).toFixed(4))} {tr('điểm phần trăm')}
+          {tr('Giảm')} {Number(((mfnRate as number) - (evftaRate as number)).toFixed(4))} {tr('điểm phần trăm')}
         </span>
       </p>
       {variant === 'full' && (

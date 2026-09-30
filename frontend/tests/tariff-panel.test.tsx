@@ -49,8 +49,8 @@ describe('TariffPanel', () => {
   it('ok: hiện thuế MFN, thuế EVFTA và chênh lệch', async () => {
     serve({ ...base, status: 'ok', mfn_rate: '12.0000', evfta_rate: '6.0000' });
     renderPanel();
-    expect(await screen.findByText(/MFN/)).toHaveTextContent('12');
-    expect(screen.getByText(/EVFTA/)).toHaveTextContent('6');
+    expect(await screen.findByText('MFN 12%')).toBeInTheDocument();
+    expect(screen.getByText('EVFTA 6%')).toBeInTheDocument();
     expect(screen.getByRole('status')).toHaveTextContent(/6/);
   });
 
@@ -73,15 +73,42 @@ describe('TariffPanel', () => {
   });
 
   it('needs_review: nêu lý do, không có con số thuế nào', async () => {
-    serve({ ...base, status: 'needs_review', quota_note: 'Hạn ngạch gạo' });
+    serve({ ...base, status: 'needs_review', mfn_rate: '12.0000', evfta_rate: '6.0000', staging_category: 'B5', zero_from: '2030-01-01', quota_note: 'Hạn ngạch gạo' });
     renderPanel();
     expect(await screen.findByText(/cần chuyên gia xem lại/i)).toBeInTheDocument();
     expect(screen.getByText('Hạn ngạch gạo')).toBeInTheDocument();
     expect(screen.queryByText(/\d+(\.\d+)?\s*%/)).not.toBeInTheDocument();
   });
 
+  it('needs_review, full: có ghi chú điều kiện nhưng vẫn không có con số thuế', async () => {
+    serve({
+      ...base,
+      status: 'needs_review',
+      mfn_rate: '12.0000',
+      evfta_rate: '6.0000',
+      staging_category: 'B5',
+      zero_from: '2030-01-01',
+      quota_note: 'Hạn ngạch gạo',
+      condition_note: 'Cần EUR.1',
+    });
+    renderPanel('full');
+    expect(await screen.findByText('Cần EUR.1')).toBeInTheDocument();
+    expect(screen.queryByText(/%/)).not.toBeInTheDocument();
+  });
+
+  it.each([
+    ['thiếu thuế MFN', { mfn_rate: null, evfta_rate: '6.0000' }],
+    ['thiếu thuế EVFTA', { mfn_rate: '12.0000', evfta_rate: null }],
+    ['thuế không phải số', { mfn_rate: 'abc', evfta_rate: '6.0000' }],
+  ])('ok nhưng %s: coi là lỗi, không hiện 0% hay NaN', async (_name, rates) => {
+    serve({ ...base, status: 'ok', ...rates });
+    renderPanel();
+    expect(await screen.findByText(/Không tải được thông tin thuế/)).toBeInTheDocument();
+    expect(screen.queryByText(/%|NaN/)).not.toBeInTheDocument();
+  });
+
   it('unsupported: nói chưa hỗ trợ, không có con số nào', async () => {
-    serve({ ...base, status: 'unsupported' });
+    serve({ ...base, status: 'unsupported', mfn_rate: '12.0000', evfta_rate: '6.0000', staging_category: 'B5', zero_from: '2030-01-01' });
     renderPanel();
     expect(await screen.findByText(/chưa có dữ liệu thuế/i)).toBeInTheDocument();
     expect(screen.queryByText(/%/)).not.toBeInTheDocument();
