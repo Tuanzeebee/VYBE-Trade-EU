@@ -131,11 +131,14 @@ async def test_st25_needs_review(
         evfta_rate_current=Decimal("0"),
         quota_required=True,
         quota_note="TRQ synthetic",
+        quota_note_en="TRQ synthetic (EN)",
     )
     r = await api_client.post(URL, json=body(hs_code=RICE))
     assert r.json()["status"] == "needs_review"
     assert_no_numbers(r.json())
     assert r.json()["quota_note"] == "TRQ synthetic"
+    assert r.json()["quota_note_en"] == "TRQ synthetic (EN)"
+    assert r.json()["condition_note_en"] is None
 
 
 async def test_two_matching_lines_need_review(

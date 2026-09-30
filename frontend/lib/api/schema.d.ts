@@ -3151,6 +3151,10 @@ export interface components {
             quota_note?: string | null;
             /** Condition Note */
             condition_note?: string | null;
+            /** Quota Note En */
+            quota_note_en?: string | null;
+            /** Condition Note En */
+            condition_note_en?: string | null;
             /** Source Url */
             source_url?: string | null;
             /**
@@ -3189,6 +3193,10 @@ export interface components {
             quota_note: string | null;
             /** Condition Note */
             condition_note: string | null;
+            /** Quota Note En */
+            quota_note_en: string | null;
+            /** Condition Note En */
+            condition_note_en: string | null;
             /** Source Url */
             source_url: string | null;
             /**
@@ -3229,6 +3237,10 @@ export interface components {
             quota_note?: string | null;
             /** Condition Note */
             condition_note?: string | null;
+            /** Quota Note En */
+            quota_note_en?: string | null;
+            /** Condition Note En */
+            condition_note_en?: string | null;
             /** Source Url */
             source_url?: string | null;
             /** Valid From */
@@ -3269,6 +3281,10 @@ export interface components {
             quota_note: string | null;
             /** Condition Note */
             condition_note: string | null;
+            /** Quota Note En */
+            quota_note_en: string | null;
+            /** Condition Note En */
+            condition_note_en: string | null;
         };
         /** UnreadCountOut */
         UnreadCountOut: {

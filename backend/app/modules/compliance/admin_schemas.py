@@ -61,6 +61,8 @@ class TariffLineIn(BaseModel):
     quota_required: bool = False
     quota_note: Text = None
     condition_note: Text = None
+    quota_note_en: Text = None
+    condition_note_en: Text = None
     source_url: Url = None
     valid_from: dt.date
     valid_until: dt.date | None = None
@@ -88,6 +90,8 @@ class TariffLinePatch(BaseModel):
     quota_required: bool | None = None
     quota_note: Text = None
     condition_note: Text = None
+    quota_note_en: Text = None
+    condition_note_en: Text = None
     source_url: Url = None
     valid_from: dt.date | None = None
     valid_until: dt.date | None = None
@@ -123,6 +127,8 @@ class TariffLineOut(BaseModel):
     quota_required: bool
     quota_note: str | None
     condition_note: str | None
+    quota_note_en: str | None
+    condition_note_en: str | None
     source_url: str | None
     valid_from: dt.date
     valid_until: dt.date | None

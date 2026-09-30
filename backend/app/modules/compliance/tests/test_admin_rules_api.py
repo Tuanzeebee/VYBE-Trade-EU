@@ -150,6 +150,13 @@ async def test_patch_is_partial(admin: AsyncClient) -> None:
     )
 
 
+async def test_english_notes_can_be_set_and_cleared(admin: AsyncClient) -> None:
+    body = tariff_body(quota_note_en="Quota", condition_note_en="Licence")
+    line_id = (await admin.post(TARIFF, json=body)).json()["id"]
+    r = await admin.patch(f"{TARIFF}/{line_id}", json={"condition_note_en": None})
+    assert (r.json()["quota_note_en"], r.json()["condition_note_en"]) == ("Quota", None)
+
+
 async def test_patch_can_clear_a_nullable_field(admin: AsyncClient) -> None:
     line_id = (await admin.post(TARIFF, json=tariff_body(quota_note="x"))).json()["id"]
     r = await admin.patch(f"{TARIFF}/{line_id}", json={"quota_note": None})

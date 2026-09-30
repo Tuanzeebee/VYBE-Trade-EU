@@ -194,6 +194,8 @@ async def calculate_tariff(
             quota_required=line.quota_required,
             quota_note=line.quota_note,
             condition_note=line.condition_note,
+            quota_note_en=line.quota_note_en,
+            condition_note_en=line.condition_note_en,
         ),
         len(lines),
         data.product_value,
@@ -229,6 +231,8 @@ async def calculate_tariff(
         annual_savings=result.annual_savings,
         quota_note=result.quota_note,
         condition_note=result.condition_note,
+        quota_note_en=result.quota_note_en,
+        condition_note_en=result.condition_note_en,
     )
 
 

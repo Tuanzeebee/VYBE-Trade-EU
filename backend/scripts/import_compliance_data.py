@@ -88,6 +88,8 @@ def parse_tariff(path: Path) -> list[tuple[int, TariffLineIn]]:
                 "quota_required": _flag(row, "quota_required", False),
                 "quota_note": _text(row, "quota_note"),
                 "condition_note": _text(row, "condition_note"),
+                "quota_note_en": _text(row, "quota_note_en"),
+                "condition_note_en": _text(row, "condition_note_en"),
                 "source_url": _text(row, "source_url"),
                 "valid_from": _date(row, "valid_from"),
                 "valid_until": _date(row, "valid_until"),

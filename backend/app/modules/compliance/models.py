@@ -160,6 +160,8 @@ class TariffLine(Base):
     )
     quota_note: Mapped[str | None] = mapped_column(Text)
     condition_note: Mapped[str | None] = mapped_column(Text)
+    quota_note_en: Mapped[str | None] = mapped_column(Text)
+    condition_note_en: Mapped[str | None] = mapped_column(Text)
     source_url: Mapped[str | None] = mapped_column(String(1024))
     reviewed_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id"))
     reviewed_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))

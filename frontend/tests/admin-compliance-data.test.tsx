@@ -25,6 +25,8 @@ const line = (over: Record<string, unknown> = {}) => ({
   quota_required: false,
   quota_note: null,
   condition_note: null,
+  quota_note_en: null,
+  condition_note_en: null,
   source_url: null,
   valid_from: '2026-01-01',
   valid_until: null,

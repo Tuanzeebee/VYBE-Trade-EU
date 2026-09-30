@@ -64,6 +64,8 @@ class TariffOut(BaseModel):
     annual_savings: Decimal | None
     quota_note: str | None
     condition_note: str | None
+    quota_note_en: str | None
+    condition_note_en: str | None
 
 
 class MaterialIn(BaseModel):

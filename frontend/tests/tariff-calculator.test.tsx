@@ -30,6 +30,8 @@ const result = (over: Record<string, unknown>) => ({
   product_value: '10000.00',
   quota_note: null,
   condition_note: null,
+  quota_note_en: null,
+  condition_note_en: null,
   ...NO_NUMBERS,
   ...over,
 });
@@ -162,6 +164,32 @@ describe('Máy tính tiết kiệm thuế (C2)', () => {
     expect(region).toHaveTextContent('cần kiểm tra thêm');
     expect(region).toHaveTextContent('Hạn ngạch TRQ synthetic');
     expect(region.textContent).not.toMatch(/€|\d+%/);
+  });
+
+  it('needs_review: giao diện EN hiện ghi chú EN, thiếu bản EN thì rơi về bản vi', async () => {
+    serve(() =>
+      json(200, result({ status: 'needs_review', quota_note: 'Hạn ngạch vi', quota_note_en: 'Quota en', condition_note: 'Điều kiện vi' })),
+    );
+    renderCalc('en');
+    fireEvent.change(screen.getByRole('combobox', { name: /Product/ }), { target: { value: 'ca phe' } });
+    fireEvent.click(await screen.findByRole('option', { name: /0901\.11/ }));
+    fireEvent.change(screen.getByLabelText(/Shipment value/), { target: { value: '10000' } });
+    fireEvent.click(screen.getByRole('button', { name: /Calculate/ }));
+    const region = await screen.findByRole('region');
+    expect(region).toHaveTextContent('Quota en');
+    expect(region).toHaveTextContent('Điều kiện vi');
+    expect(region).not.toHaveTextContent('Hạn ngạch vi');
+  });
+
+  it('needs_review: giao diện vi hiện ghi chú vi, không hiện bản EN', async () => {
+    serve(() => json(200, result({ status: 'needs_review', quota_note: 'Hạn ngạch vi', quota_note_en: 'Quota en' })));
+    renderCalc();
+    await pickCoffee();
+    fillValue('10000');
+    submit();
+    const region = await screen.findByRole('region', { name: 'Kết quả' });
+    expect(region).toHaveTextContent('Hạn ngạch vi');
+    expect(region).not.toHaveTextContent('Quota en');
   });
 
   it('429: báo tính quá nhiều lần', async () => {

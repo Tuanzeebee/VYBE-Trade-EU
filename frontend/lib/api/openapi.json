@@ -11738,6 +11738,30 @@
             ],
             "title": "Condition Note"
           },
+          "quota_note_en": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 4000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quota Note En"
+          },
+          "condition_note_en": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 4000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Condition Note En"
+          },
           "source_url": {
             "anyOf": [
               {
@@ -11879,6 +11903,28 @@
             ],
             "title": "Condition Note"
           },
+          "quota_note_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quota Note En"
+          },
+          "condition_note_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Condition Note En"
+          },
           "source_url": {
             "anyOf": [
               {
@@ -11946,6 +11992,8 @@
           "quota_required",
           "quota_note",
           "condition_note",
+          "quota_note_en",
+          "condition_note_en",
           "source_url",
           "valid_from",
           "valid_until",
@@ -12088,6 +12136,30 @@
               }
             ],
             "title": "Condition Note"
+          },
+          "quota_note_en": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 4000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quota Note En"
+          },
+          "condition_note_en": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 4000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Condition Note En"
           },
           "source_url": {
             "anyOf": [
@@ -12255,6 +12327,28 @@
               }
             ],
             "title": "Condition Note"
+          },
+          "quota_note_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quota Note En"
+          },
+          "condition_note_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Condition Note En"
           }
         },
         "type": "object",
@@ -12272,7 +12366,9 @@
           "savings",
           "annual_savings",
           "quota_note",
-          "condition_note"
+          "condition_note",
+          "quota_note_en",
+          "condition_note_en"
         ],
         "title": "TariffOut"
       },

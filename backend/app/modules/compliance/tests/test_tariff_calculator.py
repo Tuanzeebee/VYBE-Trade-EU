@@ -118,3 +118,13 @@ def test_needs_review_carries_notes() -> None:
         None,
     )
     assert (r.quota_note, r.condition_note) == ("TRQ 80.000 t", "Cần giấy phép")
+
+
+def test_needs_review_carries_english_notes() -> None:
+    r = tariff_savings(
+        line(quota_required=True, quota_note_en="TRQ 80,000 t", condition_note_en="Licence needed"),
+        1,
+        D("10000.00"),
+        None,
+    )
+    assert (r.quota_note_en, r.condition_note_en) == ("TRQ 80,000 t", "Licence needed")

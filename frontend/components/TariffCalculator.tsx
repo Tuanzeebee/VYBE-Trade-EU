@@ -22,7 +22,9 @@ function Result({ data }: { data: TariffResult }) {
   const { tr, language } = useLanguage();
   const money = (value: string) =>
     new Intl.NumberFormat(language === 'en' ? 'en-GB' : 'vi-VN', { style: 'currency', currency: 'EUR' }).format(Number(value));
-  const notes = [data.quota_note, data.condition_note].filter(Boolean);
+  // Ghi chú là dữ liệu do luật TM nhập (vi); giao diện EN dùng bản EN nếu có, thiếu thì rơi về bản vi.
+  const pick = (vi: string | null, en: string | null) => (language === 'en' ? en || vi : vi);
+  const notes = [...new Set([pick(data.quota_note, data.quota_note_en), pick(data.condition_note, data.condition_note_en)])].filter(Boolean);
 
   return (
     <section aria-label={tr('Kết quả')} className="mt-8 rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">

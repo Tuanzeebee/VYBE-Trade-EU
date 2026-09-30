@@ -35,6 +35,8 @@ class TariffLineData:
     quota_required: bool
     quota_note: str | None
     condition_note: str | None
+    quota_note_en: str | None = None
+    condition_note_en: str | None = None
 
 
 @dataclass(frozen=True)
@@ -50,6 +52,8 @@ class TariffResult:
     annual_savings: Decimal | None = None
     quota_note: str | None = None
     condition_note: str | None = None
+    quota_note_en: str | None = None
+    condition_note_en: str | None = None
 
 
 def _money(value: Decimal) -> Decimal:
@@ -71,7 +75,11 @@ def tariff_savings(
     if line is None or lines_found == 0:
         return TariffResult("unsupported")
     review = TariffResult(
-        "needs_review", quota_note=line.quota_note, condition_note=line.condition_note
+        "needs_review",
+        quota_note=line.quota_note,
+        condition_note=line.condition_note,
+        quota_note_en=line.quota_note_en,
+        condition_note_en=line.condition_note_en,
     )
     if (
         line.quota_required
@@ -95,6 +103,8 @@ def tariff_savings(
         annual_savings=savings * shipments_per_year if shipments_per_year else None,
         quota_note=line.quota_note,
         condition_note=line.condition_note,
+        quota_note_en=line.quota_note_en,
+        condition_note_en=line.condition_note_en,
     )
 
 
