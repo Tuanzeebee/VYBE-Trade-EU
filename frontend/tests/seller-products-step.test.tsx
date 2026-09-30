@@ -105,15 +105,15 @@ describe('SellerOnboarding bước 2 — sản phẩm (B5)', () => {
 
 describe('SellerOnboarding bước 1 — thị trường xuất khẩu cấp công ty (B5)', () => {
   it('có ô chọn thị trường xuất khẩu; nạp sẵn từ hồ sơ đã lưu', () => {
-    renderOnboarding({ initialStep: 1, initialCompany: { markets: 'EU,JP' } });
+    renderOnboarding({ initialStep: 1, initialCompany: { markets: 'EU,DE' } });
     expect(screen.getByRole('checkbox', { name: 'Châu Âu (EU)' })).toBeChecked();
-    expect(screen.getByRole('checkbox', { name: 'Nhật Bản' })).toBeChecked();
-    expect(screen.getByRole('checkbox', { name: 'Hoa Kỳ' })).not.toBeChecked();
+    expect(screen.getByRole('checkbox', { name: 'Germany' })).toBeChecked();
+    expect(screen.getByRole('checkbox', { name: 'France' })).not.toBeChecked();
   });
 
   it('tick / bỏ tick cập nhật lựa chọn', () => {
     renderOnboarding({ initialStep: 1 });
-    const us = screen.getByRole('checkbox', { name: 'Hoa Kỳ' });
+    const us = screen.getByRole('checkbox', { name: 'France' });
     fireEvent.click(us);
     expect(us).toBeChecked();
     fireEvent.click(us);
@@ -133,7 +133,7 @@ describe('SellerOnboarding hoàn tất — gửi hồ sơ và danh sách sản p
     const products = [valid('Gạo thơm'), valid('Cà phê')];
     renderOnboarding({
       initialStep: 1,
-      initialCompany: { taxCode: '0312345678', markets: 'EU,US' },
+      initialCompany: { taxCode: '0312345678', markets: 'EU,FR' },
       initialProducts: products,
       onComplete,
     });
@@ -143,7 +143,7 @@ describe('SellerOnboarding hoàn tất — gửi hồ sơ và danh sách sản p
     fireEvent.click(screen.getByRole('button', { name: /Hoàn tất & Gửi hồ sơ/ }));
     await waitFor(() => expect(onComplete).toHaveBeenCalledTimes(1));
     const [profile, sent] = onComplete.mock.calls[0];
-    expect(profile).toMatchObject({ companyName: 'Công ty A', taxCode: '0312345678', markets: 'EU,US' });
+    expect(profile).toMatchObject({ companyName: 'Công ty A', taxCode: '0312345678', markets: 'EU,FR' });
     expect(profile).not.toHaveProperty('market');
     // Không còn chứng chỉ/mã vùng trồng mẫu trong hồ sơ gửi đi (bằng chứng thật lưu trên server, C6).
     for (const gone of ['certificates', 'pucCode', 'phcCode', 'agreeCommitment']) expect(profile).not.toHaveProperty(gone);

@@ -6,6 +6,7 @@ import React, { useState } from 'react';
 import HsCodePicker, { type HsCodeOption } from './HsCodePicker';
 import Eur1DraftPanel from './Eur1DraftPanel';
 import { useLanguage } from '../context/LanguageContext';
+import { Link } from '../i18n/navigation';
 import {
   calculateRoo,
   emptyMaterial,
@@ -69,6 +70,11 @@ function Result({ data, goodsName }: { data: RooResult; goodsName: string }) {
       <p className="mt-5 text-xs text-slate-500">
         {tr('Kết quả chỉ mang tính tham khảo. Cơ quan cấp chứng nhận xuất xứ chính thức là Bộ Công Thương.')}
       </p>
+      {data.status !== 'unsupported' && (
+        <Link href={`/tools/tariff?roo=${data.status}`} className="mt-4 inline-block text-sm font-semibold text-[#083832] underline">
+          {tr('Xem thị trường EU nên xuất')}
+        </Link>
+      )}
       {data.status === 'pass' && <Eur1DraftPanel checkId={data.check_id} goodsName={goodsName} />}
     </section>
   );

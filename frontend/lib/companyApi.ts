@@ -54,19 +54,6 @@ const MARKET_NAMES: Record<string, string> = {
   úc: 'AU',
 };
 
-// Thị trường xuất khẩu đã phục vụ (cấp công ty). Mã lưu DB: ISO-2, EU hoặc ASEAN.
-export const EXPORT_MARKETS: { code: string; label: string }[] = [
-  { code: 'EU', label: 'Châu Âu (EU)' },
-  { code: 'US', label: 'Hoa Kỳ' },
-  { code: 'JP', label: 'Nhật Bản' },
-  { code: 'KR', label: 'Hàn Quốc' },
-  { code: 'CN', label: 'Trung Quốc' },
-  { code: 'ASEAN', label: 'ASEAN' },
-  { code: 'CA', label: 'Canada' },
-  { code: 'AU', label: 'Úc' },
-  { code: 'GB', label: 'Anh (UK)' },
-  { code: 'AE', label: 'UAE' },
-];
 
 /** Nhãn hoặc mã thị trường → mã lưu DB (ISO-2, EU, ASEAN). Không nhận ra → null. */
 export function marketCode(label: string): string | null {
@@ -88,7 +75,7 @@ export function profileToCompany(profile: Record<string, string>): CompanyIn {
   const markets = (profile.markets ?? '')
     .split(',')
     .map((m) => m.trim())
-    .filter((m) => /^(EU|ASEAN|[A-Z]{2})$/.test(m));
+    .filter((m) => EXPORT_MARKETS.some((x) => x.code === m));
   const languages = (profile.languages ?? '').split(',').map((l) => l.trim()).filter(Boolean);
   const taxId = blank(profile.taxCode);
   return {
@@ -129,6 +116,14 @@ export const COUNTRIES: { code: string; name: string }[] = [
   { code: 'US', name: 'United States' }, { code: 'CA', name: 'Canada' }, { code: 'AU', name: 'Australia' },
   { code: 'JP', name: 'Japan' }, { code: 'KR', name: 'South Korea' }, { code: 'SG', name: 'Singapore' },
   { code: 'AE', name: 'United Arab Emirates' },
+];
+
+const EU_CODES = 'AT BE BG HR CY CZ DK EE FI FR DE GR HU IE IT LV LT LU MT NL PL PT RO SK SI ES SE'.split(' ');
+
+// Thị trường xuất khẩu đã phục vụ (cấp công ty): EU nói chung hoặc từng nước thành viên EU (khớp backend).
+export const EXPORT_MARKETS: { code: string; label: string }[] = [
+  { code: 'EU', label: 'Châu Âu (EU)' },
+  ...COUNTRIES.filter((c) => EU_CODES.includes(c.code)).map((c) => ({ code: c.code, label: c.name })),
 ];
 
 /** Tên nước (hoặc mã) → mã ISO-2. Không có trong danh sách → null. */

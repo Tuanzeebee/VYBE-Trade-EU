@@ -11023,5 +11023,85 @@
     "Results for: ",
     "Résultats pour : ",
     "検索結果: "
+  ],
+  "Thị trường nên xuất": [
+    "Best export markets",
+    "Meilleurs marchés à exporter",
+    "輸出に適した市場"
+  ],
+  "Xem thị trường nên xuất": [
+    "See best export markets",
+    "Voir les meilleurs marchés à exporter",
+    "輸出に適した市場を見る"
+  ],
+  "Kết quả kiểm tra xuất xứ (nếu đã có)": [
+    "Rules-of-origin check result (if available)",
+    "Résultat du contrôle d'origine (si disponible)",
+    "原産地規則の確認結果（ある場合）"
+  ],
+  "Chưa kiểm tra": [
+    "Not checked",
+    "Non vérifié",
+    "未確認"
+  ],
+  "Tính theo thuế ưu đãi EVFTA (hàng đạt quy tắc xuất xứ, có C/O).": [
+    "Calculated at the EVFTA preferential duty (goods meet the rules of origin, with a C/O).",
+    "Calculé au droit préférentiel EVFTA (marchandises conformes aux règles d'origine, avec C/O).",
+    "EVFTA特恵関税で計算（原産地規則を満たし、C/Oあり）。"
+  ],
+  "Tính theo thuế MFN vì chưa xác nhận hàng đạt quy tắc xuất xứ.": [
+    "Calculated at the MFN duty because the goods are not yet confirmed to meet the rules of origin.",
+    "Calculé au droit NPF car la conformité aux règles d'origine n'est pas encore confirmée.",
+    "原産地規則の充足が未確認のため、MFN関税で計算。"
+  ],
+  "Chưa có dữ liệu VAT đã duyệt cho mã HS này.": [
+    "No approved VAT data yet for this HS code.",
+    "Aucune donnée de TVA validée pour ce code SH pour le moment.",
+    "このHSコードには承認済みのVATデータがまだありません。"
+  ],
+  "Thuế nhập khẩu": [
+    "Import duty",
+    "Droit d'importation",
+    "輸入関税"
+  ],
+  "VAT nhập khẩu": [
+    "Import VAT",
+    "TVA à l'importation",
+    "輸入VAT"
+  ],
+  "Tổng": [
+    "Total",
+    "Total",
+    "合計"
+  ],
+  "Ngôn ngữ nhãn bắt buộc": [
+    "Required label language",
+    "Langue d'étiquetage obligatoire",
+    "必須ラベル言語"
+  ],
+  "Tiếng Hà Lan": [
+    "Dutch",
+    "Dutch",
+    "Dutch"
+  ],
+  "Chưa có dữ liệu cho": [
+    "No data yet for",
+    "Pas encore de données pour",
+    "データなし:"
+  ],
+  "nước EU còn lại; chúng tôi không đoán số liệu.": [
+    "remaining EU countries; we do not guess figures.",
+    "autres pays de l’UE ; nous ne devinons pas les chiffres.",
+    "残りのEU加盟国。数値の推測は行いません。"
+  ],
+  "VAT nhập khẩu thường được khấu trừ với nhà nhập khẩu đã đăng ký VAT; thuế nhập khẩu thì không được khấu trừ.": [
+    "Import VAT is usually deductible for VAT-registered importers; import duty is not deductible.",
+    "La TVA à l'importation est généralement déductible pour les importateurs assujettis ; le droit d'importation ne l'est pas.",
+    "輸入VATはVAT登録済みの輸入者であれば通常控除できますが、輸入関税は控除できません。"
+  ],
+  "Xem thị trường EU nên xuất": [
+    "See best EU export markets",
+    "Voir les meilleurs marchés d'exportation de l'UE",
+    "輸出に適したEU市場を見る"
   ]
 }

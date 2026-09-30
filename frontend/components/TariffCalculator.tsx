@@ -5,6 +5,8 @@
 import React, { useState } from 'react';
 import HsCodePicker, { type HsCodeOption } from './HsCodePicker';
 import { useLanguage } from '../context/LanguageContext';
+import MarketRanking from './MarketRanking';
+import { isRooStatus, rankMarkets, type MarketsResult, type RooStatus } from '../lib/marketsApi';
 import { calculateTariff, EU_COUNTRIES, parseAmount, type TariffOutcome, type TariffResult } from '../lib/tariffApi';
 
 const MAX_SHIPMENTS = 10000;
@@ -81,7 +83,7 @@ function Result({ data }: { data: TariffResult }) {
   );
 }
 
-export default function TariffCalculator() {
+export default function TariffCalculator({ initialRoo }: { initialRoo?: RooStatus }) {
   const { tr } = useLanguage();
   const [hs, setHs] = useState<HsCodeOption | null>(null);
   const [destination, setDestination] = useState('DE');
@@ -90,10 +92,14 @@ export default function TariffCalculator() {
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<TariffResult | null>(null);
+  const [roo, setRoo] = useState<RooStatus | ''>(initialRoo ?? '');
+  const [markets, setMarkets] = useState<MarketsResult | null>(null);
+  const [marketsBusy, setMarketsBusy] = useState(false);
 
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();
     setResult(null);
+    setMarkets(null);
     setError('');
     if (!hs) return setError('Vui lòng chọn mã HS.');
     const amount = parseAmount(value);
@@ -113,6 +119,18 @@ export default function TariffCalculator() {
     });
     setBusy(false);
     if (outcome.ok) setResult(outcome.data);
+    else setError(ERRORS[outcome.error]);
+  };
+
+  const showMarkets = async () => {
+    if (!hs) return;
+    const amount = parseAmount(value);
+    if (!amount) return;
+    setMarketsBusy(true);
+    setError('');
+    const outcome = await rankMarkets({ hsCode: hs.code, productValue: amount, rooStatus: roo || undefined });
+    setMarketsBusy(false);
+    if (outcome.ok) setMarkets(outcome.data);
     else setError(ERRORS[outcome.error]);
   };
 
@@ -152,6 +170,17 @@ export default function TariffCalculator() {
           </label>
           <input id="tariff-shipments" inputMode="numeric" value={shipments} onChange={(e) => setShipments(e.target.value)} className={field} />
         </div>
+        <div>
+          <label htmlFor="tariff-roo" className={label}>
+            {tr('Kết quả kiểm tra xuất xứ (nếu đã có)')}
+          </label>
+          <select id="tariff-roo" value={roo} onChange={(e) => setRoo(isRooStatus(e.target.value) ? e.target.value : '')} className={field}>
+            <option value="">{tr('Chưa kiểm tra')}</option>
+            <option value="pass">{tr('Đạt')}</option>
+            <option value="fail">{tr('Không đạt')}</option>
+            <option value="inconclusive">{tr('Chưa kết luận')}</option>
+          </select>
+        </div>
         {error && (
           <p role="alert" className="rounded-xl bg-rose-50 p-3 text-sm text-rose-700">
             {tr(error)}
@@ -166,6 +195,17 @@ export default function TariffCalculator() {
         </button>
       </form>
       {result && <Result data={result} />}
+      {result && result.status === 'ok' && (
+        <button
+          type="button"
+          disabled={marketsBusy}
+          onClick={() => void showMarkets()}
+          className="mt-4 rounded-xl border border-[#083832] px-5 py-2.5 text-sm font-semibold text-[#083832] hover:bg-slate-50 disabled:opacity-60"
+        >
+          {tr(marketsBusy ? 'Đang tính...' : 'Xem thị trường nên xuất')}
+        </button>
+      )}
+      {markets && <MarketRanking data={markets} />}
     </div>
   );
 }

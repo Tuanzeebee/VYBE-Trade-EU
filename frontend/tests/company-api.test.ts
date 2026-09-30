@@ -30,7 +30,7 @@ const COMPANY = {
   description_vi: 'Gạo',
   description_en: 'Rice',
   logo_key: null,
-  export_markets: ['EU', 'JP'],
+  export_markets: ['EU', 'DE'],
   languages_spoken: ['en', 'vi'],
   verification_status: 'unverified',
   verification_level: 'basic',
@@ -72,7 +72,7 @@ describe('profileToCompany — form onboarding cũ → CompanyIn', () => {
       descriptionEn: '',
       industrySector: 'agriculture',
       languages: 'vi,en',
-      markets: 'EU,JP,EU',
+      markets: 'EU,DE,EU',
     });
     expect(body).toEqual({
       legal_name: 'Công ty A',
@@ -88,12 +88,12 @@ describe('profileToCompany — form onboarding cũ → CompanyIn', () => {
       description_en: null,
       industry_sector: 'agriculture',
       languages_spoken: ['vi', 'en'],
-      export_markets: ['EU', 'JP'],
+      export_markets: ['EU', 'DE'],
     });
   });
 
   it('thị trường xuất khẩu lấy từ ô chọn cấp công ty (mã), bỏ mã lạ; không đọc thị trường cũ theo sản phẩm', () => {
-    expect(profileToCompany({ companyName: 'A', markets: 'US, XX1, ASEAN,,' }).export_markets).toEqual(['US', 'ASEAN']);
+    expect(profileToCompany({ companyName: 'A', markets: 'FR, XX1, US, ASEAN,,' }).export_markets).toEqual(['FR']);
     expect(profileToCompany({ companyName: 'A', market: 'Châu Âu (EU), Nhật Bản' }).export_markets).toEqual([]);
   });
 
@@ -113,17 +113,20 @@ describe('companyToForm — dữ liệu server → giá trị ban đầu của f
       descriptionEn: 'Rice',
       industrySector: 'agriculture',
       languages: 'en,vi',
-      markets: 'EU,JP',
+      markets: 'EU,DE',
     });
   });
 });
 
 describe('EXPORT_MARKETS', () => {
-  it('mã hợp lệ với backend (ISO-2, EU, ASEAN), không trùng, có EU', () => {
+  it('chỉ gồm EU và 27 nước thành viên EU, không trùng, mã hợp lệ với backend', () => {
     const codes = EXPORT_MARKETS.map((m) => m.code);
     expect(codes).toContain('EU');
+    expect(codes).toHaveLength(28);
     expect(new Set(codes).size).toBe(codes.length);
-    expect(codes.filter((c) => !/^(EU|ASEAN|[A-Z]{2})$/.test(c))).toEqual([]);
+    expect(codes).not.toContain('US');
+    expect(codes).not.toContain('JP');
+    expect(codes.filter((c) => !/^(EU|[A-Z]{2})$/.test(c))).toEqual([]);
     expect(EXPORT_MARKETS.every((m) => m.label.trim() !== '')).toBe(true);
   });
 });
