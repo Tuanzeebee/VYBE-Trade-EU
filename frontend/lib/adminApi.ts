@@ -15,6 +15,8 @@ export type EvidenceTypeInput = components['schemas']['EvidenceTypeIn'];
 export type EvidenceTypePatch = components['schemas']['EvidenceTypePatch'];
 export type EvidenceRuleInput = components['schemas']['RuleIn'];
 export type EvidenceRulePatch = components['schemas']['RulePatch'];
+export type CountryTermInput = components['schemas']['CountryTermIn'];
+export type CountryTermPatch = components['schemas']['CountryTermPatch'];
 export type ImportResult = components['schemas']['ImportResult'];
 export type Decision = 'approve' | 'reject' | 'request_info';
 
@@ -72,6 +74,7 @@ export function reviewEvidence(evidenceId: string, decision: 'approve' | 'reject
 
 // ── Dữ liệu tuân thủ ────────────────────────────────────────────────────────
 export const listTariffLines = () => read(() => createApiClient().GET('/api/admin/tariff-lines'));
+export const listCountryTerms = () => read(() => createApiClient().GET('/api/admin/country-terms'));
 export const listRooRules = () => read(() => createApiClient().GET('/api/admin/roo-rules'));
 export const listEvidenceTypes = () => read(() => createApiClient().GET('/api/admin/evidence-types'));
 export const listEvidenceRules = () => read(() => createApiClient().GET('/api/admin/evidence-rules'));
@@ -103,6 +106,7 @@ const SAVE_ERRORS: Record<string, string> = {
   unknown_evidence_type: 'Loại bằng chứng không tồn tại.',
   evidence_type_exists: 'Mã loại bằng chứng đã tồn tại.',
   rule_exists: 'Luật này đã tồn tại.',
+  duplicate_term: 'Mã HS, nước và ngày bắt đầu này đã có.',
   invalid_patch: 'Trường bắt buộc không được để trống.',
   not_found: 'Không tìm thấy dòng dữ liệu.',
   rule_not_found: 'Không tìm thấy dòng dữ liệu.',
@@ -133,6 +137,13 @@ async function save(call: () => Promise<{ response: Response; error?: unknown }>
 export const createTariffLine = (body: TariffLineInput) => save(() => createApiClient().POST('/api/admin/tariff-lines', { body }));
 export const updateTariffLine = (id: string, body: TariffLinePatch) =>
   save(() => createApiClient().PATCH('/api/admin/tariff-lines/{line_id}', { params: { path: { line_id: id } }, body }));
+export const reviewCountryTerm = (id: string) =>
+  act(() => createApiClient().POST('/api/admin/country-terms/{term_id}/review', { params: { path: { term_id: id } } }), REVIEW_ERRORS);
+export const deleteCountryTerm = (id: string) =>
+  act(() => createApiClient().DELETE('/api/admin/country-terms/{term_id}', { params: { path: { term_id: id } } }), DELETE_ERRORS);
+export const createCountryTerm = (body: CountryTermInput) => save(() => createApiClient().POST('/api/admin/country-terms', { body }));
+export const updateCountryTerm = (id: string, body: CountryTermPatch) =>
+  save(() => createApiClient().PATCH('/api/admin/country-terms/{term_id}', { params: { path: { term_id: id } }, body }));
 export const createRooRule = (body: RooRuleInput) => save(() => createApiClient().POST('/api/admin/roo-rules', { body }));
 export const updateRooRule = (id: string, body: RooRulePatch) =>
   save(() => createApiClient().PATCH('/api/admin/roo-rules/{rule_id}', { params: { path: { rule_id: id } }, body }));

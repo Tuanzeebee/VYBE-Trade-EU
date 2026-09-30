@@ -74,6 +74,22 @@ const evRule = (over: Record<string, unknown> = {}) => ({
   ...over,
 });
 
+const term = (over: Record<string, unknown> = {}) => ({
+  id: 't-1',
+  hs_code: '090121',
+  country: 'DE',
+  vat_rate: '7.0000',
+  label_languages: 'de',
+  note: null,
+  note_en: null,
+  source: null,
+  valid_from: '2026-01-01',
+  valid_until: null,
+  reviewed_by: null,
+  reviewed_at: null,
+  ...over,
+});
+
 const json = (status: number, body: unknown) =>
   new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } });
 
@@ -82,6 +98,7 @@ interface World {
   rules?: unknown[];
   types?: unknown[];
   evRules?: unknown[];
+  terms?: unknown[];
   fail?: boolean;
   action?: (method: string, path: string) => Response;
   importResult?: (search: string) => Response;
@@ -107,6 +124,7 @@ function serve(world: World = {}) {
       if (pathname === '/api/admin/roo-rules') return json(200, world.rules ?? []);
       if (pathname === '/api/admin/evidence-types') return json(200, world.types ?? []);
       if (pathname === '/api/admin/evidence-rules') return json(200, world.evRules ?? []);
+      if (pathname === '/api/admin/country-terms') return json(200, world.terms ?? []);
       throw new Error(`unexpected ${pathname}`);
     }),
   );
@@ -128,13 +146,14 @@ const actions = () => calls.filter((c) => c.method !== 'GET').map(({ method, pat
 describe('Dữ liệu tuân thủ (admin)', () => {
   afterEach(() => vi.unstubAllGlobals());
 
-  it('có bốn nhóm dữ liệu và chú thích: chưa duyệt không ra công khai', async () => {
+  it('có năm nhóm dữ liệu và chú thích: chưa duyệt không ra công khai', async () => {
     serve();
     renderData();
     expect(await screen.findByText(/không bao giờ hiện ra công khai/)).toBeInTheDocument();
     expect(screen.getAllByRole('tab').map((t) => t.textContent)).toEqual([
       'Dòng thuế',
       'Quy tắc xuất xứ',
+      'VAT theo nước',
       'Loại bằng chứng',
       'Luật bằng chứng theo nhóm hàng',
     ]);
@@ -215,6 +234,27 @@ describe('Dữ liệu tuân thủ (admin)', () => {
     expect(table).toHaveTextContent('Nộp hồ sơ EUDR');
     fireEvent.click(within(table).getAllByRole('button', { name: 'Xóa' })[0]);
     await waitFor(() => expect(actions()).toEqual([{ method: 'DELETE', path: '/api/admin/evidence-rules/er-1' }]));
+  });
+
+  it('VAT theo nước: hiện VAT và nút Duyệt; duyệt gọi đúng id', async () => {
+    serve({ terms: [term()] });
+    renderData();
+    tab('VAT theo nước');
+    const table = await screen.findByRole('region', { name: 'VAT theo nước' });
+    expect(table).toHaveTextContent('7%');
+    expect(table).toHaveTextContent('DE');
+    fireEvent.click(within(table).getByRole('button', { name: 'Duyệt' }));
+    await waitFor(() => expect(actions()).toEqual([{ method: 'POST', path: '/api/admin/country-terms/t-1/review' }]));
+  });
+
+  it('VAT theo nước không có nút Excel; Dòng thuế vẫn có', async () => {
+    serve({ terms: [term()] });
+    renderData();
+    expect(await screen.findByRole('button', { name: 'Xuất Excel' })).toBeInTheDocument();
+    tab('VAT theo nước');
+    await screen.findByRole('region', { name: 'VAT theo nước' });
+    expect(screen.getByRole('button', { name: 'Thêm' })).toBeInTheDocument();
+    for (const name of ['Tải template', 'Xuất Excel', 'Nhập Excel']) expect(screen.queryByRole('button', { name })).not.toBeInTheDocument();
   });
 
   it('thao tác lỗi: hiện thông báo và tải lại danh sách', async () => {

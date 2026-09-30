@@ -29,6 +29,8 @@ export default function AdminComplianceData() {
   const [form, setForm] = useState<{ row: Row | null } | null>(null);
   const [importing, setImporting] = useState(false);
   const dataset = DATASETS.find((d) => d.key === active) ?? DATASETS[0];
+  const xlsxPath = dataset.xlsxPath;
+  const xlsxName = dataset.xlsxName ?? '';
 
   const load = useCallback(async () => {
     const result = await dataset.load();
@@ -137,15 +139,19 @@ export default function AdminComplianceData() {
               <button type="button" disabled={busy} onClick={() => setForm({ row: null })} className="rounded-lg bg-[#083832] px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-60">
                 {tr('Thêm')}
               </button>
-              <button type="button" disabled={busy} onClick={() => void run(() => downloadXlsx(`${dataset.xlsxPath}/template.xlsx`, `${dataset.xlsxName}-template.xlsx`))} className={BUTTON}>
-                {tr('Tải template')}
-              </button>
-              <button type="button" disabled={busy} onClick={() => void run(() => downloadXlsx(`${dataset.xlsxPath}/export.xlsx`, `${dataset.xlsxName}.xlsx`))} className={BUTTON}>
-                {tr('Xuất Excel')}
-              </button>
-              <button type="button" disabled={busy} onClick={() => setImporting(true)} className={BUTTON}>
-                {tr('Nhập Excel')}
-              </button>
+              {xlsxPath && (
+                <>
+                  <button type="button" disabled={busy} onClick={() => void run(() => downloadXlsx(`${xlsxPath}/template.xlsx`, `${xlsxName}-template.xlsx`))} className={BUTTON}>
+                    {tr('Tải template')}
+                  </button>
+                  <button type="button" disabled={busy} onClick={() => void run(() => downloadXlsx(`${xlsxPath}/export.xlsx`, `${xlsxName}.xlsx`))} className={BUTTON}>
+                    {tr('Xuất Excel')}
+                  </button>
+                  <button type="button" disabled={busy} onClick={() => setImporting(true)} className={BUTTON}>
+                    {tr('Nhập Excel')}
+                  </button>
+                </>
+              )}
             </div>
             <p className="text-xs font-semibold text-slate-600">
               {unreviewed} {tr('dòng chưa duyệt')} / {rows.length}
@@ -225,7 +231,7 @@ export default function AdminComplianceData() {
           }}
         />
       )}
-      {importing && <ImportDialog dataset={dataset} onClose={() => setImporting(false)} onDone={imported} />}
+      {importing && xlsxPath && <ImportDialog dataset={dataset} onClose={() => setImporting(false)} onDone={imported} />}
     </div>
   );
 }

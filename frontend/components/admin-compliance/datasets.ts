@@ -1,25 +1,32 @@
 // Khai báo bốn nhóm dữ liệu tuân thủ: cột bảng, trường form, chú thích và lời gọi API (C1, C4, C6).
 // Chuỗi tiếng Việt ở đây được dịch khi hiển thị bằng tr() (xem i18n/catalog.json).
 import {
+  createCountryTerm,
   createEvidenceRule,
   createEvidenceType,
   createRooRule,
   createTariffLine,
+  deleteCountryTerm,
   deleteEvidenceRule,
   deleteRooRule,
   deleteTariffLine,
+  listCountryTerms,
   listEvidenceRules,
   listEvidenceTypes,
   listRooRules,
   listTariffLines,
+  reviewCountryTerm,
   reviewEvidenceRule,
   reviewEvidenceType,
   reviewRooRule,
   reviewTariffLine,
+  updateCountryTerm,
   updateEvidenceRule,
   updateEvidenceType,
   updateRooRule,
   updateTariffLine,
+  type CountryTermInput,
+  type CountryTermPatch,
   type EvidenceRuleInput,
   type EvidenceRulePatch,
   type EvidenceTypeInput,
@@ -69,8 +76,8 @@ export interface Dataset {
   fields: Field[];
   legend: LegendItem[];
   /** Đường dẫn gốc của nhóm dữ liệu, dùng cho template / xuất / nhập Excel. */
-  xlsxPath: string;
-  xlsxName: string;
+  xlsxPath?: string;
+  xlsxName?: string;
   load: () => Promise<Row[] | null>;
   create: (body: Body) => Promise<void>;
   update: (id: string, body: Body) => Promise<void>;
@@ -143,6 +150,13 @@ const RULE_LEGEND: LegendItem[] = [
   { term: 'Nhóm hàng', text: 'Nhóm hàng trong danh mục HS (vd agriculture, seafood).' },
   { term: 'Bắt buộc', text: 'Tính vào điều kiện đạt EVFTA-verified của nhà xuất khẩu.' },
   { term: 'Chỉ nhắc', text: 'Chỉ nhắc nhà xuất khẩu, không tính vào điều kiện đạt.' },
+];
+
+const TERMS_LEGEND: LegendItem[] = [
+  { term: 'VAT nhập khẩu', text: 'Thuế suất VAT (%) áp cho mã hàng này tại nước nhập khẩu. Công thức: VAT = (trị giá + thuế nhập khẩu) × VAT.' },
+  { term: 'Nước', text: 'Mã ISO-2 của nước thành viên EU. Nước chưa có dòng đã duyệt hiện "chưa có dữ liệu", không có con số.' },
+  { term: 'Ngôn ngữ nhãn', text: 'Mã ngôn ngữ nhãn bắt buộc tại nước đó (de, fr, nl…).' },
+  { term: 'Trùng hiệu lực', text: 'Hai dòng đã duyệt cùng mã HS, cùng nước, cùng hiệu lực sẽ làm nước đó bị coi là chưa có dữ liệu. Đặt Đến ngày cho dòng cũ.' },
 ];
 
 const validity: Field[] = [
@@ -244,6 +258,45 @@ export const DATASETS: Dataset[] = [
     update: (id, body) => updateRooRule(id, body as RooRulePatch),
     review: reviewRooRule,
     remove: deleteRooRule,
+  },
+  {
+    key: 'terms',
+    label: 'VAT theo nước',
+    columns: ['Mã HS', 'Nước', 'VAT (%)', 'Ngôn ngữ nhãn', 'Từ ngày', 'Đến ngày'],
+    fields: [
+      { key: 'hs_code', label: 'Mã HS', kind: 'text', required: true, help: '6–8 chữ số, phải có trong danh mục HS. Dùng đúng mã của dòng thuế.' },
+      { key: 'country', label: 'Nước', kind: 'select', required: true, options: EU_MEMBERS, initial: 'DE' },
+      { key: 'vat_rate', label: 'VAT nhập khẩu (%)', kind: 'decimal', required: true, help: '0–100, tối đa 4 chữ số thập phân.' },
+      { key: 'label_languages', label: 'Ngôn ngữ nhãn', kind: 'text', help: 'Mã ngôn ngữ, vd de, fr, nl.' },
+      { key: 'note', label: 'Lưu ý theo nước', kind: 'textarea' },
+      { key: 'note_en', label: 'Lưu ý theo nước (tiếng Anh)', kind: 'textarea', help: 'Hiện cho người dùng giao diện tiếng Anh; để trống thì hiện bản tiếng Việt.' },
+      { key: 'source', label: 'Nguồn', kind: 'textarea' },
+      ...validity,
+    ],
+    legend: TERMS_LEGEND,
+    load: async () =>
+      ((await listCountryTerms()) ?? null)?.map((r) => ({
+        id: r.id,
+        reviewed: r.reviewed_by !== null,
+        canDelete: r.reviewed_by === null,
+        cells: [r.hs_code, r.country, pct(r.vat_rate), text(r.label_languages), r.valid_from, r.valid_until ?? NO_EXPIRY],
+        values: {
+          hs_code: r.hs_code,
+          country: r.country,
+          vat_rate: plain(r.vat_rate),
+          label_languages: text(r.label_languages),
+          note: text(r.note),
+          note_en: text(r.note_en),
+          source: text(r.source),
+          valid_from: r.valid_from,
+          valid_until: text(r.valid_until),
+        },
+        search: searchable(r.hs_code, r.country, r.label_languages, r.note, r.note_en, r.source),
+      })) ?? null,
+    create: (body) => createCountryTerm(body as unknown as CountryTermInput),
+    update: (id, body) => updateCountryTerm(id, body as CountryTermPatch),
+    review: reviewCountryTerm,
+    remove: deleteCountryTerm,
   },
   {
     key: 'types',

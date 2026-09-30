@@ -11103,5 +11103,85 @@
     "See best EU export markets",
     "Voir les meilleurs marchés d'exportation de l'UE",
     "輸出に適したEU市場を見る"
+  ],
+  "VAT theo nước": [
+    "VAT by country",
+    "TVA par pays",
+    "国別VAT"
+  ],
+  "Nước": [
+    "Country",
+    "Pays",
+    "国"
+  ],
+  "VAT (%)": [
+    "VAT (%)",
+    "TVA (%)",
+    "VAT（%）"
+  ],
+  "Ngôn ngữ nhãn": [
+    "Label language",
+    "Langue d'étiquetage",
+    "ラベル言語"
+  ],
+  "VAT nhập khẩu (%)": [
+    "Import VAT (%)",
+    "TVA à l'importation (%)",
+    "輸入VAT（%）"
+  ],
+  "Lưu ý theo nước": [
+    "Country note",
+    "Remarque par pays",
+    "国別の注記"
+  ],
+  "Lưu ý theo nước (tiếng Anh)": [
+    "Country note (English)",
+    "Remarque par pays (anglais)",
+    "国別の注記（英語）"
+  ],
+  "Mã ngôn ngữ, vd de, fr, nl.": [
+    "Language codes, e.g. de, fr, nl.",
+    "Codes de langue, p. ex. de, fr, nl.",
+    "言語コード（例：de、fr、nl）。"
+  ],
+  "6–8 chữ số, phải có trong danh mục HS. Dùng đúng mã của dòng thuế.": [
+    "6–8 digits, must exist in the HS catalogue. Use the exact code of the tariff line.",
+    "6 à 8 chiffres, doit figurer dans le catalogue SH. Utilisez le code exact de la ligne tarifaire.",
+    "6〜8桁で、HSカタログに存在する必要があります。関税ラインと同じコードを使用してください。"
+  ],
+  "Thuế suất VAT (%) áp cho mã hàng này tại nước nhập khẩu. Công thức: VAT = (trị giá + thuế nhập khẩu) × VAT.": [
+    "VAT rate (%) applied to this product code in the importing country. Formula: VAT = (value + import duty) × VAT.",
+    "Taux de TVA (%) appliqué à ce code produit dans le pays importateur. Formule : TVA = (valeur + droit d'importation) × TVA.",
+    "輸入国でこの商品コードに適用されるVAT税率（%）。計算式：VAT =（価額＋輸入関税）× VAT。"
+  ],
+  "Mã ISO-2 của nước thành viên EU. Nước chưa có dòng đã duyệt hiện \"chưa có dữ liệu\", không có con số.": [
+    "ISO-2 code of the EU member state. A country with no approved row shows \"no data yet\", with no figure.",
+    "Code ISO-2 de l'État membre de l'UE. Un pays sans ligne approuvée affiche « pas encore de données », sans chiffre.",
+    "EU加盟国のISO-2コード。承認済みの行がない国は「データなし」と表示され、数値は出ません。"
+  ],
+  "Mã ngôn ngữ nhãn bắt buộc tại nước đó (de, fr, nl…).": [
+    "Code of the label language required in that country (de, fr, nl…).",
+    "Code de la langue d'étiquetage exigée dans ce pays (de, fr, nl…).",
+    "その国で必須のラベル言語コード（de、fr、nl など）。"
+  ],
+  "Trùng hiệu lực": [
+    "Overlapping validity",
+    "Chevauchement de validité",
+    "有効期間の重複"
+  ],
+  "Hai dòng đã duyệt cùng mã HS, cùng nước, cùng hiệu lực sẽ làm nước đó bị coi là chưa có dữ liệu. Đặt Đến ngày cho dòng cũ.": [
+    "Two approved rows with the same HS code, country and validity make that country count as having no data. Set an end date on the old row.",
+    "Deux lignes approuvées avec le même code SH, le même pays et la même validité font considérer ce pays comme sans données. Renseignez une date de fin sur l'ancienne ligne.",
+    "同じHSコード・国・有効期間の承認済みの行が2つあると、その国はデータなしとして扱われます。古い行に終了日を設定してください。"
+  ],
+  "Mã HS, nước và ngày bắt đầu này đã có.": [
+    "This HS code, country and start date already exist.",
+    "Ce code SH, ce pays et cette date de début existent déjà.",
+    "このHSコード・国・開始日は既に存在します。"
+  ],
+  "Hiện cho người dùng giao diện tiếng Anh; để trống thì hiện bản tiếng Việt.": [
+    "Shown to English-interface users; if left empty the Vietnamese version is shown.",
+    "Affiché aux utilisateurs de l'interface anglaise ; si vide, la version vietnamienne est affichée.",
+    "英語UIのユーザーに表示されます。空の場合はベトナム語版が表示されます。"
   ]
 }
