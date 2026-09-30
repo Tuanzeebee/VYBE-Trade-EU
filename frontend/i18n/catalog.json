@@ -10988,5 +10988,40 @@
     "Messages with buyers",
     "Messages avec les acheteurs",
     "バイヤーとのメッセージ"
+  ],
+  "Đang tìm...": [
+    "Searching...",
+    "Recherche en cours...",
+    "検索中..."
+  ],
+  "sản phẩm": [
+    "products",
+    "produits",
+    "製品"
+  ],
+  "Doanh nghiệp & Nhà cung cấp": [
+    "Companies & Suppliers",
+    "Entreprises et fournisseurs",
+    "企業とサプライヤー"
+  ],
+  "Không tải được kết quả. Vui lòng thử lại.": [
+    "Could not load results. Please try again.",
+    "Impossible de charger les résultats. Veuillez réessayer.",
+    "結果を読み込めませんでした。もう一度お試しください。"
+  ],
+  "Chưa có nhà cung cấp phù hợp với từ khóa này.": [
+    "No suppliers match this keyword yet.",
+    "Aucun fournisseur ne correspond à ce mot-clé.",
+    "このキーワードに一致するサプライヤーはまだありません。"
+  ],
+  "Chưa có nhà cung cấp đã xác minh.": [
+    "No verified suppliers yet.",
+    "Aucun fournisseur vérifié pour le moment.",
+    "認証済みサプライヤーはまだありません。"
+  ],
+  "Kết quả cho:": [
+    "Results for: ",
+    "Résultats pour : ",
+    "検索結果: "
   ]
 }

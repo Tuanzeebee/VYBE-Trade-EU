@@ -16,9 +16,10 @@ import {
   CheckCircle2 
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext.tsx';
-import LiveSearchDropdown from './LiveSearchDropdown.tsx';
+import HomeSearchDropdown from './HomeSearchDropdown.tsx';
+import { useRouter } from '../i18n/navigation';
 import { DIRECTORY_SUPPLIERS } from './BuyerDirectory.tsx';
-import { DEFAULT_SELLER_DETAIL, type SupplierData } from './BuyerSellerDetail.tsx';
+import { type SupplierData } from './BuyerSellerDetail.tsx';
 import { POPULAR_TAGS, FEATURED_SUPPLIERS, type FeaturedSupplier } from '../lib/constants.ts';
 
 export interface HomePageProps {
@@ -49,7 +50,12 @@ export default function HomePage({
   onOpenRfqModal
 }: HomePageProps) {
   const { tr, t } = useLanguage();
+  const router = useRouter();
   const [isLiveSearchOpen, setIsLiveSearchOpen] = useState(false);
+  const goToDirectory = (q: string) => {
+    setIsLiveSearchOpen(false);
+    router.push(q.trim() ? `/suppliers?q=${encodeURIComponent(q.trim())}` : '/suppliers');
+  };
   const [activeDropdown, setActiveDropdown] = useState<'category' | 'market' | 'trust' | null>(null);
   const [activeSupplierModal, setActiveSupplierModal] = useState<FeaturedSupplier | null>(null);
 
@@ -103,8 +109,7 @@ export default function HomePage({
                   }}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
-                      setIsLiveSearchOpen(false);
-                      onNavigate('buyer-directory');
+                      goToDirectory(searchTerm);
                     } else if (e.key === 'Escape') {
                       setIsLiveSearchOpen(false);
                     }
@@ -225,10 +230,7 @@ export default function HomePage({
               {/* Submit Search Button */}
               <button
                 type="button"
-                onClick={() => {
-                  setIsLiveSearchOpen(false);
-                  onNavigate('buyer-directory');
-                }}
+                onClick={() => goToDirectory(searchTerm)}
                 className="w-full sm:w-11 h-11 bg-[#0f172a] hover:bg-slate-800 text-white rounded-full sm:rounded-xl flex items-center justify-center shrink-0 transition-colors shadow-xs cursor-pointer"
                 title={tr(t.hero.searchBtn)}
               >
@@ -236,32 +238,11 @@ export default function HomePage({
               </button>
 
               {/* LIVE SEARCH RESULTS DROPDOWN */}
-              <LiveSearchDropdown
-                filters={{ category: selectedCategory, market: selectedMarket, level: selectedTrust.startsWith('L') ? selectedTrust.slice(0, 2) : 'all' }}
+              <HomeSearchDropdown
                 query={searchTerm}
                 isOpen={isLiveSearchOpen}
                 onClose={() => setIsLiveSearchOpen(false)}
-                onSelectSupplier={(supp) => {
-                  onSelectSupplier(supp);
-                  onNavigate('buyer-seller-detail');
-                  setIsLiveSearchOpen(false);
-                }}
-                onSelectProduct={(prod) => {
-                  const matchedSupp = DIRECTORY_SUPPLIERS.find(s => s.id === prod.supplierId) || DEFAULT_SELLER_DETAIL;
-                  onSelectSupplier(matchedSupp);
-                  onNavigate('buyer-seller-detail');
-                  setIsLiveSearchOpen(false);
-                }}
-                onSelectKeyword={(kw) => {
-                  setSearchTerm(kw);
-                  setIsLiveSearchOpen(false);
-                  onNavigate('buyer-directory');
-                }}
-                onViewAllResults={(q) => {
-                  setSearchTerm(q);
-                  setIsLiveSearchOpen(false);
-                  onNavigate('buyer-directory');
-                }}
+                onViewAll={goToDirectory}
               />
 
             </div>
