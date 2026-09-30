@@ -254,7 +254,7 @@ export default function SellerOnboarding({ account, initialStep = 2, initialComp
                     className="w-full px-4 py-2 text-left hover:bg-slate-50 text-slate-700 cursor-pointer flex items-center gap-2"
                   >
                     <ShieldCheck className="w-3.5 h-3.5 text-slate-500" />
-                    <span>{tr("Xem Xác minh L0 → L3")}</span>
+                    <span>{tr("Xem tiến trình xác minh")}</span>
                   </button>
                   <button 
                     onClick={onNavigateHome}
@@ -494,7 +494,7 @@ export default function SellerOnboarding({ account, initialStep = 2, initialComp
                 <p className="text-xs sm:text-sm text-slate-500 font-normal">
                   {tr(currentStep === 1 && "Cung cấp thông tin cơ bản về doanh nghiệp của bạn.")}
                   {tr(currentStep === 2 && "Khai báo danh mục sản phẩm, năng lực cung ứng và quy mô xuất khẩu.")}
-                  {tr(currentStep === 3 && "Tải lên tài liệu pháp lý và chứng nhận tiêu chuẩn để nâng cấp xác minh lên L1, L2 hoặc L3.")}
+                  {tr(currentStep === 3 && "Tải lên giấy phép và chứng nhận để quản trị viên xác minh doanh nghiệp.")}
                   {tr(currentStep === 4 && "Kiểm tra lại toàn bộ dữ liệu trước khi gửi hồ sơ vào hàng đợi thẩm định của VYBE Trade.")}
                 </p>
               </div>
@@ -964,7 +964,7 @@ export default function SellerOnboarding({ account, initialStep = 2, initialComp
                 className="w-full py-2.5 px-4 rounded-xl border border-teal-600 text-teal-800 bg-teal-50/60 hover:bg-teal-100/70 text-xs font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer"
               >
                 <ShieldCheck className="w-4 h-4 text-teal-700" />
-                <span>{tr("Xem Tiến trình Xác minh Cấp độ (L0 → L3)")}</span>
+                <span>{tr("Xem tiến trình xác minh")}</span>
               </button>
 
               <div className="pt-2 flex justify-center gap-3">

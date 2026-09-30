@@ -173,7 +173,6 @@ function WorkspaceContent({ user, tab: routeTab }: { user: DemoUser; tab?: Works
       onLogout={handleLogout}
       onNavigateHome={() => navigate('home')}
       onNavigateOnboarding={(step) => navigate('seller-profile', { step: typeof step === 'number' ? step : undefined })}
-      onNavigateBuyerDetail={() => navigate('buyer-seller-detail')}
       initialTab={initialTab}
       onNavigateTab={(next) => navigate('workspace', { tab: next })}
     />

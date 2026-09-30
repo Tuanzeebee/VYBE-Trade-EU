@@ -1,26 +1,11 @@
 'use client';
 import React, { useState } from 'react';
-import { 
-  Search, 
-  ChevronDown, 
-  ArrowRight, 
-  ShieldCheck, 
-  Package, 
-  Send, 
-  Sparkles, 
-  MapPin, 
-  Sprout, 
-  Fish, 
-  UtensilsCrossed, 
-  X, 
-  CheckCircle2 
-} from 'lucide-react';
+import { Search, ChevronDown, ArrowRight, ShieldCheck, Package, Send, Sparkles, X } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext.tsx';
 import HomeSearchDropdown from './HomeSearchDropdown.tsx';
 import { useRouter } from '../i18n/navigation';
-import { DIRECTORY_SUPPLIERS } from './BuyerDirectory.tsx';
-import { type SupplierData } from './BuyerSellerDetail.tsx';
-import { POPULAR_TAGS, FEATURED_SUPPLIERS, type FeaturedSupplier } from '../lib/constants.ts';
+import { POPULAR_TAGS } from '../lib/constants.ts';
+import FeaturedSuppliers from './FeaturedSuppliers';
 
 export interface HomePageProps {
   searchTerm: string;
@@ -32,8 +17,6 @@ export interface HomePageProps {
   selectedTrust: string;
   setSelectedTrust: (t: string) => void;
   onNavigate: (page: any) => void;
-  onSelectSupplier: (supp: SupplierData) => void;
-  onOpenRfqModal: (supp: SupplierData) => void;
 }
 
 export default function HomePage({
@@ -46,8 +29,6 @@ export default function HomePage({
   selectedTrust,
   setSelectedTrust,
   onNavigate,
-  onSelectSupplier,
-  onOpenRfqModal
 }: HomePageProps) {
   const { tr, t } = useLanguage();
   const router = useRouter();
@@ -57,7 +38,6 @@ export default function HomePage({
     router.push(q.trim() ? `/suppliers?q=${encodeURIComponent(q.trim())}` : '/suppliers');
   };
   const [activeDropdown, setActiveDropdown] = useState<'category' | 'market' | 'trust' | null>(null);
-  const [activeSupplierModal, setActiveSupplierModal] = useState<FeaturedSupplier | null>(null);
 
   return (
     <>
@@ -461,152 +441,10 @@ export default function HomePage({
           </button>
         </div>
 
-        {/* 4 Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {FEATURED_SUPPLIERS.map((supplier) => (
-            <div
-              key={supplier.id}
-              onClick={() => setActiveSupplierModal(supplier)}
-              className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs hover:shadow-lg transition-all duration-200 hover:-translate-y-1 cursor-pointer flex flex-col justify-between group"
-            >
-              <div>
-                <div className="flex items-center gap-3 mb-3">
-                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${supplier.iconColor} transition-transform group-hover:scale-105`}>
-                    {supplier.categoryType === 'agriculture' && <Sprout className="w-5 h-5" />}
-                    {supplier.categoryType === 'seafood' && <Fish className="w-5 h-5" />}
-                    {supplier.categoryType === 'food' && <UtensilsCrossed className="w-5 h-5" />}
-                  </div>
-
-                  <div>
-                    <h4 className="text-sm font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
-                      {tr(supplier.name)}
-                    </h4>
-                  </div>
-                </div>
-
-                {/* Verified Badge */}
-                <div className="mb-3">
-                  {supplier.verifiedType === 'l2' && (
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-[11px] font-semibold text-emerald-700">
-                      <ShieldCheck className="w-3.5 h-3.5 stroke-[2.5]" />
-                      <span>{tr(supplier.verifiedLevel)}</span>
-                    </span>
-                  )}
-                  {supplier.verifiedType === 'l1' && (
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-blue-50 border border-blue-200 text-[11px] font-semibold text-blue-700">
-                      <ShieldCheck className="w-3.5 h-3.5 stroke-[2.5]" />
-                      <span>{tr(supplier.verifiedLevel)}</span>
-                    </span>
-                  )}
-                  {supplier.verifiedType === 'l3' && (
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-teal-50 border border-teal-200 text-[11px] font-semibold text-teal-800">
-                      <CheckCircle2 className="w-3.5 h-3.5 stroke-[2.5]" />
-                      <span>{tr(supplier.verifiedLevel)}</span>
-                    </span>
-                  )}
-                </div>
-
-                {/* Metadata Row: Category + Country */}
-                <div className="flex items-center gap-4 text-xs text-slate-500 font-medium mb-4">
-                  <div className="flex items-center gap-1.5">
-                    {supplier.categoryType === 'agriculture' && <Sprout className="w-3.5 h-3.5 text-slate-400" />}
-                    {supplier.categoryType === 'seafood' && <Fish className="w-3.5 h-3.5 text-slate-400" />}
-                    {supplier.categoryType === 'food' && <UtensilsCrossed className="w-3.5 h-3.5 text-slate-400" />}
-                    <span>{tr(supplier.category)}</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <MapPin className="w-3.5 h-3.5 text-slate-400" />
-                    <span>{tr(supplier.location)}</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Product Tags Row */}
-              <div className="flex flex-wrap gap-1.5 pt-3 border-t border-slate-100">
-                {supplier.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="text-[11px] font-medium text-slate-600 bg-slate-50 border border-slate-200/70 px-2.5 py-1 rounded-md"
-                  >
-                    {tr(tag)}
-                  </span>
-                ))}
-              </div>
-
-            </div>
-          ))}
-        </div>
+        <FeaturedSuppliers />
 
       </section>
 
-      {/* =========================================================================
-          SUPPLIER DETAIL MODAL
-         ========================================================================= */}
-      {activeSupplierModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
-          <div className="relative w-full max-w-lg bg-white rounded-2xl p-6 sm:p-7 shadow-2xl border border-slate-200 text-left">
-            <button
-              onClick={() => setActiveSupplierModal(null)}
-              className="absolute top-5 right-5 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center transition-colors cursor-pointer"
-            >
-              <X className="w-4 h-4" />
-            </button>
-
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center text-slate-800">
-                <Sprout className="w-7 h-7" />
-              </div>
-              <div>
-                <h3 className="text-lg font-bold text-slate-900">{tr(activeSupplierModal.name)}</h3>
-                <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-700">
-                  <ShieldCheck className="w-3.5 h-3.5" />
-                  {tr(activeSupplierModal.verifiedLevel)}
-                </span>
-              </div>
-            </div>
-
-            <p className="text-sm text-slate-600 leading-relaxed mb-4">
-              {tr(activeSupplierModal.description)}
-            </p>
-
-            <div className="space-y-2.5 p-3.5 rounded-xl bg-slate-50 border border-slate-100 text-xs mb-5">
-              <div className="flex justify-between">
-                <span className="text-slate-500">{tr(t.modal.industry)}</span>
-                <span className="font-semibold text-slate-800">{tr(activeSupplierModal.category)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-500">{tr(t.modal.capacity)}</span>
-                <span className="font-semibold text-slate-800">{tr(activeSupplierModal.capacity)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-500">{tr(t.modal.standards)}</span>
-                <span className="font-semibold text-slate-800">{tr(activeSupplierModal.standards)}</span>
-              </div>
-            </div>
-
-            <div className="flex gap-3">
-              <button
-                onClick={() => {
-                  const supplier = DIRECTORY_SUPPLIERS.find((item) => item.id === activeSupplierModal.id);
-                  if (!supplier) return;
-                  onSelectSupplier(supplier);
-                  onOpenRfqModal(supplier);
-                  setActiveSupplierModal(null);
-                }}
-                className="flex-1 py-2.5 rounded-full bg-[#0f172a] hover:bg-slate-800 text-white font-medium text-xs transition-colors cursor-pointer text-center"
-              >
-                {tr(t.modal.sendRfqBtn)}
-              </button>
-              <button
-                onClick={() => setActiveSupplierModal(null)}
-                className="px-5 py-2.5 rounded-full border border-slate-200 text-slate-700 font-medium text-xs hover:bg-slate-50 transition-colors cursor-pointer"
-              >
-                {tr(t.common.close)}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 }

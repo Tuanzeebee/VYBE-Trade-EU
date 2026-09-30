@@ -1,12 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { DEFAULT_SELLER_DETAIL, type SupplierData } from '@/components/BuyerSellerDetail';
 import type { DemoUser } from '@/lib/demoAuth';
 import {
-  findSupplier,
   hrefFor,
   pageForPath,
   parseDirectoryQuery,
-  rememberSupplier,
   resolvePage,
   roleFromType,
   type LegacyPage,
@@ -158,22 +155,6 @@ describe('pageForPath — Header tô sáng đúng mục', () => {
     ['/login', 'login'],
     ['/register', 'register'],
   ])('%s → %s', (path, page) => expect(pageForPath(path)).toBe(page));
-});
-
-describe('findSupplier', () => {
-  it('tìm trong danh bạ theo id', () => {
-    expect(findSupplier('viet-agri').id).toBe('viet-agri');
-  });
-
-  it('nhà cung cấp chọn từ trang chủ (không có trong danh bạ) được nhớ lại', () => {
-    const featured: SupplierData = { ...DEFAULT_SELLER_DETAIL, id: 'featured-x', name: 'Featured X' };
-    rememberSupplier(featured);
-    expect(findSupplier('featured-x').name).toBe('Featured X');
-  });
-
-  it('id lạ → hồ sơ mặc định như trước', () => {
-    expect(findSupplier('khong-co').id).toBe(DEFAULT_SELLER_DETAIL.id);
-  });
 });
 
 describe('roleFromType — /register?type= chọn sẵn vai trò', () => {

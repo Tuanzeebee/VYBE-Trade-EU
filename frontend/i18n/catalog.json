@@ -11328,5 +11328,115 @@
     "Price",
     "Price",
     "Price"
+  ],
+  "Chưa khai báo": [
+    "Not provided",
+    "Non renseigné",
+    "未入力"
+  ],
+  "Đang tải hồ sơ doanh nghiệp…": [
+    "Loading company profile…",
+    "Chargement du profil de l'entreprise…",
+    "企業プロフィールを読み込み中…"
+  ],
+  "Hồ sơ công khai hiển thị với buyer sau khi doanh nghiệp được xác minh.": [
+    "Your public profile becomes visible to buyers once the company is verified.",
+    "Votre profil public devient visible pour les acheteurs une fois l'entreprise vérifiée.",
+    "企業が認証されると、公開プロフィールがバイヤーに表示されます。"
+  ],
+  "Thông tin pháp lý & liên hệ": [
+    "Legal & contact details",
+    "Informations juridiques et coordonnées",
+    "法人情報・連絡先"
+  ],
+  "Năng lực & thị trường": [
+    "Capability & markets",
+    "Capacités et marchés",
+    "供給能力・市場"
+  ],
+  "Chưa có phần giới thiệu. Buyer đọc phần này đầu tiên khi xem hồ sơ.": [
+    "No company introduction yet. Buyers read this first when they open your profile.",
+    "Pas encore de présentation. Les acheteurs la lisent en premier en ouvrant votre profil.",
+    "会社紹介がまだありません。バイヤーはプロフィールを開くと最初にここを読みます。"
+  ],
+  "Viết giới thiệu": [
+    "Write an introduction",
+    "Rédiger une présentation",
+    "紹介文を書く"
+  ],
+  "Chứng nhận & giấy phép": [
+    "Certificates & licences",
+    "Certificats et licences",
+    "認証・許可証"
+  ],
+  "Quản lý": [
+    "Manage",
+    "Gérer",
+    "管理"
+  ],
+  "Không tải được danh sách chứng nhận. Vui lòng thử lại.": [
+    "Could not load certificates. Please try again.",
+    "Impossible de charger les certificats. Veuillez réessayer.",
+    "認証の一覧を読み込めませんでした。もう一度お試しください。"
+  ],
+  "Chưa có chứng nhận nào. Tải lên giấy phép kinh doanh và chứng nhận chất lượng để được xác minh.": [
+    "No certificates yet. Upload your business licence and quality certificates to get verified.",
+    "Aucun certificat pour l'instant. Téléversez votre licence commerciale et vos certificats qualité pour être vérifié.",
+    "認証はまだありません。認証を受けるには営業許可証と品質認証をアップロードしてください。"
+  ],
+  "Sản phẩm cung cấp": [
+    "Products offered",
+    "Produits proposés",
+    "取扱製品"
+  ],
+  "Các nhà cung cấp đã được xác minh sẽ hiện ở đây.": [
+    "Verified suppliers will appear here.",
+    "Les fournisseurs vérifiés apparaîtront ici.",
+    "認証済みのサプライヤーがここに表示されます。"
+  ],
+  "Đăng ký hồ sơ nhà cung cấp": [
+    "Register as a supplier",
+    "S'inscrire comme fournisseur",
+    "サプライヤーとして登録"
+  ],
+  "Tên đăng ký kinh doanh": [
+    "Registered business name",
+    "Raison sociale",
+    "登記上の商号"
+  ],
+  "Thị trường đã xuất khẩu": [
+    "Markets exported to",
+    "Marchés d'exportation",
+    "輸出実績のある市場"
+  ],
+  "Ngôn ngữ làm việc": [
+    "Working languages",
+    "Langues de travail",
+    "対応言語"
+  ],
+  "MST: {0}": [
+    "Tax ID: {0}",
+    "N° fiscal : {0}",
+    "税番号: {0}"
+  ],
+  "Thành lập: {0}": [
+    "Founded: {0}",
+    "Fondée : {0}",
+    "設立: {0}"
+  ],
+  "Hết hạn: {0}": [
+    "Expires: {0}",
+    "Expire le : {0}",
+    "有効期限: {0}"
+  ],
+  "Trạng thái hiện tại: {0}": [
+    "Current status: {0}",
+    "Statut actuel : {0}",
+    "現在の状態: {0}"
+  ],
+  "Tải lên giấy phép và chứng nhận để quản trị viên xác minh doanh nghiệp.": [
+    "Upload licences and certificates so our team can verify your company.",
+    "Téléversez licences et certificats pour que notre équipe vérifie votre entreprise.",
+    "許可証と認証をアップロードすると、運営チームが企業を認証します。"
   ]
 }
