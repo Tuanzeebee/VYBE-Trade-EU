@@ -52,3 +52,46 @@ export async function submitRequestIfNeeded(): Promise<void> {
     if (!(error instanceof AlreadySubmittedError)) throw error;
   }
 }
+
+// ── Cấp xác minh (U20, ADR-0004) ──────────────────────────────────────────────
+export type TierOverview = components['schemas']['TierOverviewOut'];
+export type TierRequirement = components['schemas']['TierRequirementOut'];
+
+export async function getTierOverview(): Promise<TierOverview | null> {
+  try {
+    const { data, response } = await createApiClient().GET('/api/me/verification-tier');
+    return response.ok && data ? data : null;
+  } catch {
+    return null;
+  }
+}
+
+export const TIER_REQUEST_ERRORS: Record<string, string> = {
+  entitlement_required: 'Duyệt cấp Nâng cao là dịch vụ trả phí. Hãy đặt mua gói "Duyệt xác minh Nâng cao" trước.',
+  request_pending: 'Bạn đã có yêu cầu lên cấp đang chờ duyệt.',
+  not_verified: 'Cần được xác minh cấp Cơ bản trước.',
+  invalid_target: 'Cấp này chưa áp dụng cho doanh nghiệp của bạn.',
+};
+
+export async function requestTier(target: number): Promise<{ ok: true } | { ok: false; error: string }> {
+  try {
+    const { error, response } = await createApiClient().POST('/api/exporter/verification-tier-requests', { body: { target_tier: target } });
+    if (response.ok) return { ok: true };
+    const code = (error as { error?: { code?: string } } | undefined)?.error?.code ?? '';
+    return { ok: false, error: TIER_REQUEST_ERRORS[code] ?? NETWORK };
+  } catch {
+    return { ok: false, error: NETWORK };
+  }
+}
+
+export async function adminTierDown(companyId: string, reason: string): Promise<boolean> {
+  try {
+    const { response } = await createApiClient().POST('/api/admin/companies/{company_id}/tier-down', {
+      params: { path: { company_id: companyId } },
+      body: { reason },
+    });
+    return response.ok;
+  } catch {
+    return false;
+  }
+}

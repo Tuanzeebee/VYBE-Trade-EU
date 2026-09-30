@@ -1,8 +1,8 @@
 // Thẻ nhà cung cấp (E3, U10): tên, MỘT huy hiệu "Đã xác minh", tỉnh/thành, nhóm hàng, mô tả ngắn, sản phẩm
 // (sản phẩm khớp từ khóa được làm nổi bật) hoặc dịch vụ. Không dùng hook để render được phía server.
 import React from 'react';
-import { BadgeCheck } from 'lucide-react';
 import { Link } from '../i18n/navigation';
+import TierBadge from './TierBadge';
 import { translateText, type Locale } from '../i18n/translate';
 import { countryName, industryLabel, serviceCategoryLabel, type SupplierCardData } from '../lib/suppliersApi';
 
@@ -31,10 +31,7 @@ export default function SupplierCard({ supplier, locale }: { supplier: SupplierC
             {supplier.legal_name}
           </Link>
         </h2>
-        <span data-testid="verified-badge" className="inline-flex shrink-0 items-center gap-1 rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-900">
-          <BadgeCheck className="h-3.5 w-3.5" aria-hidden="true" />
-          {t('Đã xác minh')}
-        </span>
+        <TierBadge tier={supplier.verification_tier ?? 1} locale={locale} />
       </div>
       <p className="mt-1 text-sm text-slate-600">
         <span data-testid="country">{place}</span>

@@ -2269,6 +2269,57 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/me/verification-tier": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** My Verification Tier */
+        get: operations["my_verification_tier_api_me_verification_tier_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/exporter/verification-tier-requests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Request Verification Tier */
+        post: operations["request_verification_tier_api_exporter_verification_tier_requests_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/companies/{company_id}/tier-down": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Tier Down */
+        post: operations["tier_down_api_admin_companies__company_id__tier_down_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -2364,6 +2415,11 @@ export interface components {
              * @enum {string}
              */
             verification_level: "basic" | "evfta_verified";
+            /**
+             * Verification Tier
+             * @default 0
+             */
+            verification_tier?: number;
             /** Is Hidden */
             is_hidden: boolean;
             /** Profile Completeness Score */
@@ -3011,6 +3067,15 @@ export interface components {
             verified_at: string | null;
             /** Expires At */
             expires_at: string | null;
+            /**
+             * Verification Tier
+             * @default 0
+             */
+            verification_tier?: number;
+            /** Tier Reviewed At */
+            tier_reviewed_at?: string | null;
+            /** Tier Expires At */
+            tier_expires_at?: string | null;
             /** Profile Completeness Score */
             profile_completeness_score: string;
             /**
@@ -4479,6 +4544,11 @@ export interface components {
             /** Products */
             products: components["schemas"]["PublicProductOut"][];
             /**
+             * Verification Tier
+             * @default 1
+             */
+            verification_tier?: number;
+            /**
              * Offering Type
              * @default products
              * @enum {string}
@@ -4611,6 +4681,18 @@ export interface components {
             company: components["schemas"]["CompanyOut"];
             /** Products */
             products: components["schemas"]["ReviewProductOut"][];
+            /**
+             * Target Tier
+             * @default 1
+             */
+            target_tier?: number;
+            /**
+             * Current Tier
+             * @default 0
+             */
+            current_tier?: number;
+            /** Tier Requirements */
+            tier_requirements?: components["schemas"]["TierRequirementOut"][];
         };
         /**
          * QuotaInfoOut
@@ -5581,6 +5663,11 @@ export interface components {
              * @enum {string}
              */
             verification_level: "basic" | "evfta_verified";
+            /**
+             * Verification Tier
+             * @default 1
+             */
+            verification_tier?: number;
             /** Description Vi */
             description_vi: string | null;
             /** Description En */
@@ -5626,6 +5713,15 @@ export interface components {
             origin_evidence_complete: boolean;
             /** Certificates */
             certificates: components["schemas"]["VerifiedCertificateOut"][];
+            /**
+             * Verification Tier
+             * @default 1
+             */
+            verification_tier?: number;
+            /** Tier Reviewed At */
+            tier_reviewed_at?: string | null;
+            /** Tier Expires At */
+            tier_expires_at?: string | null;
         };
         /** SupplierListTile */
         SupplierListTile: {
@@ -6081,6 +6177,80 @@ export interface components {
             /** Eligible Subtypes */
             eligible_subtypes?: string[] | null;
         };
+        /** TierDownIn */
+        TierDownIn: {
+            /** Reason */
+            reason: string;
+        };
+        /** TierOverviewOut */
+        TierOverviewOut: {
+            /**
+             * Company Kind
+             * @enum {string}
+             */
+            company_kind: "product_seller" | "service_provider" | "buyer";
+            /** Status */
+            status: string;
+            /** Tier */
+            tier: number;
+            /** Tier Name Vi */
+            tier_name_vi: string;
+            /** Tier Name En */
+            tier_name_en: string;
+            /** Verified At */
+            verified_at: string | null;
+            /** Tier Reviewed At */
+            tier_reviewed_at: string | null;
+            /** Tier Expires At */
+            tier_expires_at: string | null;
+            /** Expires At */
+            expires_at: string | null;
+            /** Next Tier */
+            next_tier: number | null;
+            /** Next Tier Paid */
+            next_tier_paid: boolean;
+            /** Entitled */
+            entitled: boolean;
+            /** Pending Tier Request */
+            pending_tier_request: boolean;
+            /** Request Error */
+            request_error: string | null;
+            /** Requirements */
+            requirements: components["schemas"]["TierRequirementOut"][];
+        };
+        /** TierRequestIn */
+        TierRequestIn: {
+            /** Target Tier */
+            target_tier: number;
+        };
+        /**
+         * TierRequirementOut
+         * @description Một yêu cầu của cấp xác minh (U20). reviewed=False: bản nháp chưa được luật TM duyệt.
+         */
+        TierRequirementOut: {
+            /** Tier */
+            tier: number;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "evidence" | "check" | "manual";
+            /** Code */
+            code: string;
+            /** Label Vi */
+            label_vi: string;
+            /** Label En */
+            label_en: string;
+            /** Is Required */
+            is_required: boolean;
+            /** Reviewed */
+            reviewed: boolean;
+            /**
+             * State
+             * @enum {string}
+             */
+            state: "met" | "pending" | "missing" | "manual";
+        };
         /** TradeAgreementIn */
         TradeAgreementIn: {
             /** Code */
@@ -6236,6 +6406,11 @@ export interface components {
             reviewed_at: string | null;
             /** Decision Reason */
             decision_reason: string | null;
+            /**
+             * Target Tier
+             * @default 1
+             */
+            target_tier?: number;
         };
         /** VerificationTile */
         VerificationTile: {
@@ -11824,6 +11999,107 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["VerificationRequestOut"];
                 };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    my_verification_tier_api_me_verification_tier_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TierOverviewOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    request_verification_tier_api_exporter_verification_tier_requests_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TierRequestIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VerificationRequestOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    tier_down_api_admin_companies__company_id__tier_down_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                company_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TierDownIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Validation Error */
             422: {

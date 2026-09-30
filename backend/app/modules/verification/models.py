@@ -11,6 +11,7 @@ from sqlalchemy import (
     Enum,
     ForeignKey,
     Integer,
+    SmallInteger,
     String,
     Text,
     UniqueConstraint,
@@ -31,6 +32,8 @@ class Decision(StrEnum):
     level_up = "level_up"  # chỉ hệ thống: đủ bằng chứng bắt buộc còn hạn → evfta_verified
     level_down = "level_down"  # chỉ hệ thống: thiếu/hết hạn bằng chứng → basic
     submit = "submit"  # chủ công ty nộp yêu cầu xác minh (unverified/rejected → pending)
+    tier_up = "tier_up"  # U20: admin nâng cấp xác minh (Cơ bản → Nâng cao → Chuyên sâu)
+    tier_down = "tier_down"  # U20: admin hạ cấp (có lý do) hoặc hệ thống khi cấp hết hạn
 
 
 class VerificationDecision(Base):
@@ -58,6 +61,8 @@ class VerificationDecision(Base):
     to_status: Mapped[str] = mapped_column(String(16))
     from_level: Mapped[str] = mapped_column(String(16), default="basic")
     to_level: Mapped[str] = mapped_column(String(16), default="basic")
+    from_tier: Mapped[int | None] = mapped_column(SmallInteger)
+    to_tier: Mapped[int | None] = mapped_column(SmallInteger)
     decided_at: Mapped[dt.datetime] = mapped_column(
         DateTime(timezone=True), server_default=text("clock_timestamp()")
     )
@@ -161,9 +166,11 @@ class RequestStatus(StrEnum):
 
 
 class VerificationRequest(Base):
-    """Yêu cầu xác minh của công ty (I1). Trạng thái xác minh vẫn chỉ đổi qua decide()."""
+    """Yêu cầu xác minh của công ty (I1). Trạng thái xác minh vẫn chỉ đổi qua decide().
+    target_tier 1 = xác minh lần đầu; 2–3 = xin lên cấp Nâng cao / Chuyên sâu (U20)."""
 
     __tablename__ = "verification_requests"
+    __table_args__ = (CheckConstraint("target_tier BETWEEN 1 AND 3", name="target_tier_range"),)
 
     id: Mapped[uuid.UUID] = mapped_column(
         Uuid, primary_key=True, default=uuid.uuid4, server_default=text("gen_random_uuid()")
@@ -183,3 +190,37 @@ class VerificationRequest(Base):
     )
     reviewed_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
     decision_reason: Mapped[str | None] = mapped_column(Text)  # lý do từ chối / yêu cầu bổ sung
+    target_tier: Mapped[int] = mapped_column(SmallInteger, default=1, server_default="1")
+
+
+class TierRequirement(Base):
+    """Yêu cầu của một cấp xác minh theo loại công ty (U20) — DỮ LIỆU luật TM duyệt. Dòng chưa có
+    reviewed_by là nháp: chỉ hiện làm hướng dẫn, không làm job tự hạ cấp."""
+
+    __tablename__ = "tier_requirements"
+    __table_args__ = (
+        CheckConstraint(
+            "company_kind IN ('product_seller', 'service_provider', 'buyer')", name="company_kind"
+        ),
+        CheckConstraint("tier BETWEEN 1 AND 3", name="tier"),
+        CheckConstraint("kind IN ('evidence', 'check', 'manual')", name="kind"),
+        CheckConstraint(
+            "(reviewed_by IS NULL) = (reviewed_at IS NULL)", name="reviewed_by_and_at_together"
+        ),
+        UniqueConstraint("company_kind", "tier", "code", name="kind_tier_code"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, primary_key=True, default=uuid.uuid4, server_default=text("gen_random_uuid()")
+    )
+    company_kind: Mapped[str] = mapped_column(String(20))
+    tier: Mapped[int] = mapped_column(SmallInteger)
+    kind: Mapped[str] = mapped_column(String(16))  # evidence (mã loại bằng chứng) | check | manual
+    code: Mapped[str] = mapped_column(String(64))
+    label_vi: Mapped[str] = mapped_column(String(255))
+    label_en: Mapped[str] = mapped_column(String(255))
+    is_required: Mapped[bool] = mapped_column(Boolean, default=True, server_default=text("true"))
+    sort_order: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
+    source: Mapped[str | None] = mapped_column(Text)
+    reviewed_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id"))
+    reviewed_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))

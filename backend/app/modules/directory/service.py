@@ -117,4 +117,7 @@ async def credentials(
         expires_at=state.expires_at,
         origin_evidence_complete=state.level == "evfta_verified",
         certificates=[VerifiedCertificateOut(**row) for row in rows],
+        verification_tier=max(state.tier, 1),
+        tier_reviewed_at=state.tier_reviewed_at or state.verified_at,
+        tier_expires_at=state.tier_expires_at or state.expires_at,
     )

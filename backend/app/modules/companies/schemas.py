@@ -198,6 +198,10 @@ class CompanyOut(BaseModel):
     verification_level: Literal["basic", "evfta_verified"]
     verified_at: datetime | None
     expires_at: datetime | None
+    # U20: cấp xác minh 0–3 (0 khi chưa verified); cấp 2–3 có hạn riêng.
+    verification_tier: int = 0
+    tier_reviewed_at: datetime | None = None
+    tier_expires_at: datetime | None = None
     profile_completeness_score: Decimal
     created_at: datetime
     updated_at: datetime
@@ -449,6 +453,7 @@ class PublicCompanyOut(BaseModel):
     verification_level: Literal["basic", "evfta_verified"]
     verified_at: datetime | None
     products: list[PublicProductOut]
+    verification_tier: int = 1  # U20: hồ sơ công khai luôn đã xác minh (cấp ≥ 1)
     # U10: hồ sơ công khai đầy đủ hơn. Địa chỉ nhà máy / toạ độ chỉ có khi chủ hồ sơ đồng ý
     # (location_public); mặc định bản đồ chỉ ở mức tỉnh/thành (city).
     offering_type: Literal["products", "services", "both"] = "products"
@@ -508,6 +513,9 @@ class VerificationState(BaseModel):
     level: str
     verified_at: datetime | None
     expires_at: datetime | None
+    tier: int = 0
+    tier_reviewed_at: datetime | None = None
+    tier_expires_at: datetime | None = None
 
 
 # ── Admin kiểm duyệt (I4) ─────────────────────────────────────────────────────
@@ -525,6 +533,7 @@ class AdminCompanyOut(BaseModel):
     description_en: str | None
     verification_status: Literal["unverified", "pending", "verified", "rejected"]
     verification_level: Literal["basic", "evfta_verified"]
+    verification_tier: int = 0  # U20
     is_hidden: bool
     profile_completeness_score: Decimal
     owner_email: str | None
@@ -591,6 +600,7 @@ class ExporterCardOut(BaseModel):
     description_en: str | None
     logo_url: str | None
     product_names: list[str]  # tối đa 3 sản phẩm, sản phẩm khớp từ khóa trước
+    verification_tier: int = 1  # U20
     product_count: int
     hs_codes: list[str]  # mã HS của các sản phẩm đang hiển thị (không trùng)
     # U10: sản phẩm khớp từ khóa (để giao diện làm nổi bật), loại hình cung cấp và dịch vụ.

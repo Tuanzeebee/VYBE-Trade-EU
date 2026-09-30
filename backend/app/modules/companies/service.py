@@ -136,6 +136,9 @@ def _verification_state(company: Company) -> VerificationState:
         level=company.verification_level.value,
         verified_at=company.verified_at,
         expires_at=company.expires_at,
+        tier=company.verification_tier,
+        tier_reviewed_at=company.tier_reviewed_at,
+        tier_expires_at=company.tier_expires_at,
     )
 
 
@@ -155,10 +158,14 @@ async def set_verification_state(
     level: str,
     verified_at: datetime | None,
     expires_at: datetime | None,
+    tier: int | None = None,
+    tier_reviewed_at: datetime | None = None,
+    tier_expires_at: datetime | None = None,
 ) -> VerificationState:
     """Ghi trạng thái xác minh; trả về trạng thái TRƯỚC khi đổi.
 
     Chỉ verification.service được gọi hàm này (test khóa) — nơi duy nhất đổi trạng thái xác minh.
+    U20: tier None = giữ cấp hiện tại; không còn verified thì cấp luôn về 0 (ADR-0004).
     """
     company = await session.get(Company, company_id)
     if company is None:
@@ -168,8 +175,40 @@ async def set_verification_state(
     company.verification_level = VerificationLevel(level)
     company.verified_at = verified_at
     company.expires_at = expires_at
+    if status != VerificationStatus.verified.value:
+        tier, tier_reviewed_at, tier_expires_at = 0, None, None
+    if tier is not None:
+        company.verification_tier = tier
+        company.tier_reviewed_at = tier_reviewed_at
+        company.tier_expires_at = tier_expires_at
     await session.flush()
     return previous
+
+
+async def list_tier_expired(session: AsyncSession, now: datetime) -> list[uuid.UUID]:
+    """U20: công ty verified ở cấp 2–3 mà hạn của cấp đã tới (tier_expires_at <= now)."""
+    rows = await session.scalars(
+        select(Company.id).where(
+            Company.verification_status == VerificationStatus.verified,
+            Company.verification_tier >= 2,
+            Company.tier_expires_at.is_not(None),
+            Company.tier_expires_at <= now,
+        )
+    )
+    return list(rows)
+
+
+async def list_companies_at_tier(
+    session: AsyncSession, min_tier: int
+) -> list[tuple[uuid.UUID, str, str, int]]:
+    """U20: (id, loại công ty, offering_type, cấp) của công ty verified từ cấp min_tier."""
+    rows = await session.execute(
+        select(Company.id, Company.type, Company.offering_type, Company.verification_tier).where(
+            Company.verification_status == VerificationStatus.verified,
+            Company.verification_tier >= min_tier,
+        )
+    )
+    return [(r[0], r[1].value, r[2], r[3]) for r in rows]
 
 
 async def list_expired_verified(session: AsyncSession, now: datetime) -> list[uuid.UUID]:
@@ -282,6 +321,7 @@ async def _to_admin_out(session: AsyncSession, company: Company) -> AdminCompany
         description_en=company.description_en,
         verification_status=company.verification_status.value,
         verification_level=company.verification_level.value,
+        verification_tier=company.verification_tier,
         is_hidden=company.is_hidden,
         profile_completeness_score=company.profile_completeness_score,
         owner_email=contact.email if contact else None,

@@ -555,6 +555,7 @@ async def search_verified_exporters(
             country=c.country,
             industry_sector=c.industry_sector,
             verification_level=c.verification_level.value,
+            verification_tier=max(c.verification_tier, 1),
             verified_at=c.verified_at,
             description_vi=c.description_vi,
             description_en=c.description_en,
@@ -746,6 +747,7 @@ async def get_public_profile(
         export_markets=[m.market for m in company.export_markets],
         languages_spoken=[lang.lang for lang in company.languages],
         verification_level=company.verification_level.value,
+        verification_tier=max(company.verification_tier, 1),
         verified_at=company.verified_at,
         products=products,
     )

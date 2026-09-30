@@ -14503,5 +14503,165 @@
     "Payment confirmed for order {0}. The service is now active.",
     "Paiement confirmé pour la commande {0}. Le service est actif.",
     "注文{0}の支払いを確認しました。サービスが有効になりました。"
+  ],
+  "Danh sách chỉ để đối chiếu; cấp chỉ đổi khi bạn bấm quyết định.": [
+    "For reference only; the tier changes only when you click a decision.",
+    "Pour référence uniquement ; le niveau ne change que sur votre décision.",
+    "参照用です。レベルは決定ボタンを押したときだけ変わります。"
+  ],
+  "Yêu cầu theo cấp": [
+    "Tier requirements",
+    "Exigences par niveau",
+    "レベル別の要件"
+  ],
+  "không bắt buộc": [
+    "optional",
+    "facultatif",
+    "任意"
+  ],
+  "nháp chưa duyệt": [
+    "unreviewed draft",
+    "brouillon non validé",
+    "未承認の下書き"
+  ],
+  "Chưa đủ bằng chứng xuất xứ bắt buộc còn hạn cho nhóm hàng của bạn.": [
+    "Mandatory origin evidence for your product group is not yet complete and valid.",
+    "Les preuves d'origine obligatoires pour votre groupe de produits ne sont pas encore complètes et valides.",
+    "貴社の製品群に必要な原産地証拠がまだ揃っていないか期限切れです。"
+  ],
+  "Đủ bằng chứng xuất xứ bắt buộc còn hạn cho nhóm hàng của bạn.": [
+    "Mandatory origin evidence for your product group is complete and valid.",
+    "Les preuves d'origine obligatoires pour votre groupe de produits sont complètes et valides.",
+    "貴社の製品群に必要な原産地証拠がすべて有効です。"
+  ],
+  "Cấp xác minh": [
+    "Verification tier",
+    "Niveau de vérification",
+    "認証レベル"
+  ],
+  "Danh sách yêu cầu đang là bản nháp, chờ bộ phận pháp lý duyệt.": [
+    "The requirement list is a draft pending legal review.",
+    "La liste des exigences est un brouillon en attente de validation juridique.",
+    "要件リストは下書きで、法務の承認待ちです。"
+  ],
+  "Ngày duyệt": [
+    "Reviewed on",
+    "Vérifié le",
+    "承認日"
+  ],
+  "Đặt mua gói duyệt Nâng cao": [
+    "Order the Enhanced review",
+    "Commander la vérification avancée",
+    "上位認証の審査を注文"
+  ],
+  "đã đạt": [
+    "achieved",
+    "atteint",
+    "達成済み"
+  ],
+  "Cơ bản": [
+    "Basic",
+    "Base",
+    "基本"
+  ],
+  "Nâng cao": [
+    "Enhanced",
+    "Avancé",
+    "上位"
+  ],
+  "Chuyên sâu": [
+    "Advanced",
+    "Approfondi",
+    "高度"
+  ],
+  "Đã đạt": [
+    "Met",
+    "Satisfait",
+    "達成"
+  ],
+  "Chưa có": [
+    "Missing",
+    "Manquant",
+    "未提出"
+  ],
+  "Quản trị viên kiểm tay": [
+    "Checked manually by an admin",
+    "Vérifié manuellement par un administrateur",
+    "管理者が手動で確認"
+  ],
+  "Kiểm bởi đội ngũ VYBE Trade": [
+    "Checked by the VYBE Trade team",
+    "Vérifié par l'équipe VYBE Trade",
+    "VYBE Tradeチームが確認"
+  ],
+  "Phạm vi: pháp lý doanh nghiệp (đăng ký kinh doanh, người đại diện).": [
+    "Scope: company legal status (business registration, legal representative).",
+    "Portée : statut juridique (immatriculation, représentant légal).",
+    "範囲：企業の法的地位（事業登録、法定代表者）。"
+  ],
+  "Phạm vi: năng lực (chứng nhận đối chiếu tổ chức cấp, bằng chứng xuất khẩu).": [
+    "Scope: capability (certificates checked with issuers, export evidence).",
+    "Portée : capacités (certificats vérifiés auprès des émetteurs, preuves d'export).",
+    "範囲：能力（発行機関で照合した認証、輸出の証拠）。"
+  ],
+  "Phạm vi: đánh giá nhà máy của bên thứ ba.": [
+    "Scope: third-party factory audit.",
+    "Portée : audit d'usine par un tiers.",
+    "範囲：第三者による工場監査。"
+  ],
+  "Xin lên cấp {0}": [
+    "Requests {0} tier",
+    "Demande le niveau {0}",
+    "{0}レベルを申請"
+  ],
+  "Cấp {0}": [
+    "{0} tier",
+    "Niveau {0}",
+    "{0}レベル"
+  ],
+  "Nâng lên cấp {0}": [
+    "Raise to {0} tier",
+    "Passer au niveau {0}",
+    "{0}レベルに引き上げ"
+  ],
+  "Yêu cầu duyệt cấp {0}": [
+    "Request {0} tier review",
+    "Demander la vérification de niveau {0}",
+    "{0}レベルの審査を申請"
+  ],
+  "Duyệt cấp Nâng cao là dịch vụ trả phí. Hãy đặt mua gói \"Duyệt xác minh Nâng cao\" trước.": [
+    "The Enhanced review is a paid service. Please order \"Enhanced verification review\" first.",
+    "La vérification avancée est payante. Commandez d'abord « Vérification avancée ».",
+    "上位認証の審査は有料です。先に「上位認証の審査」を注文してください。"
+  ],
+  "Bạn đã có yêu cầu lên cấp đang chờ duyệt.": [
+    "You already have a tier request awaiting review.",
+    "Vous avez déjà une demande de niveau en attente.",
+    "審査待ちのレベル申請がすでにあります。"
+  ],
+  "Cần được xác minh cấp Cơ bản trước.": [
+    "Basic verification is needed first.",
+    "La vérification de base est d'abord nécessaire.",
+    "まず基本認証が必要です。"
+  ],
+  "Cấp này chưa áp dụng cho doanh nghiệp của bạn.": [
+    "This tier does not apply to your company yet.",
+    "Ce niveau ne s'applique pas encore à votre entreprise.",
+    "このレベルは貴社にはまだ適用されません。"
+  ],
+  "Đã gửi yêu cầu lên cấp. Quản trị viên sẽ đối chiếu hồ sơ của bạn.": [
+    "Tier request sent. An admin will review your file.",
+    "Demande envoyée. Un administrateur examinera votre dossier.",
+    "レベル申請を送信しました。管理者が書類を確認します。"
+  ],
+  "Đánh giá nhà máy của bên thứ ba đã được VYBE Trade kiểm (cấp Chuyên sâu)": [
+    "Third-party factory audit checked by VYBE Trade (Advanced tier)",
+    "Audit d'usine tiers vérifié par VYBE Trade (niveau approfondi)",
+    "第三者工場監査をVYBE Tradeが確認（高度レベル）"
+  ],
+  "Năng lực đã được VYBE Trade kiểm (cấp Nâng cao)": [
+    "Capability checked by VYBE Trade (Enhanced tier)",
+    "Capacités vérifiées par VYBE Trade (niveau avancé)",
+    "能力をVYBE Tradeが確認（上位レベル）"
   ]
 }

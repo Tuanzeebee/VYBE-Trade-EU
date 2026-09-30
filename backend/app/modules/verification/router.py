@@ -15,6 +15,7 @@ from app.modules.verification import (
     admin_spreadsheet,
     evidence_service,
     request_service,
+    tier_service,
 )
 from app.modules.verification.admin_schemas import (
     EvidenceReviewIn,
@@ -33,6 +34,9 @@ from app.modules.verification.schemas import (
     EvidencePatch,
     EvidenceTypePublic,
     QueueItem,
+    TierDownIn,
+    TierOverviewOut,
+    TierRequestIn,
     VerificationRequestOut,
 )
 
@@ -221,3 +225,25 @@ async def decide_verification_request(
     request_id: uuid.UUID, data: DecisionIn, admin: Admin, session: DB
 ) -> VerificationRequestOut:
     return await request_service.decide_request(session, admin, request_id, data)
+
+
+# ── Cấp xác minh (U20, ADR-0004) ──────────────────────────────────────────────
+Owner = Annotated[CurrentUser, Depends(require_role("exporter", "buyer"))]
+
+
+@router.get("/api/me/verification-tier")
+async def my_verification_tier(user: Owner, session: DB) -> TierOverviewOut:
+    return await tier_service.overview(session, user)
+
+
+@router.post("/api/exporter/verification-tier-requests", status_code=201)
+async def request_verification_tier(
+    data: TierRequestIn, user: Exporter, session: DB
+) -> VerificationRequestOut:
+    return await tier_service.request_tier(session, user, data)
+
+
+@router.post("/api/admin/companies/{company_id}/tier-down", status_code=204)
+async def tier_down(company_id: uuid.UUID, data: TierDownIn, admin: Admin, session: DB) -> Response:
+    await tier_service.admin_tier_down(session, admin, company_id, data)
+    return Response(status_code=204)

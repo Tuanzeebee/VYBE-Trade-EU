@@ -265,6 +265,15 @@ async def _facts(session: AsyncSession, company_id: uuid.UUID) -> list[EvidenceF
     return [EvidenceFact(r.type_code, r.approval_status.value, r.expires_at) for r in rows]
 
 
+async def evidence_states(
+    session: AsyncSession, company_id: uuid.UUID, today: dt.date | None = None
+) -> dict[str, str]:
+    """Trạng thái danh sách kiểm của từng loại bằng chứng công ty đã nộp (U20 cấp xác minh)."""
+    facts = await _facts(session, company_id)
+    moment = today or _today()
+    return {code: checklist_state(code, facts, moment) for code in {f.type_code for f in facts}}
+
+
 async def _categories(session: AsyncSession, company_id: uuid.UUID) -> set[str]:
     categories: set[str] = set()
     for code in await product_service.list_active_hs_codes(session, company_id):

@@ -10018,6 +10018,176 @@
         }
       }
     },
+    "/api/me/verification-tier": {
+      "get": {
+        "tags": [
+          "verification"
+        ],
+        "summary": "My Verification Tier",
+        "operationId": "my_verification_tier_api_me_verification_tier_get",
+        "parameters": [
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TierOverviewOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/exporter/verification-tier-requests": {
+      "post": {
+        "tags": [
+          "verification"
+        ],
+        "summary": "Request Verification Tier",
+        "operationId": "request_verification_tier_api_exporter_verification_tier_requests_post",
+        "parameters": [
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TierRequestIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerificationRequestOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/companies/{company_id}/tier-down": {
+      "post": {
+        "tags": [
+          "verification"
+        ],
+        "summary": "Tier Down",
+        "operationId": "tier_down_api_admin_companies__company_id__tier_down_post",
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Company Id"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TierDownIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/health": {
       "get": {
         "summary": "Health",
@@ -10259,6 +10429,11 @@
               "evfta_verified"
             ],
             "title": "Verification Level"
+          },
+          "verification_tier": {
+            "type": "integer",
+            "title": "Verification Tier",
+            "default": 0
           },
           "is_hidden": {
             "type": "boolean",
@@ -12575,6 +12750,35 @@
               }
             ],
             "title": "Expires At"
+          },
+          "verification_tier": {
+            "type": "integer",
+            "title": "Verification Tier",
+            "default": 0
+          },
+          "tier_reviewed_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tier Reviewed At"
+          },
+          "tier_expires_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tier Expires At"
           },
           "profile_completeness_score": {
             "type": "string",
@@ -17701,6 +17905,11 @@
             "type": "array",
             "title": "Products"
           },
+          "verification_tier": {
+            "type": "integer",
+            "title": "Verification Tier",
+            "default": 1
+          },
           "offering_type": {
             "type": "string",
             "enum": [
@@ -18099,6 +18308,23 @@
             },
             "type": "array",
             "title": "Products"
+          },
+          "target_tier": {
+            "type": "integer",
+            "title": "Target Tier",
+            "default": 1
+          },
+          "current_tier": {
+            "type": "integer",
+            "title": "Current Tier",
+            "default": 0
+          },
+          "tier_requirements": {
+            "items": {
+              "$ref": "#/components/schemas/TierRequirementOut"
+            },
+            "type": "array",
+            "title": "Tier Requirements"
           }
         },
         "type": "object",
@@ -21395,6 +21621,11 @@
             ],
             "title": "Verification Level"
           },
+          "verification_tier": {
+            "type": "integer",
+            "title": "Verification Tier",
+            "default": 1
+          },
           "description_vi": {
             "anyOf": [
               {
@@ -21547,6 +21778,35 @@
             },
             "type": "array",
             "title": "Certificates"
+          },
+          "verification_tier": {
+            "type": "integer",
+            "title": "Verification Tier",
+            "default": 1
+          },
+          "tier_reviewed_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tier Reviewed At"
+          },
+          "tier_expires_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tier Expires At"
           }
         },
         "type": "object",
@@ -23615,6 +23875,233 @@
         "type": "object",
         "title": "TariffQuotaPatch"
       },
+      "TierDownIn": {
+        "properties": {
+          "reason": {
+            "type": "string",
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Reason"
+          }
+        },
+        "type": "object",
+        "required": [
+          "reason"
+        ],
+        "title": "TierDownIn"
+      },
+      "TierOverviewOut": {
+        "properties": {
+          "company_kind": {
+            "type": "string",
+            "enum": [
+              "product_seller",
+              "service_provider",
+              "buyer"
+            ],
+            "title": "Company Kind"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "tier": {
+            "type": "integer",
+            "title": "Tier"
+          },
+          "tier_name_vi": {
+            "type": "string",
+            "title": "Tier Name Vi"
+          },
+          "tier_name_en": {
+            "type": "string",
+            "title": "Tier Name En"
+          },
+          "verified_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Verified At"
+          },
+          "tier_reviewed_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tier Reviewed At"
+          },
+          "tier_expires_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tier Expires At"
+          },
+          "expires_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expires At"
+          },
+          "next_tier": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Tier"
+          },
+          "next_tier_paid": {
+            "type": "boolean",
+            "title": "Next Tier Paid"
+          },
+          "entitled": {
+            "type": "boolean",
+            "title": "Entitled"
+          },
+          "pending_tier_request": {
+            "type": "boolean",
+            "title": "Pending Tier Request"
+          },
+          "request_error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Request Error"
+          },
+          "requirements": {
+            "items": {
+              "$ref": "#/components/schemas/TierRequirementOut"
+            },
+            "type": "array",
+            "title": "Requirements"
+          }
+        },
+        "type": "object",
+        "required": [
+          "company_kind",
+          "status",
+          "tier",
+          "tier_name_vi",
+          "tier_name_en",
+          "verified_at",
+          "tier_reviewed_at",
+          "tier_expires_at",
+          "expires_at",
+          "next_tier",
+          "next_tier_paid",
+          "entitled",
+          "pending_tier_request",
+          "request_error",
+          "requirements"
+        ],
+        "title": "TierOverviewOut"
+      },
+      "TierRequestIn": {
+        "properties": {
+          "target_tier": {
+            "type": "integer",
+            "maximum": 3,
+            "minimum": 2,
+            "title": "Target Tier"
+          }
+        },
+        "type": "object",
+        "required": [
+          "target_tier"
+        ],
+        "title": "TierRequestIn"
+      },
+      "TierRequirementOut": {
+        "properties": {
+          "tier": {
+            "type": "integer",
+            "title": "Tier"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "evidence",
+              "check",
+              "manual"
+            ],
+            "title": "Kind"
+          },
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "label_vi": {
+            "type": "string",
+            "title": "Label Vi"
+          },
+          "label_en": {
+            "type": "string",
+            "title": "Label En"
+          },
+          "is_required": {
+            "type": "boolean",
+            "title": "Is Required"
+          },
+          "reviewed": {
+            "type": "boolean",
+            "title": "Reviewed"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "met",
+              "pending",
+              "missing",
+              "manual"
+            ],
+            "title": "State"
+          }
+        },
+        "type": "object",
+        "required": [
+          "tier",
+          "kind",
+          "code",
+          "label_vi",
+          "label_en",
+          "is_required",
+          "reviewed",
+          "state"
+        ],
+        "title": "TierRequirementOut",
+        "description": "Một yêu cầu của cấp xác minh (U20). reviewed=False: bản nháp chưa được luật TM duyệt."
+      },
       "TradeAgreementIn": {
         "properties": {
           "code": {
@@ -24131,6 +24618,11 @@
               }
             ],
             "title": "Decision Reason"
+          },
+          "target_tier": {
+            "type": "integer",
+            "title": "Target Tier",
+            "default": 1
           }
         },
         "type": "object",

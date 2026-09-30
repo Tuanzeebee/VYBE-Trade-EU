@@ -98,6 +98,7 @@ class Company(Base):
         CheckConstraint(
             "offering_type IN ('products', 'services', 'both')", name="offering_type_known"
         ),
+        CheckConstraint("verification_tier BETWEEN 0 AND 3", name="verification_tier_range"),
         CheckConstraint(
             "capacity_period IS NULL OR capacity_period IN ('month', 'year')",
             name="capacity_period_known",
@@ -175,6 +176,10 @@ class Company(Base):
     )
     verified_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # U20 (ADR-0004): cấp xác minh 0–3; chỉ verification.decide() đổi. Cấp 2–3 có hạn riêng.
+    verification_tier: Mapped[int] = mapped_column(SmallInteger, default=0, server_default="0")
+    tier_reviewed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    tier_expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     is_hidden: Mapped[bool] = mapped_column(Boolean, default=False, server_default=text("false"))
     profile_completeness_score: Mapped[Decimal] = mapped_column(
         Numeric(5, 2), default=Decimal("0"), server_default=text("0")

@@ -14,6 +14,7 @@ class SupplierCardOut(BaseModel):
     country: str
     industry_sector: str | None
     verification_level: Literal["basic", "evfta_verified"]
+    verification_tier: int = 1  # U20
     description_vi: str | None
     description_en: str | None
     logo_url: str | None
@@ -60,3 +61,7 @@ class SupplierCredentialsOut(BaseModel):
     verified_by: str = "VYBE Trade"
     origin_evidence_complete: bool  # đủ bằng chứng xuất xứ bắt buộc (verification_level nội bộ)
     certificates: list[VerifiedCertificateOut]
+    # U20: cấp xác minh công khai (1 Cơ bản, 2 Nâng cao, 3 Chuyên sâu), ngày duyệt và hạn của cấp.
+    verification_tier: int = 1
+    tier_reviewed_at: dt.datetime | None = None
+    tier_expires_at: dt.datetime | None = None

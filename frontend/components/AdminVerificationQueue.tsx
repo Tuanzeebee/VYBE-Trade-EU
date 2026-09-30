@@ -3,6 +3,8 @@
 // Hàng đợi xác minh (I1) và quyết định (I2). Trạng thái xác minh do quản trị viên quyết định —
 // không phải hệ thống hay AI. Từ chối và yêu cầu bổ sung bắt buộc có lý do.
 import React, { useCallback, useEffect, useState } from 'react';
+import { TIER_LABELS } from './TierBadge';
+import { REQUIREMENT_STATES, REQUIREMENT_TONES } from './VerificationTier';
 import { useLanguage } from '../context/LanguageContext';
 import { decideRequest, getQueue, reviewEvidence, type Decision, type QueueItem } from '../lib/adminApi';
 
@@ -147,6 +149,11 @@ export default function AdminVerificationQueue() {
                   {item.company.type === 'buyer' && (
                     <span className="rounded-full bg-sky-100 px-2 py-0.5 text-[11px] font-bold text-sky-800">{tr('Buyer — xác minh tùy chọn')}</span>
                   )}
+                  {(item.target_tier ?? 1) >= 2 && (
+                    <span data-testid="tier-request" className="rounded-full bg-violet-100 px-2 py-0.5 text-[11px] font-bold text-violet-800">
+                      {tr(`Xin lên cấp ${TIER_LABELS[item.target_tier ?? 1]}`)}
+                    </span>
+                  )}
                 </h3>
                 <span className="text-xs text-slate-500">
                   {tr('Gửi lúc')} {new Date(item.submitted_at).toLocaleString(language === 'en' ? 'en-GB' : 'vi-VN')}
@@ -285,6 +292,24 @@ export default function AdminVerificationQueue() {
                 ))}
               </div>
 
+              {(item.tier_requirements ?? []).length > 0 && (
+                <div role="group" aria-label={tr('Yêu cầu theo cấp')} className="mt-4 rounded-xl border border-slate-200 p-3 text-sm">
+                  <p className="text-xs font-bold uppercase tracking-wide text-slate-700">{tr('Yêu cầu theo cấp')}</p>
+                  <ul className="mt-2 space-y-1">
+                    {(item.tier_requirements ?? []).map((r) => (
+                      <li key={`${r.tier}-${r.code}`} className="flex flex-wrap items-center gap-2 text-xs text-slate-700">
+                        <span className="font-semibold">{tr(`Cấp ${TIER_LABELS[r.tier]}`)}</span>
+                        <span>{language === 'en' ? r.label_en : r.label_vi}</span>
+                        <span className={`rounded-full px-2 py-0.5 font-semibold ${REQUIREMENT_TONES[r.state]}`}>{tr(REQUIREMENT_STATES[r.state])}</span>
+                        {!r.is_required && <span className="text-slate-500">{tr('không bắt buộc')}</span>}
+                        {!r.reviewed && <span className="text-amber-700">{tr('nháp chưa duyệt')}</span>}
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="mt-2 text-[11px] text-slate-500">{tr('Danh sách chỉ để đối chiếu; cấp chỉ đổi khi bạn bấm quyết định.')}</p>
+                </div>
+              )}
+
               <div className="mt-4 border-t border-slate-100 pt-4">
                 <label htmlFor={`reason-${item.request_id}`} className="block text-xs font-semibold text-slate-700">
                   {tr('Lý do quyết định (bắt buộc khi từ chối hoặc yêu cầu bổ sung)')}
@@ -298,7 +323,7 @@ export default function AdminVerificationQueue() {
                 />
                 <div className="mt-3 flex flex-wrap gap-2">
                   <button type="button" disabled={busy} onClick={() => decide(item, 'approve')} className={`${button} bg-[#083832] text-white`}>
-                    {tr('Duyệt xác minh')}
+                    {(item.target_tier ?? 1) >= 2 ? tr(`Nâng lên cấp ${TIER_LABELS[item.target_tier ?? 1]}`) : tr('Duyệt xác minh')}
                   </button>
                   <button type="button" disabled={busy} onClick={() => decide(item, 'request_info')} className={`${button} border border-slate-300 text-slate-800`}>
                     {tr('Yêu cầu bổ sung')}

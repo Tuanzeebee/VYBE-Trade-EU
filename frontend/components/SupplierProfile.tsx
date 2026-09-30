@@ -19,6 +19,7 @@ import {
   type PublicProfile,
 } from '../lib/suppliersApi';
 import ProfileViewBeacon from './ProfileViewBeacon';
+import TierBadge from './TierBadge';
 import MessageSupplier from './MessageSupplier';
 
 /** Địa điểm cho bản đồ nhúng (Google Maps, không cần khóa API): chính xác khi doanh nghiệp đồng ý,
@@ -60,14 +61,12 @@ export default async function SupplierProfile({ slug, locale }: { slug: string; 
       {/* Tiêu đề */}
       <div className="mt-4 flex flex-wrap items-start justify-between gap-3">
         <h1 className="text-2xl font-extrabold text-slate-900 sm:text-3xl">{profile.legal_name}</h1>
-        <span
-          data-testid="verified-badge"
-          title={verifiedAt ? `${t('Xác minh bởi VYBE Trade')} · ${date(verifiedAt)}` : t('Xác minh bởi VYBE Trade')}
-          className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-900"
-        >
-          <BadgeCheck className="h-3.5 w-3.5" aria-hidden="true" />
-          {t('Đã xác minh')}
-        </span>
+        <TierBadge
+          tier={credentials?.verification_tier ?? profile.verification_tier ?? 1}
+          locale={locale}
+          reviewedAt={credentials?.tier_reviewed_at ?? verifiedAt}
+          expiresAt={credentials?.tier_expires_at ?? credentials?.expires_at}
+        />
       </div>
       <p className="mt-1 text-sm text-slate-600">
         {[profile.city, countryName(profile.country)].filter(Boolean).join(', ')}
@@ -129,6 +128,16 @@ export default async function SupplierProfile({ slug, locale }: { slug: string; 
               {credentials?.expires_at && ` · ${t('Hiệu lực đến')} ${date(credentials.expires_at)}`}
             </span>
           </li>
+          {(credentials?.verification_tier ?? 1) >= 2 && (
+            <li className="flex items-start gap-2" data-testid="tier-capability">
+              <BadgeCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-700" aria-hidden="true" />
+              <span>
+                {t((credentials?.verification_tier ?? 1) >= 3 ? 'Đánh giá nhà máy của bên thứ ba đã được VYBE Trade kiểm (cấp Chuyên sâu)' : 'Năng lực đã được VYBE Trade kiểm (cấp Nâng cao)')}
+                {credentials?.tier_reviewed_at && ` · ${date(credentials.tier_reviewed_at)}`}
+                {credentials?.tier_expires_at && ` · ${t('Hiệu lực đến')} ${date(credentials.tier_expires_at)}`}
+              </span>
+            </li>
+          )}
           {credentials?.origin_evidence_complete && (
             <li className="flex items-start gap-2">
               <FileCheck2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-700" aria-hidden="true" />

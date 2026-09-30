@@ -103,19 +103,21 @@ describe('Trạng thái xác minh của exporter (I1, I2)', () => {
     expect(submitButton()).not.toBeInTheDocument();
   });
 
-  it('đã xác minh: hiện ngày hết hạn, mức cơ bản và không có nút gửi', async () => {
+  it('đã xác minh: hiện ngày hết hạn, mục kiểm bằng chứng xuất xứ và không có nút gửi', async () => {
     serve({ company: company({ verification_status: 'verified', verified_at: '2026-09-01T00:00:00Z', expires_at: '2027-09-01T00:00:00Z' }) });
     renderPanel();
     expect(await screen.findByText('Đã xác minh')).toBeInTheDocument();
-    expect(screen.getByText(/Mức cơ bản/)).toBeInTheDocument();
+    // U20: mức basic/evfta_verified không còn là huy hiệu, chỉ là mục kiểm "bằng chứng xuất xứ".
+    expect(screen.getByText(/Chưa đủ bằng chứng xuất xứ bắt buộc/)).toBeInTheDocument();
     expect(screen.getByText(/2027/)).toBeInTheDocument();
     expect(submitButton()).not.toBeInTheDocument();
   });
 
-  it('đã xác minh mức EVFTA: nói rõ đủ bằng chứng bắt buộc còn hạn', async () => {
+  it('đủ bằng chứng xuất xứ: nói rõ còn hạn, không còn nhãn EVFTA-verified', async () => {
     serve({ company: company({ verification_status: 'verified', verification_level: 'evfta_verified', expires_at: '2027-09-01T00:00:00Z' }) });
     renderPanel();
-    expect(await screen.findByText(/EVFTA-verified/)).toBeInTheDocument();
+    expect(await screen.findByText(/^Đủ bằng chứng xuất xứ bắt buộc còn hạn/)).toBeInTheDocument();
+    expect(screen.queryByText(/EVFTA-verified/)).toBeNull();
   });
 
   it('bị từ chối: hiện lý do của quản trị viên và cho gửi lại', async () => {
