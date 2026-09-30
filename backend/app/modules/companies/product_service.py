@@ -18,6 +18,7 @@ from app.modules.companies import completeness_service
 from app.modules.companies.models import (
     ApprovalStatus,
     Company,
+    CompanySourcingCategory,
     CompanyType,
     Product,
     ProductImage,
@@ -385,6 +386,30 @@ async def list_recently_verified(
         .limit(limit)
     )
     return [_ref(c) for c in rows]
+
+
+async def find_buyers_for_new_supplier(
+    session: AsyncSession, company_id: uuid.UUID, now: datetime
+) -> tuple[PublicCompanyRef, list[uuid.UUID]] | None:
+    """Exporter còn hiển thị công khai (cùng điều kiện với danh bạ) và `owner_user_id` của các
+    buyer có nhóm hàng quan tâm trùng ngành của nó. None nếu công ty không hiển thị hoặc chưa
+    khai ngành."""
+    company = await session.scalar(
+        select(Company).where(Company.id == company_id, *verified_exporter_conditions(now))
+    )
+    if company is None or company.industry_sector is None:
+        return None
+    owners = await session.scalars(
+        select(Company.owner_user_id)
+        .join(CompanySourcingCategory, CompanySourcingCategory.company_id == Company.id)
+        .where(
+            Company.type == CompanyType.buyer,
+            Company.is_hidden.is_(False),
+            CompanySourcingCategory.category == company.industry_sector,
+        )
+        .order_by(Company.id)
+    )
+    return _ref(company), list(owners)
 
 
 async def get_orderable_product(

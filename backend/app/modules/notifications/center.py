@@ -61,6 +61,20 @@ async def create_notification(
     return out
 
 
+async def has_new_match(session: AsyncSession, user_id: uuid.UUID, company_id: uuid.UUID) -> bool:
+    """Đã có new_match cho cặp (người nhận, công ty) chưa: chống trùng khi phát lại event."""
+    found = await session.scalar(
+        select(Notification.id)
+        .where(
+            Notification.user_id == user_id,
+            Notification.type == NotificationType.new_match,
+            Notification.payload["company_id"].as_string() == str(company_id),
+        )
+        .limit(1)
+    )
+    return found is not None
+
+
 async def list_notifications(
     session: AsyncSession,
     user: CurrentUser,

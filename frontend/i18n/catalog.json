@@ -11288,5 +11288,10 @@
     "Pending",
     "En attente",
     "待ち"
+  ],
+  "Nhà cung cấp mới phù hợp với nhóm hàng bạn quan tâm: {0}": [
+    "New supplier matching your product categories: {0}",
+    "New supplier matching your product categories: {0}",
+    "New supplier matching your product categories: {0}"
   ]
 }

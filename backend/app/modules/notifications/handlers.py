@@ -1,5 +1,6 @@
 """Phản ứng với event: xếp thư vào hàng đợi job (không gửi trực tiếp trong request)."""
 
+import datetime as dt
 import logging
 import uuid
 from collections.abc import Awaitable, Callable
@@ -10,6 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 from app.core.db import get_sessionmaker
 from app.core.events import subscribe
 from app.modules.auth import service as auth
+from app.modules.companies import product_service
 from app.modules.companies import service as companies
 from app.modules.messaging.events import MessageSent, RfqCreated, RfqStatusChanged
 from app.modules.notifications import center
@@ -90,6 +92,40 @@ async def on_verification_status_changed(event: VerificationStatusChanged) -> No
     )
 
 
+async def on_new_supplier_verified(event: VerificationStatusChanged) -> None:
+    """Exporter vừa chuyển sang `verified`: gợi ý cho buyer có nhóm hàng quan tâm trùng ngành
+    (chỉ thông báo trong ứng dụng). Lỗi chỉ ghi log, không làm hỏng quyết định xác minh."""
+    if event.new_status != "verified" or event.old_status == "verified":
+        return
+    try:
+        async with _session_factory()() as session:
+            found = await product_service.find_buyers_for_new_supplier(
+                session, event.company_id, dt.datetime.now(dt.UTC)
+            )
+            if found is None:
+                return
+            supplier, buyer_user_ids = found
+            for user_id in buyer_user_ids:
+                if await center.has_new_match(session, user_id, supplier.id):
+                    continue
+                await center.create_notification(
+                    session,
+                    user_id,
+                    NotificationType.new_match,
+                    {
+                        "company_id": str(supplier.id),
+                        "company_name": supplier.legal_name,
+                        "slug": supplier.slug,
+                    },
+                    role="buyer",
+                    link=f"/suppliers/{supplier.slug}",
+                    commit=False,
+                )
+            await session.commit()
+    except Exception:
+        log.exception("Không tạo được thông báo new_match cho công ty %s", event.company_id)
+
+
 async def on_rfq_created(event: RfqCreated) -> None:
     """Exporter nhận thông báo trong ứng dụng và email khi có RFQ mới."""
     await _record_in_app(
@@ -144,6 +180,7 @@ async def on_message_sent(event: MessageSent) -> None:
 
 def register() -> None:
     subscribe(VerificationStatusChanged, on_verification_status_changed)
+    subscribe(VerificationStatusChanged, on_new_supplier_verified)
     subscribe(RfqCreated, on_rfq_created)
     subscribe(RfqStatusChanged, on_rfq_status_changed)
     subscribe(MessageSent, on_message_sent)

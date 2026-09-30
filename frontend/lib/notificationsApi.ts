@@ -61,7 +61,11 @@ export function describe(notification: Pick<AppNotification, 'type' | 'payload'>
       return 'Bạn có yêu cầu báo giá mới.';
     case 'message':
       return 'Bạn có tin nhắn mới.';
-    case 'new_match':
-      return 'Có nhà cung cấp mới phù hợp với tìm kiếm của bạn.';
+    case 'new_match': {
+      const name = notification.payload.company_name;
+      return typeof name === 'string' && name
+        ? `Nhà cung cấp mới phù hợp với nhóm hàng bạn quan tâm: ${name}`
+        : 'Có nhà cung cấp mới phù hợp với tìm kiếm của bạn.';
+    }
   }
 }

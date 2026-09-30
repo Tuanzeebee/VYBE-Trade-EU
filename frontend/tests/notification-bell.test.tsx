@@ -3,6 +3,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import NotificationBell from '@/components/NotificationBell';
 import { LanguageProvider } from '@/context/LanguageContext';
+import { translateText } from '@/i18n/translate';
 import { describe as describeNotification } from '@/lib/notificationsApi';
 
 const push = vi.fn();
@@ -141,5 +142,17 @@ describe('describe()', () => {
     ['new_match', {}, 'phù hợp'],
   ] as const)('%s %j', (type, payload, expected) => {
     expect(describeNotification({ type, payload })).toContain(expected);
+  });
+
+  it('new_match có tên công ty: nêu tên nhà cung cấp mới', () => {
+    expect(describeNotification({ type: 'new_match', payload: { company_name: 'Nông sản mới' } })).toBe(
+      'Nhà cung cấp mới phù hợp với nhóm hàng bạn quan tâm: Nông sản mới',
+    );
+  });
+
+  it('câu new_match có tên được dịch sang tiếng Anh theo mẫu tham số', () => {
+    expect(
+      translateText('Nhà cung cấp mới phù hợp với nhóm hàng bạn quan tâm: Nông sản mới', 'en'),
+    ).toBe('New supplier matching your product categories: Nông sản mới');
   });
 });
