@@ -10491,6 +10491,122 @@
         }
       }
     },
+    "/api/exporter/consistency-hints": {
+      "get": {
+        "tags": [
+          "verification"
+        ],
+        "summary": "Consistency Hints",
+        "operationId": "consistency_hints_api_exporter_consistency_hints_get",
+        "parameters": [
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FindingOut"
+                  },
+                  "title": "Response Consistency Hints Api Exporter Consistency Hints Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/companies/{company_id}/findings": {
+      "get": {
+        "tags": [
+          "verification"
+        ],
+        "summary": "Company Findings",
+        "operationId": "company_findings_api_admin_companies__company_id__findings_get",
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Company Id"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FindingOut"
+                  },
+                  "title": "Response Company Findings Api Admin Companies  Company Id  Findings Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/health": {
       "get": {
         "summary": "Health",
@@ -15654,6 +15770,44 @@
         ],
         "title": "FilterOptions"
       },
+      "FindingOut": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "info",
+              "warning"
+            ],
+            "title": "Severity"
+          },
+          "owner_visible": {
+            "type": "boolean",
+            "title": "Owner Visible"
+          },
+          "message_vi": {
+            "type": "string",
+            "title": "Message Vi"
+          },
+          "message_en": {
+            "type": "string",
+            "title": "Message En"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "severity",
+          "owner_visible",
+          "message_vi",
+          "message_en"
+        ],
+        "title": "FindingOut",
+        "description": "Kết quả luật kiểm chéo (U22): cờ cho admin, gợi ý cho chủ hồ sơ (owner_visible)."
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -18769,6 +18923,13 @@
             },
             "type": "array",
             "title": "Checks"
+          },
+          "findings": {
+            "items": {
+              "$ref": "#/components/schemas/FindingOut"
+            },
+            "type": "array",
+            "title": "Findings"
           }
         },
         "type": "object",

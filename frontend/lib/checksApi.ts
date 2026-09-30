@@ -32,3 +32,15 @@ export async function recordManualCheck(companyId: string, body: ManualCheck): P
     return false;
   }
 }
+
+// ── Luật kiểm chéo (U22): gợi ý cho chủ hồ sơ, cờ cho admin ──────────────────
+export type Finding = components['schemas']['FindingOut'];
+
+export async function listMyHints(): Promise<Finding[] | null> {
+  try {
+    const { data, response } = await createApiClient().GET('/api/exporter/consistency-hints');
+    return response.ok && Array.isArray(data) ? data : null;
+  } catch {
+    return null;
+  }
+}

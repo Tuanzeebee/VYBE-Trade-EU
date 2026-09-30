@@ -4,6 +4,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import OwnerChecks from '@/components/OwnerChecks';
 import { AdminChecks } from '@/components/VerificationChecks';
 import { LanguageProvider } from '@/context/LanguageContext';
+import type { Check } from '@/lib/checksApi';
 
 vi.mock('next/navigation', async (importOriginal) => ({
   ...(await importOriginal<typeof import('next/navigation')>()),
@@ -14,7 +15,7 @@ vi.mock('next/navigation', async (importOriginal) => ({
 const json = (status: number, body: unknown) =>
   new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } });
 
-const check = (code: string, status: string, over: Record<string, unknown> = {}) => ({
+const check = (code: string, status: Check['status'], over: Partial<Check> = {}): Check => ({
   check_code: code,
   status,
   detail: {},
@@ -51,11 +52,17 @@ afterEach(() => vi.unstubAllGlobals());
 
 describe('Kiểm tự động và kiểm tay (U21)', () => {
   it('seller thấy gợi ý: mail miễn phí cần xem thêm, website không truy cập được', async () => {
-    serve((call) => (call.path === '/api/me/verification-checks' ? json(200, [check('email_free_mail', 'warning'), check('website_live', 'fail')]) : undefined));
+    const hint = { code: 'seafood_without_establishment', severity: 'warning', owner_visible: true, message_vi: 'Thủy sản vào EU phải từ cơ sở được EU cấp phép.', message_en: 'Seafood must come from an approved establishment.' };
+    serve((call) => {
+      if (call.path === '/api/me/verification-checks') return json(200, [check('email_free_mail', 'warning'), check('website_live', 'fail')]);
+      if (call.path === '/api/exporter/consistency-hints') return json(200, [hint]);
+      return undefined;
+    });
     wrap(<OwnerChecks />);
     const section = await screen.findByRole('region', { name: 'Kiểm tự động hồ sơ' });
     expect(within(section).getByRole('listitem', { name: 'Email theo tên miền công ty (không phải mail miễn phí)' })).toHaveTextContent('Cần xem thêm');
     expect(within(section).getByRole('listitem', { name: 'Website truy cập được' })).toHaveTextContent('Không đạt');
+    expect(await within(section).findByTestId('consistency-hints')).toHaveTextContent('Thủy sản vào EU phải từ cơ sở được EU cấp phép.');
   });
 
   it('admin ghi kết quả kiểm tay Cổng ĐKDN (bắt buộc ghi chú) và chạy lại kiểm tra', async () => {

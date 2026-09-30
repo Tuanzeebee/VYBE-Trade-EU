@@ -130,6 +130,16 @@ class CheckOut(BaseModel):
     checked_at: dt.datetime
 
 
+class FindingOut(BaseModel):
+    """Kết quả luật kiểm chéo (U22): cờ cho admin, gợi ý cho chủ hồ sơ (owner_visible)."""
+
+    code: str
+    severity: Literal["info", "warning"]
+    owner_visible: bool
+    message_vi: str
+    message_en: str
+
+
 class ManualCheckIn(BaseModel):
     check_code: Literal[
         "national_registry", "company_registry", "certificate_issuer", "factory_video", "other"
@@ -161,6 +171,7 @@ class QueueItem(BaseModel):
     current_tier: int = 0
     tier_requirements: list[TierRequirementOut] = Field(default_factory=list)
     checks: list[CheckOut] = Field(default_factory=list)  # U21
+    findings: list[FindingOut] = Field(default_factory=list)  # U22
 
 
 class DecisionIn(BaseModel):

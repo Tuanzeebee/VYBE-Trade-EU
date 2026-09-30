@@ -15,6 +15,7 @@ from app.modules.verification import (
     admin_service,
     admin_spreadsheet,
     checks_service,
+    consistency_service,
     evidence_service,
     request_service,
     tier_service,
@@ -36,6 +37,7 @@ from app.modules.verification.schemas import (
     EvidenceOut,
     EvidencePatch,
     EvidenceTypePublic,
+    FindingOut,
     ManualCheckIn,
     QueueItem,
     TierDownIn,
@@ -285,3 +287,14 @@ async def import_approved_establishments(
     if len(content) > 5 * 1024 * 1024:
         raise AppError("file_too_large", "File must be at most 5 MB", 413)
     return {"imported": await checks_service.import_establishments(session, admin, content)}
+
+
+# ── Luật kiểm chéo (U22): gợi ý cho chủ hồ sơ, cờ cho admin ─────────────────────────────────
+@router.get("/api/exporter/consistency-hints")
+async def consistency_hints(user: Exporter, session: DB) -> list[FindingOut]:
+    return await consistency_service.my_hints(session, user)
+
+
+@router.get("/api/admin/companies/{company_id}/findings")
+async def company_findings(company_id: uuid.UUID, _: Admin, session: DB) -> list[FindingOut]:
+    return await consistency_service.findings_for(session, company_id)

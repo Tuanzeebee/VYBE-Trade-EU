@@ -18,7 +18,12 @@ from app.core.storage import Storage
 from app.modules.auth.schemas import CurrentUser
 from app.modules.companies import product_service
 from app.modules.companies import service as companies
-from app.modules.verification import checks_service, evidence_service, tier_service
+from app.modules.verification import (
+    checks_service,
+    consistency_service,
+    evidence_service,
+    tier_service,
+)
 from app.modules.verification.events import VerificationStatusChanged
 from app.modules.verification.models import (
     ApprovalStatus,
@@ -158,6 +163,7 @@ async def queue(session: AsyncSession, storage: Storage) -> list[QueueItem]:
                     session, company, request.target_tier
                 ),
                 checks=await checks_service.latest_checks(session, request.company_id),
+                findings=await consistency_service.findings_for(session, request.company_id),
             )
         )
     return items

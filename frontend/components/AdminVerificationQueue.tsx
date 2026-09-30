@@ -5,7 +5,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { TIER_LABELS } from './TierBadge';
 import { REQUIREMENT_STATES, REQUIREMENT_TONES } from './VerificationTier';
-import { AdminChecks } from './VerificationChecks';
+import { AdminChecks, FindingList } from './VerificationChecks';
 import { useLanguage } from '../context/LanguageContext';
 import { decideRequest, getQueue, reviewEvidence, type Decision, type QueueItem } from '../lib/adminApi';
 
@@ -294,6 +294,13 @@ export default function AdminVerificationQueue() {
               </div>
 
               <AdminChecks companyId={item.company_id} country={item.country} checks={item.checks ?? []} onChanged={() => void load()} />
+
+              {(item.findings ?? []).length > 0 && (
+                <div role="group" aria-label={tr('Cờ kiểm chéo')} className="mt-4 rounded-xl border border-amber-200 p-3 text-sm">
+                  <p className="text-xs font-bold uppercase tracking-wide text-amber-800">{tr('Cờ kiểm chéo')}</p>
+                  <FindingList findings={item.findings ?? []} />
+                </div>
+              )}
 
               {(item.tier_requirements ?? []).length > 0 && (
                 <div role="group" aria-label={tr('Yêu cầu theo cấp')} className="mt-4 rounded-xl border border-slate-200 p-3 text-sm">

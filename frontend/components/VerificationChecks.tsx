@@ -4,7 +4,7 @@
 // đổi trạng thái xác minh. Admin chạy lại kiểm tra và ghi kết quả kiểm tay (vd Cổng ĐKDN quốc gia).
 import React, { useState } from 'react';
 import { useLanguage } from '../context/LanguageContext';
-import { recordManualCheck, runChecks, type Check, type ManualCheckCode } from '../lib/checksApi';
+import { recordManualCheck, runChecks, type Check, type Finding, type ManualCheckCode } from '../lib/checksApi';
 
 export const CHECK_LABELS: Record<string, string> = {
   email_free_mail: 'Email theo tên miền công ty (không phải mail miễn phí)',
@@ -47,6 +47,19 @@ export function CheckList({ checks }: { checks: Check[] }) {
             {tr(c.manual ? 'kiểm tay' : 'tự động')} · {date(c.checked_at)}
           </span>
           {typeof c.detail.note === 'string' && c.detail.note && <span className="text-slate-500">— {c.detail.note}</span>}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+export function FindingList({ findings }: { findings: Finding[] }) {
+  const { language } = useLanguage();
+  return (
+    <ul className="mt-1 space-y-1">
+      {findings.map((f) => (
+        <li key={f.code} className={`rounded-lg px-2 py-1 text-xs ${f.severity === 'warning' ? 'bg-amber-50 text-amber-900' : 'bg-slate-50 text-slate-700'}`}>
+          {language === 'en' ? f.message_en : f.message_vi}
         </li>
       ))}
     </ul>
