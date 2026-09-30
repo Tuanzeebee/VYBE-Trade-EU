@@ -1425,6 +1425,112 @@
         }
       }
     },
+    "/api/buyer/sourcing-needs": {
+      "get": {
+        "tags": [
+          "companies"
+        ],
+        "summary": "Get Sourcing Needs",
+        "operationId": "get_sourcing_needs_api_buyer_sourcing_needs_get",
+        "parameters": [
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SourcingNeedsOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "companies"
+        ],
+        "summary": "Put Sourcing Needs",
+        "operationId": "put_sourcing_needs_api_buyer_sourcing_needs_put",
+        "parameters": [
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SourcingNeedsIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SourcingNeedsOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/exporter/services": {
       "get": {
         "tags": [
@@ -7702,6 +7808,30 @@
             ],
             "title": "Phone"
           },
+          "contact_name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contact Name"
+          },
+          "city": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "City"
+          },
           "legal_rep_name": {
             "anyOf": [
               {
@@ -8124,6 +8254,28 @@
               }
             ],
             "title": "Phone"
+          },
+          "contact_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contact Name"
+          },
+          "city": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "City"
           },
           "legal_rep_name": {
             "anyOf": [
@@ -8575,6 +8727,30 @@
               }
             ],
             "title": "Phone"
+          },
+          "contact_name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contact Name"
+          },
+          "city": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "City"
           },
           "legal_rep_name": {
             "anyOf": [
@@ -14024,6 +14200,367 @@
         },
         "type": "object",
         "title": "ServiceOfferingPatch"
+      },
+      "SourcingNeedsIn": {
+        "properties": {
+          "products_text": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Products Text"
+          },
+          "quantity": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,12}|(?=[\\d.]{1,15}0*$)\\d{0,12}\\.\\d{0,2}0*$)"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quantity"
+          },
+          "quantity_unit": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "kg",
+                  "tonne",
+                  "piece",
+                  "carton",
+                  "liter",
+                  "container_20ft",
+                  "container_40ft"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quantity Unit"
+          },
+          "frequency": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "one_off",
+                  "monthly",
+                  "quarterly",
+                  "yearly"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Frequency"
+          },
+          "certifications_wanted": {
+            "items": {
+              "type": "string",
+              "maxLength": 64
+            },
+            "type": "array",
+            "maxItems": 20,
+            "title": "Certifications Wanted"
+          },
+          "min_supplier_tier": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 3,
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Min Supplier Tier"
+          },
+          "destination_country": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Z]{2}$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Destination Country"
+          },
+          "destination_port": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Destination Port"
+          },
+          "incoterm": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "EXW",
+                  "FCA",
+                  "CPT",
+                  "CIP",
+                  "DAP",
+                  "DPU",
+                  "DDP",
+                  "FAS",
+                  "FOB",
+                  "CFR",
+                  "CIF"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Incoterm"
+          },
+          "budget_amount": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,12}|(?=[\\d.]{1,15}0*$)\\d{0,12}\\.\\d{0,2}0*$)"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Budget Amount"
+          },
+          "budget_currency": {
+            "type": "string",
+            "enum": [
+              "EUR",
+              "USD"
+            ],
+            "title": "Budget Currency",
+            "default": "EUR"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          }
+        },
+        "type": "object",
+        "title": "SourcingNeedsIn",
+        "description": "Thay toàn bộ nhu cầu (PUT). Mọi trường tùy chọn — buyer bổ sung dần ở \"Hoàn thiện hồ sơ\"."
+      },
+      "SourcingNeedsOut": {
+        "properties": {
+          "products_text": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Products Text"
+          },
+          "quantity": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,12}|(?=[\\d.]{1,15}0*$)\\d{0,12}\\.\\d{0,2}0*$)"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quantity"
+          },
+          "quantity_unit": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "kg",
+                  "tonne",
+                  "piece",
+                  "carton",
+                  "liter",
+                  "container_20ft",
+                  "container_40ft"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quantity Unit"
+          },
+          "frequency": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "one_off",
+                  "monthly",
+                  "quarterly",
+                  "yearly"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Frequency"
+          },
+          "certifications_wanted": {
+            "items": {
+              "type": "string",
+              "maxLength": 64
+            },
+            "type": "array",
+            "maxItems": 20,
+            "title": "Certifications Wanted"
+          },
+          "min_supplier_tier": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 3,
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Min Supplier Tier"
+          },
+          "destination_country": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Z]{2}$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Destination Country"
+          },
+          "destination_port": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Destination Port"
+          },
+          "incoterm": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "EXW",
+                  "FCA",
+                  "CPT",
+                  "CIP",
+                  "DAP",
+                  "DPU",
+                  "DDP",
+                  "FAS",
+                  "FOB",
+                  "CFR",
+                  "CIF"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Incoterm"
+          },
+          "budget_amount": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,12}|(?=[\\d.]{1,15}0*$)\\d{0,12}\\.\\d{0,2}0*$)"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Budget Amount"
+          },
+          "budget_currency": {
+            "type": "string",
+            "enum": [
+              "EUR",
+              "USD"
+            ],
+            "title": "Budget Currency",
+            "default": "EUR"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "title": "SourcingNeedsOut"
       },
       "StatsOut": {
         "properties": {

@@ -278,6 +278,24 @@ export interface paths {
         patch: operations["update_product_api_exporter_products__product_id__patch"];
         trace?: never;
     };
+    "/api/buyer/sourcing-needs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Sourcing Needs */
+        get: operations["get_sourcing_needs_api_buyer_sourcing_needs_get"];
+        /** Put Sourcing Needs */
+        put: operations["put_sourcing_needs_api_buyer_sourcing_needs_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/exporter/services": {
         parameters: {
             query?: never;
@@ -1865,6 +1883,10 @@ export interface components {
             contact_email?: string | null;
             /** Phone */
             phone?: string | null;
+            /** Contact Name */
+            contact_name?: string | null;
+            /** City */
+            city?: string | null;
             /** Legal Rep Name */
             legal_rep_name?: string | null;
             /** Legal Rep Title */
@@ -1951,6 +1973,10 @@ export interface components {
             contact_email: string | null;
             /** Phone */
             phone: string | null;
+            /** Contact Name */
+            contact_name?: string | null;
+            /** City */
+            city?: string | null;
             /** Legal Rep Name */
             legal_rep_name: string | null;
             /** Legal Rep Title */
@@ -2045,6 +2071,10 @@ export interface components {
             contact_email?: string | null;
             /** Phone */
             phone?: string | null;
+            /** Contact Name */
+            contact_name?: string | null;
+            /** City */
+            city?: string | null;
             /** Legal Rep Name */
             legal_rep_name?: string | null;
             /** Legal Rep Title */
@@ -3650,6 +3680,73 @@ export interface components {
             is_active?: boolean | null;
         };
         /**
+         * SourcingNeedsIn
+         * @description Thay toàn bộ nhu cầu (PUT). Mọi trường tùy chọn — buyer bổ sung dần ở "Hoàn thiện hồ sơ".
+         */
+        SourcingNeedsIn: {
+            /** Products Text */
+            products_text?: string | null;
+            /** Quantity */
+            quantity?: number | string | null;
+            /** Quantity Unit */
+            quantity_unit?: ("kg" | "tonne" | "piece" | "carton" | "liter" | "container_20ft" | "container_40ft") | null;
+            /** Frequency */
+            frequency?: ("one_off" | "monthly" | "quarterly" | "yearly") | null;
+            /** Certifications Wanted */
+            certifications_wanted?: string[];
+            /** Min Supplier Tier */
+            min_supplier_tier?: number | null;
+            /** Destination Country */
+            destination_country?: string | null;
+            /** Destination Port */
+            destination_port?: string | null;
+            /** Incoterm */
+            incoterm?: ("EXW" | "FCA" | "CPT" | "CIP" | "DAP" | "DPU" | "DDP" | "FAS" | "FOB" | "CFR" | "CIF") | null;
+            /** Budget Amount */
+            budget_amount?: number | string | null;
+            /**
+             * Budget Currency
+             * @default EUR
+             * @enum {string}
+             */
+            budget_currency?: "EUR" | "USD";
+            /** Notes */
+            notes?: string | null;
+        };
+        /** SourcingNeedsOut */
+        SourcingNeedsOut: {
+            /** Products Text */
+            products_text?: string | null;
+            /** Quantity */
+            quantity?: string | null;
+            /** Quantity Unit */
+            quantity_unit?: ("kg" | "tonne" | "piece" | "carton" | "liter" | "container_20ft" | "container_40ft") | null;
+            /** Frequency */
+            frequency?: ("one_off" | "monthly" | "quarterly" | "yearly") | null;
+            /** Certifications Wanted */
+            certifications_wanted?: string[];
+            /** Min Supplier Tier */
+            min_supplier_tier?: number | null;
+            /** Destination Country */
+            destination_country?: string | null;
+            /** Destination Port */
+            destination_port?: string | null;
+            /** Incoterm */
+            incoterm?: ("EXW" | "FCA" | "CPT" | "CIP" | "DAP" | "DPU" | "DDP" | "FAS" | "FOB" | "CFR" | "CIF") | null;
+            /** Budget Amount */
+            budget_amount?: string | null;
+            /**
+             * Budget Currency
+             * @default EUR
+             * @enum {string}
+             */
+            budget_currency?: "EUR" | "USD";
+            /** Notes */
+            notes?: string | null;
+            /** Updated At */
+            updated_at?: string | null;
+        };
+        /**
          * StatsOut
          * @description Số liệu dashboard nội bộ.
          */
@@ -4753,6 +4850,72 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ProductOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_sourcing_needs_api_buyer_sourcing_needs_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SourcingNeedsOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    put_sourcing_needs_api_buyer_sourcing_needs_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SourcingNeedsIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SourcingNeedsOut"];
                 };
             };
             /** @description Validation Error */

@@ -12093,5 +12093,245 @@
     "Rejecting needs a reason; approving a document type with a validity period needs an issue date (not in the future, before expiry).",
     "Un refus doit être motivé ; approuver un document à durée de validité exige une date d'émission (pas future, avant l'expiration).",
     "却下には理由が必要です。有効期間のある書類の承認には発行日（未来日不可・期限前）が必要です。"
+  ],
+  "Tìm nguồn cung ổn định, giảm rủi ro khi đổi nhà cung cấp.": [
+    "Find stable supply and reduce the risk of switching suppliers.",
+    "Trouvez un approvisionnement stable et réduisez le risque de changer de fournisseur.",
+    "安定した供給先を見つけ、サプライヤー変更のリスクを減らしましょう。"
+  ],
+  "Nhà cung cấp trong danh bạ đã được kiểm tra pháp lý; xem năng lực, sản lượng và thị trường đã xuất khẩu trước khi liên hệ.": [
+    "Suppliers in the directory have passed a legal check; review their capacity, volumes and export markets before you get in touch.",
+    "Les fournisseurs de l'annuaire ont passé une vérification juridique ; consultez leurs capacités, volumes et marchés d'exportation avant de les contacter.",
+    "掲載サプライヤーは法的確認済みです。連絡前に供給能力・生産量・輸出実績市場をご確認ください。"
+  ],
+  "Cập nhật nhu cầu mua hàng": [
+    "Update your sourcing needs",
+    "Mettre à jour vos besoins d'achat",
+    "調達ニーズを更新"
+  ],
+  "Nhóm hàng bạn cần": [
+    "Product groups you need",
+    "Groupes de produits recherchés",
+    "必要な品目群"
+  ],
+  "Sản phẩm cụ thể": [
+    "Specific products",
+    "Produits précis",
+    "具体的な製品"
+  ],
+  "Ví dụ: phi lê cá tra đông lạnh 120–170 g, đóng túi 1 kg": [
+    "e.g. frozen pangasius fillets 120–170 g, 1 kg bags",
+    "ex. filets de pangasius surgelés 120–170 g, sachets de 1 kg",
+    "例: 冷凍パンガシウスフィレ 120–170g、1kg袋"
+  ],
+  "Khối lượng mỗi lần mua": [
+    "Quantity per order",
+    "Quantité par commande",
+    "1回あたりの購入量"
+  ],
+  "Tần suất mua": [
+    "Purchase frequency",
+    "Fréquence d'achat",
+    "購入頻度"
+  ],
+  "Chứng chỉ bạn yêu cầu ở nhà cung cấp": [
+    "Certificates you require from suppliers",
+    "Certificats exigés des fournisseurs",
+    "サプライヤーに求める認証"
+  ],
+  "Cấp xác minh nhà cung cấp tối thiểu": [
+    "Minimum supplier verification level",
+    "Niveau minimal de vérification du fournisseur",
+    "サプライヤーの最低認証レベル"
+  ],
+  "Nước nhận hàng": [
+    "Destination country",
+    "Pays de destination",
+    "仕向国"
+  ],
+  "Cảng nhận hàng": [
+    "Destination port",
+    "Port de destination",
+    "仕向港"
+  ],
+  "Ví dụ: Hamburg": [
+    "e.g. Hamburg",
+    "ex. Hambourg",
+    "例: ハンブルク"
+  ],
+  "Chưa rõ / thương lượng": [
+    "Not sure / negotiable",
+    "Indécis / à négocier",
+    "未定・交渉可"
+  ],
+  "Ngân sách tham khảo (đơn giá)": [
+    "Reference budget (unit price)",
+    "Budget de référence (prix unitaire)",
+    "参考予算（単価）"
+  ],
+  "Điều bạn quan tâm nhất ở nhà cung cấp": [
+    "What matters most to you in a supplier",
+    "Ce qui compte le plus pour vous chez un fournisseur",
+    "サプライヤーに最も重視すること"
+  ],
+  "Ví dụ: giao hàng đều mỗi tháng, chất lượng ổn định giữa các lô": [
+    "e.g. reliable monthly deliveries, consistent quality between batches",
+    "ex. livraisons mensuelles régulières, qualité constante d'un lot à l'autre",
+    "例: 毎月の安定した納品、ロット間で品質が一定"
+  ],
+  "Nguồn cung Việt Nam ổn định,": [
+    "Stable Vietnamese supply,",
+    "Un approvisionnement vietnamien stable,",
+    "安定したベトナムの供給元、"
+  ],
+  "đã được xác minh.": [
+    "already verified.",
+    "déjà vérifié.",
+    "認証済み。"
+  ],
+  "Đổi hoặc thêm nhà cung cấp mà ít rủi ro hơn: pháp lý, chứng nhận và năng lực của nhà cung cấp được kiểm tra trước khi hiện trong danh bạ.": [
+    "Switch or add suppliers with less risk: each supplier's legal status, certificates and capacity are checked before they appear in the directory.",
+    "Changez ou ajoutez des fournisseurs avec moins de risque : statut juridique, certificats et capacités sont vérifiés avant leur publication dans l'annuaire.",
+    "リスクを抑えてサプライヤーを変更・追加：掲載前に法的地位・認証・供給能力を確認しています。"
+  ],
+  "Thành phố *": [
+    "City *",
+    "Ville *",
+    "都市 *"
+  ],
+  "Quy mô công ty (không bắt buộc)": [
+    "Company size (optional)",
+    "Taille de l'entreprise (facultatif)",
+    "企業規模（任意）"
+  ],
+  "Bỏ qua, bổ sung sau": [
+    "Skip, add later",
+    "Passer, compléter plus tard",
+    "スキップして後で入力"
+  ],
+  "Hồ sơ công ty": [
+    "Company profile",
+    "Profil de l'entreprise",
+    "企業プロフィール"
+  ],
+  "Nhu cầu càng rõ, nhà cung cấp phù hợp càng dễ tìm thấy và báo giá đúng cho bạn.": [
+    "The clearer your needs, the easier it is for the right suppliers to find you and quote accurately.",
+    "Plus vos besoins sont précis, plus les bons fournisseurs vous trouvent et chiffrent juste.",
+    "ニーズが明確なほど、最適なサプライヤーが見つけやすく、正確な見積もりが届きます。"
+  ],
+  "Mã số VAT (không bắt buộc)": [
+    "VAT number (optional)",
+    "Numéro de TVA (facultatif)",
+    "VAT番号（任意）"
+  ],
+  "Mã EORI (không bắt buộc)": [
+    "EORI number (optional)",
+    "Numéro EORI (facultatif)",
+    "EORI番号（任意）"
+  ],
+  "Nhu cầu mua hàng": [
+    "Sourcing needs",
+    "Besoins d'achat",
+    "調達ニーズ"
+  ],
+  "Nhà bán buôn": [
+    "Wholesaler",
+    "Grossiste",
+    "卸売業者"
+  ],
+  "Siêu thị, chuỗi bán lẻ": [
+    "Supermarket / retail chain",
+    "Supermarché / chaîne de distribution",
+    "スーパー・小売チェーン"
+  ],
+  "Mua một lần": [
+    "One-off purchase",
+    "Achat ponctuel",
+    "単発購入"
+  ],
+  "Hằng tháng": [
+    "Monthly",
+    "Mensuel",
+    "毎月"
+  ],
+  "Hằng quý": [
+    "Quarterly",
+    "Trimestriel",
+    "四半期ごと"
+  ],
+  "Hằng năm": [
+    "Yearly",
+    "Annuel",
+    "毎年"
+  ],
+  "Cơ bản (pháp lý đã xác minh)": [
+    "Basic (legal status verified)",
+    "Basique (statut juridique vérifié)",
+    "ベーシック（法的地位を確認済み）"
+  ],
+  "Nâng cao (năng lực đã xác minh)": [
+    "Enhanced (capability verified)",
+    "Avancé (capacités vérifiées)",
+    "アドバンス（供給能力を確認済み）"
+  ],
+  "Chuyên sâu (bên thứ ba đánh giá)": [
+    "Advanced (third-party audited)",
+    "Approfondi (audité par un tiers)",
+    "プレミアム（第三者監査済み）"
+  ],
+  "Chỉ cần thông tin để nhà cung cấp liên hệ lại với bạn.": [
+    "Just the details suppliers need to get back to you.",
+    "Seulement les informations dont les fournisseurs ont besoin pour vous recontacter.",
+    "サプライヤーが連絡するために必要な情報だけです。"
+  ],
+  "Không bắt buộc — bạn có thể bỏ qua và bổ sung sau ở Hồ sơ công ty.": [
+    "Optional — you can skip this and add it later under Company profile.",
+    "Facultatif — vous pouvez passer cette étape et compléter plus tard dans Profil de l'entreprise.",
+    "任意です。スキップして後で企業プロフィールから入力できます。"
+  ],
+  "Chỉ doanh nghiệp đã được kiểm tra pháp lý mới hiện trong danh bạ.": [
+    "Only companies that passed a legal check appear in the directory.",
+    "Seules les entreprises ayant passé une vérification juridique figurent dans l'annuaire.",
+    "法的確認を通過した企業だけが掲載されます。"
+  ],
+  "Năng lực rõ ràng": [
+    "Clear capacity",
+    "Capacités claires",
+    "明確な供給能力"
+  ],
+  "Sản lượng, quy cách, MOQ và thị trường đã xuất khẩu trên từng hồ sơ.": [
+    "Volumes, packaging, MOQ and export markets on every profile.",
+    "Volumes, conditionnement, MOQ et marchés d'exportation sur chaque profil.",
+    "各プロフィールに生産量・包装・MOQ・輸出実績市場を掲載。"
+  ],
+  "Làm việc trực tiếp": [
+    "Deal directly",
+    "Traitez en direct",
+    "直接取引"
+  ],
+  "Nhắn tin và yêu cầu báo giá thẳng với nhà cung cấp.": [
+    "Message suppliers and request quotes directly.",
+    "Écrivez aux fournisseurs et demandez des devis directement.",
+    "サプライヤーに直接メッセージや見積依頼を送れます。"
+  ],
+  "Đã lưu hồ sơ.": [
+    "Profile saved.",
+    "Profil enregistré.",
+    "プロフィールを保存しました。"
+  ],
+  "Lưu hồ sơ": [
+    "Save profile",
+    "Enregistrer le profil",
+    "プロフィールを保存"
+  ],
+  "Bước {0} / {1}": [
+    "Step {0} / {1}",
+    "Étape {0} / {1}",
+    "ステップ {0} / {1}"
+  ],
+  "Nhu cầu mua hàng chưa hợp lệ. Vui lòng kiểm tra lại.": [
+    "Sourcing needs are invalid. Please check them.",
+    "Besoins d'achat invalides. Veuillez vérifier.",
+    "調達ニーズが不正です。ご確認ください。"
   ]
 }

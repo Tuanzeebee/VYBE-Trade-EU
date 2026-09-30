@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { NextIntlClientProvider } from 'next-intl';
 import { describe, expect, it, vi } from 'vitest';
 import BuyerOnboarding from '@/components/BuyerOnboarding';
@@ -20,7 +20,7 @@ const USER: DemoUser = {
   onboardingCompleted: false,
 };
 
-function renderBuyer(initialCompany?: Record<string, string>, onComplete = vi.fn()) {
+function renderBuyer(initialCompany?: Record<string, string>, onComplete = vi.fn().mockResolvedValue(undefined)) {
   render(
     <NextIntlClientProvider locale="vi" messages={{}}>
       <LanguageProvider>
@@ -31,79 +31,73 @@ function renderBuyer(initialCompany?: Record<string, string>, onComplete = vi.fn
   return { onComplete };
 }
 
-const goNext = () => fireEvent.click(screen.getByRole('button', { name: /Tiếp tục|Tiếp theo|Continue/ }));
+function fillStepOne() {
+  fireEvent.change(screen.getByLabelText(/Tên công ty/), { target: { value: 'Global Foods GmbH' } });
+  fireEvent.change(screen.getByRole('combobox', { name: /Quốc gia/ }), { target: { value: 'Germany' } });
+  fireEvent.change(screen.getByLabelText(/Thành phố/), { target: { value: 'Hamburg' } });
+}
+const submitStep = () => fireEvent.submit(screen.getByRole('button', { name: /Tiếp tục|Hoàn tất/ }).closest('form') as HTMLFormElement);
 
-describe('BuyerOnboarding (B2)', () => {
-  it('bước 1: quốc gia là danh sách chọn có nước EU, có ô mã số VAT', () => {
+describe('BuyerOnboarding tối giản (U5)', () => {
+  it('bước 1 chỉ hỏi thông tin liên hệ cơ bản — không có VAT/EORI hay cấp xác minh', () => {
     renderBuyer();
+    for (const label of [/Tên công ty/, /Thành phố/, /Người liên hệ/, /Email liên hệ/]) {
+      expect(screen.getByLabelText(label)).toBeRequired();
+    }
+    expect(screen.getByLabelText(/Quy mô công ty/)).not.toBeRequired();
+    expect(screen.queryByLabelText(/VAT/)).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(/EORI/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Tiêu chí xác minh/)).not.toBeInTheDocument();
     const country = screen.getByRole('combobox', { name: /Quốc gia/ }) as HTMLSelectElement;
-    const options = [...country.options].map((o) => o.value);
-    expect(options).toEqual(expect.arrayContaining(['Germany', 'France', 'Netherlands', 'United States']));
-    expect((screen.getByLabelText(/Mã số VAT/) as HTMLInputElement).type).toBe('text');
+    expect([...country.options].map((o) => o.value)).toContain('Germany');
+  });
+
+  it('headline nhấn nguồn cung ổn định, không còn câu "phù hợp với bạn"', () => {
+    renderBuyer();
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(/Nguồn cung Việt Nam ổn định/);
+    expect(screen.queryByText(/phù hợp với bạn/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/lưu trên trình duyệt/)).not.toBeInTheDocument();
   });
 
   it('nạp hồ sơ đã lưu trên server vào form', () => {
-    renderBuyer({
-      companyName: 'Global Foods Trading GmbH',
-      country: 'Germany',
-      companySize: '51–200 nhân sự',
-      vatNumber: 'DE123456789',
-      interest: 'Nông sản, Gia vị & Hương liệu',
-    });
-    expect(screen.getByDisplayValue('Global Foods Trading GmbH')).toBeInTheDocument();
-    expect(screen.getByDisplayValue('DE123456789')).toBeInTheDocument();
-    expect((screen.getByRole('combobox', { name: /Quốc gia/ }) as HTMLSelectElement).value).toBe('Germany');
-    expect((screen.getByRole('combobox', { name: /Quy mô công ty/ }) as HTMLSelectElement).value).toBe('51–200 nhân sự');
+    renderBuyer({ companyName: 'Đã lưu GmbH', city: 'Berlin', contactName: 'Anna' });
+    expect(screen.getByLabelText(/Tên công ty/)).toHaveValue('Đã lưu GmbH');
+    expect(screen.getByLabelText(/Thành phố/)).toHaveValue('Berlin');
+    expect(screen.getByLabelText(/Người liên hệ/)).toHaveValue('Anna');
   });
 
-  function fillStepOne() {
-    fireEvent.change(screen.getByLabelText(/Tên công ty/), { target: { value: 'Global Foods' } });
-    fireEvent.change(screen.getByRole('combobox', { name: /Quốc gia/ }), { target: { value: 'Germany' } });
-    fireEvent.change(screen.getByRole('combobox', { name: /Khu vực/ }), { target: { value: 'Châu Âu' } });
-    fireEvent.change(screen.getByRole('combobox', { name: /Quy mô công ty/ }), { target: { value: '11–50 nhân sự' } });
-    fireEvent.change(screen.getByLabelText(/Người liên hệ/), { target: { value: 'Alex' } });
-    fireEvent.change(screen.getByLabelText(/Email liên hệ/), { target: { value: 'alex@globalfoods.de' } });
-  }
-
-  it('bước 2: chọn nhiều nhóm hàng bằng ô tick (6 nhóm ngành) và ước lượng mua hàng', () => {
-    renderBuyer();
+  it('bỏ qua bước nhu cầu: hoàn tất chỉ với thông tin công ty (nhu cầu = null)', async () => {
+    const { onComplete } = renderBuyer();
     fillStepOne();
-    goNext();
-    for (const label of ['Nông sản', 'Thủy sản', 'Thực phẩm & Đồ uống', 'Dệt may', 'Thủ công mỹ nghệ', 'Gia vị & Hương liệu']) {
-      expect(screen.getByRole('checkbox', { name: label })).toBeInTheDocument();
-    }
-    expect(screen.getByRole('combobox', { name: /Ước lượng mua hàng/ })).toBeInTheDocument();
+    submitStep();
+    fireEvent.click(await screen.findByRole('button', { name: 'Bỏ qua, bổ sung sau' }));
+    await waitFor(() => expect(onComplete).toHaveBeenCalled());
+    const [profile, needs] = onComplete.mock.calls[0];
+    expect(profile).toMatchObject({ companyName: 'Global Foods GmbH', country: 'Germany', city: 'Hamburg' });
+    expect(needs).toBeNull();
   });
 
-  it('bước 2: chưa chọn nhóm hàng nào thì báo lỗi và ở lại bước 2', () => {
-    renderBuyer();
+  it('điền nhu cầu: nhóm hàng, chứng chỉ yêu cầu ở NHÀ CUNG CẤP, tiền tệ mặc định EUR', async () => {
+    const { onComplete } = renderBuyer();
     fillStepOne();
-    goNext();
-    fireEvent.change(screen.getByLabelText(/Khối lượng dự kiến/), { target: { value: '10' } });
-    fireEvent.change(screen.getByRole('combobox', { name: /Tần suất/ }), { target: { value: 'Hàng tháng' } });
-    goNext();
-    expect(screen.getByRole('alert')).toHaveTextContent('Vui lòng chọn ít nhất một nhóm hàng cần tìm.');
-    expect(screen.getByRole('checkbox', { name: 'Nông sản' })).toBeInTheDocument();
+    submitStep();
+    fireEvent.click(await screen.findByRole('checkbox', { name: 'Thủy sản' }));
+    fireEvent.click(screen.getByRole('checkbox', { name: 'BRCGS' }));
+    fireEvent.change(screen.getByLabelText(/Khối lượng mỗi lần mua/), { target: { value: '40' } });
+    expect(screen.getByLabelText(/^Tiền tệ/)).toHaveValue('EUR');
+    expect(screen.getByText('Chứng chỉ bạn yêu cầu ở nhà cung cấp')).toBeInTheDocument();
+    submitStep();
+    await waitFor(() => expect(onComplete).toHaveBeenCalled());
+    const [profile, needs] = onComplete.mock.calls[0];
+    expect(profile.interest).toBe('Thủy sản');
+    expect(needs).toMatchObject({ quantity: '40', certifications: ['BRCGS'], budgetCurrency: 'EUR' });
   });
 
-  it('bước 2: chọn nhóm hàng rồi sang được bước 3', () => {
-    renderBuyer();
+  it('lỗi khi lưu hiện ngay trên form', async () => {
+    renderBuyer(undefined, vi.fn().mockRejectedValue(new Error('Không thể lưu hồ sơ. Vui lòng thử lại.')));
     fillStepOne();
-    goNext();
-    fireEvent.click(screen.getByRole('checkbox', { name: 'Nông sản' }));
-    fireEvent.click(screen.getByRole('checkbox', { name: 'Gia vị & Hương liệu' }));
-    fireEvent.change(screen.getByLabelText(/Khối lượng dự kiến/), { target: { value: '10' } });
-    fireEvent.change(screen.getByRole('combobox', { name: /Tần suất/ }), { target: { value: 'Hàng tháng' } });
-    goNext();
-    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
-    expect(screen.getByText('Tiêu chí xác minh', { selector: 'h2' })).toBeInTheDocument();
-  });
-});
-
-describe('BuyerOnboarding — mã EORI (B3)', () => {
-  it('có ô EORI cạnh mã VAT, nạp sẵn từ hồ sơ đã lưu', () => {
-    renderBuyer({ eoriNumber: 'DE123456789012' });
-    expect((screen.getByLabelText(/Mã EORI/) as HTMLInputElement).value).toBe('DE123456789012');
-    expect(screen.getByLabelText(/Mã số VAT/)).toBeInTheDocument();
+    submitStep();
+    fireEvent.click(await screen.findByRole('button', { name: 'Bỏ qua, bổ sung sau' }));
+    expect(await screen.findByRole('alert')).toHaveTextContent('Không thể lưu hồ sơ');
   });
 });

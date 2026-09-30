@@ -24,12 +24,15 @@ from app.modules.companies.schemas import (
     ServiceOfferingIn,
     ServiceOfferingOut,
     ServiceOfferingPatch,
+    SourcingNeedsIn,
+    SourcingNeedsOut,
 )
 
 router = APIRouter(tags=["companies"])
 DB = Annotated[AsyncSession, Depends(get_session)]
 Owner = Annotated[CurrentUser, Depends(require_role("exporter", "buyer"))]
 Exporter = Annotated[CurrentUser, Depends(require_role("exporter"))]
+Buyer = Annotated[CurrentUser, Depends(require_role("buyer"))]
 Store = Annotated[Storage, Depends(get_storage)]
 
 
@@ -97,6 +100,16 @@ async def update_product(
 async def delete_product(product_id: uuid.UUID, user: Exporter, session: DB) -> Response:
     await product_service.delete_product(session, user, product_id)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@router.get("/api/buyer/sourcing-needs")
+async def get_sourcing_needs(user: Buyer, session: DB) -> SourcingNeedsOut:
+    return await service.get_sourcing_needs(session, user)
+
+
+@router.put("/api/buyer/sourcing-needs")
+async def put_sourcing_needs(data: SourcingNeedsIn, user: Buyer, session: DB) -> SourcingNeedsOut:
+    return await service.put_sourcing_needs(session, user, data)
 
 
 @router.get("/api/exporter/services")

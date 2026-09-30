@@ -19,6 +19,7 @@ from app.modules.companies import completeness_service
 from app.modules.companies.completeness import BUSINESS_MODELS
 from app.modules.companies.events import CompanyUpdated
 from app.modules.companies.models import (
+    BuyerSourcingNeeds,
     Company,
     CompanyExportMarket,
     CompanyFacilityCode,
@@ -41,6 +42,8 @@ from app.modules.companies.schemas import (
     MissingOut,
     PresignIn,
     PresignOut,
+    SourcingNeedsIn,
+    SourcingNeedsOut,
     VerificationState,
 )
 
@@ -531,3 +534,50 @@ async def presign_upload(
     folder = _UPLOAD_FOLDERS[data.purpose]
     key = f"{folder}/{company.id}/{uuid.uuid4().hex}.{_EXTENSIONS[data.content_type]}"
     return PresignOut(upload_url=await storage.presign_put(key, data.content_type), key=key)
+
+
+# ── Nhu cầu mua hàng của buyer (U5) ───────────────────────────────────────────────────────
+async def _own_buyer(session: AsyncSession, user: CurrentUser) -> Company:
+    """Lớp kiểm thứ hai (lớp một là require_role("buyer") ở router)."""
+    if user.role != "buyer":
+        raise AppError("forbidden", "Not allowed for this role", 403)
+    company = await _own_company(session, user)
+    if company.type is not CompanyType.buyer:
+        raise AppError("forbidden", "Not allowed for this role", 403)
+    return company
+
+
+def _needs_out(row: BuyerSourcingNeeds | None) -> SourcingNeedsOut:
+    if row is None:
+        return SourcingNeedsOut()
+    return SourcingNeedsOut.model_validate(
+        {field: getattr(row, field) for field in SourcingNeedsOut.model_fields}
+    )
+
+
+async def get_sourcing_needs(session: AsyncSession, user: CurrentUser) -> SourcingNeedsOut:
+    company = await _own_buyer(session, user)
+    return _needs_out(await session.get(BuyerSourcingNeeds, company.id))
+
+
+async def put_sourcing_needs(
+    session: AsyncSession, user: CurrentUser, data: SourcingNeedsIn
+) -> SourcingNeedsOut:
+    company = await _own_buyer(session, user)
+    row = await session.get(BuyerSourcingNeeds, company.id)
+    if row is None:
+        row = BuyerSourcingNeeds(company_id=company.id)
+        session.add(row)
+    for field, value in data.model_dump().items():
+        setattr(row, field, value)
+    await session.commit()
+    await session.refresh(row)
+    return _needs_out(row)
+
+
+async def get_sourcing_needs_for(
+    session: AsyncSession, company_id: uuid.UUID
+) -> SourcingNeedsOut | None:
+    """Nhu cầu của một buyer — module khác (RFQ, ghép nối) đọc qua đây, không query bảng."""
+    row = await session.get(BuyerSourcingNeeds, company_id)
+    return _needs_out(row) if row else None

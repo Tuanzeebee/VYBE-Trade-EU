@@ -113,11 +113,19 @@ describe('buyerProfileToCompany — form buyer cũ → CompanyIn', () => {
       business_type: 'Nhà nhập khẩu',
       website: 'https://globalfoods.example.de',
       contact_email: 'sourcing@globalfoods.example.de',
+      contact_name: null,
+      city: null,
+      phone: null,
       vat_number: 'DE123456789',
       eori_number: 'DE123456789012',
       procurement_estimate: '500k_2m',
       sourcing_categories: ['agriculture', 'spices'],
     });
+  });
+
+  it('U5: người liên hệ, thành phố, điện thoại được gửi lên server', () => {
+    const body = buyerProfileToCompany({ companyName: 'A', country: 'Germany', contactName: ' Anna ', city: 'Hamburg', phone: '+49 40 123' });
+    expect([body.contact_name, body.city, body.phone]).toEqual(['Anna', 'Hamburg', '+49 40 123']);
   });
 
   it('bỏ ô trống, nhóm hàng lạ và trùng; không gửi trường của exporter', () => {

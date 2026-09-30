@@ -58,6 +58,14 @@ export default function BuyerDashboard() {
   return (
     <main className="mx-auto max-w-6xl px-5 py-10 sm:px-8">
       <h1 className="text-2xl font-extrabold text-slate-900 sm:text-3xl">{tr('Bảng điều khiển')}</h1>
+      {/* U5: điều buyer cần nhất là nguồn cung ổn định, giảm rủi ro khi đổi nhà cung cấp (demo 30/9). */}
+      <div className="mt-4 rounded-2xl border border-teal-100 bg-teal-50/60 p-4 text-sm text-teal-900">
+        <p className="font-semibold">{tr('Tìm nguồn cung ổn định, giảm rủi ro khi đổi nhà cung cấp.')}</p>
+        <p className="mt-1 text-xs text-teal-800">
+          {tr('Nhà cung cấp trong danh bạ đã được kiểm tra pháp lý; xem năng lực, sản lượng và thị trường đã xuất khẩu trước khi liên hệ.')}{' '}
+          <Link href="/buyer/profile" className="font-semibold underline">{tr('Cập nhật nhu cầu mua hàng')}</Link>
+        </p>
+      </div>
       {data === undefined ? null : data === null ? (
         <p role="alert" className="mt-6 rounded-xl bg-rose-50 p-4 text-sm text-rose-700">
           {tr('Không tải được bảng điều khiển. Vui lòng thử lại.')}

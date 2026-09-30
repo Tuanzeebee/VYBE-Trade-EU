@@ -98,6 +98,8 @@ class _CompanyFields(BaseModel):
     website: Website | None = None
     contact_email: EmailStr | None = None
     phone: Phone | None = None
+    contact_name: ShortText | None = None
+    city: Title | None = None
     legal_rep_name: ShortText | None = None
     legal_rep_title: Title | None = None
     # Lưu đúng như in trên ĐKKD; giao diện hiển thị tên cơ quan hiện hành (Sở KH&ĐT → Sở Tài chính).
@@ -166,6 +168,8 @@ class CompanyOut(BaseModel):
     website: str | None
     contact_email: str | None
     phone: str | None
+    contact_name: str | None = None
+    city: str | None = None
     legal_rep_name: str | None
     legal_rep_title: str | None
     issuing_authority: str | None
@@ -637,3 +641,34 @@ class ServiceOfferingOut(BaseModel):
     coverage_countries: list[str]
     is_active: bool
     created_at: datetime
+
+
+# ── Nhu cầu mua hàng của buyer (U5) ───────────────────────────────────────────────────────
+Frequency = Literal["one_off", "monthly", "quarterly", "yearly"]
+IncotermCode = Literal["EXW", "FCA", "CPT", "CIP", "DAP", "DPU", "DDP", "FAS", "FOB", "CFR", "CIF"]
+BudgetCurrency = Literal["EUR", "USD"]
+
+
+class SourcingNeedsIn(BaseModel):
+    """Thay toàn bộ nhu cầu (PUT). Mọi trường tùy chọn — buyer bổ sung dần ở "Hoàn thiện hồ sơ"."""
+
+    products_text: Annotated[str, StringConstraints(max_length=2000)] | None = None
+    quantity: Amount | None = None
+    quantity_unit: Unit | None = None
+    frequency: Frequency | None = None
+    certifications_wanted: list[Annotated[str, StringConstraints(max_length=64)]] = Field(
+        default_factory=list, max_length=20
+    )
+    min_supplier_tier: Annotated[int, Field(ge=0, le=3)] | None = None
+    destination_country: CountryCode | None = None
+    destination_port: Title | None = None
+    incoterm: IncotermCode | None = None
+    budget_amount: Amount | None = None
+    budget_currency: BudgetCurrency = "EUR"
+    notes: Annotated[str, StringConstraints(max_length=2000)] | None = None
+
+    _uniq = field_validator("certifications_wanted")(_unique)
+
+
+class SourcingNeedsOut(SourcingNeedsIn):
+    updated_at: datetime | None = None

@@ -128,6 +128,9 @@ class Company(Base):
     website: Mapped[str | None] = mapped_column(String(255))
     contact_email: Mapped[str | None] = mapped_column(String(320))
     phone: Mapped[str | None] = mapped_column(String(40))
+    # U5: người liên hệ và thành phố (buyer chỉ khai thông tin cơ bản ở bước đầu).
+    contact_name: Mapped[str | None] = mapped_column(String(255))
+    city: Mapped[str | None] = mapped_column(String(120))
     # Người đại diện pháp luật và cơ quan cấp ĐKKD — lưu đúng như in trên giấy tờ (U2).
     legal_rep_name: Mapped[str | None] = mapped_column(String(255))
     legal_rep_title: Mapped[str | None] = mapped_column(String(120))
@@ -192,6 +195,45 @@ class Company(Base):
         cascade="all, delete-orphan",
         lazy="selectin",
         order_by="[CompanyFacilityCode.code_type, CompanyFacilityCode.code]",
+    )
+
+
+class BuyerSourcingNeeds(Base):
+    """Nhu cầu mua hàng của buyer (U5): trước đây chỉ nằm trong trình duyệt; nay lưu server để
+    seller và việc ghép nối đọc được. Mỗi buyer một dòng; mọi trường tùy chọn (hỏi sau bước đầu)."""
+
+    __tablename__ = "buyer_sourcing_needs"
+    __table_args__ = (
+        CheckConstraint("quantity IS NULL OR quantity > 0", name="quantity_positive"),
+        CheckConstraint("budget_amount IS NULL OR budget_amount > 0", name="budget_positive"),
+        CheckConstraint(
+            "min_supplier_tier IS NULL OR min_supplier_tier BETWEEN 0 AND 3", name="tier_range"
+        ),
+        CheckConstraint(
+            "frequency IS NULL OR frequency IN ('one_off', 'monthly', 'quarterly', 'yearly')",
+            name="frequency_known",
+        ),
+    )
+
+    company_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("companies.id", ondelete="CASCADE"), primary_key=True
+    )
+    products_text: Mapped[str | None] = mapped_column(Text)
+    quantity: Mapped[Decimal | None] = mapped_column(Numeric(14, 2))
+    quantity_unit: Mapped[str | None] = mapped_column(String(32))
+    frequency: Mapped[str | None] = mapped_column(String(16))
+    certifications_wanted: Mapped[list[str]] = mapped_column(
+        ARRAY(String(64)), default=list, server_default=text("'{}'")
+    )
+    min_supplier_tier: Mapped[int | None] = mapped_column(SmallInteger)
+    destination_country: Mapped[str | None] = mapped_column(String(2))
+    destination_port: Mapped[str | None] = mapped_column(String(120))
+    incoterm: Mapped[str | None] = mapped_column(String(8))
+    budget_amount: Mapped[Decimal | None] = mapped_column(Numeric(14, 2))
+    budget_currency: Mapped[str] = mapped_column(String(3), default="EUR", server_default="EUR")
+    notes: Mapped[str | None] = mapped_column(Text)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
     )
 
 

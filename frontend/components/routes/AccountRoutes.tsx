@@ -18,6 +18,7 @@ import { buyerProfileToCompany, companyToForm, getMyCompany, profileToCompany, s
 import { draftFromProduct, getMyProducts, syncProducts, type ProductDraft } from '../../lib/productsApi';
 import { draftFromService, getMyServices, syncServices, type ServiceDraft } from '../../lib/servicesApi';
 import { submitRequestIfNeeded } from '../../lib/verificationApi';
+import { saveSourcingNeeds, type NeedsDraft } from '../../lib/buyerNeedsApi';
 import { hrefFor, roleFromType } from '../../lib/legacyNav';
 
 const WORKSPACE_TABS: WorkspaceTabId[] = ['verification', 'profile', 'overview', 'products', 'rfq', 'messages', 'notifications', 'licenses'];
@@ -100,9 +101,10 @@ function OnboardingContent({ user }: { user: DemoUser }) {
   const data = useProfileData(user.role === 'seller');
   if (data === undefined) return null;
   if (user.role === 'buyer') {
-    // Hồ sơ buyer lên server trước; nhu cầu từng đơn hàng vẫn lưu trình duyệt tới F1 (RFQ).
-    const onBuyerComplete = async (profile: Record<string, string>) => {
+    // U5: hồ sơ buyer và nhu cầu mua hàng đều lưu server (bỏ qua bước nhu cầu thì chỉ lưu công ty).
+    const onBuyerComplete = async (profile: Record<string, string>, needs: NeedsDraft | null) => {
       await saveMyCompany(buyerProfileToCompany(profile));
+      if (needs) await saveSourcingNeeds(needs);
       goHome(completeOnboarding(user.id, profile));
     };
     return (
