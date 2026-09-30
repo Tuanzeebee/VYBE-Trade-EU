@@ -12463,5 +12463,85 @@
     "City",
     "Ville",
     "都市"
+  ],
+  "Tin nhắn trực tiếp": [
+    "Direct message",
+    "Message direct",
+    "ダイレクトメッセージ"
+  ],
+  "Chưa có hội thoại nào. Nhắn tin cho nhà cung cấp từ hồ sơ của họ, hoặc gửi yêu cầu báo giá.": [
+    "No conversations yet. Message a supplier from their profile, or send a quote request.",
+    "Aucune conversation pour l'instant. Écrivez à un fournisseur depuis son profil ou envoyez une demande de devis.",
+    "まだ会話はありません。サプライヤーのプロフィールからメッセージを送るか、見積依頼を送信してください。"
+  ],
+  "Đăng nhập để nhắn tin": [
+    "Sign in to send a message",
+    "Connectez-vous pour écrire",
+    "ログインしてメッセージを送信"
+  ],
+  "Nhắn tin": [
+    "Message",
+    "Écrire",
+    "メッセージ"
+  ],
+  "Nhắn tin cho nhà cung cấp": [
+    "Message the supplier",
+    "Écrire au fournisseur",
+    "サプライヤーにメッセージ"
+  ],
+  "Tin nhắn tới": [
+    "Message to",
+    "Message à",
+    "宛先"
+  ],
+  "Ví dụ: Chào anh chị, chúng tôi cần 2 container cá tra phi lê mỗi tháng, xin báo giá CIF Hamburg.": [
+    "e.g. Hello, we need 2 containers of pangasius fillets per month — please quote CIF Hamburg.",
+    "ex. Bonjour, nous avons besoin de 2 conteneurs de filets de pangasius par mois — merci de coter CIF Hambourg.",
+    "例: こんにちは。パンガシウスフィレを月2コンテナ必要です。CIFハンブルクで見積をお願いします。"
+  ],
+  "Tin nhắn được dịch sang ngôn ngữ của người nhận.": [
+    "Messages are translated into the recipient's language.",
+    "Les messages sont traduits dans la langue du destinataire.",
+    "メッセージは受信者の言語に翻訳されます。"
+  ],
+  "Huỷ": [
+    "Cancel",
+    "Annuler",
+    "キャンセル"
+  ],
+  "Gửi tin nhắn": [
+    "Send message",
+    "Envoyer le message",
+    "メッセージを送信"
+  ],
+  "Bạn đã mở quá nhiều hội thoại mới hôm nay. Vui lòng thử lại vào ngày mai.": [
+    "You have opened too many new conversations today. Please try again tomorrow.",
+    "Vous avez ouvert trop de nouvelles conversations aujourd'hui. Réessayez demain.",
+    "本日は新しい会話を開きすぎました。明日もう一度お試しください。"
+  ],
+  "Nhà cung cấp này hiện không nhận tin nhắn.": [
+    "This supplier is not accepting messages right now.",
+    "Ce fournisseur n'accepte pas de messages pour le moment.",
+    "このサプライヤーは現在メッセージを受け付けていません。"
+  ],
+  "Vui lòng hoàn thiện hồ sơ doanh nghiệp của bạn trước khi nhắn tin.": [
+    "Please complete your company profile before sending messages.",
+    "Veuillez compléter le profil de votre entreprise avant d'écrire.",
+    "メッセージを送る前に企業プロフィールを完成させてください。"
+  ],
+  "Bạn không thể nhắn tin cho chính công ty mình.": [
+    "You cannot message your own company.",
+    "Vous ne pouvez pas écrire à votre propre entreprise.",
+    "自社にはメッセージを送れません。"
+  ],
+  "Vui lòng nhập nội dung tin nhắn.": [
+    "Please enter a message.",
+    "Veuillez saisir un message.",
+    "メッセージを入力してください。"
+  ],
+  "Vui lòng đăng nhập để nhắn tin.": [
+    "Please sign in to send messages.",
+    "Veuillez vous connecter pour écrire.",
+    "メッセージを送るにはログインしてください。"
   ]
 }

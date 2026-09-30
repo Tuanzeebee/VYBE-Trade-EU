@@ -1,16 +1,20 @@
-"""Hội thoại theo cặp công ty gắn với RFQ (F2) và dịch máy từng tin (F3).
+"""Hội thoại theo cặp công ty (F2) và dịch máy từng tin (F3).
 
-Chỉ hai công ty của RFQ đọc và gửi được; người ngoài cuộc nhận 404. Lỗi dịch không chặn gửi:
+Hội thoại mở cùng RFQ, hoặc trực tiếp không cần RFQ (U7) tới nhà cung cấp đang hiển thị công khai.
+Chỉ hai công ty của hội thoại đọc và gửi được; người ngoài cuộc nhận 404. Lỗi dịch không chặn gửi:
 tin nhắn đi bằng bản gốc, body_translated để trống và người nhận thấy bản gốc.
 """
 
+import datetime as dt
 import logging
 import uuid
 
-from sqlalchemy import func, select, tuple_, update
+from sqlalchemy import and_, func, or_, select, tuple_, update
 from sqlalchemy.dialects.postgresql import distinct_on
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.config import get_settings
 from app.core.errors import AppError
 from app.core.events import publish
 from app.core.translation import TranslationService
@@ -83,6 +87,14 @@ async def list_conversations(session: AsyncSession, user: CurrentUser) -> list[C
             )
         )
     ).all()
+    out = await _build(session, company_id, list(conversations))
+    return sorted(out, key=lambda o: (o.last_message_at, str(o.id)), reverse=True)
+
+
+async def _build(
+    session: AsyncSession, company_id: uuid.UUID, conversations: list[Conversation]
+) -> list[ConversationOut]:
+    """Dòng danh sách của từng hội thoại, nhìn từ công ty `company_id`."""
     if not conversations:
         return []
     ids = [c.id for c in conversations]
@@ -105,12 +117,8 @@ async def list_conversations(session: AsyncSession, user: CurrentUser) -> list[C
     )
     for row in latest:
         last[row.conversation_id] = row
-    rfqs = {
-        r.id: r
-        for r in await session.scalars(
-            select(Rfq).where(Rfq.id.in_([c.rfq_id for c in conversations]))
-        )
-    }
+    rfq_ids = [c.rfq_id for c in conversations if c.rfq_id is not None]
+    rfqs = {r.id: r for r in await session.scalars(select(Rfq).where(Rfq.id.in_(rfq_ids)))}
     names = await companies.get_company_summaries(
         session, [c.company_a_id for c in conversations] + [c.company_b_id for c in conversations]
     )
@@ -121,18 +129,21 @@ async def list_conversations(session: AsyncSession, user: CurrentUser) -> list[C
     for c in conversations:
         other = c.company_b_id if c.company_a_id == company_id else c.company_a_id
         message = last.get(c.id)
+        rfq = rfqs.get(c.rfq_id) if c.rfq_id is not None else None
         out.append(
             ConversationOut(
                 id=c.id,
                 rfq_id=c.rfq_id,
-                product_name=products.get(rfqs[c.rfq_id].product_id, ""),
+                product_name=products.get(rfq.product_id, "") if rfq else "",
+                counterpart_company_id=other,
                 counterpart_name=names[other].legal_name,
+                counterpart_verified=names[other].verification_status == "verified",
                 last_message=_view(message, company_id).body if message else None,
                 last_message_at=message.sent_at if message else c.created_at,
                 unread_count=unread.get(c.id, 0),
             )
         )
-    return sorted(out, key=lambda o: (o.last_message_at, str(o.id)), reverse=True)
+    return out
 
 
 async def list_messages(
@@ -230,3 +241,71 @@ async def send_message(
         )
     )
     return out
+
+
+async def _direct_between(
+    session: AsyncSession, one: uuid.UUID, other: uuid.UUID
+) -> Conversation | None:
+    found: Conversation | None = await session.scalar(
+        select(Conversation).where(
+            Conversation.rfq_id.is_(None),
+            or_(
+                and_(Conversation.company_a_id == one, Conversation.company_b_id == other),
+                and_(Conversation.company_a_id == other, Conversation.company_b_id == one),
+            ),
+        )
+    )
+    return found
+
+
+async def start_direct(
+    session: AsyncSession,
+    user: CurrentUser,
+    supplier_slug: str,
+    body: str,
+    translator: TranslationService,
+    now: dt.datetime | None = None,
+) -> ConversationOut:
+    """U7: nhắn tin trực tiếp tới nhà cung cấp đang hiển thị công khai (không cần RFQ).
+
+    Đã có hội thoại trực tiếp với công ty đó (chiều nào cũng vậy) thì gửi tiếp vào đó; mở hội thoại
+    MỚI bị giới hạn theo ngày để chống spam. Chỉ nhắn chủ động tới nhà cung cấp công khai — buyer
+    không nằm trong danh bạ nên chỉ trả lời, không bị nhắn nguội.
+    """
+    moment = now or dt.datetime.now(dt.UTC)
+    company_id = await companies.get_company_id(session, user.id)
+    if company_id is None:
+        raise AppError("company_required", "Create your company profile first", 409)
+    target = await product_service.resolve_visible_company(session, supplier_slug, moment)
+    if target is None:
+        raise AppError("supplier_not_found", "Supplier not found", 404)
+    if target == company_id:
+        raise AppError("cannot_message_self", "You cannot message your own company", 422)
+
+    conversation = await _direct_between(session, company_id, target)
+    if conversation is None:
+        opened = await session.scalar(
+            select(func.count())
+            .select_from(Conversation)
+            .where(
+                Conversation.rfq_id.is_(None),
+                Conversation.company_a_id == company_id,
+                Conversation.created_at > moment - dt.timedelta(hours=24),
+            )
+        )
+        if (opened or 0) >= get_settings().direct_conversation_daily_limit:
+            raise AppError(
+                "conversation_daily_limit",
+                "Too many new conversations today. Try again tomorrow.",
+                429,
+            )
+        conversation = Conversation(rfq_id=None, company_a_id=company_id, company_b_id=target)
+        try:
+            async with session.begin_nested():
+                session.add(conversation)
+        except IntegrityError:  # hai yêu cầu cùng lúc: dùng hội thoại bên kia vừa tạo
+            conversation = await _direct_between(session, company_id, target)
+            if conversation is None:
+                raise
+    await send_message(session, user, conversation.id, body, translator)
+    return (await _build(session, company_id, [conversation]))[0]

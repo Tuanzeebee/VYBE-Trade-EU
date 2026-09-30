@@ -1181,7 +1181,11 @@ export interface paths {
         /** List My Conversations */
         get: operations["list_my_conversations_api_me_conversations_get"];
         put?: never;
-        post?: never;
+        /**
+         * Start Direct Conversation
+         * @description U7: nhắn tin trực tiếp tới nhà cung cấp (không cần RFQ); đã có hội thoại thì gửi tiếp.
+         */
+        post: operations["start_direct_conversation_api_me_conversations_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2187,15 +2191,19 @@ export interface components {
              * Format: uuid
              */
             id: string;
-            /**
-             * Rfq Id
-             * Format: uuid
-             */
-            rfq_id: string;
+            /** Rfq Id */
+            rfq_id: string | null;
             /** Product Name */
             product_name: string;
+            /**
+             * Counterpart Company Id
+             * Format: uuid
+             */
+            counterpart_company_id: string;
             /** Counterpart Name */
             counterpart_name: string;
+            /** Counterpart Verified */
+            counterpart_verified: boolean;
             /** Last Message */
             last_message: string | null;
             /**
@@ -2362,6 +2370,16 @@ export interface components {
         DeleteAccountIn: {
             /** Password */
             password: string;
+        };
+        /**
+         * DirectConversationIn
+         * @description U7: nhắn tin trực tiếp tới nhà cung cấp đang hiển thị công khai (theo slug hồ sơ).
+         */
+        DirectConversationIn: {
+            /** Supplier Slug */
+            supplier_slug: string;
+            /** Body */
+            body: string;
         };
         /** DocumentOut */
         DocumentOut: {
@@ -6932,6 +6950,41 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ConversationOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    start_direct_conversation_api_me_conversations_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DirectConversationIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConversationOut"];
                 };
             };
             /** @description Validation Error */

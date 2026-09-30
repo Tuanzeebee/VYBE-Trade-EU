@@ -9,7 +9,12 @@ from app.core.translation import TranslationService, get_translation_service
 from app.modules.auth.schemas import CurrentUser
 from app.modules.auth.service import require_role
 from app.modules.messaging import conversation_service, service
-from app.modules.messaging.conversation_schemas import ConversationOut, MessageIn, MessageOut
+from app.modules.messaging.conversation_schemas import (
+    ConversationOut,
+    DirectConversationIn,
+    MessageIn,
+    MessageOut,
+)
 from app.modules.messaging.models import RfqStatus
 from app.modules.messaging.schemas import RfqIn, RfqOut, RfqQuotaOut, RfqStatusIn
 
@@ -59,6 +64,16 @@ Translator = Annotated[TranslationService, Depends(get_translation_service)]
 @router.get("/api/me/conversations")
 async def list_my_conversations(user: Member, session: DB) -> list[ConversationOut]:
     return await conversation_service.list_conversations(session, user)
+
+
+@router.post("/api/me/conversations", status_code=status.HTTP_201_CREATED)
+async def start_direct_conversation(
+    data: DirectConversationIn, user: Member, session: DB, translator: Translator
+) -> ConversationOut:
+    """U7: nhắn tin trực tiếp tới nhà cung cấp (không cần RFQ); đã có hội thoại thì gửi tiếp."""
+    return await conversation_service.start_direct(
+        session, user, data.supplier_slug, data.body, translator
+    )
 
 
 @router.get("/api/me/conversations/{conversation_id}/messages")

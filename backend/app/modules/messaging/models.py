@@ -14,6 +14,7 @@ from sqlalchemy import (
     String,
     Text,
     Uuid,
+    func,
     text,
 )
 from sqlalchemy.orm import Mapped, mapped_column
@@ -85,10 +86,16 @@ class Rfq(Base):
 
 
 class Conversation(Base):
-    """Hội thoại giữa hai công ty, mở tự động cùng RFQ (F2). Mỗi RFQ đúng một hội thoại."""
+    """Hội thoại giữa hai công ty (F2).
+
+    - Theo RFQ: mở tự động cùng RFQ, mỗi RFQ đúng một hội thoại; a = buyer, b = exporter.
+    - Trực tiếp (U7): rfq_id NULL; a = bên mở, b = nhà cung cấp. Mỗi cặp công ty tối đa MỘT hội
+      thoại trực tiếp, không phân biệt chiều (unique index uq_conversations_direct_pair bên dưới).
+    """
 
     __tablename__ = "conversations"
     __table_args__ = (
+        CheckConstraint("company_a_id <> company_b_id", name="two_companies"),
         Index("ix_conversations_company_a", "company_a_id"),
         Index("ix_conversations_company_b", "company_b_id"),
     )
@@ -96,12 +103,21 @@ class Conversation(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         Uuid, primary_key=True, default=uuid.uuid4, server_default=text("gen_random_uuid()")
     )
-    rfq_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("rfqs.id"), unique=True)
-    company_a_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("companies.id"))  # buyer
+    rfq_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("rfqs.id"), unique=True)
+    company_a_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("companies.id"))  # buyer / bên mở
     company_b_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("companies.id"))  # exporter
     created_at: Mapped[dt.datetime] = mapped_column(
         DateTime(timezone=True), server_default=text("clock_timestamp()")
     )
+
+
+Index(
+    "uq_conversations_direct_pair",
+    func.least(Conversation.company_a_id, Conversation.company_b_id),
+    func.greatest(Conversation.company_a_id, Conversation.company_b_id),
+    unique=True,
+    postgresql_where=Conversation.rfq_id.is_(None),
+)
 
 
 class Message(Base):

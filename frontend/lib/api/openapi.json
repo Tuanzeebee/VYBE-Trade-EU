@@ -5089,6 +5089,64 @@
             }
           }
         }
+      },
+      "post": {
+        "tags": [
+          "messaging"
+        ],
+        "summary": "Start Direct Conversation",
+        "description": "U7: nhắn tin trực tiếp tới nhà cung cấp (không cần RFQ); đã có hội thoại thì gửi tiếp.",
+        "operationId": "start_direct_conversation_api_me_conversations_post",
+        "parameters": [
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DirectConversationIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConversationOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/api/me/conversations/{conversation_id}/messages": {
@@ -9320,17 +9378,33 @@
             "title": "Id"
           },
           "rfq_id": {
-            "type": "string",
-            "format": "uuid",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Rfq Id"
           },
           "product_name": {
             "type": "string",
             "title": "Product Name"
           },
+          "counterpart_company_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Counterpart Company Id"
+          },
           "counterpart_name": {
             "type": "string",
             "title": "Counterpart Name"
+          },
+          "counterpart_verified": {
+            "type": "boolean",
+            "title": "Counterpart Verified"
           },
           "last_message": {
             "anyOf": [
@@ -9358,7 +9432,9 @@
           "id",
           "rfq_id",
           "product_name",
+          "counterpart_company_id",
           "counterpart_name",
+          "counterpart_verified",
           "last_message",
           "last_message_at",
           "unread_count"
@@ -9901,6 +9977,30 @@
         ],
         "title": "DeleteAccountIn",
         "description": "Xóa tài khoản là không thể hoàn tác nên phải nhập lại mật khẩu."
+      },
+      "DirectConversationIn": {
+        "properties": {
+          "supplier_slug": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Supplier Slug"
+          },
+          "body": {
+            "type": "string",
+            "maxLength": 4000,
+            "minLength": 1,
+            "title": "Body"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "supplier_slug",
+          "body"
+        ],
+        "title": "DirectConversationIn",
+        "description": "U7: nhắn tin trực tiếp tới nhà cung cấp đang hiển thị công khai (theo slug hồ sơ)."
       },
       "DocumentOut": {
         "properties": {

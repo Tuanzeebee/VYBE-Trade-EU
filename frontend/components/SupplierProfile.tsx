@@ -7,6 +7,7 @@ import { Link } from '../i18n/navigation';
 import { translateText, type Locale } from '../i18n/translate';
 import { countryName, fetchProfile, industryLabel } from '../lib/suppliersApi';
 import ProfileViewBeacon from './ProfileViewBeacon';
+import MessageSupplier from './MessageSupplier';
 
 export default async function SupplierProfile({ slug, locale }: { slug: string; locale: Locale }) {
   const t = (vi: string) => translateText(vi, locale);
@@ -30,6 +31,9 @@ export default async function SupplierProfile({ slug, locale }: { slug: string; 
         {profile.founded_year && ` · ${t('Thành lập')} ${profile.founded_year}`}
       </p>
       {description && <p className="mt-4 whitespace-pre-line text-sm leading-relaxed text-slate-800">{description}</p>}
+      <div className="mt-5 flex flex-wrap items-start gap-3">
+        <MessageSupplier slug={slug} supplierName={profile.legal_name} />
+      </div>
 
       <section aria-label={t('Sản phẩm')} className="mt-8">
         <h2 className="text-lg font-bold text-slate-900">{t('Sản phẩm')}</h2>

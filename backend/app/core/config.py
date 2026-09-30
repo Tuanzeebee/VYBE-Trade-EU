@@ -27,6 +27,9 @@ class Settings(BaseSettings):
     # hạn mức thấp hơn (0 = chặn hẳn, chỉ dùng khi PO yêu cầu).
     rfq_daily_limit_verified: int = 5
     rfq_daily_limit_unverified: int = 3
+    # U7: số hội thoại trực tiếp MỚI một công ty được mở trong 24 giờ (chống spam; PO chốt con số).
+    # Nhắn tiếp trong hội thoại đã có không bị tính.
+    direct_conversation_daily_limit: int = 10
     # Email (H2): dev dùng Mailpit; nhà cung cấp thật do Q5 chốt; link thư dựng từ public_base_url
     email_backend: str = "smtp"  # smtp | fake
     smtp_host: str = "localhost"
