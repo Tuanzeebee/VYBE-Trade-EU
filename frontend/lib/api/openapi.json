@@ -10607,6 +10607,181 @@
         }
       }
     },
+    "/api/exporter/trust-score": {
+      "get": {
+        "tags": [
+          "verification"
+        ],
+        "summary": "My Trust Score",
+        "operationId": "my_trust_score_api_exporter_trust_score_get",
+        "parameters": [
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrustScoreOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/companies/{company_id}/trust-score": {
+      "get": {
+        "tags": [
+          "verification"
+        ],
+        "summary": "Company Trust Score",
+        "operationId": "company_trust_score_api_admin_companies__company_id__trust_score_get",
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Company Id"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrustScoreOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/public/companies/{slug}/trust-score": {
+      "get": {
+        "tags": [
+          "verification"
+        ],
+        "summary": "Public Trust Score",
+        "operationId": "public_trust_score_api_public_companies__slug__trust_score_get",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Slug"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrustScoreOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/public/trust-criteria": {
+      "get": {
+        "tags": [
+          "verification"
+        ],
+        "summary": "Trust Criteria",
+        "operationId": "trust_criteria_api_public_trust_criteria_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/TrustCriterionOut"
+                  },
+                  "type": "array",
+                  "title": "Response Trust Criteria Api Public Trust Criteria Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/health": {
       "get": {
         "summary": "Health",
@@ -25069,6 +25244,182 @@
         "type": "object",
         "title": "TradeImportIn",
         "description": "Nạp từ Eurostat Comext. Bỏ trống products = danh sách mã ưu tiên; năm mặc định 6 năm gần\nnhất."
+      },
+      "TrustComponentOut": {
+        "properties": {
+          "component": {
+            "type": "string",
+            "enum": [
+              "documents",
+              "automated",
+              "behaviour"
+            ],
+            "title": "Component"
+          },
+          "label_vi": {
+            "type": "string",
+            "title": "Label Vi"
+          },
+          "label_en": {
+            "type": "string",
+            "title": "Label En"
+          },
+          "score": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Score"
+          },
+          "criteria": {
+            "items": {
+              "$ref": "#/components/schemas/TrustCriterionOut"
+            },
+            "type": "array",
+            "title": "Criteria"
+          }
+        },
+        "type": "object",
+        "required": [
+          "component",
+          "label_vi",
+          "label_en",
+          "score",
+          "criteria"
+        ],
+        "title": "TrustComponentOut"
+      },
+      "TrustCriterionOut": {
+        "properties": {
+          "fact_key": {
+            "type": "string",
+            "title": "Fact Key"
+          },
+          "label_vi": {
+            "type": "string",
+            "title": "Label Vi"
+          },
+          "label_en": {
+            "type": "string",
+            "title": "Label En"
+          },
+          "weight": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Weight"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          },
+          "draft": {
+            "type": "boolean",
+            "title": "Draft"
+          },
+          "component": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Component"
+          }
+        },
+        "type": "object",
+        "required": [
+          "fact_key",
+          "label_vi",
+          "label_en",
+          "weight",
+          "value",
+          "draft"
+        ],
+        "title": "TrustCriterionOut"
+      },
+      "TrustScoreOut": {
+        "properties": {
+          "score": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Score"
+          },
+          "computed_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Computed At"
+          },
+          "new_on_platform": {
+            "type": "boolean",
+            "title": "New On Platform"
+          },
+          "uses_draft_criteria": {
+            "type": "boolean",
+            "title": "Uses Draft Criteria"
+          },
+          "method_url": {
+            "type": "string",
+            "title": "Method Url"
+          },
+          "disclaimer_vi": {
+            "type": "string",
+            "title": "Disclaimer Vi"
+          },
+          "disclaimer_en": {
+            "type": "string",
+            "title": "Disclaimer En"
+          },
+          "components": {
+            "items": {
+              "$ref": "#/components/schemas/TrustComponentOut"
+            },
+            "type": "array",
+            "title": "Components"
+          },
+          "self_declared": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Self Declared"
+          }
+        },
+        "type": "object",
+        "required": [
+          "score",
+          "computed_at",
+          "new_on_platform",
+          "uses_draft_criteria",
+          "method_url",
+          "disclaimer_vi",
+          "disclaimer_en",
+          "components",
+          "self_declared"
+        ],
+        "title": "TrustScoreOut",
+        "description": "Điểm 0–100 kèm điểm thành phần, ngày tính, phương pháp và câu \"không phải chứng nhận\"."
       },
       "UnreadCountOut": {
         "properties": {

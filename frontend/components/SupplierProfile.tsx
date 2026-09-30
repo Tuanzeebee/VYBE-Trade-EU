@@ -20,6 +20,8 @@ import {
 } from '../lib/suppliersApi';
 import ProfileViewBeacon from './ProfileViewBeacon';
 import TierBadge from './TierBadge';
+import TrustScoreBadge from './TrustScoreBadge';
+import { fetchPublicTrustScore } from '../lib/trustApi';
 import MessageSupplier from './MessageSupplier';
 
 /** Địa điểm cho bản đồ nhúng (Google Maps, không cần khóa API): chính xác khi doanh nghiệp đồng ý,
@@ -40,7 +42,7 @@ const heading = 'text-lg font-bold text-slate-900';
 
 export default async function SupplierProfile({ slug, locale }: { slug: string; locale: Locale }) {
   const t = (vi: string) => translateText(vi, locale);
-  const [profile, credentials] = await Promise.all([fetchProfile(slug), fetchCredentials(slug)]);
+  const [profile, credentials, trust] = await Promise.all([fetchProfile(slug), fetchCredentials(slug), fetchPublicTrustScore(slug)]);
   if (!profile) notFound();
   const description = locale === 'en' ? (profile.description_en ?? profile.description_vi) : (profile.description_vi ?? profile.description_en);
   const date = (iso: string) => new Intl.DateTimeFormat(locale === 'en' ? 'en-GB' : 'vi-VN', { dateStyle: 'medium' }).format(new Date(iso));
@@ -67,6 +69,7 @@ export default async function SupplierProfile({ slug, locale }: { slug: string; 
           reviewedAt={credentials?.tier_reviewed_at ?? verifiedAt}
           expiresAt={credentials?.tier_expires_at ?? credentials?.expires_at}
         />
+        {trust && <TrustScoreBadge trust={trust} locale={locale} />}
       </div>
       <p className="mt-1 text-sm text-slate-600">
         {[profile.city, countryName(profile.country)].filter(Boolean).join(', ')}

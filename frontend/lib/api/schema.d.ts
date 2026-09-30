@@ -2423,6 +2423,74 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/exporter/trust-score": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** My Trust Score */
+        get: operations["my_trust_score_api_exporter_trust_score_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/companies/{company_id}/trust-score": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Company Trust Score */
+        get: operations["company_trust_score_api_admin_companies__company_id__trust_score_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/public/companies/{slug}/trust-score": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Public Trust Score */
+        get: operations["public_trust_score_api_public_companies__slug__trust_score_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/public/trust-criteria": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Trust Criteria */
+        get: operations["trust_criteria_api_public_trust_criteria_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -6526,6 +6594,66 @@ export interface components {
             year_from?: number | null;
             /** Year To */
             year_to?: number | null;
+        };
+        /** TrustComponentOut */
+        TrustComponentOut: {
+            /**
+             * Component
+             * @enum {string}
+             */
+            component: "documents" | "automated" | "behaviour";
+            /** Label Vi */
+            label_vi: string;
+            /** Label En */
+            label_en: string;
+            /** Score */
+            score: string | null;
+            /** Criteria */
+            criteria: components["schemas"]["TrustCriterionOut"][];
+        };
+        /** TrustCriterionOut */
+        TrustCriterionOut: {
+            /** Fact Key */
+            fact_key: string;
+            /** Label Vi */
+            label_vi: string;
+            /** Label En */
+            label_en: string;
+            /** Weight */
+            weight: string;
+            /** Value */
+            value: string | null;
+            /** Draft */
+            draft: boolean;
+            /** Component */
+            component?: string | null;
+        };
+        /**
+         * TrustScoreOut
+         * @description Điểm 0–100 kèm điểm thành phần, ngày tính, phương pháp và câu "không phải chứng nhận".
+         */
+        TrustScoreOut: {
+            /** Score */
+            score: string | null;
+            /**
+             * Computed At
+             * Format: date-time
+             */
+            computed_at: string;
+            /** New On Platform */
+            new_on_platform: boolean;
+            /** Uses Draft Criteria */
+            uses_draft_criteria: boolean;
+            /** Method Url */
+            method_url: string;
+            /** Disclaimer Vi */
+            disclaimer_vi: string;
+            /** Disclaimer En */
+            disclaimer_en: string;
+            /** Components */
+            components: components["schemas"]["TrustComponentOut"][];
+            /** Self Declared */
+            self_declared: string[];
         };
         /** UnreadCountOut */
         UnreadCountOut: {
@@ -12521,6 +12649,121 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    my_trust_score_api_exporter_trust_score_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TrustScoreOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    company_trust_score_api_admin_companies__company_id__trust_score_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                company_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TrustScoreOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    public_trust_score_api_public_companies__slug__trust_score_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TrustScoreOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    trust_criteria_api_public_trust_criteria_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TrustCriterionOut"][];
                 };
             };
         };

@@ -1,5 +1,6 @@
 import datetime as dt
 import uuid
+from decimal import Decimal
 from typing import Annotated, Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -185,3 +186,36 @@ class PublicCertificateOut(BaseModel):
     code: str
     name_vi: str
     name_en: str
+
+
+# ── Điểm tín nhiệm seller (U23, ADR-0004) ─────────────────────────────────────
+class TrustCriterionOut(BaseModel):
+    fact_key: str
+    label_vi: str
+    label_en: str
+    weight: Decimal
+    value: Decimal | None  # 0–1; None = không tính (không áp dụng / chưa đủ dữ liệu)
+    draft: bool  # tiêu chí minh hoạ chưa duyệt
+    component: str | None = None
+
+
+class TrustComponentOut(BaseModel):
+    component: Literal["documents", "automated", "behaviour"]
+    label_vi: str
+    label_en: str
+    score: Decimal | None
+    criteria: list[TrustCriterionOut]
+
+
+class TrustScoreOut(BaseModel):
+    """Điểm 0–100 kèm điểm thành phần, ngày tính, phương pháp và câu "không phải chứng nhận"."""
+
+    score: Decimal | None
+    computed_at: dt.datetime
+    new_on_platform: bool
+    uses_draft_criteria: bool
+    method_url: str
+    disclaimer_vi: str
+    disclaimer_en: str
+    components: list[TrustComponentOut]
+    self_declared: list[str]  # dữ kiện tự khai, trọng số 0

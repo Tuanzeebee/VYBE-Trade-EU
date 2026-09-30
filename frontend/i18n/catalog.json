@@ -14843,5 +14843,140 @@
     "Profile improvement hints",
     "Conseils pour compléter le profil",
     "プロフィール改善のヒント"
+  ],
+  "Chưa tính được": [
+    "Not available yet",
+    "Pas encore disponible",
+    "まだ算出できません"
+  ],
+  "Cần ít nhất 3 hội thoại hoặc yêu cầu báo giá trong 90 ngày để chấm phần này.": [
+    "At least 3 conversations or quote requests in 90 days are needed to score this part.",
+    "Au moins 3 conversations ou demandes de devis sur 90 jours sont nécessaires pour noter cette partie.",
+    "この項目の算出には90日間で3件以上の会話または見積依頼が必要です。"
+  ],
+  "Mới trên nền tảng": [
+    "New on the platform",
+    "Nouveau sur la plateforme",
+    "新規参加"
+  ],
+  "Tiêu chí đang là bản nháp minh hoạ, chờ duyệt.": [
+    "Criteria are an illustrative draft pending review.",
+    "Les critères sont un brouillon illustratif en attente de validation.",
+    "基準は例示用の下書きで、承認待ちです。"
+  ],
+  "Tính lúc": [
+    "Computed at",
+    "Calculé le",
+    "算出日時"
+  ],
+  "Tự khai (không tính điểm)": [
+    "Self-declared (not scored)",
+    "Déclaratif (non noté)",
+    "自己申告（採点対象外）"
+  ],
+  "Xem phương pháp": [
+    "See the method",
+    "Voir la méthode",
+    "算出方法を見る"
+  ],
+  "chưa tính": [
+    "not scored",
+    "non noté",
+    "未算出"
+  ],
+  "Điểm tín nhiệm": [
+    "Trust score",
+    "Score de confiance",
+    "信頼スコア"
+  ],
+  "Danh sách sản phẩm": [
+    "Product list",
+    "Liste des produits",
+    "製品リスト"
+  ],
+  "Phương pháp tính điểm tín nhiệm": [
+    "How the trust score is computed",
+    "Méthode du score de confiance",
+    "信頼スコアの算出方法"
+  ],
+  "Ba thành phần": [
+    "Three components",
+    "Trois composantes",
+    "3つの構成要素"
+  ],
+  "Nguyên tắc": [
+    "Principles",
+    "Principes",
+    "原則"
+  ],
+  "Tiêu chí đang chờ bộ phận pháp lý duyệt.": [
+    "Criteria are pending legal review.",
+    "Les critères sont en attente de validation juridique.",
+    "基準は法務の承認待ちです。"
+  ],
+  "Điểm do hệ thống VYBE Trade tính theo phương pháp công bố tại /trust-score. Không phải chứng nhận hay xếp hạng tín dụng.": [
+    "Score computed by VYBE Trade using the method published at /trust-score. Not a certification or credit rating.",
+    "Score calculé par VYBE Trade selon la méthode publiée sur /trust-score. Ni certification ni notation de crédit.",
+    "VYBE Tradeが/trust-scoreで公開した方法で算出したスコアです。認証や信用格付けではありません。"
+  ],
+  "Điểm tín nhiệm (0–100) giúp buyer đánh giá nhanh một nhà cung cấp. Điểm do hệ thống VYBE Trade tính theo phương pháp dưới đây và luôn đi kèm điểm thành phần, ngày tính.": [
+    "The trust score (0–100) helps buyers assess a supplier quickly. VYBE Trade computes it with the method below and always shows the component scores and the date.",
+    "Le score de confiance (0–100) aide les acheteurs à évaluer rapidement un fournisseur. VYBE Trade le calcule selon la méthode ci-dessous, avec les sous-scores et la date.",
+    "信頼スコア（0〜100）はバイヤーがサプライヤーを素早く評価するためのものです。VYBE Tradeが以下の方法で算出し、構成要素と算出日を常に表示します。"
+  ],
+  "Giấy tờ đã kiểm (khoảng 35%)": [
+    "Checked documents (about 35%)",
+    "Documents vérifiés (environ 35 %)",
+    "確認済み書類（約35%）"
+  ],
+  "Pháp lý doanh nghiệp, cấp xác minh, chứng nhận còn hạn và bằng chứng xuất khẩu đã được đội ngũ VYBE Trade đối chiếu.": [
+    "Legal status, verification tier, valid certificates and export evidence checked by the VYBE Trade team.",
+    "Statut juridique, niveau de vérification, certificats valides et preuves d'export vérifiés par l'équipe VYBE Trade.",
+    "VYBE Tradeチームが照合した法的地位、認証レベル、有効な認証、輸出の証拠。"
+  ],
+  "Kiểm tự động (khoảng 15%)": [
+    "Automated checks (about 15%)",
+    "Vérifications automatiques (environ 15 %)",
+    "自動確認（約15%）"
+  ],
+  "Email theo tên miền công ty, tuổi tên miền, website có tên công ty, đối chiếu sổ đăng ký (VIES, GLEIF, Cổng đăng ký doanh nghiệp) và địa chỉ.": [
+    "Company-domain email, domain age, website showing the company name, registry matches (VIES, GLEIF, business registration portal) and address.",
+    "E-mail au domaine de l'entreprise, ancienneté du domaine, site affichant le nom, registres (VIES, GLEIF, portail d'immatriculation) et adresse.",
+    "会社ドメインのメール、ドメイン年数、社名のあるウェブサイト、登記照合（VIES・GLEIF・企業登録ポータル）、住所。"
+  ],
+  "Hành vi trên nền tảng (khoảng 50%)": [
+    "Platform behaviour (about 50%)",
+    "Comportement sur la plateforme (environ 50 %)",
+    "プラットフォーム上の行動（約50%）"
+  ],
+  "Tỷ lệ và tốc độ trả lời tin nhắn của buyer, tỷ lệ yêu cầu báo giá được báo giá, trong 90 ngày gần nhất.": [
+    "Share and speed of replies to buyers, and share of quote requests answered with a quote, over the last 90 days.",
+    "Part et rapidité des réponses aux acheteurs, part des demandes de devis chiffrées, sur les 90 derniers jours.",
+    "直近90日間のバイヤーへの返信率と速さ、見積依頼への見積提示率。"
+  ],
+  "Chỉ chấm dữ kiện kiểm chứng được; thông tin tự khai được gắn nhãn và không tính điểm.": [
+    "Only verifiable facts are scored; self-declared information is labelled and not scored.",
+    "Seuls les faits vérifiables sont notés ; les informations déclaratives sont signalées et non notées.",
+    "検証可能な事実のみ採点し、自己申告情報は表示のみで採点しません。"
+  ],
+  "Tiêu chí và trọng số là dữ liệu có người duyệt; tiêu chí chưa duyệt không được dùng.": [
+    "Criteria and weights are reviewed data; unreviewed criteria are not used.",
+    "Critères et pondérations sont des données validées ; les critères non validés ne sont pas utilisés.",
+    "基準と重みは承認済みデータで、未承認の基準は使いません。"
+  ],
+  "Doanh nghiệp có dưới 3 hội thoại hoặc yêu cầu báo giá trong 90 ngày được gắn nhãn \"Mới trên nền tảng\" và chưa chấm phần hành vi.": [
+    "Companies with fewer than 3 conversations or quote requests in 90 days are labelled \"New on the platform\" and the behaviour part is not scored.",
+    "Les entreprises ayant moins de 3 conversations ou demandes de devis sur 90 jours sont « Nouvelles sur la plateforme » et la partie comportement n'est pas notée.",
+    "90日間の会話・見積依頼が3件未満の企業は「新規参加」と表示し、行動の項目は採点しません。"
+  ],
+  "Điểm không phải chứng nhận hay xếp hạng tín dụng, không quyết định việc xác minh và không dùng để xếp thứ tự danh bạ.": [
+    "The score is not a certification or credit rating, does not decide verification and is not used to rank the directory.",
+    "Le score n'est ni une certification ni une notation de crédit, ne décide pas de la vérification et ne sert pas à classer l'annuaire.",
+    "スコアは認証や信用格付けではなく、認証判断にもディレクトリの並び順にも使いません。"
+  ],
+  "Doanh nghiệp luôn xem được điểm và từng thành phần của mình trong khu vực quản lý.": [
+    "Companies can always see their own score and each component in their workspace.",
+    "Les entreprises voient toujours leur score et chaque composante dans leur espace.",
+    "企業は自社のスコアと各構成要素をいつでも管理画面で確認できます。"
   ]
 }

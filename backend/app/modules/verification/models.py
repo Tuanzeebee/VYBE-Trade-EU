@@ -1,5 +1,6 @@
 import datetime as dt
 import uuid
+from decimal import Decimal
 from enum import StrEnum
 from typing import Any
 
@@ -13,6 +14,7 @@ from sqlalchemy import (
     ForeignKey,
     Index,
     Integer,
+    Numeric,
     SmallInteger,
     String,
     Text,
@@ -278,3 +280,31 @@ class ApprovedEstablishment(Base):
     imported_at: Mapped[dt.datetime] = mapped_column(
         DateTime(timezone=True), server_default=text("clock_timestamp()")
     )
+
+
+class TrustCriterion(Base):
+    """Tiêu chí điểm tín nhiệm seller (U23, ADR-0004) — DỮ LIỆU có người duyệt. Chưa duyệt thì bỏ
+    qua; is_demo chỉ dùng được khi bật DEMO ngoài production."""
+
+    __tablename__ = "trust_criteria"
+    __table_args__ = (
+        CheckConstraint("component IN ('documents', 'automated', 'behaviour')", name="component"),
+        CheckConstraint("weight >= 0", name="weight_non_negative"),
+        CheckConstraint(
+            "(reviewed_by IS NULL) = (reviewed_at IS NULL)", name="reviewed_by_and_at_together"
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, primary_key=True, default=uuid.uuid4, server_default=text("gen_random_uuid()")
+    )
+    component: Mapped[str] = mapped_column(String(16))
+    fact_key: Mapped[str] = mapped_column(String(64), unique=True)
+    label_vi: Mapped[str] = mapped_column(String(255))
+    label_en: Mapped[str] = mapped_column(String(255))
+    weight: Mapped[Decimal] = mapped_column(Numeric(5, 2))
+    sort_order: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, server_default=text("true"))
+    is_demo: Mapped[bool] = mapped_column(Boolean, default=False, server_default=text("false"))
+    reviewed_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id"))
+    reviewed_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))

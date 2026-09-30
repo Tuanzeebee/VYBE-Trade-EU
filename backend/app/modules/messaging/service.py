@@ -4,8 +4,9 @@ kiểm tra từng bản ghi thuộc về công ty của người gọi (buyer g�
 
 import datetime as dt
 import uuid
+from decimal import Decimal
 
-from sqlalchemy import func, select
+from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import get_settings
@@ -16,8 +17,14 @@ from app.modules.companies import product_service
 from app.modules.companies import service as companies
 from app.modules.messaging import conversation_service
 from app.modules.messaging.events import RfqCreated, RfqStatusChanged
-from app.modules.messaging.models import Rfq, RfqStatus
-from app.modules.messaging.schemas import RfqIn, RfqOut, RfqQuotaOut, RfqSummary
+from app.modules.messaging.models import Conversation, Message, Rfq, RfqQuote, RfqStatus
+from app.modules.messaging.schemas import (
+    ResponseStats,
+    RfqIn,
+    RfqOut,
+    RfqQuotaOut,
+    RfqSummary,
+)
 
 MAX_HORIZON_DAYS = 5 * 366  # ngày cần hàng không quá xa (chặn nhập nhầm năm)
 
@@ -262,4 +269,69 @@ async def summarize_rfqs(
         total=sum(counts.values()),
         created_since=created_since or 0,
         recent=await _to_out(session, list(rows)),
+    )
+
+
+# ── Thống kê phản hồi của seller (U23 điểm tín nhiệm — phần hành vi) ─────────────────────────
+REPLY_WINDOW = dt.timedelta(days=7)
+
+
+async def seller_response_stats(
+    session: AsyncSession, company_id: uuid.UUID, since: dt.datetime
+) -> ResponseStats:
+    """Hội thoại mà bên kia nhắn trước tới công ty từ `since`: bao nhiêu được trả lời trong 7 ngày,
+    trung vị giờ tới câu trả lời đầu; RFQ nhận được và bao nhiêu RFQ có báo giá. Chỉ đọc."""
+    conversation_ids = list(
+        await session.scalars(
+            select(Conversation.id).where(
+                or_(
+                    Conversation.company_a_id == company_id, Conversation.company_b_id == company_id
+                ),
+                Conversation.created_at >= since,
+            )
+        )
+    )
+    first_in: dict[uuid.UUID, dt.datetime] = {}
+    first_reply: dict[uuid.UUID, dt.datetime] = {}
+    if conversation_ids:
+        rows = await session.execute(
+            select(Message.conversation_id, Message.sender_company_id, Message.sent_at)
+            .where(Message.conversation_id.in_(conversation_ids))
+            .order_by(Message.sent_at)
+        )
+        for conversation_id, sender, sent_at in rows:
+            if sender != company_id:
+                first_in.setdefault(conversation_id, sent_at)
+            elif conversation_id in first_in:
+                first_reply.setdefault(conversation_id, sent_at)
+    waits = sorted((first_reply[c] - first_in[c]) for c in first_in if c in first_reply)
+    replied = sum(
+        1 for c in first_in if c in first_reply and first_reply[c] - first_in[c] <= REPLY_WINDOW
+    )
+    median = None
+    if waits:
+        half = len(waits) // 2
+        middle = waits[half] if len(waits) % 2 else (waits[half - 1] + waits[half]) / 2
+        median = Decimal(str(round(middle.total_seconds() / 3600, 2)))
+    rfq_ids = list(
+        await session.scalars(
+            select(Rfq.id).where(Rfq.exporter_company_id == company_id, Rfq.created_at >= since)
+        )
+    )
+    quoted = 0
+    if rfq_ids:
+        quoted = int(
+            await session.scalar(
+                select(func.count(func.distinct(RfqQuote.rfq_id))).where(
+                    RfqQuote.rfq_id.in_(rfq_ids)
+                )
+            )
+            or 0
+        )
+    return ResponseStats(
+        conversations=len(first_in),
+        replied=replied,
+        median_reply_hours=median,
+        rfqs=len(rfq_ids),
+        quoted=quoted,
     )

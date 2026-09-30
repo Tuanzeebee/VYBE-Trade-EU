@@ -171,3 +171,13 @@ class QuoteOut(BaseModel):
     decision_reason: str | None
     decided_at: dt.datetime | None
     created_at: dt.datetime
+
+
+class ResponseStats(BaseModel):
+    """Thống kê phản hồi của seller trong một kỳ (U23) — module verification đọc qua service."""
+
+    conversations: int
+    replied: int
+    median_reply_hours: Decimal | None
+    rfqs: int
+    quoted: int

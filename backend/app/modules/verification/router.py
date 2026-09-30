@@ -19,6 +19,7 @@ from app.modules.verification import (
     evidence_service,
     request_service,
     tier_service,
+    trust_service,
 )
 from app.modules.verification.admin_schemas import (
     EvidenceReviewIn,
@@ -43,6 +44,8 @@ from app.modules.verification.schemas import (
     TierDownIn,
     TierOverviewOut,
     TierRequestIn,
+    TrustCriterionOut,
+    TrustScoreOut,
     VerificationRequestOut,
 )
 
@@ -298,3 +301,24 @@ async def consistency_hints(user: Exporter, session: DB) -> list[FindingOut]:
 @router.get("/api/admin/companies/{company_id}/findings")
 async def company_findings(company_id: uuid.UUID, _: Admin, session: DB) -> list[FindingOut]:
     return await consistency_service.findings_for(session, company_id)
+
+
+# ── Điểm tín nhiệm seller (U23): owner + admin; công khai khi TRUST_SCORE_PUBLIC bật ───────────
+@router.get("/api/exporter/trust-score")
+async def my_trust_score(user: Exporter, session: DB) -> TrustScoreOut:
+    return await trust_service.my_score(session, user)
+
+
+@router.get("/api/admin/companies/{company_id}/trust-score")
+async def company_trust_score(company_id: uuid.UUID, _: Admin, session: DB) -> TrustScoreOut:
+    return await trust_service.score_for(session, company_id)
+
+
+@router.get("/api/public/companies/{slug}/trust-score")
+async def public_trust_score(slug: str, session: DB) -> TrustScoreOut:
+    return await trust_service.public_score(session, slug)
+
+
+@router.get("/api/public/trust-criteria")
+async def trust_criteria(session: DB) -> list[TrustCriterionOut]:
+    return await trust_service.public_criteria(session)

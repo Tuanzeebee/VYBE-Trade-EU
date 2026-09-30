@@ -1,0 +1,17 @@
+# BẢN NHÁP tiêu chí điểm tín nhiệm seller (U23, ADR-0004) — CHƯA duyệt, is_demo = true.
+# Theo docs/roadmap/2026-09-29-nghien-cuu-trong-so-uy-tin.md: giấy tờ đã kiểm ~35%, kiểm tự động ~15%,
+# hành vi ~50%. Luật TM / PO duyệt từng dòng; dòng chưa duyệt chỉ dùng được khi bật DEMO ngoài production.
+# Nạp: uv run python -m scripts.seed_trust_criteria
+component,fact_key,label_vi,label_en,weight,sort_order
+documents,legal_verified,Pháp lý doanh nghiệp đã được VYBE Trade đối chiếu,Company legal status checked by VYBE Trade,15,1
+documents,enhanced_tier,Năng lực đã kiểm (cấp Nâng cao trở lên),Capability checked (Enhanced tier or above),8,2
+documents,valid_certificates,Chứng nhận còn hạn đã được duyệt,Approved certificates still valid,7,3
+documents,export_evidence,Bằng chứng xuất khẩu đã được duyệt,Approved export evidence,5,4
+automated,company_email_domain,Email theo tên miền công ty nhận được thư,Company-domain email that receives mail,3,1
+automated,website_matches,Website truy cập được và có tên công ty,Website reachable and shows the company name,4,2
+automated,domain_age,Tên miền đã đăng ký trên 1 năm,Domain registered for over a year,2,3
+automated,registry_match,Khớp sổ đăng ký (VIES / GLEIF / Cổng ĐKDN),Registry match (VIES / GLEIF / national portal),4,4
+automated,location_confirmed,Địa chỉ hoặc mã cơ sở được xác nhận,Address or facility code confirmed,2,5
+behaviour,response_rate,Tỷ lệ trả lời tin nhắn của buyer trong 7 ngày,Share of buyer messages answered within 7 days,20,1
+behaviour,response_time,Thời gian trả lời tin nhắn đầu tiên,Time to first reply,15,2
+behaviour,quote_rate,Tỷ lệ yêu cầu báo giá được báo giá,Share of quote requests answered with a quote,15,3
