@@ -5,6 +5,7 @@
 import React, { useId, useRef, useState } from 'react';
 import { Camera, Plus, X } from 'lucide-react';
 import HsCodePicker, { type HsCodeOption } from './HsCodePicker';
+import TariffPanel from './TariffPanel';
 import { useLanguage } from '../context/LanguageContext';
 import {
   CURRENCIES,
@@ -154,6 +155,7 @@ function ProductCard({
         value={product.hs}
         onChange={chooseHs}
       />
+      {product.hs && <TariffPanel hsCode={product.hs.code} />}
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div>

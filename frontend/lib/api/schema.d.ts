@@ -346,6 +346,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/exporter/tariff-preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Tariff Preview */
+        get: operations["tariff_preview_api_exporter_tariff_preview_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/public/roo": {
         parameters: {
             query?: never;
@@ -3494,6 +3511,39 @@ export interface components {
             /** Condition Note En */
             condition_note_en: string | null;
         };
+        /**
+         * TariffPreviewOut
+         * @description Xem thuế tại sản phẩm (chỉ đọc). `unsupported` và `needs_review` không có con số nào.
+         */
+        TariffPreviewOut: {
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "ok" | "unsupported" | "needs_review";
+            /** Hs Code */
+            hs_code: string;
+            /** Hs Formatted */
+            hs_formatted: string;
+            /** Mfn Rate */
+            mfn_rate: string | null;
+            /** Evfta Rate */
+            evfta_rate: string | null;
+            /** Staging Category */
+            staging_category: string | null;
+            /** Zero From */
+            zero_from: string | null;
+            /** Quota Note */
+            quota_note: string | null;
+            /** Condition Note */
+            condition_note: string | null;
+            /** Quota Note En */
+            quota_note_en: string | null;
+            /** Condition Note En */
+            condition_note_en: string | null;
+            /** Source Url */
+            source_url: string | null;
+        };
         /** UnreadCountOut */
         UnreadCountOut: {
             /** Count */
@@ -4443,6 +4493,39 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["TariffOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    tariff_preview_api_exporter_tariff_preview_get: {
+        parameters: {
+            query: {
+                hs_code: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TariffPreviewOut"];
                 };
             };
             /** @description Validation Error */

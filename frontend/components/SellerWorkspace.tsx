@@ -10,6 +10,7 @@ import NotificationBell from './NotificationBell';
 import VerificationStatusCard, { STATUS_BADGE } from './VerificationStatusCard';
 import type { DemoUser } from '../lib/demoAuth';
 import { formatMoq, formatPrice, getMyProducts, type ProductOut } from '../lib/productsApi';
+import TariffPanel from './TariffPanel';
 import CompletenessCard from './CompletenessCard';
 import LanguageSelect from './LanguageSelect';
 import { 
@@ -254,6 +255,7 @@ export default function SellerWorkspace({
       active = false;
     };
   }, []);
+  const [taxOpenId, setTaxOpenId] = useState<string | null>(null);
   const productsList: ProductOut[] = Array.isArray(productsState) ? productsState : [];
   const productsFailed = productsState === 'error';
   const hsLabel = (p: ProductOut) => `${p.hs_formatted} — ${language === 'en' ? p.hs_name_en : p.hs_name_vi}`;
@@ -1150,7 +1152,15 @@ export default function SellerWorkspace({
                       </div>
                     </div>
 
-                    <div className="pt-4 mt-2">
+                    <div className="pt-4 mt-2 space-y-2">
+                      <button
+                        type="button"
+                        aria-expanded={taxOpenId === product.id}
+                        onClick={() => setTaxOpenId(taxOpenId === product.id ? null : product.id)}
+                        className="w-full py-2 rounded-xl bg-teal-50 hover:bg-teal-100 text-teal-900 text-xs font-semibold transition-colors cursor-pointer"
+                      >
+                        {taxOpenId === product.id ? tr("Ẩn thuế") : tr("Xem thuế MFN / EVFTA")}</button>
+                      {taxOpenId === product.id && <TariffPanel hsCode={product.hs_code} variant="full" />}
                       <button 
                         onClick={() => setActiveModal('public-preview')}
                         className="w-full py-2 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-semibold transition-colors cursor-pointer"

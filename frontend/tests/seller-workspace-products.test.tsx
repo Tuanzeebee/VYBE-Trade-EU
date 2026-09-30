@@ -46,14 +46,16 @@ const product = (over: Record<string, unknown> = {}) => ({
   ...over,
 });
 
-function serve(products: unknown[] | 'error') {
+function serve(products: unknown[] | 'error', tariff: unknown = null) {
   vi.stubGlobal(
     'fetch',
     vi.fn(async (req: Request) => {
-      if (new URL(req.url).pathname === '/api/exporter/products') {
+      const path = new URL(req.url).pathname;
+      if (path === '/api/exporter/products') {
         return products === 'error' ? json(500, {}) : json(200, products);
       }
-      throw new Error(`unexpected ${new URL(req.url).pathname}`);
+      if (path === '/api/exporter/tariff-preview' && tariff) return json(200, tariff);
+      throw new Error(`unexpected ${path}`);
     }),
   );
 }
@@ -136,5 +138,32 @@ describe('SellerWorkspace — sản phẩm lấy từ server (B5)', () => {
     const block = screen.getByText('4. Sản phẩm xuất khẩu').closest('div.rounded-3xl') as HTMLElement;
     fireEvent.click(within(block).getByRole('button', { name: /Quản lý \(1\)/ }));
     expect(await screen.findByRole('heading', { name: 'Gạo thơm Jasmine' })).toBeInTheDocument();
+  });
+
+  it('tab Sản phẩm: bấm "Xem thuế MFN / EVFTA" mở đủ thông tin thuế của sản phẩm đó', async () => {
+    serve([product()], {
+      status: 'ok',
+      hs_code: '100630',
+      hs_formatted: '1006.30',
+      mfn_rate: '12.0000',
+      evfta_rate: '6.0000',
+      staging_category: 'B5',
+      zero_from: '2030-01-01',
+      quota_note: null,
+      condition_note: 'Cần EUR.1',
+      quota_note_en: null,
+      condition_note_en: null,
+      source_url: 'https://example.test/tariff',
+    });
+    renderWorkspace('products');
+    const heading = await screen.findByRole('heading', { name: 'Gạo thơm Jasmine' });
+    const card = heading.closest('div.rounded-3xl') as HTMLElement;
+    expect(within(card).queryByText(/MFN 12%/)).not.toBeInTheDocument(); // chưa bấm: chưa tra
+    const toggle = within(card).getByRole('button', { name: /Xem thuế MFN/ });
+    fireEvent.click(toggle);
+    expect(toggle).toHaveAttribute('aria-expanded', 'true');
+    expect(await within(card).findByText(/MFN 12%/)).toBeInTheDocument();
+    expect(within(card).getByText('Cần EUR.1')).toBeInTheDocument();
+    expect(within(card).getByText('B5')).toBeInTheDocument();
   });
 });

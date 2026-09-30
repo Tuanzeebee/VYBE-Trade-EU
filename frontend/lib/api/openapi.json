@@ -1603,6 +1603,65 @@
         }
       }
     },
+    "/api/exporter/tariff-preview": {
+      "get": {
+        "tags": [
+          "compliance"
+        ],
+        "summary": "Tariff Preview",
+        "operationId": "tariff_preview_api_exporter_tariff_preview_get",
+        "parameters": [
+          {
+            "name": "hs_code",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 32,
+              "title": "Hs Code"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TariffPreviewOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/public/roo": {
       "post": {
         "tags": [
@@ -13327,6 +13386,146 @@
           "condition_note_en"
         ],
         "title": "TariffOut"
+      },
+      "TariffPreviewOut": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "ok",
+              "unsupported",
+              "needs_review"
+            ],
+            "title": "Status"
+          },
+          "hs_code": {
+            "type": "string",
+            "title": "Hs Code"
+          },
+          "hs_formatted": {
+            "type": "string",
+            "title": "Hs Formatted"
+          },
+          "mfn_rate": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mfn Rate"
+          },
+          "evfta_rate": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Evfta Rate"
+          },
+          "staging_category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Staging Category"
+          },
+          "zero_from": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Zero From"
+          },
+          "quota_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quota Note"
+          },
+          "condition_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Condition Note"
+          },
+          "quota_note_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quota Note En"
+          },
+          "condition_note_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Condition Note En"
+          },
+          "source_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Url"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "hs_code",
+          "hs_formatted",
+          "mfn_rate",
+          "evfta_rate",
+          "staging_category",
+          "zero_from",
+          "quota_note",
+          "condition_note",
+          "quota_note_en",
+          "condition_note_en",
+          "source_url"
+        ],
+        "title": "TariffPreviewOut",
+        "description": "Xem thuế tại sản phẩm (chỉ đọc). `unsupported` và `needs_review` không có con số nào."
       },
       "UnreadCountOut": {
         "properties": {

@@ -8019,6 +8019,16 @@
     "Supported by calculators",
     "Supported by calculators"
   ],
+  "Đang tra thuế…": ["Checking duty…","Checking duty…","Checking duty…"],
+  "Không tải được thông tin thuế.": ["Could not load duty information.","Could not load duty information.","Could not load duty information."],
+  "Thử lại": ["Try again","Try again","Try again"],
+  "Mã HS này chưa có dữ liệu thuế được duyệt. Bạn vẫn lưu được sản phẩm.": ["No reviewed duty data for this HS code yet. You can still save the product.","No reviewed duty data for this HS code yet. You can still save the product.","No reviewed duty data for this HS code yet. You can still save the product."],
+  "Mã HS này cần chuyên gia xem lại thuế (hạn ngạch hoặc thuế đặc biệt).": ["This HS code needs expert review of duty (quota or special duty).","This HS code needs expert review of duty (quota or special duty).","This HS code needs expert review of duty (quota or special duty)."],
+  "Giảm": ["Down","Down","Down"],
+  "điểm phần trăm": ["percentage points","percentage points","percentage points"],
+  "Về 0% từ": ["Zero duty from","Zero duty from","Zero duty from"],
+  "Xem thuế MFN / EVFTA": ["View MFN / EVFTA duty","View MFN / EVFTA duty","View MFN / EVFTA duty"],
+  "Ẩn thuế": ["Hide duty","Hide duty","Hide duty"],
   "Chưa hỗ trợ máy tính": [
     "Not yet supported by calculators",
     "Not yet supported by calculators",

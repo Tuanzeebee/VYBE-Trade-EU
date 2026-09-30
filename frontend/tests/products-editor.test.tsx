@@ -293,4 +293,43 @@ describe('ProductsEditor', () => {
     expect(latest[0].name).toBe('A'.repeat(255));
     expect(latest[0].name.length).toBe(255);
   });
+
+  it('chọn mã HS: hiện thuế MFN so với EVFTA ngay trong thẻ sản phẩm', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (req: Request) => {
+        const path = new URL(req.url).pathname;
+        const body =
+          path === '/api/exporter/tariff-preview'
+            ? {
+                status: 'ok',
+                hs_code: '100630',
+                hs_formatted: '1006.30',
+                mfn_rate: '12.0000',
+                evfta_rate: '6.0000',
+                staging_category: null,
+                zero_from: null,
+                quota_note: null,
+                condition_note: null,
+                quota_note_en: null,
+                condition_note_en: null,
+                source_url: null,
+              }
+            : [RICE];
+        return new Response(JSON.stringify(body), { status: 200, headers: { 'content-type': 'application/json' } });
+      }),
+    );
+    render(<Harness initial={[emptyDraft()]} />);
+    fireEvent.change(within(card()).getByRole('combobox', { name: /Mã HS/ }), { target: { value: 'gao' } });
+    fireEvent.click(await screen.findByRole('option', { name: /1006\.30/ }));
+    expect(await within(card()).findByText(/MFN 12%/)).toBeInTheDocument();
+    expect(within(card()).getByText(/EVFTA 6%/)).toBeInTheDocument();
+  });
+
+  it('chưa chọn mã HS: không gọi tra thuế', () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal('fetch', fetchMock);
+    render(<Harness initial={[emptyDraft()]} />);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
 });
