@@ -189,3 +189,77 @@ class RooRuleOut(BaseModel):
     valid_until: dt.date | None
     reviewed_by: uuid.UUID | None
     reviewed_at: dt.datetime | None
+
+
+def _eu_country(value: str) -> str:
+    upper = value.strip().upper()
+    if upper not in EU_MEMBERS:
+        raise ValueError("country must be an EU member state (ISO 3166-1 alpha-2)")
+    return upper
+
+
+class CountryTermIn(BaseModel):
+    hs_code: str
+    country: str
+    vat_rate: Decimal
+    label_languages: Annotated[str | None, Field(max_length=64)] = None
+    note: Text = None
+    note_en: Text = None
+    source: Text = None
+    valid_from: dt.date
+    valid_until: dt.date | None = None
+
+    _hs_code = field_validator("hs_code")(_hs)
+    _country = field_validator("country")(_eu_country)
+
+    @field_validator("vat_rate", mode="before")
+    @classmethod
+    def _vat(cls, value: Any) -> Decimal:
+        parsed = _percentage(value, _RATE)
+        if parsed is None:
+            raise ValueError("vat_rate is required")
+        return parsed
+
+
+class CountryTermPatch(BaseModel):
+    hs_code: str | None = None
+    country: str | None = None
+    vat_rate: Decimal | None = None
+    label_languages: Annotated[str | None, Field(max_length=64)] = None
+    note: Text = None
+    note_en: Text = None
+    source: Text = None
+    valid_from: dt.date | None = None
+    valid_until: dt.date | None = None
+
+    @field_validator("hs_code")
+    @classmethod
+    def _hs_code(cls, value: str | None) -> str | None:
+        return None if value is None else _hs(value)
+
+    @field_validator("country")
+    @classmethod
+    def _country(cls, value: str | None) -> str | None:
+        return None if value is None else _eu_country(value)
+
+    @field_validator("vat_rate", mode="before")
+    @classmethod
+    def _vat(cls, value: Any) -> Decimal | None:
+        return _percentage(value, _RATE)
+
+
+class CountryTermOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: uuid.UUID
+    hs_code: str
+    country: str
+    vat_rate: Decimal
+    label_languages: str | None
+    note: str | None
+    note_en: str | None
+    source: str | None
+    valid_from: dt.date
+    valid_until: dt.date | None
+    reviewed_by: uuid.UUID | None
+    reviewed_at: dt.datetime | None

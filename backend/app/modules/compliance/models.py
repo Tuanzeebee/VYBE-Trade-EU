@@ -14,6 +14,7 @@ from sqlalchemy import (
     Numeric,
     String,
     Text,
+    UniqueConstraint,
     Uuid,
     func,
     text,
@@ -205,6 +206,46 @@ class ProductSpecificRule(Base):
         Boolean, default=False, server_default=text("false")
     )
     source: Mapped[str | None] = mapped_column(String(1024))
+    reviewed_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id"))
+    reviewed_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
+    valid_from: Mapped[dt.date] = mapped_column(Date)
+    valid_until: Mapped[dt.date | None] = mapped_column(Date)
+    created_at: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=text("clock_timestamp()")
+    )
+    updated_at: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+
+class ImportCountryTerm(Base):
+    """VAT nhập khẩu, ngôn ngữ nhãn và lưu ý theo (mã HS, nước EU) do luật TM nhập và duyệt.
+
+    Dòng chưa có reviewed_by không bao giờ được dùng: mọi truy vấn đi qua
+    compliance.service._reviewed_terms. vat_rate là % (numeric, không float).
+    """
+
+    __tablename__ = "import_country_terms"
+    __table_args__ = (
+        CheckConstraint("valid_until IS NULL OR valid_until > valid_from", name="valid_window"),
+        CheckConstraint(
+            "(reviewed_by IS NULL) = (reviewed_at IS NULL)", name="reviewed_by_and_at_together"
+        ),
+        CheckConstraint("vat_rate BETWEEN 0 AND 100", name="vat_is_percentage"),
+        CheckConstraint("country ~ '^[A-Z]{2}$'", name="country_iso2"),
+        UniqueConstraint("hs_code", "country", "valid_from", name="hs_country_from"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, primary_key=True, default=uuid.uuid4, server_default=text("gen_random_uuid()")
+    )
+    hs_code: Mapped[str] = mapped_column(ForeignKey("hs_codes.code"), index=True)
+    country: Mapped[str] = mapped_column(String(2))  # ISO-2 nước EU
+    vat_rate: Mapped[Decimal] = mapped_column(Numeric(7, 4))
+    label_languages: Mapped[str | None] = mapped_column(String(64))
+    note: Mapped[str | None] = mapped_column(Text)
+    note_en: Mapped[str | None] = mapped_column(Text)
+    source: Mapped[str | None] = mapped_column(Text)
     reviewed_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id"))
     reviewed_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
     valid_from: Mapped[dt.date] = mapped_column(Date)

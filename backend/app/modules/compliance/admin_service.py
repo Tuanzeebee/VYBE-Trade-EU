@@ -19,14 +19,22 @@ from app.core.errors import AppError
 from app.modules.auth.schemas import CurrentUser
 from app.modules.catalog import service as catalog
 from app.modules.compliance.admin_schemas import (
+    CountryTermIn,
+    CountryTermPatch,
     RooRuleIn,
     RooRulePatch,
     TariffLineIn,
     TariffLinePatch,
 )
-from app.modules.compliance.models import ProductSpecificRule, RuleType, TariffLine
+from app.modules.compliance.models import (
+    ImportCountryTerm,
+    ProductSpecificRule,
+    RuleType,
+    TariffLine,
+)
 
 TARIFF_ENTITY = "tariff_line"
+TERM_ENTITY = "country_term"
 RULE_ENTITY = "roo_rule"
 _WITH_THRESHOLD = (RuleType.MaxNOM, RuleType.CTH_OR_MaxNOM)
 
@@ -39,7 +47,9 @@ def _jsonable(value: Any) -> Any:
     return value
 
 
-def _snapshot[Row: (TariffLine, ProductSpecificRule)](row: Row) -> dict[str, Any]:
+def _snapshot[Row: (TariffLine, ProductSpecificRule, ImportCountryTerm)](
+    row: Row,
+) -> dict[str, Any]:
     # updated_at do DB tự đặt khi UPDATE nên chưa nạp sau flush — không cần trong audit.
     skip = {"created_at", "updated_at"}
     return {
@@ -65,7 +75,7 @@ def _check_threshold(rule_type: RuleType, threshold: Decimal | None) -> None:
         raise AppError("invalid_threshold", "threshold_pct must be empty for this rule_type", 422)
 
 
-async def _get[Row: (TariffLine, ProductSpecificRule)](
+async def _get[Row: (TariffLine, ProductSpecificRule, ImportCountryTerm)](
     session: AsyncSession, model: type[Row], row_id: uuid.UUID
 ) -> Row:
     row = await session.get(model, row_id)
@@ -74,13 +84,15 @@ async def _get[Row: (TariffLine, ProductSpecificRule)](
     return row
 
 
-async def _save[Row: (TariffLine, ProductSpecificRule)](session: AsyncSession, row: Row) -> Row:
+async def _save[Row: (TariffLine, ProductSpecificRule, ImportCountryTerm)](
+    session: AsyncSession, row: Row
+) -> Row:
     await session.commit()
     await session.refresh(row)
     return row
 
 
-async def _create[Row: (TariffLine, ProductSpecificRule)](
+async def _create[Row: (TariffLine, ProductSpecificRule, ImportCountryTerm)](
     session: AsyncSession, actor: CurrentUser, row: Row, entity: str, commit: bool = True
 ) -> Row:
     session.add(row)
@@ -98,7 +110,7 @@ async def _create[Row: (TariffLine, ProductSpecificRule)](
     return await _save(session, row) if commit else row
 
 
-async def _update[Row: (TariffLine, ProductSpecificRule)](
+async def _update[Row: (TariffLine, ProductSpecificRule, ImportCountryTerm)](
     session: AsyncSession,
     actor: CurrentUser,
     row: Row,
@@ -125,7 +137,7 @@ async def _update[Row: (TariffLine, ProductSpecificRule)](
     return await _save(session, row) if commit else row
 
 
-async def _review[Row: (TariffLine, ProductSpecificRule)](
+async def _review[Row: (TariffLine, ProductSpecificRule, ImportCountryTerm)](
     session: AsyncSession, actor: CurrentUser, row: Row, entity: str
 ) -> Row:
     before = _snapshot(row)
@@ -145,7 +157,7 @@ async def _review[Row: (TariffLine, ProductSpecificRule)](
     return await _save(session, row)
 
 
-async def _delete[Row: (TariffLine, ProductSpecificRule)](
+async def _delete[Row: (TariffLine, ProductSpecificRule, ImportCountryTerm)](
     session: AsyncSession, actor: CurrentUser, row: Row, entity: str
 ) -> None:
     if row.reviewed_by is not None:
@@ -282,3 +294,81 @@ async def review_roo_rule(
 
 async def delete_roo_rule(session: AsyncSession, actor: CurrentUser, rule_id: uuid.UUID) -> None:
     await _delete(session, actor, await _get(session, ProductSpecificRule, rule_id), RULE_ENTITY)
+
+
+# ── VAT theo nước ───────────────────────────────────────────────────────────
+async def list_country_terms(
+    session: AsyncSession, hs_code: str | None, reviewed: bool | None
+) -> list[ImportCountryTerm]:
+    query = _apply_filters(select(ImportCountryTerm), ImportCountryTerm, hs_code, reviewed)
+    return list(await session.scalars(query))
+
+
+async def _require_free_key(
+    session: AsyncSession,
+    hs_code: str,
+    country: str,
+    valid_from: dt.date,
+    ignore_id: uuid.UUID | None = None,
+) -> None:
+    query = select(ImportCountryTerm.id).where(
+        ImportCountryTerm.hs_code == hs_code,
+        ImportCountryTerm.country == country,
+        ImportCountryTerm.valid_from == valid_from,
+    )
+    existing = await session.scalar(query)
+    if existing is not None and existing != ignore_id:
+        raise AppError("duplicate_term", "This HS code, country and start date already exist", 409)
+
+
+async def create_country_term(
+    session: AsyncSession, actor: CurrentUser, data: CountryTermIn, commit: bool = True
+) -> ImportCountryTerm:
+    await _require_hs(session, data.hs_code)
+    _check_window(data.valid_from, data.valid_until)
+    await _require_free_key(session, data.hs_code, data.country, data.valid_from)
+    return await _create(
+        session, actor, ImportCountryTerm(**data.model_dump()), TERM_ENTITY, commit
+    )
+
+
+async def update_country_term(
+    session: AsyncSession,
+    actor: CurrentUser,
+    term_id: uuid.UUID,
+    patch: CountryTermPatch,
+    commit: bool = True,
+) -> ImportCountryTerm:
+    term = await _get(session, ImportCountryTerm, term_id)
+    fields = patch.model_fields_set
+    required = {"hs_code", "country", "vat_rate", "valid_from"} & fields
+    if any(getattr(patch, name) is None for name in required):
+        raise AppError("invalid_patch", "Required fields cannot be null", 422)
+    if patch.hs_code is not None:
+        await _require_hs(session, patch.hs_code)
+    valid_from = (
+        patch.valid_from if "valid_from" in fields and patch.valid_from else term.valid_from
+    )
+    _check_window(valid_from, patch.valid_until if "valid_until" in fields else term.valid_until)
+    await _require_free_key(
+        session,
+        patch.hs_code or term.hs_code,
+        patch.country or term.country,
+        valid_from,
+        ignore_id=term.id,
+    )
+    return await _update(session, actor, term, patch, TERM_ENTITY, commit)
+
+
+async def review_country_term(
+    session: AsyncSession, actor: CurrentUser, term_id: uuid.UUID
+) -> ImportCountryTerm:
+    return await _review(
+        session, actor, await _get(session, ImportCountryTerm, term_id), TERM_ENTITY
+    )
+
+
+async def delete_country_term(
+    session: AsyncSession, actor: CurrentUser, term_id: uuid.UUID
+) -> None:
+    await _delete(session, actor, await _get(session, ImportCountryTerm, term_id), TERM_ENTITY)

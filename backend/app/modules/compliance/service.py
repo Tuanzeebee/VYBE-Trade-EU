@@ -27,6 +27,7 @@ from app.modules.compliance.calculators import (
 from app.modules.compliance.models import (
     CheckType,
     ComplianceCheck,
+    ImportCountryTerm,
     ProductSpecificRule,
     TariffLine,
 )
@@ -71,6 +72,25 @@ async def find_rules(
 ) -> list[ProductSpecificRule]:
     """Các quy tắc đã duyệt khớp mã HS (C4 dùng số lượng để phát hiện dữ liệu mơ hồ)."""
     return list(await session.scalars(_reviewed_rules(hs_code, on_date)))
+
+
+def _reviewed_terms(hs_code: str, on_date: dt.date) -> Select[Any]:
+    """Dòng VAT ĐÃ DUYỆT và đang hiệu lực vào `on_date`."""
+    return select(ImportCountryTerm).where(
+        ImportCountryTerm.reviewed_by.is_not(None),
+        ImportCountryTerm.hs_code == hs_code,
+        ImportCountryTerm.valid_from <= on_date,
+        or_(ImportCountryTerm.valid_until.is_(None), ImportCountryTerm.valid_until > on_date),
+    )
+
+
+async def find_terms(
+    session: AsyncSession, hs_code: str, on_date: dt.date
+) -> list[ImportCountryTerm]:
+    """Dòng VAT theo nước đã duyệt cho `hs_code` (mã chính xác của dòng thuế đã khớp)."""
+    return list(
+        await session.scalars(_reviewed_terms(hs_code, on_date).order_by(ImportCountryTerm.country))
+    )
 
 
 async def _supported_keys(session: AsyncSession, code: str) -> list[str]:

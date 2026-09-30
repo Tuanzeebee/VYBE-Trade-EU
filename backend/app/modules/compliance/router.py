@@ -12,6 +12,9 @@ from app.modules.auth.schemas import CurrentUser
 from app.modules.auth.service import get_optional_user, require_role
 from app.modules.compliance import admin_service, admin_spreadsheet, documents, service
 from app.modules.compliance.admin_schemas import (
+    CountryTermIn,
+    CountryTermOut,
+    CountryTermPatch,
     RooRuleIn,
     RooRuleOut,
     RooRulePatch,
@@ -192,3 +195,39 @@ async def get_document(
     document_id: uuid.UUID, user: Exporter, session: DB, storage: Store
 ) -> DocumentOut:
     return await documents.get_document(session, user, storage, document_id)
+
+
+@router.get("/api/admin/country-terms")
+async def list_country_terms(
+    _: Admin, session: DB, hs_code: str | None = None, reviewed: bool | None = None
+) -> list[CountryTermOut]:
+    rows = await admin_service.list_country_terms(session, hs_code, reviewed)
+    return [CountryTermOut.model_validate(r) for r in rows]
+
+
+@router.post("/api/admin/country-terms", status_code=201)
+async def create_country_term(data: CountryTermIn, admin: Admin, session: DB) -> CountryTermOut:
+    return CountryTermOut.model_validate(
+        await admin_service.create_country_term(session, admin, data)
+    )
+
+
+@router.patch("/api/admin/country-terms/{term_id}")
+async def update_country_term(
+    term_id: uuid.UUID, data: CountryTermPatch, admin: Admin, session: DB
+) -> CountryTermOut:
+    row = await admin_service.update_country_term(session, admin, term_id, data)
+    return CountryTermOut.model_validate(row)
+
+
+@router.post("/api/admin/country-terms/{term_id}/review")
+async def review_country_term(term_id: uuid.UUID, admin: Admin, session: DB) -> CountryTermOut:
+    return CountryTermOut.model_validate(
+        await admin_service.review_country_term(session, admin, term_id)
+    )
+
+
+@router.delete("/api/admin/country-terms/{term_id}", status_code=204)
+async def delete_country_term(term_id: uuid.UUID, admin: Admin, session: DB) -> Response:
+    await admin_service.delete_country_term(session, admin, term_id)
+    return Response(status_code=204)
