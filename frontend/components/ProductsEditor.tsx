@@ -8,6 +8,7 @@ import { Camera, Plus, Trash2, X } from 'lucide-react';
 import HsCodePicker, { type HsCodeOption } from './HsCodePicker';
 import HsSuggestions from './HsSuggestions';
 import TariffPanel from './TariffPanel';
+import PriceReference from './PriceReference';
 import { useLanguage } from '../context/LanguageContext';
 import {
   BRAND_MODELS,
@@ -183,6 +184,7 @@ export function ProductCard({
         </p>
       )}
       {product.hs && <TariffPanel hsCode={product.hs.code} />}
+      {product.hs && <PriceReference hsCode={product.hs.code} />}
 
       <fieldset className="space-y-3">
         <legend className={LABEL}>{tr('Giá bán')} *</legend>

@@ -81,3 +81,25 @@ async def test_unknown_product_returns_suggestions(api_client: AsyncClient) -> N
 async def test_known_family_without_imported_data_is_no_data(api_client: AsyncClient) -> None:
     body = (await api_client.get(URL, params={"q": "cà phê"})).json()
     assert (body["status"], body["family"]["family"]) == ("no_data", "coffee")
+
+
+@pytest.mark.usefixtures("snapshot")
+async def test_price_reference_for_the_product_form(api_client: AsyncClient) -> None:
+    """U17: đơn giá nhập khẩu EU tham khảo (EUR/kg) từ số liệu thật; mã 8 số dùng nhóm 6 số."""
+    body = (
+        await api_client.get("/api/public/markets/price-reference", params={"hs": "03046200"})
+    ).json()
+    assert (body["status"], body["hs_code"], body["year"]) == ("ok", "030462", 2025)
+    assert Decimal(body["vietnam"]["unit_price"]) > 0
+    assert body["extra_eu_average"]["partner"] == "EXT_EU27_2020"
+    assert all(c["partner"] not in ("VN", "DE", "NL") for c in body["competitors"])
+    assert len(body["competitors"]) <= 3
+
+
+async def test_price_reference_without_data_is_no_data(api_client: AsyncClient) -> None:
+    body = (
+        await api_client.get("/api/public/markets/price-reference", params={"hs": "090111"})
+    ).json()
+    assert body["status"] == "no_data" and body["vietnam"] is None
+    bad = await api_client.get("/api/public/markets/price-reference", params={"hs": "0901"})
+    assert bad.status_code == 422

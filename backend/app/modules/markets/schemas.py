@@ -97,3 +97,23 @@ class MarketRecommendationOut(BaseModel):
     hhi: Decimal | None
     weights: dict[str, Decimal]
     suggestions: list[FamilyOut] = Field(default_factory=list)
+
+
+# ── Giá tham khảo (U17) ──────────────────────────────────────────────────────
+class PricePointOut(BaseModel):
+    partner: str  # VN, EXT_EU27_2020 (trung bình ngoài EU) hoặc mã nước đối thủ
+    unit_price: Decimal  # EUR/kg
+    value: Decimal
+
+
+class PriceReferenceOut(BaseModel):
+    """Đơn giá nhập khẩu vào EU (EUR/kg) — CHỈ THAM KHẢO, không phải giá sàn hay giá chống bán
+    phá giá."""
+
+    status: Literal["ok", "no_data"]
+    hs_code: str
+    year: int | None
+    source: str
+    vietnam: PricePointOut | None
+    extra_eu_average: PricePointOut | None
+    competitors: list[PricePointOut] = Field(default_factory=list)

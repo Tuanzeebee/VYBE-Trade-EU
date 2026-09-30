@@ -1627,6 +1627,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/public/markets/price-reference": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Price Reference
+         * @description U17: đơn giá nhập khẩu EU tham khảo cho form sản phẩm (không phải giá sàn).
+         */
+        get: operations["price_reference_api_public_markets_price_reference_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/exporter/evidence-types": {
         parameters: {
             query?: never;
@@ -3493,6 +3513,37 @@ export interface components {
             upload_url: string;
             /** Key */
             key: string;
+        };
+        /** PricePointOut */
+        PricePointOut: {
+            /** Partner */
+            partner: string;
+            /** Unit Price */
+            unit_price: string;
+            /** Value */
+            value: string;
+        };
+        /**
+         * PriceReferenceOut
+         * @description Đơn giá nhập khẩu vào EU (EUR/kg) — CHỈ THAM KHẢO, không phải giá sàn hay giá chống bán
+         *     phá giá.
+         */
+        PriceReferenceOut: {
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "ok" | "no_data";
+            /** Hs Code */
+            hs_code: string;
+            /** Year */
+            year: number | null;
+            /** Source */
+            source: string;
+            vietnam: components["schemas"]["PricePointOut"] | null;
+            extra_eu_average: components["schemas"]["PricePointOut"] | null;
+            /** Competitors */
+            competitors?: components["schemas"]["PricePointOut"][];
         };
         /**
          * PriceTierIn
@@ -9493,6 +9544,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["MarketRecommendationOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    price_reference_api_public_markets_price_reference_get: {
+        parameters: {
+            query: {
+                hs: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PriceReferenceOut"];
                 };
             };
             /** @description Validation Error */

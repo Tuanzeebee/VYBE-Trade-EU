@@ -7315,6 +7315,50 @@
         }
       }
     },
+    "/api/public/markets/price-reference": {
+      "get": {
+        "tags": [
+          "markets"
+        ],
+        "summary": "Price Reference",
+        "description": "U17: đơn giá nhập khẩu EU tham khảo cho form sản phẩm (không phải giá sàn).",
+        "operationId": "price_reference_api_public_markets_price_reference_get",
+        "parameters": [
+          {
+            "name": "hs",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9]{6,8}$",
+              "title": "Hs"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PriceReferenceOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/exporter/evidence-types": {
       "get": {
         "tags": [
@@ -14247,6 +14291,100 @@
           "key"
         ],
         "title": "PresignOut"
+      },
+      "PricePointOut": {
+        "properties": {
+          "partner": {
+            "type": "string",
+            "title": "Partner"
+          },
+          "unit_price": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Unit Price"
+          },
+          "value": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Value"
+          }
+        },
+        "type": "object",
+        "required": [
+          "partner",
+          "unit_price",
+          "value"
+        ],
+        "title": "PricePointOut"
+      },
+      "PriceReferenceOut": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "ok",
+              "no_data"
+            ],
+            "title": "Status"
+          },
+          "hs_code": {
+            "type": "string",
+            "title": "Hs Code"
+          },
+          "year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Year"
+          },
+          "source": {
+            "type": "string",
+            "title": "Source"
+          },
+          "vietnam": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PricePointOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "extra_eu_average": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PricePointOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "competitors": {
+            "items": {
+              "$ref": "#/components/schemas/PricePointOut"
+            },
+            "type": "array",
+            "title": "Competitors"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "hs_code",
+          "year",
+          "source",
+          "vietnam",
+          "extra_eu_average"
+        ],
+        "title": "PriceReferenceOut",
+        "description": "Đơn giá nhập khẩu vào EU (EUR/kg) — CHỈ THAM KHẢO, không phải giá sàn hay giá chống bán\nphá giá."
       },
       "PriceTierIn": {
         "properties": {

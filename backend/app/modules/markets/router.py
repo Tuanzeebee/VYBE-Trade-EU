@@ -10,6 +10,7 @@ from app.modules.auth.service import require_role
 from app.modules.markets import recommendation, service
 from app.modules.markets.schemas import (
     MarketRecommendationOut,
+    PriceReferenceOut,
     PriorityProductOut,
     TradeImportBatchOut,
     TradeImportIn,
@@ -56,3 +57,11 @@ async def market_recommendation(
     hs: Annotated[str | None, Query(pattern=r"^[0-9]{4,8}$")] = None,
 ) -> MarketRecommendationOut:
     return await recommendation.market_recommendation(session, q, hs)
+
+
+@router.get("/api/public/markets/price-reference")
+async def price_reference(
+    session: DB, hs: Annotated[str, Query(pattern=r"^[0-9]{6,8}$")]
+) -> PriceReferenceOut:
+    """U17: đơn giá nhập khẩu EU tham khảo cho form sản phẩm (không phải giá sàn)."""
+    return await recommendation.price_reference(session, hs)

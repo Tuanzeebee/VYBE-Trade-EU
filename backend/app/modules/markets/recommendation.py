@@ -30,6 +30,8 @@ from app.modules.markets.schemas import (
     FamilyOut,
     MarketOut,
     MarketRecommendationOut,
+    PricePointOut,
+    PriceReferenceOut,
     PriorityProductOut,
     ReasonOut,
 )
@@ -271,4 +273,59 @@ async def market_recommendation(
         vn_rank=ranked.index(VIETNAM) + 1 if VIETNAM in values else None,
         hhi=hhi,
         weights=weights,
+    )
+
+
+async def price_reference(session: AsyncSession, hs: str) -> PriceReferenceOut:
+    """Đơn giá nhập khẩu vào EU (năm gần nhất) từ Việt Nam, trung bình ngoài EU và 3 đối thủ lớn
+    nhất. Mã 8 số dùng nhóm 6 số (thống kê theo HS6). Không có dữ liệu → no_data, không đoán."""
+    code = hs[:6]
+    empty = PriceReferenceOut(
+        status="no_data",
+        hs_code=code,
+        year=None,
+        source=SOURCE_LABEL,
+        vietnam=None,
+        extra_eu_average=None,
+    )
+    source = await _source_for(session, [code])
+    if source is None:
+        return empty
+    base = (
+        TradeFlow.source == source,
+        TradeFlow.product == code,
+        TradeFlow.flow == "import",
+        TradeFlow.reporter == EU_AGGREGATE,
+    )
+    year = await session.scalar(
+        select(func.max(TradeFlow.year)).where(*base, TradeFlow.quantity_kg > 0)
+    )
+    if year is None:
+        return empty
+    rows = (
+        await session.execute(
+            select(TradeFlow.partner, TradeFlow.value_eur, TradeFlow.quantity_kg).where(
+                *base, TradeFlow.year == year, TradeFlow.quantity_kg > 0
+            )
+        )
+    ).all()
+
+    def point(partner: str, value: Decimal, kg: Decimal) -> PricePointOut:
+        return PricePointOut(
+            partner=partner, unit_price=(value / kg).quantize(Decimal("0.01")), value=value
+        )
+
+    points = {p: point(p, v, k) for p, v, k in rows if v is not None and k}
+    competitors = sorted(
+        (pt for p, pt in points.items() if _extra_eu_partner(p) and p != VIETNAM),
+        key=lambda pt: (-pt.value, pt.partner),
+    )[:3]
+    return PriceReferenceOut(
+        status="ok" if points else "no_data",
+        hs_code=code,
+        year=year,
+        source=SOURCE_LABEL if source == "eurostat_comext" else source,
+        vietnam=points.get(VIETNAM),
+        extra_eu_average=points.get("EXT_EU27_2020"),
+        competitors=competitors,
     )

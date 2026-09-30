@@ -13843,5 +13843,25 @@
     "Vietnamese goods hold only {0} — room to grow",
     "Les produits vietnamiens ne détiennent que {0} — marge de progression",
     "ベトナム産品のシェアは{0}のみ — 伸びしろあり"
+  ],
+  "Giá tham khảo nhập khẩu EU năm {0}": [
+    "EU import reference prices, {0}",
+    "Prix de référence à l'importation UE, {0}",
+    "{0}年のEU輸入参考価格"
+  ],
+  "Từ Việt Nam": [
+    "From Vietnam",
+    "Depuis le Vietnam",
+    "ベトナムから"
+  ],
+  "Trung bình hàng ngoài EU": [
+    "Extra-EU average",
+    "Moyenne hors UE",
+    "EU域外平均"
+  ],
+  "Chỉ để tham khảo khi định giá, không phải giá sàn.": [
+    "For pricing reference only, not a floor price.",
+    "À titre indicatif uniquement, pas un prix plancher.",
+    "価格設定の参考のみで、最低価格ではありません。"
   ]
 }
