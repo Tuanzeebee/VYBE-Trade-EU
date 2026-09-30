@@ -111,3 +111,23 @@ async def test_roo_uses_eight_digit_rule_over_heading_rule(
     body = {"hs_code": SHRIMP_A, "materials_declared": True, "materials": []}
     d = (await api_client.post("/api/public/roo", json=body)).json()
     assert d["status"] == "pass"
+
+
+async def test_unreviewed_eight_digit_line_is_skipped_for_the_reviewed_heading_line(
+    api_client: AsyncClient, db_session: AsyncSession, reviewer_id: uuid.UUID
+) -> None:
+    await add_hs(db_session, SHRIMP_A)
+    await add_line(db_session, reviewer_id, SHRIMP6, "20", "10")
+    db_session.add(
+        TariffLine(
+            hs_code=SHRIMP_A,
+            destination="EU",
+            duty_type=DutyType.ad_valorem,
+            mfn_rate=Decimal("12"),
+            evfta_rate_current=Decimal("0"),
+            valid_from=FROM,
+        )
+    )
+    await db_session.flush()
+    d = (await api_client.post("/api/public/tariff", json=tariff_body(SHRIMP_A))).json()
+    assert (d["status"], d["mfn_duty"], d["evfta_duty"]) == ("ok", "20000.00", "10000.00")
