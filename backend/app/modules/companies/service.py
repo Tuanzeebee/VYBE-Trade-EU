@@ -175,6 +175,14 @@ async def get_company_summaries(
     }
 
 
+async def get_company_for_review(session: AsyncSession, company_id: uuid.UUID) -> CompanyOut:
+    """Hồ sơ đầy đủ của công ty cho admin duyệt xác minh. Router phải giới hạn vai trò admin."""
+    company = await session.get(Company, company_id)
+    if company is None:
+        raise AppError("company_not_found", "Company not found", 404)
+    return _to_out(company)
+
+
 async def refresh_completeness(session: AsyncSession, company_id: uuid.UUID) -> None:
     """Tính lại điểm hoàn thiện (vd khi bằng chứng đổi hoặc hết hạn). Chỉ flush, không commit."""
     company = await session.get(Company, company_id)

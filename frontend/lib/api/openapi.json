@@ -11186,6 +11186,16 @@
             },
             "type": "array",
             "title": "Evidences"
+          },
+          "company": {
+            "$ref": "#/components/schemas/CompanyOut"
+          },
+          "products": {
+            "items": {
+              "$ref": "#/components/schemas/ReviewProductOut"
+            },
+            "type": "array",
+            "title": "Products"
           }
         },
         "type": "object",
@@ -11196,7 +11206,9 @@
           "tax_id",
           "country",
           "submitted_at",
-          "evidences"
+          "evidences",
+          "company",
+          "products"
         ],
         "title": "QueueItem"
       },
@@ -11289,6 +11301,133 @@
           "target_ratio"
         ],
         "title": "ReturnVisitStats"
+      },
+      "ReviewProductOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "hs_code": {
+            "type": "string",
+            "title": "Hs Code"
+          },
+          "hs_formatted": {
+            "type": "string",
+            "title": "Hs Formatted"
+          },
+          "hs_name_vi": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hs Name Vi"
+          },
+          "hs_name_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hs Name En"
+          },
+          "price_min": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price Min"
+          },
+          "price_max": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price Max"
+          },
+          "currency": {
+            "type": "string",
+            "title": "Currency"
+          },
+          "unit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit"
+          },
+          "moq": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Moq"
+          },
+          "moq_unit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Moq Unit"
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "hs_code",
+          "hs_formatted",
+          "hs_name_vi",
+          "hs_name_en",
+          "price_min",
+          "price_max",
+          "currency",
+          "unit",
+          "moq",
+          "moq_unit",
+          "is_active"
+        ],
+        "title": "ReviewProductOut",
+        "description": "Sản phẩm exporter đã khai, để admin đối chiếu khi duyệt xác minh (chỉ đọc)."
       },
       "RfqBrief": {
         "properties": {

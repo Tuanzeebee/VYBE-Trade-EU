@@ -249,6 +249,24 @@ class ProductOut(BaseModel):
     created_at: datetime
 
 
+class ReviewProductOut(BaseModel):
+    """Sản phẩm exporter đã khai, để admin đối chiếu khi duyệt xác minh (chỉ đọc)."""
+
+    id: uuid.UUID
+    name: str
+    hs_code: str
+    hs_formatted: str
+    hs_name_vi: str | None
+    hs_name_en: str | None
+    price_min: Decimal | None
+    price_max: Decimal | None
+    currency: str
+    unit: str | None
+    moq: Decimal | None
+    moq_unit: str | None
+    is_active: bool
+
+
 class PublicProductOut(BaseModel):
     """Sản phẩm trên hồ sơ công khai — không lộ trạng thái duyệt hay khóa ảnh. `id` cần để buyer
     gắn RFQ (F1); id sản phẩm không nhạy cảm, còn id công ty vẫn không lộ."""

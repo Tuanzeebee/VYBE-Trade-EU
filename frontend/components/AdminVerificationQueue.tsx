@@ -93,6 +93,69 @@ export default function AdminVerificationQueue() {
                 {tr('MST')}: {item.tax_id ?? '—'} · {tr('Quốc gia')}: {item.country}
               </p>
 
+              <details open role="group" aria-label={tr('Thông tin doanh nghiệp')} className="mt-4 rounded-xl border border-slate-200 p-3 text-sm">
+                <summary className="cursor-pointer text-xs font-bold uppercase tracking-wide text-slate-700">{tr('Thông tin doanh nghiệp')}</summary>
+                <dl className="mt-3 grid gap-x-6 gap-y-2 text-xs sm:grid-cols-2">
+                  {[
+                    ['Số đăng ký', item.company.registration_number],
+                    ['Loại hình', item.company.business_type],
+                    ['Năm thành lập', item.company.founded_year],
+                    ['Địa chỉ', item.company.address],
+                    ['Email liên hệ', item.company.contact_email],
+                    ['Ngành', item.company.industry_sector],
+                    ['Thị trường xuất khẩu', item.company.export_markets.join(', ')],
+                    ['Ngôn ngữ', item.company.languages_spoken.join(', ')],
+                  ].map(([label, value]) => (
+                    <div key={label as string}>
+                      <dt className="font-semibold text-slate-700">{tr(label as string)}</dt>
+                      <dd className="break-words text-slate-600">{value || '—'}</dd>
+                    </div>
+                  ))}
+                  <div>
+                    <dt className="font-semibold text-slate-700">Website</dt>
+                    <dd className="break-words text-slate-600">
+                      {item.company.website ? (
+                        <a href={item.company.website} target="_blank" rel="noreferrer" className="text-teal-700 hover:underline">
+                          {item.company.website}
+                        </a>
+                      ) : (
+                        '—'
+                      )}
+                    </dd>
+                  </div>
+                  <div className="sm:col-span-2">
+                    <dt className="font-semibold text-slate-700">{tr('Mô tả')}</dt>
+                    <dd className="whitespace-pre-line break-words text-slate-600">
+                      {(language === 'en' ? item.company.description_en : item.company.description_vi) || '—'}
+                    </dd>
+                  </div>
+                </dl>
+              </details>
+
+              <details open role="group" aria-label={tr('Sản phẩm đã khai')} className="mt-3 rounded-xl border border-slate-200 p-3 text-sm">
+                <summary className="cursor-pointer text-xs font-bold uppercase tracking-wide text-slate-700">
+                  {tr('Sản phẩm đã khai')} ({item.products.length})
+                </summary>
+                {item.products.length === 0 ? (
+                  <p className="mt-2 text-xs text-slate-500">{tr('Chưa khai sản phẩm nào.')}</p>
+                ) : (
+                  <ul className="mt-2 space-y-2">
+                    {item.products.map((p) => (
+                      <li key={p.id} className="rounded-lg bg-slate-50 p-2 text-xs text-slate-600">
+                        <strong className="text-slate-900">{p.name}</strong>
+                        <div>
+                          {tr('Mã HS')}: {p.hs_formatted} — {(language === 'en' ? p.hs_name_en : p.hs_name_vi) ?? '—'}
+                        </div>
+                        <div>
+                          {tr('Giá')}: {p.price_min ?? '—'} – {p.price_max ?? '—'} {p.currency}
+                          {p.unit && `/${p.unit}`} · MOQ: {p.moq ?? '—'} {p.moq_unit ?? ''}
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </details>
+
               <div className="mt-4 space-y-3">
                 {item.evidences.length === 0 && <p className="text-xs text-slate-500">{tr('Chưa nộp bằng chứng.')}</p>}
                 {item.evidences.map((e) => (

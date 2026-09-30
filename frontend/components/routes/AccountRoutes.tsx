@@ -16,6 +16,7 @@ import { useRouter } from '../../i18n/navigation';
 import { completeOnboarding, getUserPage, logout, type DemoUser } from '../../lib/demoAuth';
 import { buyerProfileToCompany, companyToForm, getMyCompany, profileToCompany, saveMyCompany } from '../../lib/companyApi';
 import { draftFromProduct, getMyProducts, syncProducts, type ProductDraft } from '../../lib/productsApi';
+import { submitRequestIfNeeded } from '../../lib/verificationApi';
 import { hrefFor, roleFromType } from '../../lib/legacyNav';
 
 const WORKSPACE_TABS: WorkspaceTabId[] = ['verification', 'profile', 'overview', 'products', 'rfq', 'messages', 'notifications', 'licenses'];
@@ -111,6 +112,7 @@ function OnboardingContent({ user }: { user: DemoUser }) {
   const onComplete = async (profile: Record<string, string>, products: ProductDraft[]) => {
     await saveMyCompany(profileToCompany(profile));
     await syncProducts(products);
+    await submitRequestIfNeeded();
     goHome(completeOnboarding(user.id, profile));
   };
   return (
@@ -193,6 +195,7 @@ function SellerProfileContent({ user }: { user: DemoUser }) {
   const onComplete = async (profile: Record<string, string>, products: ProductDraft[]) => {
     await saveMyCompany(profileToCompany(profile));
     await syncProducts(products);
+    await submitRequestIfNeeded();
     navigate('workspace', { tab: 'profile' });
   };
   return (

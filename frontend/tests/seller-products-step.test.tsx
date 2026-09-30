@@ -127,6 +127,20 @@ describe('SellerOnboarding hoàn tất — gửi hồ sơ và danh sách sản p
     nextFromStepTwo();
     fireEvent.click(await screen.findByRole('button', { name: /Tiếp tục \(Xem lại hồ sơ\)/ }));
   };
+  const commitmentBox = () => screen.getByRole('checkbox', { name: /Tôi cam kết/ });
+
+  it('chưa tick cam kết thì nút gửi bị khóa và không gọi onComplete; tick rồi mới gửi được', async () => {
+    const onComplete = vi.fn().mockResolvedValue(undefined);
+    renderOnboarding({ initialStep: 1, initialCompany: { taxCode: '0312345678' }, initialProducts: [valid()], onComplete });
+    await walkToFinish();
+    expect(commitmentBox()).not.toBeChecked();
+    const send = screen.getByRole('button', { name: /Hoàn tất & Gửi hồ sơ/ });
+    expect(send).toBeDisabled();
+    fireEvent.click(send);
+    expect(onComplete).not.toHaveBeenCalled();
+    fireEvent.click(commitmentBox());
+    expect(send).toBeEnabled();
+  });
 
   it('onComplete nhận hồ sơ (thị trường theo mã, không còn "market" cũ) và danh sách bản nháp', async () => {
     const onComplete = vi.fn().mockResolvedValue(undefined);
@@ -140,13 +154,14 @@ describe('SellerOnboarding hoàn tất — gửi hồ sơ và danh sách sản p
     await walkToFinish();
     expect(screen.getAllByText(/Gạo thơm/).length).toBeGreaterThan(0); // trang xem lại hiện sản phẩm mới
     expect(screen.getAllByText(/1006\.30/).length).toBeGreaterThan(0);
+    fireEvent.click(commitmentBox());
     fireEvent.click(screen.getByRole('button', { name: /Hoàn tất & Gửi hồ sơ/ }));
     await waitFor(() => expect(onComplete).toHaveBeenCalledTimes(1));
     const [profile, sent] = onComplete.mock.calls[0];
-    expect(profile).toMatchObject({ companyName: 'Công ty A', taxCode: '0312345678', markets: 'EU,FR' });
+    expect(profile).toMatchObject({ companyName: 'Công ty A', taxCode: '0312345678', markets: 'EU,FR', agreeCommitment: 'true' });
     expect(profile).not.toHaveProperty('market');
     // Không còn chứng chỉ/mã vùng trồng mẫu trong hồ sơ gửi đi (bằng chứng thật lưu trên server, C6).
-    for (const gone of ['certificates', 'pucCode', 'phcCode', 'agreeCommitment']) expect(profile).not.toHaveProperty(gone);
+    for (const gone of ['certificates', 'pucCode', 'phcCode']) expect(profile).not.toHaveProperty(gone);
     expect(JSON.parse(profile.products)).toEqual([{ name: 'Gạo thơm' }, { name: 'Cà phê' }]);
     expect(profile.interest).toBe('1006.30');
     expect(sent).toEqual(products);
@@ -156,6 +171,7 @@ describe('SellerOnboarding hoàn tất — gửi hồ sơ và danh sách sản p
     const onComplete = vi.fn().mockRejectedValue(new Error('Sản phẩm "Gạo thơm" chưa hợp lệ. Vui lòng kiểm tra mã HS, giá và ảnh.'));
     renderOnboarding({ initialStep: 1, initialCompany: { taxCode: '0312345678' }, initialProducts: [valid()], onComplete });
     await walkToFinish();
+    fireEvent.click(commitmentBox());
     fireEvent.click(screen.getByRole('button', { name: /Hoàn tất & Gửi hồ sơ/ }));
     expect(await screen.findByRole('alert')).toHaveTextContent('Sản phẩm "Gạo thơm" chưa hợp lệ');
     expect(screen.getByRole('button', { name: /Hoàn tất & Gửi hồ sơ/ })).toBeEnabled();

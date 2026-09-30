@@ -15,6 +15,8 @@ export async function listMyRequests(): Promise<VerificationRequest[] | null> {
   }
 }
 
+export class AlreadySubmittedError extends Error {}
+
 export async function submitRequest(): Promise<VerificationRequest> {
   let result;
   try {
@@ -23,11 +25,20 @@ export async function submitRequest(): Promise<VerificationRequest> {
     throw new Error(NETWORK);
   }
   if (result.response.status === 409) {
-    throw new Error('Hồ sơ đang chờ duyệt hoặc đã được xác minh, không gửi thêm được.');
+    throw new AlreadySubmittedError('Hồ sơ đang chờ duyệt hoặc đã được xác minh, không gửi thêm được.');
   }
   if (result.response.status === 404) {
     throw new Error('Hãy tạo hồ sơ doanh nghiệp trước khi gửi yêu cầu xác minh.');
   }
   if (!result.response.ok || !result.data) throw new Error(NETWORK);
   return result.data;
+}
+
+/** Gửi hồ sơ xong thì đưa vào hàng đợi admin; đã chờ duyệt / đã xác minh thì bỏ qua, lỗi khác vẫn ném. */
+export async function submitRequestIfNeeded(): Promise<void> {
+  try {
+    await submitRequest();
+  } catch (error) {
+    if (!(error instanceof AlreadySubmittedError)) throw error;
+  }
 }

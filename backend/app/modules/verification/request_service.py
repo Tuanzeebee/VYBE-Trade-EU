@@ -13,6 +13,7 @@ from app.core.errors import AppError
 from app.core.events import publish
 from app.core.storage import Storage
 from app.modules.auth.schemas import CurrentUser
+from app.modules.companies import product_service
 from app.modules.companies import service as companies
 from app.modules.verification import evidence_service
 from app.modules.verification.events import VerificationStatusChanged
@@ -128,6 +129,10 @@ async def queue(session: AsyncSession, storage: Storage) -> list[QueueItem]:
                 evidences=[
                     await evidence_service.to_out(session, storage, e) for e in evidence_rows
                 ],
+                company=await companies.get_company_for_review(session, request.company_id),
+                products=await product_service.list_products_for_review(
+                    session, request.company_id
+                ),
             )
         )
     return items

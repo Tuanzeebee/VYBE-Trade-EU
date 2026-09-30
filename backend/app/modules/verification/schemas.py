@@ -4,6 +4,8 @@ from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from app.modules.companies.schemas import CompanyOut, ReviewProductOut
+
 ApprovalStatusLiteral = Literal["pending", "approved", "rejected"]
 ChecklistStateLiteral = Literal["missing", "pending", "approved", "expired", "rejected"]
 
@@ -86,6 +88,8 @@ class QueueItem(BaseModel):
     country: str
     submitted_at: dt.datetime
     evidences: list[EvidenceOut]  # xem bằng chứng ngay trên dòng
+    company: CompanyOut  # hồ sơ đầy đủ để admin đối chiếu
+    products: list[ReviewProductOut]
 
 
 class DecisionIn(BaseModel):

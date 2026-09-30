@@ -11293,5 +11293,40 @@
     "New supplier matching your product categories: {0}",
     "New supplier matching your product categories: {0}",
     "New supplier matching your product categories: {0}"
+  ],
+  "Số đăng ký": [
+    "Registration number",
+    "Registration number",
+    "Registration number"
+  ],
+  "Ngành": [
+    "Industry",
+    "Industry",
+    "Industry"
+  ],
+  "Ngôn ngữ": [
+    "Languages",
+    "Languages",
+    "Languages"
+  ],
+  "Mô tả": [
+    "Description",
+    "Description",
+    "Description"
+  ],
+  "Sản phẩm đã khai": [
+    "Declared products",
+    "Declared products",
+    "Declared products"
+  ],
+  "Chưa khai sản phẩm nào.": [
+    "No products declared yet.",
+    "No products declared yet.",
+    "No products declared yet."
+  ],
+  "Giá": [
+    "Price",
+    "Price",
+    "Price"
   ]
 }

@@ -37,6 +37,7 @@ from app.modules.companies.schemas import (
     PublicCompanyOut,
     PublicCompanyRef,
     PublicProductOut,
+    ReviewProductOut,
 )
 from app.modules.companies.service import _own_company
 
@@ -128,6 +129,41 @@ async def list_active_hs_codes(session: AsyncSession, company_id: uuid.UUID) -> 
         .distinct()
     )
     return sorted(rows)
+
+
+async def list_products_for_review(
+    session: AsyncSession, company_id: uuid.UUID
+) -> list[ReviewProductOut]:
+    """Sản phẩm của một công ty cho admin duyệt xác minh. Router phải giới hạn vai trò admin."""
+    rows = await session.scalars(
+        select(Product)
+        .where(Product.company_id == company_id)
+        .order_by(Product.created_at, Product.id)
+    )
+    cache: dict[str, HsCodeOut | None] = {}
+    out: list[ReviewProductOut] = []
+    for p in rows:
+        if p.hs_code not in cache:
+            cache[p.hs_code] = await get_hs_code(session, p.hs_code)
+        hs = cache[p.hs_code]
+        out.append(
+            ReviewProductOut(
+                id=p.id,
+                name=p.name,
+                hs_code=p.hs_code,
+                hs_formatted=hs.formatted if hs else p.hs_code,
+                hs_name_vi=hs.name_vi if hs else None,
+                hs_name_en=hs.name_en if hs else None,
+                price_min=p.price_min,
+                price_max=p.price_max,
+                currency=p.currency,
+                unit=p.unit,
+                moq=p.moq,
+                moq_unit=p.moq_unit,
+                is_active=p.is_active,
+            )
+        )
+    return out
 
 
 async def list_products(

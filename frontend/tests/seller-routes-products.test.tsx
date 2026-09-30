@@ -61,7 +61,7 @@ const product = (id: string, name: string) => ({
 
 let calls: string[] = [];
 
-function serve(opts: { products: ReturnType<typeof product>[]; failProduct?: number }) {
+function serve(opts: { products: ReturnType<typeof product>[]; failProduct?: number; verificationStatus?: number }) {
   calls = [];
   vi.stubGlobal(
     'fetch',
@@ -69,6 +69,12 @@ function serve(opts: { products: ReturnType<typeof product>[]; failProduct?: num
       const path = new URL(req.url).pathname;
       calls.push(`${req.method} ${path}`);
       if (path === '/api/me') return json(200, ME);
+      if (path === '/api/exporter/verification-requests' && req.method === 'POST') {
+        const status = opts.verificationStatus ?? 201;
+        return status === 201
+          ? json(201, { id: 'r-1', company_id: 'c-1', status: 'pending', evidence_ids: [], submitted_at: '2026-09-30T00:00:00Z', reviewed_at: null, decision_reason: null })
+          : json(status, { error: { code: 'invalid_transition' } });
+      }
       if (path === '/api/me/company') return req.method === 'GET' ? json(200, COMPANY) : json(200, COMPANY);
       if (path === '/api/exporter/products' && req.method === 'GET') return json(200, opts.products);
       if (path.startsWith('/api/exporter/products')) {
@@ -96,6 +102,7 @@ const finishFromStepOne = async () => {
   // Mỗi bước lưu nháp lên server (A2) rồi mới sang bước sau.
   fireEvent.click(await screen.findByRole('button', { name: /Tiếp tục \(Tải lên giấy phép\)/ }));
   fireEvent.click(await screen.findByRole('button', { name: /Tiếp tục \(Xem lại hồ sơ\)/ }));
+  fireEvent.click(await screen.findByRole('checkbox', { name: /Tôi cam kết/ }));
   fireEvent.click(await screen.findByRole('button', { name: /Hoàn tất & Gửi hồ sơ/ }));
 };
 
@@ -137,6 +144,22 @@ describe('route hồ sơ exporter dùng sản phẩm trên server (B5)', () => {
     expect(calls.some((c) => c.startsWith('DELETE'))).toBe(false);
   });
 
+  it('gửi hồ sơ xong thì gửi luôn yêu cầu xác minh để hiện trong hàng đợi admin', async () => {
+    serve({ products: [product('p1', 'Gạo thơm Jasmine')] });
+    renderRoute(<SellerProfileRoute />, '/exporter/profile?step=1');
+    await finishFromStepOne();
+    await waitFor(() => expect(calls).toContain('POST /api/exporter/verification-requests'));
+    expect(calls.indexOf('POST /api/exporter/verification-requests')).toBeGreaterThan(calls.indexOf('PATCH /api/exporter/products/p1'));
+  });
+
+  it('đã chờ duyệt / đã xác minh (409) thì vẫn hoàn tất, không báo lỗi', async () => {
+    serve({ products: [product('p1', 'Gạo thơm Jasmine')], verificationStatus: 409 });
+    renderRoute(<SellerProfileRoute />, '/exporter/profile?step=1');
+    await finishFromStepOne();
+    await waitFor(() => expect(calls).toContain('POST /api/exporter/verification-requests'));
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+  });
+
   it('sản phẩm bị xóa khỏi form thì bị xóa trên server', async () => {
     localStorage.setItem('vybe_profiles_v2', JSON.stringify({ 'u-1': { onboardingCompleted: true, onboardingVersion: 2 } }));
     serve({ products: [product('p1', 'Gạo thơm Jasmine'), product('p2', 'Cà phê')] });
@@ -146,6 +169,7 @@ describe('route hồ sơ exporter dùng sản phẩm trên server (B5)', () => {
     fireEvent.click((await screen.findAllByRole('button', { name: /Xóa sản phẩm/ }))[1]);
     fireEvent.click(screen.getByRole('button', { name: /Tiếp tục \(Tải lên giấy phép\)/ }));
     fireEvent.click(await screen.findByRole('button', { name: /Tiếp tục \(Xem lại hồ sơ\)/ }));
+    fireEvent.click(await screen.findByRole('checkbox', { name: /Tôi cam kết/ }));
     fireEvent.click(await screen.findByRole('button', { name: /Hoàn tất & Gửi hồ sơ/ }));
     await waitFor(() => expect(calls).toContain('DELETE /api/exporter/products/p2'));
     expect(calls).toContain('PATCH /api/exporter/products/p1');

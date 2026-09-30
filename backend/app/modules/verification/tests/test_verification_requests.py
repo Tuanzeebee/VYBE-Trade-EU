@@ -15,7 +15,7 @@ from app.core.events import clear_subscribers, subscribe
 from app.modules.auth.schemas import CurrentUser
 from app.modules.auth.service import create_admin
 from app.modules.companies import service as companies
-from app.modules.companies.tests.helpers import PASSWORD, company_body, login_as
+from app.modules.companies.tests.helpers import PASSWORD, company_body, login_as, product_body
 from app.modules.verification.events import VerificationStatusChanged
 from app.modules.verification.models import (
     ApprovalStatus,
@@ -175,6 +175,33 @@ async def test_queue_lists_only_pending_oldest_first_with_evidence(
     assert shown["file_url"].startswith("https://fake/evidence/")
     assert rows[1]["evidences"] == []
     assert {"request_id", "company_id", "tax_id", "country"} <= set(rows[0])
+
+
+async def test_queue_shows_company_profile_and_products_for_review(
+    api_client: AsyncClient, db_session: AsyncSession
+) -> None:
+    await new_exporter(api_client, "a@x.vn", "Công ty A")
+    r = await api_client.post("/api/exporter/products", json=product_body())
+    assert r.status_code == 201, r.text
+    await api_client.post(SUBMIT)
+    await login_admin(api_client, db_session)
+
+    [row] = (await api_client.get(QUEUE)).json()
+    company = row["company"]
+    assert company["legal_name"] == "Công ty A"
+    assert company["registration_number"] == "0314892345"
+    assert company["business_type"] == "manufacturer"
+    assert company["founded_year"] == 2018
+    assert company["address"] == "720A Điện Biên Phủ, TP. Hồ Chí Minh"
+    assert company["website"] == "https://vietagri-export.vn"
+    assert company["contact_email"] == "contact@vietagri-export.vn"
+    assert company["description_vi"] == "Gạo và cà phê xuất khẩu."
+    assert company["export_markets"] == ["DE", "EU"]
+    assert company["languages_spoken"] == ["en", "vi"]
+    [product] = row["products"]
+    assert product["name"] == "Gạo thơm Jasmine xuất khẩu"
+    assert product["hs_formatted"] == "1006.30"
+    assert product["price_min"] == "480.00" and product["moq"] == "25.00"
 
 
 async def test_queue_excludes_decided_requests(

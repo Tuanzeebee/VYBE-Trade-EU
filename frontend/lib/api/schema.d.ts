@@ -2890,6 +2890,9 @@ export interface components {
             submitted_at: string;
             /** Evidences */
             evidences: components["schemas"]["EvidenceOut"][];
+            company: components["schemas"]["CompanyOut"];
+            /** Products */
+            products: components["schemas"]["ReviewProductOut"][];
         };
         /** RegisterIn */
         RegisterIn: {
@@ -2927,6 +2930,41 @@ export interface components {
             overall_ratio: string | null;
             /** Target Ratio */
             target_ratio: string;
+        };
+        /**
+         * ReviewProductOut
+         * @description Sản phẩm exporter đã khai, để admin đối chiếu khi duyệt xác minh (chỉ đọc).
+         */
+        ReviewProductOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Name */
+            name: string;
+            /** Hs Code */
+            hs_code: string;
+            /** Hs Formatted */
+            hs_formatted: string;
+            /** Hs Name Vi */
+            hs_name_vi: string | null;
+            /** Hs Name En */
+            hs_name_en: string | null;
+            /** Price Min */
+            price_min: string | null;
+            /** Price Max */
+            price_max: string | null;
+            /** Currency */
+            currency: string;
+            /** Unit */
+            unit: string | null;
+            /** Moq */
+            moq: string | null;
+            /** Moq Unit */
+            moq_unit: string | null;
+            /** Is Active */
+            is_active: boolean;
         };
         /** RfqBrief */
         RfqBrief: {
