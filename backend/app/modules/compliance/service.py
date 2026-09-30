@@ -17,10 +17,12 @@ from app.modules.auth.schemas import CurrentUser
 from app.modules.catalog import service as catalog
 from app.modules.companies import service as companies
 from app.modules.compliance.calculators import (
+    CountryTerms,
     Material,
     RooResult,
     RuleData,
     TariffLineData,
+    rank_markets,
     roo_verdict,
     tariff_savings,
 )
@@ -31,7 +33,15 @@ from app.modules.compliance.models import (
     ProductSpecificRule,
     TariffLine,
 )
-from app.modules.compliance.schemas import RooIn, RooOut, TariffIn, TariffOut
+from app.modules.compliance.schemas import (
+    MarketRowOut,
+    MarketsIn,
+    MarketsOut,
+    RooIn,
+    RooOut,
+    TariffIn,
+    TariffOut,
+)
 
 # EU là liên minh thuế quan: biểu thuế chung lưu ở destination 'EU' (một dòng/HS cho 27 nước).
 UNION_DESTINATION = "EU"
@@ -222,6 +232,19 @@ async def export_checks_csv(session: AsyncSession, *, actor_id: uuid.UUID) -> As
         yield buf.getvalue()
 
 
+def _line_data(line: TariffLine) -> TariffLineData:
+    return TariffLineData(
+        duty_type=line.duty_type,
+        mfn_rate=line.mfn_rate,
+        evfta_rate_current=line.evfta_rate_current,
+        quota_required=line.quota_required,
+        quota_note=line.quota_note,
+        condition_note=line.condition_note,
+        quota_note_en=line.quota_note_en,
+        condition_note_en=line.condition_note_en,
+    )
+
+
 async def calculate_tariff(
     session: AsyncSession, data: TariffIn, user: CurrentUser | None
 ) -> TariffOut:
@@ -232,18 +255,7 @@ async def calculate_tariff(
     lines = await lookup_lines(session, code, dt.datetime.now(dt.UTC).date())
     line = lines[0] if lines else None
     result = tariff_savings(
-        None
-        if line is None
-        else TariffLineData(
-            duty_type=line.duty_type,
-            mfn_rate=line.mfn_rate,
-            evfta_rate_current=line.evfta_rate_current,
-            quota_required=line.quota_required,
-            quota_note=line.quota_note,
-            condition_note=line.condition_note,
-            quota_note_en=line.quota_note_en,
-            condition_note_en=line.condition_note_en,
-        ),
+        None if line is None else _line_data(line),
         len(lines),
         data.product_value,
         data.shipments_per_year,
@@ -280,6 +292,62 @@ async def calculate_tariff(
         condition_note=result.condition_note,
         quota_note_en=result.quota_note_en,
         condition_note_en=result.condition_note_en,
+    )
+
+
+async def rank_markets_for(
+    session: AsyncSession, data: MarketsIn, user: CurrentUser | None
+) -> MarketsOut:
+    """Xếp hạng nước EU (thuế + VAT nhập khẩu). Mỗi lần gọi ghi ĐÚNG MỘT compliance_checks."""
+    code = catalog.normalize_code(data.hs_code)
+    if code is None:
+        raise AppError("invalid_hs_code", "HS code must be 6 to 8 digits", 422)
+    today = dt.datetime.now(dt.UTC).date()
+    lines = await lookup_lines(session, code, today)
+    line = lines[0] if len(lines) == 1 else None
+    terms: list[CountryTerms] = []
+    if line is not None:
+        found = await find_terms(session, line.hs_code, today)
+        # Hai dòng VAT cùng nước đang hiệu lực = dữ liệu mơ hồ → nước đó coi như chưa có dữ liệu.
+        ambiguous = {
+            c for c in {t.country for t in found} if sum(t.country == c for t in found) > 1
+        }
+        terms = [
+            CountryTerms(t.country, t.vat_rate, t.label_languages, t.note, t.note_en)
+            for t in found
+            if t.country not in ambiguous
+        ]
+    ranking = rank_markets(
+        None if line is None else _line_data(line),
+        len(lines),
+        data.product_value,
+        data.roo_status,
+        terms,
+    )
+    company_id = await companies.get_company_id(session, user.id) if user else None
+    ok = ranking.status == "ok" and line is not None
+    check = await log_check(
+        session,
+        check_type=CheckType.tariff,
+        hs_code=code,
+        destination_country=UNION_DESTINATION,
+        status=ranking.status,
+        company_id=company_id,
+        product_value=data.product_value,
+        mfn_duty_rate=line.mfn_rate if ok and line is not None else None,
+        evfta_duty_rate=line.evfta_rate_current if ok and line is not None else None,
+        tariff_line_id=line.id if line is not None else None,
+    )
+    await session.commit()
+    return MarketsOut(
+        check_id=str(check.id),
+        status=ranking.status,
+        basis=ranking.basis,
+        hs_code=code,
+        hs_formatted=catalog.format_code(code),
+        product_value=data.product_value,
+        duty_rate=ranking.duty_rate,
+        rows=[MarketRowOut(**row.__dict__) for row in ranking.rows],
     )
 
 

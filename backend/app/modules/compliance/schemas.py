@@ -68,6 +68,45 @@ class TariffOut(BaseModel):
     condition_note_en: str | None
 
 
+class MarketsIn(BaseModel):
+    """Số tiền nhận dạng CHUỖI JSON (không nhận số). roo_status lấy từ máy tính xuất xứ."""
+
+    model_config = ConfigDict(strict=True)
+
+    hs_code: Annotated[str, Field(max_length=32)]
+    product_value: Decimal
+    roo_status: Literal["pass", "fail", "inconclusive"] | None = None
+
+    @field_validator("product_value", mode="before")
+    @classmethod
+    def _amount(cls, value: Any) -> Decimal:
+        return parse_amount(value)
+
+
+class MarketRowOut(BaseModel):
+    country: str
+    status: Literal["ranked", "no_data"]
+    rank: int | None
+    duty: Decimal | None
+    vat_rate: Decimal | None
+    vat: Decimal | None
+    total: Decimal | None
+    label_languages: str | None
+    note: str | None
+    note_en: str | None
+
+
+class MarketsOut(BaseModel):
+    check_id: str
+    status: Literal["ok", "unsupported", "needs_review"]
+    basis: Literal["evfta", "mfn"] | None
+    hs_code: str
+    hs_formatted: str
+    product_value: Decimal
+    duty_rate: Decimal | None
+    rows: list[MarketRowOut]
+
+
 class MaterialIn(BaseModel):
     model_config = ConfigDict(strict=True)
 

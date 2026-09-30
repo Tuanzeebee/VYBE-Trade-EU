@@ -25,6 +25,8 @@ from app.modules.compliance.admin_schemas import (
 from app.modules.compliance.schemas import (
     DocumentOut,
     Eur1In,
+    MarketsIn,
+    MarketsOut,
     RooIn,
     RooOut,
     TariffIn,
@@ -63,6 +65,15 @@ async def calculate_roo(
     session: Annotated[AsyncSession, Depends(get_session)],
 ) -> RooOut:
     return await service.calculate_roo(session, data, user)
+
+
+@router.post("/api/public/markets")
+async def rank_markets(
+    data: MarketsIn,
+    user: Annotated[CurrentUser | None, Depends(get_optional_user)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> MarketsOut:
+    return await service.rank_markets_for(session, data, user)
 
 
 # ── Admin: nhập + duyệt dữ liệu tuân thủ ─────────────────────────────────────
