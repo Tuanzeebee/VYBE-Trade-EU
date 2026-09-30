@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css';
 import Providers from './providers';
@@ -13,7 +13,11 @@ export const metadata: Metadata = {
   title: 'VYBE TRADE - Nền tảng B2B Tin cậy & Xác minh Nhà cung cấp Việt Nam',
   description: 'Nền tảng B2B với lớp xác minh tin cậy đa tầng L1 - L2 - L3, giúp buyer quốc tế tìm kiếm và hợp tác an toàn với các nhà cung cấp Việt Nam uy tín.',
   keywords: ['B2B', 'Vietnam exporters', 'Nông sản', 'Thủy sản', 'Xác minh nhà cung ứng', 'VYBE TRADE'],
+  appleWebApp: { capable: true, title: 'VYBE TRADE' },
+  icons: { apple: '/icon-192.png' },
 };
+
+export const viewport: Viewport = { themeColor: '#2563eb' };
 
 export default function RootLayout({
   children,
