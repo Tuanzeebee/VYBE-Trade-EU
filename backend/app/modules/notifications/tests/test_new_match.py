@@ -10,7 +10,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.modules.messaging.tests.conftest import make_buyer, make_exporter
 from app.modules.notifications import handlers
-from app.modules.notifications.models import NotificationType
 from app.modules.verification.events import VerificationStatusChanged
 
 pytestmark = pytest.mark.usefixtures("notifications_on")
@@ -121,11 +120,28 @@ async def test_hidden_or_expired_supplier_does_not_notify(
 async def test_exporter_companies_never_receive_it(
     api_client: AsyncClient, db_session: AsyncSession
 ) -> None:
-    exporter_id, _ = await make_exporter(api_client, db_session, "a@x.vn")
-    await make_exporter(api_client, db_session, "b@x.vn", legal_name="Nhà B")
+    exporter_id, _ = await make_exporter(
+        api_client, db_session, "a@x.vn", industry_sector="agriculture"
+    )
+    other_id, _ = await make_exporter(api_client, db_session, "b@x.vn", legal_name="Nhà B")
+    await db_session.execute(
+        text("INSERT INTO company_sourcing_categories (company_id, category) VALUES (:id, :cat)"),
+        {"id": other_id, "cat": "agriculture"},
+    )
     await handlers.on_new_supplier_verified(verified(exporter_id))
     assert await matches(db_session, "b@x.vn") == []
-    assert NotificationType.new_match.value == "new_match"
+
+
+async def test_hidden_buyer_does_not_receive_it(
+    api_client: AsyncClient, db_session: AsyncSession
+) -> None:
+    exporter_id, _ = await make_exporter(api_client, db_session, industry_sector="agriculture")
+    buyer_id = await make_buyer(api_client)
+    await db_session.execute(
+        text("UPDATE companies SET is_hidden = true WHERE id = :id"), {"id": buyer_id}
+    )
+    await handlers.on_new_supplier_verified(verified(exporter_id))
+    assert await matches(db_session, "buyer@x.de") == []
 
 
 async def test_full_flow_through_the_event_bus(
