@@ -116,6 +116,8 @@ export default function SellerOnboarding({ account, initialStep = 2, initialComp
 
   // Bước 3: bằng chứng lưu trên server (C6); wizard chỉ giữ số lượng để hiện ở bước xem lại.
   const [evidenceCount, setEvidenceCount] = useState(0);
+  // Cam kết pháp lý trước khi gửi hồ sơ: người dùng phải tự tick, completeOnboarding kiểm lại.
+  const [agreeCommitment, setAgreeCommitment] = useState(false);
 
   const goToLicenses = async () => {
     if (products.length === 0) { setProductError('Vui lòng thêm ít nhất một sản phẩm.'); return; }
@@ -142,8 +144,9 @@ export default function SellerOnboarding({ account, initialStep = 2, initialComp
   const finish = async () => {
     setSubmitError('');
     if (!onComplete) { setSubmittedSuccess(true); return; }
+    if (!agreeCommitment) return;
     try {
-      let profile = buildProfile();
+      let profile: Record<string, string> = { ...buildProfile(), agreeCommitment: 'true' };
       if (logoFile && onSaveCompany) {
         await onSaveCompany(profile);
         const logoKey = await uploadCompanyLogo(logoFile);
@@ -877,6 +880,17 @@ export default function SellerOnboarding({ account, initialStep = 2, initialComp
 
                   </div>
 
+                  <label className="flex items-start gap-2.5 p-3 rounded-xl border border-slate-200 bg-white cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={agreeCommitment}
+                      onChange={(e) => setAgreeCommitment(e.target.checked)}
+                      className="mt-0.5 rounded text-teal-800 focus:ring-teal-700 cursor-pointer"
+                    />
+                    <span className="text-xs text-slate-700 leading-snug">
+                      {tr("Tôi cam kết thông tin doanh nghiệp, sản phẩm và bằng chứng đã nộp là thật, hợp pháp và doanh nghiệp hoàn toàn chịu trách nhiệm trước pháp luật về tính chính xác của hồ sơ.")}</span>
+                  </label>
+
                   {submitError && <p role="alert" className="rounded-xl bg-rose-50 p-3 text-sm text-rose-700">{tr(submitError)}</p>}
                   <div className="pt-4 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-slate-100">
                     <button 
@@ -889,7 +903,8 @@ export default function SellerOnboarding({ account, initialStep = 2, initialComp
                       <button 
                         type="button"
                         onClick={finish}
-                        className="flex-1 sm:flex-none px-6 py-2.5 rounded-xl bg-[#083832] hover:bg-[#062924] text-white text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 cursor-pointer shadow-xs active:scale-95"
+                        disabled={!agreeCommitment}
+                        className="flex-1 sm:flex-none px-6 py-2.5 rounded-xl bg-[#083832] hover:bg-[#062924] disabled:bg-slate-300 disabled:cursor-not-allowed text-white text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 cursor-pointer shadow-xs active:scale-95"
                       >
                         <span>{tr("Hoàn tất & Gửi hồ sơ")}</span>
                         <Check className="w-4 h-4 stroke-[2.5]" />

@@ -96,6 +96,7 @@ const finishFromStepOne = async () => {
   // Mỗi bước lưu nháp lên server (A2) rồi mới sang bước sau.
   fireEvent.click(await screen.findByRole('button', { name: /Tiếp tục \(Tải lên giấy phép\)/ }));
   fireEvent.click(await screen.findByRole('button', { name: /Tiếp tục \(Xem lại hồ sơ\)/ }));
+  fireEvent.click(await screen.findByRole('checkbox', { name: /Tôi cam kết/ }));
   fireEvent.click(await screen.findByRole('button', { name: /Hoàn tất & Gửi hồ sơ/ }));
 };
 
@@ -136,6 +137,14 @@ describe('route hồ sơ exporter dùng sản phẩm trên server (B5)', () => {
     expect(calls.some((c) => c.startsWith('DELETE'))).toBe(false);
   });
 
+  it('hoàn tất onboarding sau khi tick cam kết: đánh dấu đã hoàn tất, không báo lỗi', async () => {
+    serve({ products: [product('p1', 'Gạo thơm Jasmine')] });
+    renderRoute(<OnboardingRoute />, '/exporter/onboarding');
+    await finishFromStepOne();
+    await waitFor(() => expect(localStorage.getItem('vybe_profiles_v2') ?? '').toContain('onboardingCompleted'));
+    expect(screen.queryByText(/xác nhận cam kết/)).not.toBeInTheDocument();
+  });
+
   it('sản phẩm bị xóa khỏi form thì bị xóa trên server', async () => {
     serve({ products: [product('p1', 'Gạo thơm Jasmine'), product('p2', 'Cà phê')] });
     renderRoute(<OnboardingRoute />, '/exporter/onboarding');
@@ -144,6 +153,7 @@ describe('route hồ sơ exporter dùng sản phẩm trên server (B5)', () => {
     fireEvent.click((await screen.findAllByRole('button', { name: /Xóa sản phẩm/ }))[1]);
     fireEvent.click(screen.getByRole('button', { name: /Tiếp tục \(Tải lên giấy phép\)/ }));
     fireEvent.click(await screen.findByRole('button', { name: /Tiếp tục \(Xem lại hồ sơ\)/ }));
+    fireEvent.click(await screen.findByRole('checkbox', { name: /Tôi cam kết/ }));
     fireEvent.click(await screen.findByRole('button', { name: /Hoàn tất & Gửi hồ sơ/ }));
     await waitFor(() => expect(calls).toContain('DELETE /api/exporter/products/p2'));
     expect(calls).toContain('PATCH /api/exporter/products/p1');

@@ -126,7 +126,23 @@ describe('SellerOnboarding hoàn tất — gửi hồ sơ và danh sách sản p
     fireEvent.submit(screen.getByRole('button', { name: /^Tiếp tục$/ }).closest('form') as HTMLFormElement);
     nextFromStepTwo();
     fireEvent.click(await screen.findByRole('button', { name: /Tiếp tục \(Xem lại hồ sơ\)/ }));
+    fireEvent.click(await screen.findByRole('checkbox', { name: /Tôi cam kết/ }));
   };
+
+  it('chưa tick cam kết thì nút gửi hồ sơ bị khóa', async () => {
+    const onComplete = vi.fn().mockResolvedValue(undefined);
+    renderOnboarding({ initialStep: 1, initialCompany: { taxCode: '0312345678' }, initialProducts: [valid('Gạo thơm')], onComplete });
+    fireEvent.submit(screen.getByRole('button', { name: /^Tiếp tục$/ }).closest('form') as HTMLFormElement);
+    nextFromStepTwo();
+    fireEvent.click(await screen.findByRole('button', { name: /Tiếp tục \(Xem lại hồ sơ\)/ }));
+    const commitment = screen.getByRole('checkbox', { name: /Tôi cam kết/ });
+    expect(commitment).not.toBeChecked();
+    expect(screen.getByRole('button', { name: /Hoàn tất & Gửi hồ sơ/ })).toBeDisabled();
+    fireEvent.click(screen.getByRole('button', { name: /Hoàn tất & Gửi hồ sơ/ }));
+    expect(onComplete).not.toHaveBeenCalled();
+    fireEvent.click(commitment);
+    expect(screen.getByRole('button', { name: /Hoàn tất & Gửi hồ sơ/ })).toBeEnabled();
+  });
 
   it('onComplete nhận hồ sơ (thị trường theo mã, không còn "market" cũ) và danh sách bản nháp', async () => {
     const onComplete = vi.fn().mockResolvedValue(undefined);
@@ -146,7 +162,8 @@ describe('SellerOnboarding hoàn tất — gửi hồ sơ và danh sách sản p
     expect(profile).toMatchObject({ companyName: 'Công ty A', taxCode: '0312345678', markets: 'EU,US' });
     expect(profile).not.toHaveProperty('market');
     // Không còn chứng chỉ/mã vùng trồng mẫu trong hồ sơ gửi đi (bằng chứng thật lưu trên server, C6).
-    for (const gone of ['certificates', 'pucCode', 'phcCode', 'agreeCommitment']) expect(profile).not.toHaveProperty(gone);
+    for (const gone of ['certificates', 'pucCode', 'phcCode']) expect(profile).not.toHaveProperty(gone);
+    expect(profile.agreeCommitment).toBe('true');
     expect(JSON.parse(profile.products)).toEqual([{ name: 'Gạo thơm' }, { name: 'Cà phê' }]);
     expect(profile.interest).toBe('1006.30');
     expect(sent).toEqual(products);
