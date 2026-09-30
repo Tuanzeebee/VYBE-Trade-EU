@@ -24,6 +24,8 @@ Dữ liệu hồ sơ doanh nghiệp & bằng chứng: giấy phép, mã số thu
 
 Dữ liệu trao đổi: nội dung RFQ, tin nhắn, yêu cầu kết nối.
 
+Dữ liệu lượt xem hồ sơ: khi người dùng đã đăng nhập mở hồ sơ công khai của một nhà cung cấp, chúng tôi ghi lại doanh nghiệp đã xem và thời điểm xem. Nhà cung cấp chỉ thấy tên doanh nghiệp xem nếu đó là người mua đã được xác minh và không bật chế độ xem ẩn danh; các lượt xem khác chỉ hiển thị dưới dạng số đếm. Người mua có thể bật hoặc tắt chế độ ẩn danh bất kỳ lúc nào trong Hồ sơ công ty. [Thời hạn lưu dữ liệu lượt xem: cần quyết định.]
+
 Dữ liệu sử dụng & kỹ thuật: nhật ký truy cập, địa chỉ IP, thiết bị, cookie phục vụ vận hành và bảo mật.
 
 ## 4. Mục đích và cơ sở pháp lý xử lý
@@ -35,6 +37,8 @@ Xác minh doanh nghiệp & hiển thị cấp độ tin cậy (cơ sở: lợi �
 Bảo mật, chống gian lận, tuân thủ pháp luật (cơ sở: nghĩa vụ pháp lý & lợi ích hợp pháp).
 
 Cải thiện dịch vụ & liên hệ hỗ trợ (cơ sở: lợi ích hợp pháp/sự đồng ý).
+
+Hiển thị cho nhà cung cấp doanh nghiệp người mua đã xem hồ sơ của họ (cơ sở: lợi ích hợp pháp; người mua có quyền phản đối bằng chế độ xem ẩn danh).
 
 Với dữ liệu dựa trên sự đồng ý, chủ thể có thể rút lại đồng ý bất kỳ lúc nào (không ảnh hưởng tính hợp pháp của việc xử lý trước đó).
 

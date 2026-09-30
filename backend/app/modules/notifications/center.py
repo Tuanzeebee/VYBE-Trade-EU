@@ -3,6 +3,7 @@
 Giao diện dựng nội dung từ (type, payload) theo ngôn ngữ người dùng; ở đây chỉ lưu dữ liệu.
 """
 
+import datetime as dt
 import uuid
 from typing import Any
 
@@ -21,6 +22,9 @@ _EXPORTER_LINKS: dict[NotificationType, str] = {
     NotificationType.rfq: "/exporter?tab=rfq",
     NotificationType.message: "/conversations",
     NotificationType.new_match: "/suppliers",
+    NotificationType.profile_viewed: "/exporter/profile-views",
+    NotificationType.sector_alert: "/exporter",
+    NotificationType.order: "/exporter/billing",
 }
 _BUYER_LINKS: dict[NotificationType, str] = {
     NotificationType.verification_status: "/buyer",
@@ -28,6 +32,9 @@ _BUYER_LINKS: dict[NotificationType, str] = {
     NotificationType.rfq: "/buyer/rfqs",
     NotificationType.message: "/conversations",
     NotificationType.new_match: "/suppliers",
+    NotificationType.profile_viewed: "/buyer",
+    NotificationType.sector_alert: "/buyer",
+    NotificationType.order: "/buyer",
 }
 
 MAX_LIMIT = 100
@@ -69,6 +76,28 @@ async def has_new_match(session: AsyncSession, user_id: uuid.UUID, company_id: u
             Notification.user_id == user_id,
             Notification.type == NotificationType.new_match,
             Notification.payload["company_id"].as_string() == str(company_id),
+        )
+        .limit(1)
+    )
+    return found is not None
+
+
+async def has_recent(
+    session: AsyncSession,
+    user_id: uuid.UUID,
+    notification_type: NotificationType,
+    key: str,
+    value: str,
+    since: dt.datetime,
+) -> bool:
+    """Đã có thông báo cùng loại và cùng payload[key] kể từ `since` chưa (chống spam lặp lại)."""
+    found = await session.scalar(
+        select(Notification.id)
+        .where(
+            Notification.user_id == user_id,
+            Notification.type == notification_type,
+            Notification.payload[key].as_string() == value,
+            Notification.created_at >= since,
         )
         .limit(1)
     )

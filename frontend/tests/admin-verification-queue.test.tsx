@@ -281,7 +281,7 @@ describe('Hàng đợi xác minh — buyer xác minh tùy chọn (U6)', () => {
         legal_name: 'Global Foods GmbH',
         country: 'DE',
         vat_number: 'DE123456789',
-        eori_number: null,
+        eori_number: null, hide_profile_views: false,
         city: 'Hamburg',
         contact_name: 'Anna',
         contact_email: 'anna@globalfoods.de',

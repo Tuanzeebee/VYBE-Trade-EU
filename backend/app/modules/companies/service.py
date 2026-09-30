@@ -45,6 +45,7 @@ from app.modules.companies.schemas import (
     SourcingNeedsIn,
     SourcingNeedsOut,
     VerificationState,
+    ViewerIdentity,
 )
 
 _EXTENSIONS = {
@@ -73,6 +74,7 @@ _ONLY_BUYER = (
     "vat_number",
     "eori_number",
     "sourcing_categories",
+    "hide_profile_views",
 )
 _LIST_FIELDS = ("export_markets", "languages_spoken", "sourcing_categories", "facility_codes")
 
@@ -197,6 +199,30 @@ async def get_company_summaries(
             country=c.country,
             address=c.address,
             verification_status=c.verification_status.value,
+        )
+        for c in rows
+    }
+
+
+async def get_viewer_identities(
+    session: AsyncSession, company_ids: list[uuid.UUID], now: datetime
+) -> dict[uuid.UUID, ViewerIdentity]:
+    """Danh tính các công ty đã xem hồ sơ (U9). Tên chỉ được lộ khi `identifiable`."""
+    if not company_ids:
+        return {}
+    rows = await session.scalars(select(Company).where(Company.id.in_(company_ids)))
+    return {
+        c.id: ViewerIdentity(
+            id=c.id,
+            legal_name=c.legal_name,
+            country=c.country,
+            business_type=c.business_type,
+            identifiable=(
+                c.type is CompanyType.buyer
+                and c.verification_status is VerificationStatus.verified
+                and (c.expires_at is None or c.expires_at > now)
+                and not c.hide_profile_views
+            ),
         )
         for c in rows
     }
@@ -460,8 +486,9 @@ async def create_company(session: AsyncSession, user: CurrentUser, data: Company
         values["offering_type"] = OfferingType.products.value
     if values.get("offering_type") is None:
         values.pop("offering_type")
-    if values.get("location_public") is None:
-        values.pop("location_public")
+    for flag in ("location_public", "hide_profile_views"):
+        if values.get(flag) is None:
+            values.pop(flag)
     company = Company(
         owner_user_id=user.id,
         type=company_type,
@@ -482,7 +509,13 @@ async def update_company(
     logo_key = changes.get("logo_key")
     if logo_key is not None and not logo_key.startswith(f"logos/{company.id}/"):
         raise AppError("invalid_logo_key", "Logo does not belong to this company", 422)
-    for field in ("legal_name", "country", "offering_type", "location_public"):
+    for field in (
+        "legal_name",
+        "country",
+        "offering_type",
+        "location_public",
+        "hide_profile_views",
+    ):
         if field in changes and changes[field] is None:
             raise AppError("invalid_field", f"{field} cannot be empty", 422)
     _set_lists(company, changes)

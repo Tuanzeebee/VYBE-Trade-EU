@@ -52,7 +52,7 @@ const COMPANY = {
   website: null, contact_email: 'a@congtya.vn', description_vi: null, description_en: null, logo_key: null, export_markets: [],
   industry_other: null, phone: null, legal_rep_name: null, legal_rep_title: null, issuing_authority: null, offering_type: 'products',
   factory_address: null, capacity_value: null, capacity_unit: null, capacity_period: null, main_customers: null, location_public: false, facility_codes: [],
-  languages_spoken: [], company_size: null, procurement_estimate: null, vat_number: null, eori_number: null, sourcing_categories: [],
+  languages_spoken: [], company_size: null, procurement_estimate: null, vat_number: null, eori_number: null, hide_profile_views: false, sourcing_categories: [],
   verification_status: 'unverified', verification_level: 'basic', verified_at: null, expires_at: null,
   profile_completeness_score: '40.00', created_at: '2026-09-29T00:00:00Z', updated_at: '2026-09-29T00:00:00Z',
 };

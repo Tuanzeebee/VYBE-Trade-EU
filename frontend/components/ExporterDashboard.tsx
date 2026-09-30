@@ -69,6 +69,9 @@ export default function ExporterDashboard() {
             <p className="text-xs text-slate-600">
               {tr('Tuần trước')}: {data.profile_views.data.previous_week}
             </p>
+            <Link href="/exporter/profile-views" className="mt-2 inline-block text-xs font-semibold text-teal-800 underline">
+              {tr('Xem ai đã xem hồ sơ')}
+            </Link>
           </>
         )}
       </DashboardTile>

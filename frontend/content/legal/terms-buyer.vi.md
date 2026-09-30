@@ -52,6 +52,8 @@ RFQ và trao đổi phải trung thực, đúng mục đích thương mại; Ng�
 
 VYBE không bảo đảm Nhà cung cấp sẽ phản hồi, hay bất kỳ kết quả kết nối/giao dịch nào.
 
+Khi Người mua đã được xác minh xem hồ sơ của Nhà cung cấp, Nhà cung cấp có thể thấy tên doanh nghiệp của Người mua trong mục "Ai đã xem hồ sơ". Người mua có thể bật chế độ xem ẩn danh trong Hồ sơ công ty; khi đó Nhà cung cấp chỉ thấy số lượt xem.
+
 ## Điều 7. Cam đoan và hành vi bị cấm
 
 Thông tin đăng ký của Người mua là chính xác; người đăng ký có thẩm quyền đại diện.

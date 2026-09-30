@@ -20,7 +20,7 @@ const COMPANY = {
   legal_rep_title: null, issuing_authority: null, description_vi: null, description_en: null, logo_key: null,
   offering_type: null, factory_address: null, capacity_value: null, capacity_unit: null, capacity_period: null,
   main_customers: null, location_public: false, facility_codes: [], export_markets: [], languages_spoken: [],
-  company_size: null, procurement_estimate: null, vat_number: 'DE123456789', eori_number: null, sourcing_categories: ['seafood'],
+  company_size: null, procurement_estimate: null, vat_number: 'DE123456789', eori_number: null, hide_profile_views: false, sourcing_categories: ['seafood'],
   verification_status: 'unverified', verification_level: 'basic', verified_at: null, expires_at: null,
   profile_completeness_score: '0.00', created_at: '2026-09-29T00:00:00Z', updated_at: '2026-09-29T00:00:00Z',
 };
@@ -114,5 +114,20 @@ describe('Xác minh buyer tùy chọn (U6)', () => {
     const card = await screen.findByRole('region', { name: 'Xác minh doanh nghiệp' });
     expect(await within(card).findByText('VAT không khớp trên VIES')).toBeInTheDocument();
     expect(within(card).getByRole('button', { name: 'Gửi yêu cầu xác minh' })).toBeEnabled();
+  });
+});
+
+describe('Xem ẩn danh (U9)', () => {
+  afterEach(() => vi.unstubAllGlobals());
+
+  it('bật ẩn danh rồi lưu gửi hide_profile_views = true', async () => {
+    const calls: { method: string; path: string; body?: unknown }[] = [];
+    serve(calls);
+    renderProfile();
+    const toggle = await screen.findByRole('checkbox', { name: /chế độ ẩn danh/ });
+    expect(toggle).not.toBeChecked();
+    fireEvent.click(toggle);
+    fireEvent.click(screen.getByRole('button', { name: 'Lưu hồ sơ' }));
+    await waitFor(() => expect(calls.find((c) => c.method === 'PATCH')?.body).toMatchObject({ hide_profile_views: true }));
   });
 });

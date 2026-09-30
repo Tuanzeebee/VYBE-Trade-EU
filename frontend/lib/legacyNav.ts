@@ -41,6 +41,7 @@ const WORKSPACE_PATHS: Record<string, string> = {
   rfq: '/exporter/rfqs',
   messages: '/exporter/messages',
   notifications: '/exporter/notifications',
+  viewers: '/exporter/profile-views',
 };
 
 export const PROTECTED_PAGES: LegacyPage[] = ['workspace', 'onboarding', 'seller-profile', 'admin'];

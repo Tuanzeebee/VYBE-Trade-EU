@@ -933,6 +933,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/exporter/profile-viewers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Profile Viewers */
+        get: operations["profile_viewers_api_exporter_profile_viewers_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/exporter/dashboard": {
         parameters: {
             query?: never;
@@ -2032,6 +2049,8 @@ export interface components {
             vat_number?: string | null;
             /** Eori Number */
             eori_number?: string | null;
+            /** Hide Profile Views */
+            hide_profile_views?: boolean | null;
             /** Legal Name */
             legal_name: string;
             /**
@@ -2130,6 +2149,8 @@ export interface components {
             vat_number: string | null;
             /** Eori Number */
             eori_number: string | null;
+            /** Hide Profile Views */
+            hide_profile_views: boolean;
             /** Sourcing Categories */
             sourcing_categories: string[];
             /**
@@ -2220,6 +2241,8 @@ export interface components {
             vat_number?: string | null;
             /** Eori Number */
             eori_number?: string | null;
+            /** Hide Profile Views */
+            hide_profile_views?: boolean | null;
             /** Legal Name */
             legal_name?: string | null;
             /** Country */
@@ -2947,10 +2970,11 @@ export interface components {
         };
         /**
          * NotificationType
-         * @description Năm loại của spec §4.9. RFQ và tin nhắn do F1/F2 tạo.
+         * @description Năm loại của spec §4.9 (RFQ và tin nhắn do F1/F2 tạo; báo giá U8 dùng loại rfq) cùng ba loại
+         *     của bản nâng cấp: ai đã xem hồ sơ (U9), cảnh báo ngành (U14), đơn hàng (U19).
          * @enum {string}
          */
-        NotificationType: "message" | "rfq" | "verification_status" | "new_match" | "expiry_alert";
+        NotificationType: "message" | "rfq" | "verification_status" | "new_match" | "expiry_alert" | "profile_viewed" | "sector_alert" | "order";
         /** PackagingIn */
         PackagingIn: {
             /** Pack Size */
@@ -3172,6 +3196,41 @@ export interface components {
             packagings?: components["schemas"]["PackagingIn"][] | null;
             /** Price Tiers */
             price_tiers?: components["schemas"]["PriceTierIn"][] | null;
+        };
+        /**
+         * ProfileViewerOut
+         * @description Một buyer đã xác minh (không ẩn danh) đã xem hồ sơ trong khoảng thời gian.
+         */
+        ProfileViewerOut: {
+            /** Legal Name */
+            legal_name: string;
+            /** Country */
+            country: string;
+            /** Business Type */
+            business_type: string | null;
+            /** Views */
+            views: number;
+            /**
+             * Last Viewed At
+             * Format: date-time
+             */
+            last_viewed_at: string;
+        };
+        /**
+         * ProfileViewersOut
+         * @description U9 "ai đã xem hồ sơ": tên chỉ hiện với buyer đã xác minh, không bật ẩn danh; còn lại đếm.
+         */
+        ProfileViewersOut: {
+            /** Days */
+            days: number;
+            /** Total Views */
+            total_views: number;
+            /** Guest Views */
+            guest_views: number;
+            /** Anonymous Company Views */
+            anonymous_company_views: number;
+            /** Viewers */
+            viewers: components["schemas"]["ProfileViewerOut"][];
         };
         /** ProfileViewsData */
         ProfileViewsData: {
@@ -6635,6 +6694,39 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    profile_viewers_api_exporter_profile_viewers_get: {
+        parameters: {
+            query?: {
+                days?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProfileViewersOut"];
+                };
             };
             /** @description Validation Error */
             422: {

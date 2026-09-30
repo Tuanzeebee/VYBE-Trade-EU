@@ -24,6 +24,8 @@ Business profile & evidence data: licenses, tax/VAT/EORI numbers, certificates, 
 
 Communications data: RFQ content, messages, connection requests.
 
+Profile view data: when a signed-in user opens a supplier's public profile, we record the viewing business and the time of the view. The supplier sees the viewing business's name only if it is a verified buyer that has not turned on anonymous viewing; all other views are shown only as counts. Buyers can turn anonymous viewing on or off at any time in their Company profile. [Retention period for view data: to be decided.]
+
 Usage & technical data: access logs, IP address, device, cookies for operation and security.
 
 ## 4. Purposes and Legal Bases
@@ -35,6 +37,8 @@ Verifying enterprises & displaying trust levels (basis: legitimate interest and/
 Security, fraud prevention, legal compliance (basis: legal obligation & legitimate interest).
 
 Service improvement & support contact (basis: legitimate interest/consent).
+
+Showing suppliers which buyer businesses viewed their profile (basis: legitimate interest; buyers may object by using anonymous viewing).
 
 Where processing is based on consent, the data subject may withdraw consent at any time (without affecting the lawfulness of prior processing).
 

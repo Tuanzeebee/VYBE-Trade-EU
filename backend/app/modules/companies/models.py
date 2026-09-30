@@ -153,6 +153,10 @@ class Company(Base):
     location_public: Mapped[bool] = mapped_column(
         Boolean, default=False, server_default=text("false")
     )
+    # U9: buyer bật thì seller không thấy tên công ty khi buyer xem hồ sơ (chỉ được đếm ẩn danh).
+    hide_profile_views: Mapped[bool] = mapped_column(
+        Boolean, default=False, server_default=text("false")
+    )
     # Quy mô nhân sự: buyer (B2) và seller (U2) đều dùng
     company_size: Mapped[str | None] = mapped_column(String(16))
     procurement_estimate: Mapped[str | None] = mapped_column(String(16))

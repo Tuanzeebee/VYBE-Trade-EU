@@ -13,6 +13,7 @@ from app.core.events import subscribe
 from app.modules.auth import service as auth
 from app.modules.companies import product_service
 from app.modules.companies import service as companies
+from app.modules.dashboard.events import ProfileViewed
 from app.modules.messaging.events import (
     MessageSent,
     QuoteDecided,
@@ -198,6 +199,43 @@ async def on_quote_decided(event: QuoteDecided) -> None:
     )
 
 
+PROFILE_VIEW_REPEAT = dt.timedelta(hours=24)
+
+
+async def on_profile_viewed(event: ProfileViewed) -> None:
+    """Seller thấy buyer đã xác minh vừa xem hồ sơ; cùng một buyer tối đa một thông báo mỗi 24 giờ.
+    Chỉ trong ứng dụng; lỗi chỉ ghi log."""
+    try:
+        async with _session_factory()() as session:
+            user_id = await companies.get_owner_user_id(session, event.company_id)
+            if user_id is None:
+                return
+            since = dt.datetime.now(dt.UTC) - PROFILE_VIEW_REPEAT
+            viewer = str(event.viewer_company_id)
+            if await center.has_recent(
+                session,
+                user_id,
+                NotificationType.profile_viewed,
+                "viewer_company_id",
+                viewer,
+                since,
+            ):
+                return
+            await center.create_notification(
+                session,
+                user_id,
+                NotificationType.profile_viewed,
+                {
+                    "viewer_company_id": viewer,
+                    "viewer_name": event.viewer_name,
+                    "viewer_country": event.viewer_country,
+                },
+                role="exporter",
+            )
+    except Exception:
+        log.exception("Không tạo được thông báo profile_viewed cho %s", event.company_id)
+
+
 async def on_message_sent(event: MessageSent) -> None:
     """Bên nhận thấy tin mới trong ứng dụng và nhận email (không kèm nội dung tin)."""
     await _record_in_app(
@@ -222,3 +260,4 @@ def register() -> None:
     subscribe(MessageSent, on_message_sent)
     subscribe(QuoteSent, on_quote_sent)
     subscribe(QuoteDecided, on_quote_decided)
+    subscribe(ProfileViewed, on_profile_viewed)

@@ -118,6 +118,7 @@ class _CompanyFields(BaseModel):
     procurement_estimate: ProcurementEstimate | None = None
     vat_number: Annotated[str, StringConstraints(max_length=32)] | None = None
     eori_number: Annotated[str, StringConstraints(max_length=20)] | None = None
+    hide_profile_views: bool | None = None  # buyer (U9)
 
 
 class CompanyIn(_CompanyFields):
@@ -191,6 +192,7 @@ class CompanyOut(BaseModel):
     procurement_estimate: str | None
     vat_number: str | None
     eori_number: str | None
+    hide_profile_views: bool
     sourcing_categories: list[str]
     verification_status: Literal["unverified", "pending", "verified", "rejected"]
     verification_level: Literal["basic", "evfta_verified"]
@@ -472,6 +474,17 @@ class CompanySummary(BaseModel):
     country: str
     address: str | None = None
     verification_status: str = "unverified"
+
+
+class ViewerIdentity(BaseModel):
+    """Công ty đã xem một hồ sơ (U9). `identifiable` = seller được thấy tên: buyer đã xác minh, còn
+    hạn và không bật ẩn danh. Không identifiable thì seller chỉ thấy số đếm."""
+
+    id: uuid.UUID
+    legal_name: str
+    country: str
+    business_type: str | None
+    identifiable: bool
 
 
 class VerificationState(BaseModel):

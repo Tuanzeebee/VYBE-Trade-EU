@@ -49,7 +49,7 @@ const company = (over: Partial<CompanyOut> = {}): CompanyOut => ({
   company_size: null,
   procurement_estimate: null,
   vat_number: null,
-  eori_number: null,
+  eori_number: null, hide_profile_views: false,
   sourcing_categories: [],
   verification_status: 'unverified',
   verification_level: 'basic',

@@ -68,6 +68,14 @@ export function describe(notification: Pick<AppNotification, 'type' | 'payload'>
     }
     case 'message':
       return 'Bạn có tin nhắn mới.';
+    case 'profile_viewed': {
+      const viewer = notification.payload.viewer_name;
+      return typeof viewer === 'string' && viewer ? `${viewer} vừa xem hồ sơ của bạn.` : 'Một buyer đã xác minh vừa xem hồ sơ của bạn.';
+    }
+    case 'sector_alert':
+      return 'Có cảnh báo mới cho ngành hàng của bạn.';
+    case 'order':
+      return 'Đơn hàng của bạn đã được cập nhật.';
     case 'new_match': {
       const name = notification.payload.company_name;
       return typeof name === 'string' && name

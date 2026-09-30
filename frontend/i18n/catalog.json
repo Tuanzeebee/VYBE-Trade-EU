@@ -12738,5 +12738,100 @@
     "The supplier updated your quote request.",
     "Le fournisseur a mis à jour votre demande de devis.",
     "サプライヤーが見積依頼を更新しました。"
+  ],
+  "Xem hồ sơ nhà cung cấp ở chế độ ẩn danh": [
+    "View supplier profiles anonymously",
+    "Consulter les profils fournisseurs en mode anonyme",
+    "サプライヤーのプロフィールを匿名で閲覧"
+  ],
+  "Khi bật, nhà cung cấp chỉ thấy có một doanh nghiệp đã xem, không thấy tên công ty của bạn.": [
+    "When on, suppliers only see that a business viewed them, not your company name.",
+    "Activé, les fournisseurs voient seulement qu'une entreprise les a consultés, pas le nom de votre société.",
+    "オンにすると、サプライヤーには企業が閲覧したことだけが表示され、貴社名は表示されません。"
+  ],
+  "Xem ai đã xem hồ sơ": [
+    "See who viewed your profile",
+    "Voir qui a consulté votre profil",
+    "プロフィールの閲覧者を見る"
+  ],
+  "Ai đã xem hồ sơ của bạn": [
+    "Who viewed your profile",
+    "Qui a consulté votre profil",
+    "プロフィールの閲覧者"
+  ],
+  "Ai đã xem hồ sơ": [
+    "Profile viewers",
+    "Visiteurs du profil",
+    "プロフィール閲覧者"
+  ],
+  "Khoảng thời gian": [
+    "Period",
+    "Période",
+    "期間"
+  ],
+  "Chỉ hiện tên buyer đã xác minh và không bật chế độ ẩn danh. Các lượt xem khác chỉ được đếm, không lộ danh tính.": [
+    "Only verified buyers who have not turned on anonymous mode are named. Other views are only counted, without revealing identity.",
+    "Seuls les acheteurs vérifiés n'ayant pas activé le mode anonyme sont nommés. Les autres consultations sont seulement comptées, sans révéler l'identité.",
+    "匿名モードをオンにしていない認証済みバイヤーのみ名前が表示されます。その他の閲覧は件数のみで、身元は表示されません。"
+  ],
+  "Không tải được dữ liệu lượt xem. Vui lòng thử lại.": [
+    "Could not load profile views. Please try again.",
+    "Impossible de charger les consultations. Réessayez.",
+    "閲覧データを読み込めませんでした。もう一度お試しください。"
+  ],
+  "Chưa có buyer đã xác minh nào xem hồ sơ trong khoảng này. Hồ sơ đầy đủ sản phẩm, năng lực và chứng nhận giúp buyer tìm thấy bạn.": [
+    "No verified buyer viewed your profile in this period. A complete profile with products, capacity and certificates helps buyers find you.",
+    "Aucun acheteur vérifié n'a consulté votre profil sur cette période. Un profil complet (produits, capacités, certificats) aide les acheteurs à vous trouver.",
+    "この期間に閲覧した認証済みバイヤーはいません。製品・供給能力・認証を充実させるとバイヤーに見つけてもらいやすくなります。"
+  ],
+  "Gần nhất": [
+    "Latest",
+    "Dernière",
+    "最新"
+  ],
+  "Tổng lượt xem": [
+    "Total views",
+    "Total des consultations",
+    "総閲覧数"
+  ],
+  "Khách chưa đăng nhập": [
+    "Guests (not signed in)",
+    "Visiteurs non connectés",
+    "未ログインのゲスト"
+  ],
+  "Doanh nghiệp ẩn danh": [
+    "Anonymous businesses",
+    "Entreprises anonymes",
+    "匿名の企業"
+  ],
+  "{0} ngày qua": [
+    "Last {0} days",
+    "{0} derniers jours",
+    "過去{0}日"
+  ],
+  "{0} lượt xem": [
+    "{0} views",
+    "{0} consultations",
+    "{0}回閲覧"
+  ],
+  "{0} vừa xem hồ sơ của bạn.": [
+    "{0} just viewed your profile.",
+    "{0} vient de consulter votre profil.",
+    "{0}があなたのプロフィールを閲覧しました。"
+  ],
+  "Một buyer đã xác minh vừa xem hồ sơ của bạn.": [
+    "A verified buyer just viewed your profile.",
+    "Un acheteur vérifié vient de consulter votre profil.",
+    "認証済みバイヤーがプロフィールを閲覧しました。"
+  ],
+  "Có cảnh báo mới cho ngành hàng của bạn.": [
+    "There is a new alert for your sector.",
+    "Nouvelle alerte pour votre secteur.",
+    "あなたの業界に新しい警告があります。"
+  ],
+  "Đơn hàng của bạn đã được cập nhật.": [
+    "Your order has been updated.",
+    "Votre commande a été mise à jour.",
+    "ご注文が更新されました。"
   ]
 }

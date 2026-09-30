@@ -4151,6 +4151,67 @@
         }
       }
     },
+    "/api/exporter/profile-viewers": {
+      "get": {
+        "tags": [
+          "dashboard"
+        ],
+        "summary": "Profile Viewers",
+        "operationId": "profile_viewers_api_exporter_profile_viewers_get",
+        "parameters": [
+          {
+            "name": "days",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 90,
+              "minimum": 1,
+              "default": 30,
+              "title": "Days"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileViewersOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/exporter/dashboard": {
       "get": {
         "tags": [
@@ -8532,6 +8593,17 @@
             ],
             "title": "Eori Number"
           },
+          "hide_profile_views": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hide Profile Views"
+          },
           "legal_name": {
             "type": "string",
             "maxLength": 255,
@@ -8962,6 +9034,10 @@
             ],
             "title": "Eori Number"
           },
+          "hide_profile_views": {
+            "type": "boolean",
+            "title": "Hide Profile Views"
+          },
           "sourcing_categories": {
             "items": {
               "type": "string"
@@ -9064,6 +9140,7 @@
           "procurement_estimate",
           "vat_number",
           "eori_number",
+          "hide_profile_views",
           "sourcing_categories",
           "verification_status",
           "verification_level",
@@ -9451,6 +9528,17 @@
               }
             ],
             "title": "Eori Number"
+          },
+          "hide_profile_views": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hide Profile Views"
           },
           "legal_name": {
             "anyOf": [
@@ -11842,10 +11930,13 @@
           "rfq",
           "verification_status",
           "new_match",
-          "expiry_alert"
+          "expiry_alert",
+          "profile_viewed",
+          "sector_alert",
+          "order"
         ],
         "title": "NotificationType",
-        "description": "Năm loại của spec §4.9. RFQ và tin nhắn do F1/F2 tạo."
+        "description": "Năm loại của spec §4.9 (RFQ và tin nhắn do F1/F2 tạo; báo giá U8 dùng loại rfq) cùng ba loại\ncủa bản nâng cấp: ai đã xem hồ sơ (U9), cảnh báo ngành (U14), đơn hàng (U19)."
       },
       "PackagingIn": {
         "properties": {
@@ -12721,6 +12812,85 @@
         "type": "object",
         "title": "ProductPatch",
         "description": "Chỉ các trường gửi lên mới được sửa; image_keys gửi lên thay thế toàn bộ ảnh."
+      },
+      "ProfileViewerOut": {
+        "properties": {
+          "legal_name": {
+            "type": "string",
+            "title": "Legal Name"
+          },
+          "country": {
+            "type": "string",
+            "title": "Country"
+          },
+          "business_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Business Type"
+          },
+          "views": {
+            "type": "integer",
+            "title": "Views"
+          },
+          "last_viewed_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Last Viewed At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "legal_name",
+          "country",
+          "business_type",
+          "views",
+          "last_viewed_at"
+        ],
+        "title": "ProfileViewerOut",
+        "description": "Một buyer đã xác minh (không ẩn danh) đã xem hồ sơ trong khoảng thời gian."
+      },
+      "ProfileViewersOut": {
+        "properties": {
+          "days": {
+            "type": "integer",
+            "title": "Days"
+          },
+          "total_views": {
+            "type": "integer",
+            "title": "Total Views"
+          },
+          "guest_views": {
+            "type": "integer",
+            "title": "Guest Views"
+          },
+          "anonymous_company_views": {
+            "type": "integer",
+            "title": "Anonymous Company Views"
+          },
+          "viewers": {
+            "items": {
+              "$ref": "#/components/schemas/ProfileViewerOut"
+            },
+            "type": "array",
+            "title": "Viewers"
+          }
+        },
+        "type": "object",
+        "required": [
+          "days",
+          "total_views",
+          "guest_views",
+          "anonymous_company_views",
+          "viewers"
+        ],
+        "title": "ProfileViewersOut",
+        "description": "U9 \"ai đã xem hồ sơ\": tên chỉ hiện với buyer đã xác minh, không bật ẩn danh; còn lại đếm."
       },
       "ProfileViewsData": {
         "properties": {

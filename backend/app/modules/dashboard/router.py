@@ -7,7 +7,12 @@ from app.core.db import get_session
 from app.modules.auth.schemas import CurrentUser
 from app.modules.auth.service import get_optional_user, require_role
 from app.modules.dashboard import service
-from app.modules.dashboard.schemas import BuyerDashboard, ExporterDashboard, ReturnVisitStats
+from app.modules.dashboard.schemas import (
+    BuyerDashboard,
+    ExporterDashboard,
+    ProfileViewersOut,
+    ReturnVisitStats,
+)
 
 router = APIRouter(tags=["dashboard"])
 DB = Annotated[AsyncSession, Depends(get_session)]
@@ -26,6 +31,13 @@ MaybeUser = Annotated[CurrentUser | None, Depends(get_optional_user)]
 async def record_view(slug: str, session: DB, viewer: MaybeUser) -> Response:
     await service.record_profile_view(session, slug, viewer)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@router.get("/api/exporter/profile-viewers")
+async def profile_viewers(
+    user: Exporter, session: DB, days: Annotated[int, Query(ge=1, le=90)] = 30
+) -> ProfileViewersOut:
+    return await service.list_profile_viewers(session, user, days)
 
 
 @router.get("/api/exporter/dashboard")

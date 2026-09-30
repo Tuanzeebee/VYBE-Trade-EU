@@ -106,6 +106,13 @@ export default function BuyerProfile() {
               <label className={LABEL}>{tr('Mã số VAT (không bắt buộc)')}<input className={INPUT} value={profile.vatNumber ?? ''} onChange={(e) => update('vatNumber', e.target.value)} placeholder="DE123456789" /></label>
               <label className={LABEL}>{tr('Mã EORI (không bắt buộc)')}<input className={INPUT} value={profile.eoriNumber ?? ''} onChange={(e) => update('eoriNumber', e.target.value)} /></label>
             </div>
+            <label className="flex items-start gap-3 rounded-xl border border-slate-200 p-4 text-sm text-slate-700">
+              <input type="checkbox" className="mt-0.5 h-4 w-4" checked={profile.hideProfileViews === 'true'} onChange={(e) => update('hideProfileViews', String(e.target.checked))} />
+              <span>
+                <span className="block font-semibold text-slate-900">{tr('Xem hồ sơ nhà cung cấp ở chế độ ẩn danh')}</span>
+                {tr('Khi bật, nhà cung cấp chỉ thấy có một doanh nghiệp đã xem, không thấy tên công ty của bạn.')}
+              </span>
+            </label>
           </>
         ) : (
           <BuyerNeedsForm needs={needs} onChange={setNeeds} interest={profile.interest ?? ''} onInterestChange={(value) => update('interest', value)} />

@@ -21,10 +21,11 @@ import { useLanguage } from "../context/LanguageContext";
 import RfqInbox from './RfqInbox';
 import NotificationsPanel from './NotificationsPanel';
 import Conversations from './Conversations';
+import ProfileViewers from './ProfileViewers';
 import { Link } from '../i18n/navigation';
 import ExporterDashboard from './ExporterDashboard';
 
-export type WorkspaceTabId = 'overview' | 'profile' | 'verification' | 'products' | 'rfq' | 'messages' | 'notifications' | 'licenses';
+export type WorkspaceTabId = 'overview' | 'profile' | 'verification' | 'products' | 'rfq' | 'messages' | 'notifications' | 'licenses' | 'viewers';
 
 interface SellerWorkspaceProps {
   account?: DemoUser;
@@ -93,6 +94,7 @@ export default function SellerWorkspace({
               { id: 'licenses', label: 'Tải lên & Quản lý Giấy phép & Chứng nhận', icon: Award },
               { id: 'verification', label: 'Xác minh doanh nghiệp', icon: ShieldCheck, badge: statusBadge.short },
               { id: 'overview', label: 'Tổng quan & Chỉ số', icon: Home },
+              { id: 'viewers', label: 'Ai đã xem hồ sơ', icon: Eye },
               { id: 'products', label: 'Sản phẩm cung cấp', icon: Package, badge: `${productsList.length}` },
               { id: 'rfq', label: 'Cơ hội kết nối B2B', icon: Handshake },
               { id: 'messages', label: 'Tin nhắn', icon: MessageSquare },
@@ -243,6 +245,7 @@ export default function SellerWorkspace({
                 {tr(activeTab === 'rfq' && 'Cơ hội kết nối & Báo giá B2B')}
                 {tr(activeTab === 'messages' && 'Tin nhắn với buyer')}
                 {tr(activeTab === 'notifications' && 'Thông báo hệ thống')}
+                {tr(activeTab === 'viewers' && 'Ai đã xem hồ sơ của bạn')}
               </span>
             </div>
 
@@ -563,6 +566,8 @@ export default function SellerWorkspace({
           {activeTab === 'messages' && <Conversations />}
 
           {activeTab === 'notifications' && <NotificationsPanel />}
+
+          {activeTab === 'viewers' && <ProfileViewers />}
 
         </main>
 

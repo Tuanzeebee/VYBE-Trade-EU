@@ -15,11 +15,13 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.errors import AppError
+from app.core.events import publish
 from app.modules.auth.schemas import CurrentUser
 from app.modules.companies import product_service
 from app.modules.companies import service as companies
 from app.modules.compliance import service as compliance
 from app.modules.copilot import service as copilot
+from app.modules.dashboard.events import ProfileViewed
 from app.modules.dashboard.models import DashboardEvent, ProfileView
 from app.modules.dashboard.schemas import (
     BuyerDashboard,
@@ -28,6 +30,8 @@ from app.modules.dashboard.schemas import (
     CopilotTile,
     ExporterDashboard,
     MissingItem,
+    ProfileViewerOut,
+    ProfileViewersOut,
     ProfileViewsData,
     ProfileViewsTile,
     QuestionBrief,
@@ -80,7 +84,77 @@ async def record_profile_view(
     session.add(
         ProfileView(company_id=company_id, viewer_company_id=viewer_company, viewed_at=moment)
     )
+    identity = None
+    if viewer_company is not None:
+        identity = (await companies.get_viewer_identities(session, [viewer_company], moment)).get(
+            viewer_company
+        )
     await session.commit()
+    if identity is not None and identity.identifiable:
+        await publish(
+            ProfileViewed(
+                company_id=company_id,
+                viewer_company_id=identity.id,
+                viewer_name=identity.legal_name,
+                viewer_country=identity.country,
+            )
+        )
+
+
+async def list_profile_viewers(
+    session: AsyncSession, user: CurrentUser, days: int, now: dt.datetime | None = None
+) -> ProfileViewersOut:
+    """U9: ai đã xem hồ sơ của công ty người gọi trong `days` ngày. Chưa có công ty → rỗng."""
+    moment = now or dt.datetime.now(dt.UTC)
+    empty = ProfileViewersOut(
+        days=days, total_views=0, guest_views=0, anonymous_company_views=0, viewers=[]
+    )
+    company_id = await companies.get_company_id(session, user.id)
+    if company_id is None:
+        return empty
+    rows = (
+        await session.execute(
+            select(
+                ProfileView.viewer_company_id,
+                func.count(),
+                func.max(ProfileView.viewed_at),
+            )
+            .where(
+                ProfileView.company_id == company_id,
+                ProfileView.viewed_at > moment - dt.timedelta(days=days),
+            )
+            .group_by(ProfileView.viewer_company_id)
+        )
+    ).all()
+    identities = await companies.get_viewer_identities(
+        session, [r[0] for r in rows if r[0] is not None], moment
+    )
+    guests = anonymous = 0
+    viewers: list[ProfileViewerOut] = []
+    for viewer_id, views, last in rows:
+        identity = identities.get(viewer_id) if viewer_id is not None else None
+        if viewer_id is None:
+            guests += views
+        elif identity is None or not identity.identifiable:
+            anonymous += views
+        else:
+            viewers.append(
+                ProfileViewerOut(
+                    legal_name=identity.legal_name,
+                    country=identity.country,
+                    business_type=identity.business_type,
+                    views=views,
+                    last_viewed_at=last,
+                )
+            )
+    viewers.sort(key=lambda v: v.last_viewed_at, reverse=True)
+    return ProfileViewersOut(
+        days=days,
+        total_views=guests + anonymous + sum(v.views for v in viewers),
+        guest_views=guests,
+        anonymous_company_views=anonymous,
+        viewers=viewers,
+    )
 
 
 # ── Dấu vân tay và ghi sự kiện (G3) ────────────────────────────────────────────

@@ -45,7 +45,7 @@ const BUYER = {
   company_size: '51_200',
   procurement_estimate: '500k_2m',
   vat_number: 'DE123456789',
-  eori_number: 'DE123456789012',
+  eori_number: 'DE123456789012', hide_profile_views: false,
   sourcing_categories: ['agriculture', 'spices'],
   verification_status: 'unverified',
   verification_level: 'basic',
@@ -118,7 +118,7 @@ describe('buyerProfileToCompany — form buyer cũ → CompanyIn', () => {
       phone: null,
       registration_number: null,
       vat_number: 'DE123456789',
-      eori_number: 'DE123456789012',
+      eori_number: 'DE123456789012', hide_profile_views: false,
       procurement_estimate: '500k_2m',
       sourcing_categories: ['agriculture', 'spices'],
     });

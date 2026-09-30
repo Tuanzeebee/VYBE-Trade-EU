@@ -33,6 +33,18 @@ export async function fetchReturnVisits(weeks = 8): Promise<ReturnVisitStats | n
   }
 }
 
+export type ProfileViewers = components['schemas']['ProfileViewersOut'];
+
+/** U9: ai đã xem hồ sơ trong `days` ngày. null = lỗi tải. */
+export async function getProfileViewers(days: number): Promise<ProfileViewers | null> {
+  try {
+    const { data, response } = await createApiClient().GET('/api/exporter/profile-viewers', { params: { query: { days } } });
+    return response.ok && data ? data : null;
+  } catch {
+    return null;
+  }
+}
+
 /** Ghi lượt xem hồ sơ công khai; thất bại không ảnh hưởng người xem. */
 export async function recordProfileView(slug: string): Promise<void> {
   try {

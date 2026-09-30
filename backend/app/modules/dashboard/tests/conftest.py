@@ -2,12 +2,13 @@ import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.modules.catalog.service import upsert_hs_codes
+from app.modules.messaging.tests.conftest import notifications_on  # noqa: F401 — dùng lại fixture
 from scripts.seed_hs_codes import DEFAULT_CSV, load_csv
 
 
 @pytest.fixture(autouse=True)
 def _rfq_limit_for_fixtures(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Test khác dùng buyer chưa xác minh chỉ để có RFQ; chính sách thật (0) được test riêng."""
+    """Test khác dùng buyer chưa xác minh chỉ để có RFQ; chính sách thật (3) được test riêng."""
     from app.core.config import get_settings
 
     monkeypatch.setattr(get_settings(), "rfq_daily_limit_unverified", 5)
