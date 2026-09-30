@@ -1,5 +1,6 @@
 """Hàm thuần của máy tính tuân thủ: không đụng DB/HTTP (AGENTS.md §5.3)."""
 
+from collections.abc import Sequence
 from dataclasses import dataclass
 from decimal import ROUND_CEILING, ROUND_HALF_UP, Decimal
 from typing import Literal
@@ -106,6 +107,101 @@ def tariff_savings(
         quota_note_en=line.quota_note_en,
         condition_note_en=line.condition_note_en,
     )
+
+
+# ── Xếp hạng thị trường EU ──────────────────────────────────────────────────
+
+MarketStatus = Literal["ranked", "no_data"]
+MarketBasis = Literal["evfta", "mfn"]
+
+
+@dataclass(frozen=True)
+class CountryTerms:
+    """VAT nhập khẩu (%) và lưu ý của một nước cho một mã hàng. Dữ liệu đã duyệt."""
+
+    country: str
+    vat_rate: Decimal
+    label_languages: str | None = None
+    note: str | None = None
+    note_en: str | None = None
+
+
+@dataclass(frozen=True)
+class MarketRow:
+    """`no_data`: nước chưa có dòng VAT đã duyệt — mọi trường số là None."""
+
+    country: str
+    status: MarketStatus
+    rank: int | None = None
+    duty: Decimal | None = None
+    vat_rate: Decimal | None = None
+    vat: Decimal | None = None
+    total: Decimal | None = None
+    label_languages: str | None = None
+    note: str | None = None
+    note_en: str | None = None
+
+
+@dataclass(frozen=True)
+class MarketRanking:
+    """status khác `ok` (unsupported/needs_review) → không có dòng nào, không có con số nào."""
+
+    status: TariffStatus
+    basis: MarketBasis | None = None
+    duty_rate: Decimal | None = None
+    rows: tuple[MarketRow, ...] = ()
+
+
+def rank_markets(
+    line: TariffLineData | None,
+    lines_found: int,
+    product_value: Decimal,
+    roo_status: str | None,
+    terms: Sequence[CountryTerms],
+) -> MarketRanking:
+    """Xếp các nước EU theo tổng (thuế nhập khẩu + VAT nhập khẩu) tăng dần.
+
+    - Trạng thái và số thuế lấy từ tariff_savings; chỉ `ok` mới xếp hạng.
+    - Thuế EVFTA chỉ áp khi RoO = pass; ngược lại dùng MFN (không hưởng ưu đãi).
+    - VAT nhập khẩu = (giá trị + thuế nhập khẩu) × VAT. Hòa tổng thì xếp theo mã nước.
+    - Nước không có dòng VAT xếp cuối, status no_data, không có con số.
+    """
+    base = tariff_savings(line, lines_found, product_value, None)
+    if (
+        base.status != "ok"
+        or base.mfn_duty is None
+        or base.evfta_duty is None
+        or base.mfn_rate is None
+        or base.evfta_rate is None
+    ):
+        return MarketRanking(base.status)
+    basis: MarketBasis = "evfta" if roo_status == "pass" else "mfn"
+    duty, duty_rate = (
+        (base.evfta_duty, base.evfta_rate) if basis == "evfta" else (base.mfn_duty, base.mfn_rate)
+    )
+    ranked: list[MarketRow] = []
+    for term in terms:
+        vat = _money((product_value + duty) * term.vat_rate / HUNDRED)
+        ranked.append(
+            MarketRow(
+                term.country,
+                "ranked",
+                duty=duty,
+                vat_rate=term.vat_rate,
+                vat=vat,
+                total=duty + vat,
+                label_languages=term.label_languages,
+                note=term.note,
+                note_en=term.note_en,
+            )
+        )
+    ranked.sort(key=lambda r: (r.total or Decimal(0), r.country))
+    rows = [
+        MarketRow(**{**row.__dict__, "rank": position}) for position, row in enumerate(ranked, 1)
+    ]
+    covered = {t.country for t in terms}
+    rows += [MarketRow(c, "no_data") for c in sorted(EU_MEMBERS - covered)]
+    return MarketRanking("ok", basis, duty_rate, tuple(rows))
 
 
 # ── Quy tắc xuất xứ (C4) ────────────────────────────────────────────────────
