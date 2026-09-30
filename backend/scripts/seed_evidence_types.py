@@ -16,6 +16,7 @@ from pathlib import Path
 from pydantic import ValidationError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+import app.modules.auth.models  # noqa: F401 — cần bảng users cho khóa ngoại reviewed_by
 from app.core.db import get_sessionmaker
 from app.modules.verification.admin_schemas import EvidenceTypeIn
 from app.modules.verification.models import EvidenceType
