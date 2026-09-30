@@ -7819,44 +7819,3179 @@
     "GlobalG.A.P. IFA version 5.4",
     "GlobalG.A.P. IFA バージョン 5.4"
   ],
-  "Ít nhất 10 ký tự": [
-    "At least 10 characters",
-    "Au moins 10 caractères",
-    "10文字以上"
-  ],
-  "Tôi đồng ý với Điều khoản sử dụng và Chính sách bảo mật.": [
-    "I agree to the Terms of Use and Privacy Policy.",
-    "J’accepte les Conditions d’utilisation et la Politique de confidentialité.",
-    "利用規約とプライバシーポリシーに同意します。"
-  ],
-  "Vui lòng đồng ý Điều khoản và Chính sách bảo mật.": [
-    "Please accept the Terms and Privacy Policy.",
-    "Veuillez accepter les Conditions et la Politique de confidentialité.",
-    "利用規約とプライバシーポリシーに同意してください。"
-  ],
-  "Tài khoản tạm khóa 15 phút do nhập sai mật khẩu nhiều lần.": [
-    "Account locked for 15 minutes after too many failed password attempts.",
-    "Compte verrouillé 15 minutes après trop de tentatives de mot de passe incorrectes.",
-    "パスワードの入力ミスが多いため、アカウントを15分間ロックしました。"
+  "Tài khoản tạm khóa 15 phút do đăng nhập sai nhiều lần.": [
+    "Account locked for 15 minutes after too many failed sign-in attempts.",
+    "Account locked for 15 minutes after too many failed sign-in attempts.",
+    "Account locked for 15 minutes after too many failed sign-in attempts."
   ],
   "Mật khẩu cần ít nhất 10 ký tự.": [
-    "Password must be at least 10 characters.",
-    "Le mot de passe doit contenir au moins 10 caractères.",
-    "パスワードは10文字以上にしてください。"
+    "Password requires at least 10 characters.",
+    "Password requires at least 10 characters.",
+    "Password requires at least 10 characters."
+  ],
+  "Vui lòng đồng ý Điều khoản sử dụng và Chính sách bảo mật.": [
+    "Please accept the Terms of Use and Privacy Policy.",
+    "Please accept the Terms of Use and Privacy Policy.",
+    "Please accept the Terms of Use and Privacy Policy."
   ],
   "Không kết nối được máy chủ. Vui lòng thử lại.": [
     "Cannot reach the server. Please try again.",
-    "Impossible de joindre le serveur. Veuillez réessayer.",
-    "サーバーに接続できません。もう一度お試しください。"
+    "Cannot reach the server. Please try again.",
+    "Cannot reach the server. Please try again."
   ],
-  "Đã có lỗi xảy ra. Vui lòng thử lại.": [
-    "Something went wrong. Please try again.",
-    "Une erreur est survenue. Veuillez réessayer.",
-    "エラーが発生しました。もう一度お試しください。"
+  "Thông tin chưa hợp lệ. Vui lòng kiểm tra lại.": [
+    "Some information is invalid. Please check and try again.",
+    "Some information is invalid. Please check and try again.",
+    "Some information is invalid. Please check and try again."
   ],
-  "Vui lòng đăng nhập.": [
-    "Please log in.",
-    "Veuillez vous connecter.",
-    "ログインしてください。"
+  "Ít nhất 10 ký tự": [
+    "At least 10 characters",
+    "At least 10 characters",
+    "At least 10 characters"
+  ],
+  "Mật khẩu được mã hóa và phiên đăng nhập được bảo vệ phía máy chủ.": [
+    "Passwords are hashed and sign-in sessions are protected on the server.",
+    "Passwords are hashed and sign-in sessions are protected on the server.",
+    "Passwords are hashed and sign-in sessions are protected on the server."
+  ],
+  "Tôi đồng ý với Điều khoản sử dụng và Chính sách bảo mật của nền tảng.": [
+    "I agree to the platform Terms of Use and Privacy Policy.",
+    "I agree to the platform Terms of Use and Privacy Policy.",
+    "I agree to the platform Terms of Use and Privacy Policy."
+  ],
+  "Ngôn ngữ nhân viên sử dụng": [
+    "Languages spoken by staff",
+    "Languages spoken by staff",
+    "Languages spoken by staff"
+  ],
+  "Mô tả doanh nghiệp (tiếng Việt)": [
+    "Company description (Vietnamese)",
+    "Company description (Vietnamese)",
+    "Company description (Vietnamese)"
+  ],
+  "Mô tả doanh nghiệp (tiếng Anh)": [
+    "Company description (English)",
+    "Company description (English)",
+    "Company description (English)"
+  ],
+  "Tiếng Việt": [
+    "Vietnamese",
+    "Vietnamese",
+    "Vietnamese"
+  ],
+  "Tiếng Anh": [
+    "English",
+    "English",
+    "English"
+  ],
+  "Tiếng Trung": [
+    "Chinese",
+    "Chinese",
+    "Chinese"
+  ],
+  "Tiếng Nhật": [
+    "Japanese",
+    "Japanese",
+    "Japanese"
+  ],
+  "Tiếng Hàn": [
+    "Korean",
+    "Korean",
+    "Korean"
+  ],
+  "Tiếng Pháp": [
+    "French",
+    "French",
+    "French"
+  ],
+  "Tiếng Đức": [
+    "German",
+    "German",
+    "German"
+  ],
+  "Thực phẩm & Đồ uống": [
+    "Food & Beverages",
+    "Food & Beverages",
+    "Food & Beverages"
+  ],
+  "Dệt may": [
+    "Textiles & Garments",
+    "Textiles & Garments",
+    "Textiles & Garments"
+  ],
+  "Thủ công mỹ nghệ": [
+    "Handicrafts",
+    "Handicrafts",
+    "Handicrafts"
+  ],
+  "Thông tin doanh nghiệp chưa hợp lệ. Vui lòng kiểm tra lại.": [
+    "Some company information is invalid. Please check and try again.",
+    "Some company information is invalid. Please check and try again.",
+    "Some company information is invalid. Please check and try again."
+  ],
+  "Chọn quốc gia": [
+    "Select country",
+    "Select country",
+    "Select country"
+  ],
+  "Mã số VAT": [
+    "VAT number",
+    "VAT number",
+    "VAT number"
+  ],
+  "Ví dụ: DE123456789": [
+    "Example: DE123456789",
+    "Example: DE123456789",
+    "Example: DE123456789"
+  ],
+  "Nhóm hàng cần tìm *": [
+    "Product groups you source *",
+    "Product groups you source *",
+    "Product groups you source *"
+  ],
+  "Chọn một hoặc nhiều nhóm hàng bạn quan tâm.": [
+    "Select one or more product groups you are interested in.",
+    "Select one or more product groups you are interested in.",
+    "Select one or more product groups you are interested in."
+  ],
+  "Ước lượng mua hàng mỗi năm": [
+    "Estimated annual purchases",
+    "Estimated annual purchases",
+    "Estimated annual purchases"
+  ],
+  "Chọn mức ước lượng": [
+    "Select an estimate",
+    "Select an estimate",
+    "Select an estimate"
+  ],
+  "Dưới 100.000 EUR/năm": [
+    "Under EUR 100,000 per year",
+    "Under EUR 100,000 per year",
+    "Under EUR 100,000 per year"
+  ],
+  "100.000 – 500.000 EUR/năm": [
+    "EUR 100,000 – 500,000 per year",
+    "EUR 100,000 – 500,000 per year",
+    "EUR 100,000 – 500,000 per year"
+  ],
+  "500.000 – 2 triệu EUR/năm": [
+    "EUR 500,000 – 2 million per year",
+    "EUR 500,000 – 2 million per year",
+    "EUR 500,000 – 2 million per year"
+  ],
+  "2 – 10 triệu EUR/năm": [
+    "EUR 2 – 10 million per year",
+    "EUR 2 – 10 million per year",
+    "EUR 2 – 10 million per year"
+  ],
+  "Trên 10 triệu EUR/năm": [
+    "Over EUR 10 million per year",
+    "Over EUR 10 million per year",
+    "Over EUR 10 million per year"
+  ],
+  "Vui lòng chọn ít nhất một nhóm hàng cần tìm.": [
+    "Please select at least one product group.",
+    "Please select at least one product group.",
+    "Please select at least one product group."
+  ],
+  "Vui lòng chọn quốc gia từ danh sách.": [
+    "Please choose a country from the list.",
+    "Please choose a country from the list.",
+    "Please choose a country from the list."
+  ],
+  "Nhóm hàng": [
+    "Product groups",
+    "Product groups",
+    "Product groups"
+  ],
+  "Ước lượng mua hàng": [
+    "Estimated purchases",
+    "Estimated purchases",
+    "Estimated purchases"
+  ],
+  "Gõ tên sản phẩm hoặc mã HS, ví dụ: gạo, rice, 1006": [
+    "Type a product name or HS code, e.g. rice, 1006",
+    "Type a product name or HS code, e.g. rice, 1006",
+    "Type a product name or HS code, e.g. rice, 1006"
+  ],
+  "Đã hỗ trợ máy tính": [
+    "Supported by calculators",
+    "Supported by calculators",
+    "Supported by calculators"
+  ],
+  "Chưa hỗ trợ máy tính": [
+    "Not yet supported by calculators",
+    "Not yet supported by calculators",
+    "Not yet supported by calculators"
+  ],
+  "Không tìm thấy mã HS phù hợp": [
+    "No matching HS code found",
+    "No matching HS code found",
+    "No matching HS code found"
+  ],
+  "Không tải được danh sách mã HS. Vui lòng thử lại.": [
+    "Could not load HS codes. Please try again.",
+    "Could not load HS codes. Please try again.",
+    "Could not load HS codes. Please try again."
+  ],
+  "Chưa có sản phẩm. Hãy thêm ít nhất một sản phẩm kèm mã HS để buyer tìm thấy bạn.": [
+    "No products yet. Add at least one product with an HS code so buyers can find you.",
+    "No products yet. Add at least one product with an HS code so buyers can find you.",
+    "No products yet. Add at least one product with an HS code so buyers can find you."
+  ],
+  "Sản phẩm": [
+    "Product",
+    "Product",
+    "Product"
+  ],
+  "Ví dụ: Gạo thơm Jasmine xuất khẩu": [
+    "Example: Jasmine fragrant rice for export",
+    "Example: Jasmine fragrant rice for export",
+    "Example: Jasmine fragrant rice for export"
+  ],
+  "Mã HS": [
+    "HS code",
+    "HS code",
+    "HS code"
+  ],
+  "Giá thấp nhất": [
+    "Lowest price",
+    "Lowest price",
+    "Lowest price"
+  ],
+  "Giá cao nhất": [
+    "Highest price",
+    "Highest price",
+    "Highest price"
+  ],
+  "Tiền tệ": [
+    "Currency",
+    "Currency",
+    "Currency"
+  ],
+  "Đơn vị giá": [
+    "Price unit",
+    "Price unit",
+    "Price unit"
+  ],
+  "Chọn đơn vị": [
+    "Select unit",
+    "Select unit",
+    "Select unit"
+  ],
+  "MOQ (số lượng đặt tối thiểu)": [
+    "MOQ (minimum order quantity)",
+    "MOQ (minimum order quantity)",
+    "MOQ (minimum order quantity)"
+  ],
+  "Đơn vị MOQ": [
+    "MOQ unit",
+    "MOQ unit",
+    "MOQ unit"
+  ],
+  "Mô tả (tiếng Việt)": [
+    "Description (Vietnamese)",
+    "Description (Vietnamese)",
+    "Description (Vietnamese)"
+  ],
+  "Mô tả (tiếng Anh)": [
+    "Description (English)",
+    "Description (English)",
+    "Description (English)"
+  ],
+  "Ảnh sản phẩm": [
+    "Product images",
+    "Product images",
+    "Product images"
+  ],
+  "Ảnh": [
+    "Image",
+    "Image",
+    "Image"
+  ],
+  "Xóa ảnh": [
+    "Remove image",
+    "Remove image",
+    "Remove image"
+  ],
+  "Đang tải…": [
+    "Uploading…",
+    "Uploading…",
+    "Uploading…"
+  ],
+  "Thêm ảnh": [
+    "Add image",
+    "Add image",
+    "Add image"
+  ],
+  "Đã đủ 10 ảnh": [
+    "Maximum of 10 images reached",
+    "Maximum of 10 images reached",
+    "Maximum of 10 images reached"
+  ],
+  "Hiển thị công khai": [
+    "Show publicly",
+    "Show publicly",
+    "Show publicly"
+  ],
+  "Cái": [
+    "Piece",
+    "Piece",
+    "Piece"
+  ],
+  "Thùng": [
+    "Carton",
+    "Carton",
+    "Carton"
+  ],
+  "Lít": [
+    "Litre",
+    "Litre",
+    "Litre"
+  ],
+  "Ảnh phải là PNG, JPEG hoặc WebP.": [
+    "Images must be PNG, JPEG or WebP.",
+    "Images must be PNG, JPEG or WebP.",
+    "Images must be PNG, JPEG or WebP."
+  ],
+  "Ảnh tối đa 5MB.": [
+    "Images can be at most 5MB.",
+    "Images can be at most 5MB.",
+    "Images can be at most 5MB."
+  ],
+  "Không tải được ảnh lên. Bạn vẫn có thể lưu sản phẩm không có ảnh.": [
+    "Could not upload the image. You can still save the product without images.",
+    "Could not upload the image. You can still save the product without images.",
+    "Could not upload the image. You can still save the product without images."
+  ],
+  "Vui lòng thêm ít nhất một sản phẩm.": [
+    "Please add at least one product.",
+    "Please add at least one product.",
+    "Please add at least one product."
+  ],
+  "Sản phẩm chưa hợp lệ. Vui lòng kiểm tra lại.": [
+    "The product is invalid. Please check it again.",
+    "The product is invalid. Please check it again.",
+    "The product is invalid. Please check it again."
+  ],
+  "Thị trường xuất khẩu đã phục vụ": [
+    "Export markets served",
+    "Export markets served",
+    "Export markets served"
+  ],
+  "Mỗi sản phẩm cần có mã HS. Buyer tìm thấy bạn qua mã HS, giá và MOQ.": [
+    "Each product needs an HS code. Buyers find you by HS code, price and MOQ.",
+    "Each product needs an HS code. Buyers find you by HS code, price and MOQ.",
+    "Each product needs an HS code. Buyers find you by HS code, price and MOQ."
+  ],
+  "Mỗi sản phẩm cần có tên.": [
+    "Each product needs a name.",
+    "Each product needs a name.",
+    "Each product needs a name."
+  ],
+  "Giá thấp nhất không được lớn hơn giá cao nhất.": [
+    "The lowest price must not exceed the highest price.",
+    "The lowest price must not exceed the highest price.",
+    "The lowest price must not exceed the highest price."
+  ],
+  "Chưa có hồ sơ doanh nghiệp. Hãy lưu thông tin doanh nghiệp trước.": [
+    "No company profile yet. Please save your company information first.",
+    "No company profile yet. Please save your company information first.",
+    "No company profile yet. Please save your company information first."
+  ],
+  "Không tải được danh sách sản phẩm. Vui lòng thử lại.": [
+    "Could not load products. Please try again.",
+    "Could not load products. Please try again.",
+    "Could not load products. Please try again."
+  ],
+  "Chưa có sản phẩm. Thêm sản phẩm kèm mã HS để buyer tìm thấy bạn.": [
+    "No products yet. Add products with HS codes so buyers can find you.",
+    "No products yet. Add products with HS codes so buyers can find you.",
+    "No products yet. Add products with HS codes so buyers can find you."
+  ],
+  "Đang ẩn": [
+    "Hidden",
+    "Hidden",
+    "Hidden"
+  ],
+  "Giá:": [
+    "Price:",
+    "Price:",
+    "Price:"
+  ],
+  "Từ": [
+    "From",
+    "From",
+    "From"
+  ],
+  "Đến": [
+    "Up to",
+    "Up to",
+    "Up to"
+  ],
+  "Sản phẩm \"{0}\" chưa chọn mã HS.": [
+    "Product \"{0}\" has no HS code selected.",
+    "Product \"{0}\" has no HS code selected.",
+    "Product \"{0}\" has no HS code selected."
+  ],
+  "Sản phẩm \"{0}\" chưa hợp lệ. Vui lòng kiểm tra mã HS, giá và ảnh.": [
+    "Product \"{0}\" is invalid. Please check the HS code, price and images.",
+    "Product \"{0}\" is invalid. Please check the HS code, price and images.",
+    "Product \"{0}\" is invalid. Please check the HS code, price and images."
+  ],
+  "Không lưu được sản phẩm \"{0}\". Vui lòng thử lại.": [
+    "Could not save product \"{0}\". Please try again.",
+    "Could not save product \"{0}\". Please try again.",
+    "Could not save product \"{0}\". Please try again."
+  ],
+  "{0} không hợp lệ (số dương, dùng dấu chấm cho phần thập phân, tối đa 2 chữ số).": [
+    "{0} is invalid (a positive number, use a dot for decimals, at most 2 decimal places).",
+    "{0} is invalid (a positive number, use a dot for decimals, at most 2 decimal places).",
+    "{0} is invalid (a positive number, use a dot for decimals, at most 2 decimal places)."
+  ],
+  "Mô hình kinh doanh *": [
+    "Business model *",
+    "Business model *",
+    "Business model *"
+  ],
+  "Mô hình kinh doanh": [
+    "Business model",
+    "Business model",
+    "Business model"
+  ],
+  "Chọn mô hình": [
+    "Select a model",
+    "Select a model",
+    "Select a model"
+  ],
+  "Nhà sản xuất": [
+    "Manufacturer",
+    "Manufacturer",
+    "Manufacturer"
+  ],
+  "Công ty thương mại": [
+    "Trading company",
+    "Trading company",
+    "Trading company"
+  ],
+  "Vừa sản xuất vừa thương mại": [
+    "Both manufacturer and trader",
+    "Both manufacturer and trader",
+    "Both manufacturer and trader"
+  ],
+  "Mô hình:": [
+    "Model:",
+    "Model:",
+    "Model:"
+  ],
+  "Mã EORI": [
+    "EORI number",
+    "EORI number",
+    "EORI number"
+  ],
+  "Ví dụ: DE123456789012345": [
+    "Example: DE123456789012345",
+    "Example: DE123456789012345",
+    "Example: DE123456789012345"
+  ],
+  "Mức độ hoàn thiện hồ sơ": [
+    "Profile completeness",
+    "Profile completeness",
+    "Profile completeness"
+  ],
+  "Đang tính điểm hoàn thiện…": [
+    "Calculating completeness…",
+    "Calculating completeness…",
+    "Calculating completeness…"
+  ],
+  "Không tải được điểm hoàn thiện hồ sơ.": [
+    "Could not load the profile completeness score.",
+    "Could not load the profile completeness score.",
+    "Could not load the profile completeness score."
+  ],
+  "hoàn thiện": [
+    "complete",
+    "complete",
+    "complete"
+  ],
+  "Hồ sơ đã đầy đủ thông tin cần thiết.": [
+    "Your profile has all the required information.",
+    "Your profile has all the required information.",
+    "Your profile has all the required information."
+  ],
+  "Việc cần bổ sung": [
+    "Still to complete",
+    "Still to complete",
+    "Still to complete"
+  ],
+  "Điểm này chỉ đo mức đầy đủ của hồ sơ, không phải kết quả xác minh.": [
+    "This score only measures how complete your profile is; it is not a verification result.",
+    "This score only measures how complete your profile is; it is not a verification result.",
+    "This score only measures how complete your profile is; it is not a verification result."
+  ],
+  "Mã số thuế / ĐKKD": [
+    "Tax ID / business registration number",
+    "Tax ID / business registration number",
+    "Tax ID / business registration number"
+  ],
+  "Năm thành lập": [
+    "Year founded",
+    "Year founded",
+    "Year founded"
+  ],
+  "Địa chỉ": [
+    "Address",
+    "Address",
+    "Address"
+  ],
+  "Mô tả tiếng Anh (≥ 150 ký tự)": [
+    "English description (at least 150 characters)",
+    "English description (at least 150 characters)",
+    "English description (at least 150 characters)"
+  ],
+  "Mô tả tiếng Việt (≥ 150 ký tự)": [
+    "Vietnamese description (at least 150 characters)",
+    "Vietnamese description (at least 150 characters)",
+    "Vietnamese description (at least 150 characters)"
+  ],
+  "Ngoại ngữ nhân viên": [
+    "Staff foreign languages",
+    "Staff foreign languages",
+    "Staff foreign languages"
+  ],
+  "Sản phẩm kèm mã HS": [
+    "Products with HS code",
+    "Products with HS code",
+    "Products with HS code"
+  ],
+  "Mô tả sản phẩm (≥ 30 ký tự)": [
+    "Product description (at least 30 characters)",
+    "Product description (at least 30 characters)",
+    "Product description (at least 30 characters)"
+  ],
+  "Giá sản phẩm": [
+    "Product price",
+    "Product price",
+    "Product price"
+  ],
+  "Bằng chứng đã nộp": [
+    "Evidence submitted",
+    "Evidence submitted",
+    "Evidence submitted"
+  ],
+  "Nhóm hàng quan tâm": [
+    "Product groups of interest",
+    "Product groups of interest",
+    "Product groups of interest"
+  ],
+  "Mã VAT hoặc EORI": [
+    "VAT or EORI number",
+    "VAT or EORI number",
+    "VAT or EORI number"
+  ],
+  "Quy mô công ty": [
+    "Company size",
+    "Company size",
+    "Company size"
+  ],
+  "Giấy phép và chứng nhận chưa được lưu lên hệ thống ở phiên bản này; phần tải lên thật sẽ được bổ sung sau. Bạn vẫn có thể hoàn tất hồ sơ với công ty và sản phẩm.": [
+    "Licenses and certificates are not saved to the system in this version; real uploads will be added later. You can still complete your profile with the company and products.",
+    "Licenses and certificates are not saved to the system in this version; real uploads will be added later. You can still complete your profile with the company and products.",
+    "Licenses and certificates are not saved to the system in this version; real uploads will be added later. You can still complete your profile with the company and products."
+  ],
+  "Không thể lưu sản phẩm. Vui lòng thử lại.": [
+    "Unable to save products. Please try again.",
+    "Unable to save products. Please try again.",
+    "Unable to save products. Please try again."
+  ],
+  "Kết quả": [
+    "Result",
+    "Result",
+    "Result"
+  ],
+  "Tiết kiệm mỗi lô": [
+    "Savings per shipment",
+    "Savings per shipment",
+    "Savings per shipment"
+  ],
+  "Thuế MFN": [
+    "MFN duty",
+    "MFN duty",
+    "MFN duty"
+  ],
+  "Thuế EVFTA": [
+    "EVFTA duty",
+    "EVFTA duty",
+    "EVFTA duty"
+  ],
+  "Tiết kiệm mỗi năm": [
+    "Annual savings",
+    "Annual savings",
+    "Annual savings"
+  ],
+  "Mã HS này chưa được hỗ trợ. Vui lòng liên hệ để được tư vấn.": [
+    "This HS code is not supported yet. Please contact us for advice.",
+    "This HS code is not supported yet. Please contact us for advice.",
+    "This HS code is not supported yet. Please contact us for advice."
+  ],
+  "Trường hợp này cần kiểm tra thêm (ví dụ hạn ngạch hoặc thuế tuyệt đối), nên chúng tôi không đưa ra con số.": [
+    "This case needs further review (for example a quota or a specific duty), so we do not provide a figure.",
+    "This case needs further review (for example a quota or a specific duty), so we do not provide a figure.",
+    "This case needs further review (for example a quota or a specific duty), so we do not provide a figure."
+  ],
+  "Kết quả chỉ mang tính tham khảo, không thay thế tư vấn pháp lý hoặc xác nhận của cơ quan hải quan.": [
+    "Results are indicative only and do not replace legal advice or confirmation from customs authorities.",
+    "Results are indicative only and do not replace legal advice or confirmation from customs authorities.",
+    "Results are indicative only and do not replace legal advice or confirmation from customs authorities."
+  ],
+  "Xem nhà cung cấp cho mã HS này": [
+    "View suppliers for this HS code",
+    "View suppliers for this HS code",
+    "View suppliers for this HS code"
+  ],
+  "Máy tính tiết kiệm thuế EVFTA": [
+    "EVFTA tariff savings calculator",
+    "EVFTA tariff savings calculator",
+    "EVFTA tariff savings calculator"
+  ],
+  "Nhập mã HS, nước EU nhập khẩu và giá trị lô hàng để ước tính thuế nhập khẩu tiết kiệm được nhờ EVFTA.": [
+    "Enter an HS code, the EU importing country and the shipment value to estimate the import duty you save under EVFTA.",
+    "Enter an HS code, the EU importing country and the shipment value to estimate the import duty you save under EVFTA.",
+    "Enter an HS code, the EU importing country and the shipment value to estimate the import duty you save under EVFTA."
+  ],
+  "Sản phẩm (mã HS)": [
+    "Product (HS code)",
+    "Product (HS code)",
+    "Product (HS code)"
+  ],
+  "Nước EU nhập khẩu": [
+    "EU importing country",
+    "EU importing country",
+    "EU importing country"
+  ],
+  "Giá trị lô hàng (EUR)": [
+    "Shipment value (EUR)",
+    "Shipment value (EUR)",
+    "Shipment value (EUR)"
+  ],
+  "Số lô hàng mỗi năm (không bắt buộc)": [
+    "Shipments per year (optional)",
+    "Shipments per year (optional)",
+    "Shipments per year (optional)"
+  ],
+  "Tính tiết kiệm thuế": [
+    "Calculate tax savings",
+    "Calculate tax savings",
+    "Calculate tax savings"
+  ],
+  "Đang tính...": [
+    "Calculating...",
+    "Calculating...",
+    "Calculating..."
+  ],
+  "Bạn đã tính quá nhiều lần. Vui lòng thử lại sau một phút.": [
+    "You have calculated too many times. Please try again in a minute.",
+    "You have calculated too many times. Please try again in a minute.",
+    "You have calculated too many times. Please try again in a minute."
+  ],
+  "Dữ liệu chưa hợp lệ. Vui lòng kiểm tra lại mã HS, nước nhập khẩu và giá trị lô hàng.": [
+    "The data is not valid. Please check the HS code, importing country and shipment value.",
+    "The data is not valid. Please check the HS code, importing country and shipment value.",
+    "The data is not valid. Please check the HS code, importing country and shipment value."
+  ],
+  "Vui lòng chọn mã HS.": [
+    "Please select an HS code.",
+    "Please select an HS code.",
+    "Please select an HS code."
+  ],
+  "Giá trị lô hàng phải là số dương, tối đa 2 chữ số thập phân (ví dụ 10000 hoặc 10000.50).": [
+    "The shipment value must be a positive number with at most 2 decimal places (for example 10000 or 10000.50).",
+    "The shipment value must be a positive number with at most 2 decimal places (for example 10000 or 10000.50).",
+    "The shipment value must be a positive number with at most 2 decimal places (for example 10000 or 10000.50)."
+  ],
+  "Số lô hàng mỗi năm phải là số nguyên từ 1 đến 10000.": [
+    "Shipments per year must be a whole number from 1 to 10000.",
+    "Shipments per year must be a whole number from 1 to 10000.",
+    "Shipments per year must be a whole number from 1 to 10000."
+  ],
+  "Bạn đã kiểm tra quá nhiều lần. Vui lòng thử lại sau một phút.": [
+    "You have run too many checks. Please try again in a minute.",
+    "You have run too many checks. Please try again in a minute.",
+    "You have run too many checks. Please try again in a minute."
+  ],
+  "Dữ liệu chưa hợp lệ. Vui lòng kiểm tra lại mã HS, giá xuất xưởng và nguyên liệu.": [
+    "The data is not valid. Please check the HS code, ex-works price and materials.",
+    "The data is not valid. Please check the HS code, ex-works price and materials.",
+    "The data is not valid. Please check the HS code, ex-works price and materials."
+  ],
+  "Trường hợp này cần chuyên gia đánh giá nên hệ thống không tự kết luận.": [
+    "This case needs an expert assessment, so the system does not draw a conclusion by itself.",
+    "This case needs an expert assessment, so the system does not draw a conclusion by itself.",
+    "This case needs an expert assessment, so the system does not draw a conclusion by itself."
+  ],
+  "Có nhiều hơn một quy tắc cho mã HS này nên cần chuyên gia đánh giá.": [
+    "There is more than one rule for this HS code, so an expert assessment is needed.",
+    "There is more than one rule for this HS code, so an expert assessment is needed.",
+    "There is more than one rule for this HS code, so an expert assessment is needed."
+  ],
+  "Bạn chưa khai nguyên liệu nên chưa thể kết luận.": [
+    "You have not declared materials, so no conclusion can be drawn yet.",
+    "You have not declared materials, so no conclusion can be drawn yet.",
+    "You have not declared materials, so no conclusion can be drawn yet."
+  ],
+  "Còn thiếu dữ liệu để kết luận (ví dụ giá xuất xưởng hoặc mã HS của nguyên liệu).": [
+    "Data is still missing to reach a conclusion (for example the ex-works price or the HS code of a material).",
+    "Data is still missing to reach a conclusion (for example the ex-works price or the HS code of a material).",
+    "Data is still missing to reach a conclusion (for example the ex-works price or the HS code of a material)."
+  ],
+  "Đạt": [
+    "Pass",
+    "Pass",
+    "Pass"
+  ],
+  "Không đạt": [
+    "Fail",
+    "Fail",
+    "Fail"
+  ],
+  "Chưa kết luận": [
+    "Inconclusive",
+    "Inconclusive",
+    "Inconclusive"
+  ],
+  "Chưa hỗ trợ": [
+    "Not supported",
+    "Not supported",
+    "Not supported"
+  ],
+  "Mã HS này nằm ngoài phạm vi dữ liệu của hệ thống. Điều đó không có nghĩa là hàng hóa không có quy tắc xuất xứ; vui lòng liên hệ để được tư vấn.": [
+    "This HS code is outside the system's data scope. That does not mean the goods have no origin rule; please contact us for advice.",
+    "This HS code is outside the system's data scope. That does not mean the goods have no origin rule; please contact us for advice.",
+    "This HS code is outside the system's data scope. That does not mean the goods have no origin rule; please contact us for advice."
+  ],
+  "Nguyên liệu không xuất xứ (NOM)": [
+    "Non-originating materials (NOM)",
+    "Non-originating materials (NOM)",
+    "Non-originating materials (NOM)"
+  ],
+  "Ngưỡng tối đa": [
+    "Maximum threshold",
+    "Maximum threshold",
+    "Maximum threshold"
+  ],
+  "Kết quả chỉ mang tính tham khảo. Cơ quan cấp chứng nhận xuất xứ chính thức là Bộ Công Thương.": [
+    "Results are indicative only. The official issuing authority for certificates of origin is the Ministry of Industry and Trade (Bộ Công Thương).",
+    "Results are indicative only. The official issuing authority for certificates of origin is the Ministry of Industry and Trade (Bộ Công Thương).",
+    "Results are indicative only. The official issuing authority for certificates of origin is the Ministry of Industry and Trade (Bộ Công Thương)."
+  ],
+  "Giá xuất xưởng phải là số dương, tối đa 2 chữ số thập phân (ví dụ 1000 hoặc 1000.50).": [
+    "The ex-works price must be a positive number with at most 2 decimal places (for example 1000 or 1000.50).",
+    "The ex-works price must be a positive number with at most 2 decimal places (for example 1000 or 1000.50).",
+    "The ex-works price must be a positive number with at most 2 decimal places (for example 1000 or 1000.50)."
+  ],
+  "Máy tính quy tắc xuất xứ EVFTA": [
+    "EVFTA rules of origin calculator",
+    "EVFTA rules of origin calculator",
+    "EVFTA rules of origin calculator"
+  ],
+  "Kiểm tra hàng Việt Nam xuất sang EU có đạt quy tắc xuất xứ hay không. Mọi số tiền dùng cùng một đơn vị tiền tệ.": [
+    "Check whether goods exported from Vietnam to the EU meet the rules of origin. All amounts use the same currency.",
+    "Check whether goods exported from Vietnam to the EU meet the rules of origin. All amounts use the same currency.",
+    "Check whether goods exported from Vietnam to the EU meet the rules of origin. All amounts use the same currency."
+  ],
+  "Giá xuất xưởng (EXW)": [
+    "Ex-works price (EXW)",
+    "Ex-works price (EXW)",
+    "Ex-works price (EXW)"
+  ],
+  "Nguyên liệu nhập khẩu": [
+    "Imported materials",
+    "Imported materials",
+    "Imported materials"
+  ],
+  "Chưa khai nguyên liệu": [
+    "Materials not declared",
+    "Materials not declared",
+    "Materials not declared"
+  ],
+  "Không có nguyên liệu nhập khẩu": [
+    "No imported materials",
+    "No imported materials",
+    "No imported materials"
+  ],
+  "Có nguyên liệu nhập khẩu (khai bên dưới)": [
+    "Imported materials (declare below)",
+    "Imported materials (declare below)",
+    "Imported materials (declare below)"
+  ],
+  "Nguyên liệu": [
+    "Material",
+    "Material",
+    "Material"
+  ],
+  "Nước xuất xứ (mã 2 chữ cái)": [
+    "Country of origin (2-letter code)",
+    "Country of origin (2-letter code)",
+    "Country of origin (2-letter code)"
+  ],
+  "Giá trị nguyên liệu": [
+    "Material value",
+    "Material value",
+    "Material value"
+  ],
+  "Mã HS nguyên liệu (nếu có)": [
+    "Material HS code (if known)",
+    "Material HS code (if known)",
+    "Material HS code (if known)"
+  ],
+  "Xóa nguyên liệu": [
+    "Remove material",
+    "Remove material",
+    "Remove material"
+  ],
+  "Thêm nguyên liệu": [
+    "Add material",
+    "Add material",
+    "Add material"
+  ],
+  "Đang kiểm tra...": [
+    "Checking...",
+    "Checking...",
+    "Checking..."
+  ],
+  "Kiểm tra xuất xứ": [
+    "Check origin",
+    "Check origin",
+    "Check origin"
+  ],
+  "Chưa nộp": [
+    "Not submitted",
+    "Not submitted",
+    "Not submitted"
+  ],
+  "Chờ duyệt": [
+    "Pending review",
+    "Pending review",
+    "Pending review"
+  ],
+  "Đã duyệt": [
+    "Approved",
+    "Approved",
+    "Approved"
+  ],
+  "Hết hạn": [
+    "Expired",
+    "Expired",
+    "Expired"
+  ],
+  "Bị từ chối": [
+    "Rejected",
+    "Rejected",
+    "Rejected"
+  ],
+  "Bằng chứng do quản trị viên xem xét và duyệt. Nộp đủ bằng chứng không phải kết quả xác minh doanh nghiệp.": [
+    "Evidence is reviewed and approved by an administrator. Submitting all evidence is not the result of company verification.",
+    "Evidence is reviewed and approved by an administrator. Submitting all evidence is not the result of company verification.",
+    "Evidence is reviewed and approved by an administrator. Submitting all evidence is not the result of company verification."
+  ],
+  "Danh sách kiểm theo nhóm hàng": [
+    "Checklist by product group",
+    "Checklist by product group",
+    "Checklist by product group"
+  ],
+  "Thêm sản phẩm có mã HS để xem những bằng chứng cần nộp cho nhóm hàng của bạn.": [
+    "Add a product with an HS code to see which evidence you need for your product group.",
+    "Add a product with an HS code to see which evidence you need for your product group.",
+    "Add a product with an HS code to see which evidence you need for your product group."
+  ],
+  "Chỉ nhắc": [
+    "Reminder only",
+    "Reminder only",
+    "Reminder only"
+  ],
+  "Chưa có bằng chứng nào. Chọn loại bằng chứng bên dưới và tải file lên.": [
+    "No evidence yet. Choose an evidence type below and upload a file.",
+    "No evidence yet. Choose an evidence type below and upload a file.",
+    "No evidence yet. Choose an evidence type below and upload a file."
+  ],
+  "Số chứng chỉ": [
+    "Certificate number",
+    "Certificate number",
+    "Certificate number"
+  ],
+  "Tổ chức cấp": [
+    "Issuer",
+    "Issuer",
+    "Issuer"
+  ],
+  "Ngày cấp": [
+    "Issue date",
+    "Issue date",
+    "Issue date"
+  ],
+  "Ngày hết hạn": [
+    "Expiry date",
+    "Expiry date",
+    "Expiry date"
+  ],
+  "Lý do từ chối": [
+    "Rejection reason",
+    "Rejection reason",
+    "Rejection reason"
+  ],
+  "Xem file": [
+    "View file",
+    "View file",
+    "View file"
+  ],
+  "Nộp bằng chứng mới": [
+    "Submit new evidence",
+    "Submit new evidence",
+    "Submit new evidence"
+  ],
+  "Loại bằng chứng": [
+    "Evidence type",
+    "Evidence type",
+    "Evidence type"
+  ],
+  "Chọn loại": [
+    "Choose a type",
+    "Choose a type",
+    "Choose a type"
+  ],
+  "Hạn dùng do hệ thống tự tính": [
+    "The validity period is calculated by the system:",
+    "The validity period is calculated by the system:",
+    "The validity period is calculated by the system:"
+  ],
+  "tháng kể từ ngày cấp.": [
+    "months from the issue date.",
+    "months from the issue date.",
+    "months from the issue date."
+  ],
+  "File bằng chứng": [
+    "Evidence file",
+    "Evidence file",
+    "Evidence file"
+  ],
+  "PDF, PNG hoặc JPEG, tối đa 10MB.": [
+    "PDF, PNG or JPEG, up to 10MB.",
+    "PDF, PNG or JPEG, up to 10MB.",
+    "PDF, PNG or JPEG, up to 10MB."
+  ],
+  "Nộp bằng chứng": [
+    "Submit evidence",
+    "Submit evidence",
+    "Submit evidence"
+  ],
+  "Vui lòng chọn loại bằng chứng.": [
+    "Please choose an evidence type.",
+    "Please choose an evidence type.",
+    "Please choose an evidence type."
+  ],
+  "Vui lòng chọn file bằng chứng.": [
+    "Please choose an evidence file.",
+    "Please choose an evidence file.",
+    "Please choose an evidence file."
+  ],
+  "Vui lòng nhập ngày cấp.": [
+    "Please enter the issue date.",
+    "Please enter the issue date.",
+    "Please enter the issue date."
+  ],
+  "Ngày cấp không được ở tương lai.": [
+    "The issue date cannot be in the future.",
+    "The issue date cannot be in the future.",
+    "The issue date cannot be in the future."
+  ],
+  "Ngày hết hạn phải sau ngày cấp.": [
+    "The expiry date must be after the issue date.",
+    "The expiry date must be after the issue date.",
+    "The expiry date must be after the issue date."
+  ],
+  "File phải là PDF, PNG hoặc JPEG.": [
+    "The file must be a PDF, PNG or JPEG.",
+    "The file must be a PDF, PNG or JPEG.",
+    "The file must be a PDF, PNG or JPEG."
+  ],
+  "File tối đa 10MB.": [
+    "The file can be at most 10MB.",
+    "The file can be at most 10MB.",
+    "The file can be at most 10MB."
+  ],
+  "Không tải được file lên. Vui lòng thử lại.": [
+    "Unable to upload the file. Please try again.",
+    "Unable to upload the file. Please try again.",
+    "Unable to upload the file. Please try again."
+  ],
+  "Bằng chứng chưa hợp lệ. Vui lòng kiểm tra loại, ngày cấp, ngày hết hạn và file.": [
+    "The evidence is not valid. Please check the type, issue date, expiry date and file.",
+    "The evidence is not valid. Please check the type, issue date, expiry date and file.",
+    "The evidence is not valid. Please check the type, issue date, expiry date and file."
+  ],
+  "Không nộp được bằng chứng. Vui lòng thử lại.": [
+    "Unable to submit the evidence. Please try again.",
+    "Unable to submit the evidence. Please try again.",
+    "Unable to submit the evidence. Please try again."
+  ],
+  "Không xóa được bằng chứng. Vui lòng thử lại.": [
+    "Unable to delete the evidence. Please try again.",
+    "Unable to delete the evidence. Please try again.",
+    "Unable to delete the evidence. Please try again."
+  ],
+  "Kiểm tra lại hồ sơ trước khi hoàn tất": [
+    "Review your profile before finishing",
+    "Review your profile before finishing",
+    "Review your profile before finishing"
+  ],
+  "Hoàn thiện hồ sơ không đồng nghĩa đã xác minh: việc xác minh do quản trị viên thực hiện.": [
+    "A complete profile does not mean it is verified: verification is done by an administrator.",
+    "A complete profile does not mean it is verified: verification is done by an administrator.",
+    "A complete profile does not mean it is verified: verification is done by an administrator."
+  ],
+  "3. Bằng chứng đã nộp": [
+    "3. Submitted evidence",
+    "3. Submitted evidence",
+    "3. Submitted evidence"
+  ],
+  "bằng chứng đã nộp": [
+    "evidence submitted",
+    "evidence submitted",
+    "evidence submitted"
+  ],
+  "Chưa có bằng chứng — bạn có thể bổ sung sau.": [
+    "No evidence yet — you can add it later.",
+    "No evidence yet — you can add it later.",
+    "No evidence yet — you can add it later."
+  ],
+  "Hồ sơ đã được lưu.": [
+    "Your profile has been saved.",
+    "Your profile has been saved.",
+    "Your profile has been saved."
+  ],
+  "Hồ sơ doanh nghiệp, sản phẩm xuất khẩu và bằng chứng đã nộp đã được ghi nhận. Quản trị viên sẽ xem xét bằng chứng của bạn.": [
+    "Your company profile, export products and submitted evidence have been recorded. An administrator will review your evidence.",
+    "Your company profile, export products and submitted evidence have been recorded. An administrator will review your evidence.",
+    "Your company profile, export products and submitted evidence have been recorded. An administrator will review your evidence."
+  ],
+  "Bằng chứng & chứng nhận": [
+    "Evidence & certificates",
+    "Evidence & certificates",
+    "Evidence & certificates"
+  ],
+  "Nộp chứng nhận chất lượng, bằng chứng xuất xứ và các giấy tờ theo danh sách kiểm của nhóm hàng. Quản trị viên sẽ xem xét từng bằng chứng.": [
+    "Submit quality certificates, origin evidence and the documents on the checklist for your product group. An administrator will review each item.",
+    "Submit quality certificates, origin evidence and the documents on the checklist for your product group. An administrator will review each item.",
+    "Submit quality certificates, origin evidence and the documents on the checklist for your product group. An administrator will review each item."
+  ],
+  "Trạng thái xác minh do quản trị viên quyết định. Từ chối và yêu cầu bổ sung phải có lý do; doanh nghiệp sẽ thấy lý do này.": [
+    "Verification status is decided by an administrator. Rejections and requests for more information need a reason; the company will see it.",
+    "Verification status is decided by an administrator. Rejections and requests for more information need a reason; the company will see it.",
+    "Verification status is decided by an administrator. Rejections and requests for more information need a reason; the company will see it."
+  ],
+  "Vui lòng nhập lý do.": [
+    "Please enter a reason.",
+    "Please enter a reason.",
+    "Please enter a reason."
+  ],
+  "Không tải được hàng đợi. Vui lòng thử lại.": [
+    "Unable to load the queue. Please try again.",
+    "Unable to load the queue. Please try again.",
+    "Unable to load the queue. Please try again."
+  ],
+  "Không có hồ sơ nào đang chờ duyệt.": [
+    "There are no profiles waiting for review.",
+    "There are no profiles waiting for review.",
+    "There are no profiles waiting for review."
+  ],
+  "Gửi lúc": [
+    "Submitted at",
+    "Submitted at",
+    "Submitted at"
+  ],
+  "MST": [
+    "Tax ID",
+    "Tax ID",
+    "Tax ID"
+  ],
+  "Quốc gia": [
+    "Country",
+    "Country",
+    "Country"
+  ],
+  "Chưa nộp bằng chứng.": [
+    "No evidence submitted.",
+    "No evidence submitted.",
+    "No evidence submitted."
+  ],
+  "Duyệt bằng chứng": [
+    "Approve evidence",
+    "Approve evidence",
+    "Approve evidence"
+  ],
+  "Từ chối bằng chứng": [
+    "Reject evidence",
+    "Reject evidence",
+    "Reject evidence"
+  ],
+  "Lý do từ chối bằng chứng": [
+    "Reason for rejecting the evidence",
+    "Reason for rejecting the evidence",
+    "Reason for rejecting the evidence"
+  ],
+  "Lý do quyết định (bắt buộc khi từ chối hoặc yêu cầu bổ sung)": [
+    "Decision reason (required when rejecting or requesting more information)",
+    "Decision reason (required when rejecting or requesting more information)",
+    "Decision reason (required when rejecting or requesting more information)"
+  ],
+  "Duyệt xác minh": [
+    "Approve verification",
+    "Approve verification",
+    "Approve verification"
+  ],
+  "Yêu cầu bổ sung": [
+    "Request more information",
+    "Request more information",
+    "Request more information"
+  ],
+  "Từ chối": [
+    "Reject",
+    "Reject",
+    "Reject"
+  ],
+  "Yêu cầu này đã được xử lý hoặc công ty không còn ở trạng thái chờ duyệt.": [
+    "This request was already handled or the company is no longer waiting for review.",
+    "This request was already handled or the company is no longer waiting for review.",
+    "This request was already handled or the company is no longer waiting for review."
+  ],
+  "Cần nhập lý do khi từ chối hoặc yêu cầu bổ sung.": [
+    "A reason is required when rejecting or requesting more information.",
+    "A reason is required when rejecting or requesting more information.",
+    "A reason is required when rejecting or requesting more information."
+  ],
+  "Không tìm thấy yêu cầu.": [
+    "Request not found.",
+    "Request not found.",
+    "Request not found."
+  ],
+  "Cần nhập lý do khi từ chối bằng chứng.": [
+    "A reason is required when rejecting evidence.",
+    "A reason is required when rejecting evidence.",
+    "A reason is required when rejecting evidence."
+  ],
+  "Không tìm thấy bằng chứng.": [
+    "Evidence not found.",
+    "Evidence not found.",
+    "Evidence not found."
+  ],
+  "Không tìm thấy dòng dữ liệu.": [
+    "Data row not found.",
+    "Data row not found.",
+    "Data row not found."
+  ],
+  "Dòng đã duyệt không xóa được.": [
+    "Reviewed rows cannot be deleted.",
+    "Reviewed rows cannot be deleted.",
+    "Reviewed rows cannot be deleted."
+  ],
+  "Dữ liệu chưa duyệt không bao giờ hiện ra công khai và không được máy tính tuân thủ dùng. Sửa dữ liệu đã duyệt sẽ đưa nó về chưa duyệt.": [
+    "Unreviewed data never appears publicly and is never used by the compliance calculators. Editing reviewed data makes it unreviewed again.",
+    "Unreviewed data never appears publicly and is never used by the compliance calculators. Editing reviewed data makes it unreviewed again.",
+    "Unreviewed data never appears publicly and is never used by the compliance calculators. Editing reviewed data makes it unreviewed again."
+  ],
+  "Dữ liệu tuân thủ": [
+    "Compliance data",
+    "Compliance data",
+    "Compliance data"
+  ],
+  "Dòng thuế": [
+    "Tariff lines",
+    "Tariff lines",
+    "Tariff lines"
+  ],
+  "Quy tắc xuất xứ": [
+    "Rules of origin",
+    "Rules of origin",
+    "Rules of origin"
+  ],
+  "Luật bằng chứng theo nhóm hàng": [
+    "Evidence rules by product group",
+    "Evidence rules by product group",
+    "Evidence rules by product group"
+  ],
+  "Nơi đến": [
+    "Destination",
+    "Destination",
+    "Destination"
+  ],
+  "Loại thuế": [
+    "Duty type",
+    "Duty type",
+    "Duty type"
+  ],
+  "MFN": [
+    "MFN",
+    "MFN",
+    "MFN"
+  ],
+  "EVFTA": [
+    "EVFTA",
+    "EVFTA",
+    "EVFTA"
+  ],
+  "Hạn ngạch": [
+    "Quota",
+    "Quota",
+    "Quota"
+  ],
+  "Hiệu lực": [
+    "Validity",
+    "Validity",
+    "Validity"
+  ],
+  "Loại quy tắc": [
+    "Rule type",
+    "Rule type",
+    "Rule type"
+  ],
+  "Ngưỡng NOM": [
+    "NOM threshold",
+    "NOM threshold",
+    "NOM threshold"
+  ],
+  "Cần chuyên gia": [
+    "Needs expert",
+    "Needs expert",
+    "Needs expert"
+  ],
+  "Mã": [
+    "Code",
+    "Code",
+    "Code"
+  ],
+  "Tên": [
+    "Name",
+    "Name",
+    "Name"
+  ],
+  "Nhóm": [
+    "Group",
+    "Group",
+    "Group"
+  ],
+  "Hạn (tháng)": [
+    "Validity (months)",
+    "Validity (months)",
+    "Validity (months)"
+  ],
+  "Đang bật": [
+    "Active",
+    "Active",
+    "Active"
+  ],
+  "Mức độ": [
+    "Level",
+    "Level",
+    "Level"
+  ],
+  "Ghi chú": [
+    "Note",
+    "Note",
+    "Note"
+  ],
+  "Trạng thái": [
+    "Status",
+    "Status",
+    "Status"
+  ],
+  "Chưa duyệt": [
+    "Unreviewed",
+    "Unreviewed",
+    "Unreviewed"
+  ],
+  "Duyệt": [
+    "Approve",
+    "Approve",
+    "Approve"
+  ],
+  "dòng chưa duyệt": [
+    "unreviewed rows",
+    "unreviewed rows",
+    "unreviewed rows"
+  ],
+  "Không tải được dữ liệu. Vui lòng thử lại.": [
+    "Unable to load the data. Please try again.",
+    "Unable to load the data. Please try again.",
+    "Unable to load the data. Please try again."
+  ],
+  "Chưa có dữ liệu. Nhập bằng script CSV rồi quay lại để duyệt.": [
+    "No data yet. Import it with the CSV script, then come back to review it.",
+    "No data yet. Import it with the CSV script, then come back to review it.",
+    "No data yet. Import it with the CSV script, then come back to review it."
+  ],
+  "Quản trị": [
+    "Administration",
+    "Administration",
+    "Administration"
+  ],
+  "Hãy tạo hồ sơ doanh nghiệp trước, sau đó bạn có thể gửi yêu cầu xác minh.": [
+    "Create your company profile first, then you can submit a verification request.",
+    "Create your company profile first, then you can submit a verification request.",
+    "Create your company profile first, then you can submit a verification request."
+  ],
+  "Trạng thái xác minh": [
+    "Verification status",
+    "Verification status",
+    "Verification status"
+  ],
+  "Chưa xác minh": [
+    "Not verified",
+    "Not verified",
+    "Not verified"
+  ],
+  "Đang chờ duyệt": [
+    "Awaiting review",
+    "Awaiting review",
+    "Awaiting review"
+  ],
+  "Đã xác minh": [
+    "Verified",
+    "Verified",
+    "Verified"
+  ],
+  "Cần bổ sung": [
+    "More information needed",
+    "More information needed",
+    "More information needed"
+  ],
+  "Mức EVFTA-verified: đã đủ bằng chứng bắt buộc còn hạn cho nhóm hàng của bạn.": [
+    "EVFTA-verified level: you have all the required, valid evidence for your product group.",
+    "EVFTA-verified level: you have all the required, valid evidence for your product group.",
+    "EVFTA-verified level: you have all the required, valid evidence for your product group."
+  ],
+  "Mức cơ bản: nộp đủ bằng chứng bắt buộc còn hạn để đạt EVFTA-verified.": [
+    "Basic level: submit all required, valid evidence to reach EVFTA-verified.",
+    "Basic level: submit all required, valid evidence to reach EVFTA-verified.",
+    "Basic level: submit all required, valid evidence to reach EVFTA-verified."
+  ],
+  "Có hiệu lực đến": [
+    "Valid until",
+    "Valid until",
+    "Valid until"
+  ],
+  "Quản trị viên đang xem xét hồ sơ của bạn.": [
+    "An administrator is reviewing your profile.",
+    "An administrator is reviewing your profile.",
+    "An administrator is reviewing your profile."
+  ],
+  "Lý do của quản trị viên": [
+    "Administrator's reason",
+    "Administrator's reason",
+    "Administrator's reason"
+  ],
+  "Hoàn thiện hồ sơ và nộp bằng chứng không đồng nghĩa đã xác minh: việc xác minh do quản trị viên quyết định.": [
+    "Completing your profile and submitting evidence does not mean you are verified: verification is decided by an administrator.",
+    "Completing your profile and submitting evidence does not mean you are verified: verification is decided by an administrator.",
+    "Completing your profile and submitting evidence does not mean you are verified: verification is decided by an administrator."
+  ],
+  "Gửi yêu cầu xác minh": [
+    "Submit verification request",
+    "Submit verification request",
+    "Submit verification request"
+  ],
+  "Hồ sơ đang chờ duyệt hoặc đã được xác minh, không gửi thêm được.": [
+    "Your profile is awaiting review or already verified, so it cannot be submitted again.",
+    "Your profile is awaiting review or already verified, so it cannot be submitted again.",
+    "Your profile is awaiting review or already verified, so it cannot be submitted again."
+  ],
+  "Hãy tạo hồ sơ doanh nghiệp trước khi gửi yêu cầu xác minh.": [
+    "Create your company profile before submitting a verification request.",
+    "Create your company profile before submitting a verification request.",
+    "Create your company profile before submitting a verification request."
+  ],
+  "Gửi yêu cầu để quản trị viên xem xét hồ sơ và bằng chứng của bạn. Chỉ doanh nghiệp đã xác minh mới hiện trong danh bạ nhà cung cấp.": [
+    "Submit a request so an administrator can review your profile and evidence. Only verified companies appear in the supplier directory.",
+    "Submit a request so an administrator can review your profile and evidence. Only verified companies appear in the supplier directory.",
+    "Submit a request so an administrator can review your profile and evidence. Only verified companies appear in the supplier directory."
+  ],
+  "Chỉ tạo được bản nháp khi kết quả xuất xứ là Đạt.": [
+    "A draft can only be created when the origin result is Pass.",
+    "A draft can only be created when the origin result is Pass.",
+    "A draft can only be created when the origin result is Pass."
+  ],
+  "Không tìm thấy kết quả xuất xứ hoặc bạn chưa có hồ sơ doanh nghiệp.": [
+    "The origin result was not found or you do not have a company profile yet.",
+    "The origin result was not found or you do not have a company profile yet.",
+    "The origin result was not found or you do not have a company profile yet."
+  ],
+  "Dữ liệu hóa đơn chưa hợp lệ. Vui lòng kiểm tra lại các ô.": [
+    "The invoice data is not valid. Please check the fields.",
+    "The invoice data is not valid. Please check the fields.",
+    "The invoice data is not valid. Please check the fields."
+  ],
+  "Bạn thao tác quá nhiều lần. Vui lòng thử lại sau một phút.": [
+    "You have made too many requests. Please try again in a minute.",
+    "You have made too many requests. Please try again in a minute.",
+    "You have made too many requests. Please try again in a minute."
+  ],
+  "Vui lòng nhập tên người nhận hàng.": [
+    "Please enter the consignee's name.",
+    "Please enter the consignee's name.",
+    "Please enter the consignee's name."
+  ],
+  "Vui lòng nhập địa chỉ người nhận hàng.": [
+    "Please enter the consignee's address.",
+    "Please enter the consignee's address.",
+    "Please enter the consignee's address."
+  ],
+  "Vui lòng nhập số hóa đơn.": [
+    "Please enter the invoice number.",
+    "Please enter the invoice number.",
+    "Please enter the invoice number."
+  ],
+  "Vui lòng nhập ngày hóa đơn.": [
+    "Please enter the invoice date.",
+    "Please enter the invoice date.",
+    "Please enter the invoice date."
+  ],
+  "Ngày hóa đơn không được ở tương lai.": [
+    "The invoice date cannot be in the future.",
+    "The invoice date cannot be in the future.",
+    "The invoice date cannot be in the future."
+  ],
+  "Vui lòng nhập mô tả hàng hóa.": [
+    "Please enter the description of goods.",
+    "Please enter the description of goods.",
+    "Please enter the description of goods."
+  ],
+  "Vui lòng nhập quy cách đóng gói.": [
+    "Please enter the packaging details.",
+    "Please enter the packaging details.",
+    "Please enter the packaging details."
+  ],
+  "Khối lượng phải là số dương, tối đa 2 chữ số thập phân.": [
+    "The mass must be a positive number with at most 2 decimal places.",
+    "The mass must be a positive number with at most 2 decimal places.",
+    "The mass must be a positive number with at most 2 decimal places."
+  ],
+  "Không tạo được bản nháp. Vui lòng thử lại sau.": [
+    "Unable to create the draft. Please try again later.",
+    "Unable to create the draft. Please try again later.",
+    "Unable to create the draft. Please try again later."
+  ],
+  "Đăng nhập bằng tài khoản nhà xuất khẩu (đã có hồ sơ doanh nghiệp) để tạo bản nháp EUR.1 từ kết quả này.": [
+    "Sign in with an exporter account (with a company profile) to create an EUR.1 draft from this result.",
+    "Sign in with an exporter account (with a company profile) to create an EUR.1 draft from this result.",
+    "Sign in with an exporter account (with a company profile) to create an EUR.1 draft from this result."
+  ],
+  "Bản nháp EUR.1": [
+    "EUR.1 draft",
+    "EUR.1 draft",
+    "EUR.1 draft"
+  ],
+  "Đây chỉ là bản nháp để rà soát, không phải chứng từ chính thức. Cơ quan cấp chính thức là Bộ Công Thương; mọi trang bản nháp đều có watermark.": [
+    "This is only a draft for review, not an official document. The official issuing authority is the Ministry of Industry and Trade (Bộ Công Thương); every page of the draft carries a watermark.",
+    "This is only a draft for review, not an official document. The official issuing authority is the Ministry of Industry and Trade (Bộ Công Thương); every page of the draft carries a watermark.",
+    "This is only a draft for review, not an official document. The official issuing authority is the Ministry of Industry and Trade (Bộ Công Thương); every page of the draft carries a watermark."
+  ],
+  "Tên người nhận hàng": [
+    "Consignee name",
+    "Consignee name",
+    "Consignee name"
+  ],
+  "Nước người nhận hàng": [
+    "Consignee country",
+    "Consignee country",
+    "Consignee country"
+  ],
+  "Địa chỉ người nhận hàng": [
+    "Consignee address",
+    "Consignee address",
+    "Consignee address"
+  ],
+  "Số hóa đơn": [
+    "Invoice number",
+    "Invoice number",
+    "Invoice number"
+  ],
+  "Ngày hóa đơn": [
+    "Invoice date",
+    "Invoice date",
+    "Invoice date"
+  ],
+  "Mô tả hàng hóa": [
+    "Description of goods",
+    "Description of goods",
+    "Description of goods"
+  ],
+  "Khối lượng cả bì (kg)": [
+    "Gross mass (kg)",
+    "Gross mass (kg)",
+    "Gross mass (kg)"
+  ],
+  "Thông tin vận chuyển (không bắt buộc)": [
+    "Transport details (optional)",
+    "Transport details (optional)",
+    "Transport details (optional)"
+  ],
+  "Ghi chú (không bắt buộc)": [
+    "Remarks (optional)",
+    "Remarks (optional)",
+    "Remarks (optional)"
+  ],
+  "Đang tạo bản nháp...": [
+    "Creating the draft...",
+    "Creating the draft...",
+    "Creating the draft..."
+  ],
+  "Tải bản nháp (PDF)": [
+    "Download draft (PDF)",
+    "Download draft (PDF)",
+    "Download draft (PDF)"
+  ],
+  "Tạo bản nháp EUR.1": [
+    "Create EUR.1 draft",
+    "Create EUR.1 draft",
+    "Create EUR.1 draft"
+  ],
+  "Không tải được số liệu. Vui lòng thử lại.": [
+    "Unable to load the figures. Please try again.",
+    "Unable to load the figures. Please try again.",
+    "Unable to load the figures. Please try again."
+  ],
+  "Hồ sơ chờ duyệt": [
+    "Profiles awaiting review",
+    "Profiles awaiting review",
+    "Profiles awaiting review"
+  ],
+  "Chưa có doanh nghiệp nào được xác minh. Duyệt hồ sơ ở tab Chờ duyệt.": [
+    "No company has been verified yet. Review profiles in the Pending review tab.",
+    "No company has been verified yet. Review profiles in the Pending review tab.",
+    "No company has been verified yet. Review profiles in the Pending review tab."
+  ],
+  "Chưa có hồ sơ nào đang chờ duyệt.": [
+    "No profile is awaiting review.",
+    "No profile is awaiting review.",
+    "No profile is awaiting review."
+  ],
+  "Ẩn hồ sơ hoặc sản phẩm không đổi trạng thái xác minh; mọi thao tác đều được ghi vào nhật ký.": [
+    "Hiding a profile or product does not change its verification status; every action is written to the log.",
+    "Hiding a profile or product does not change its verification status; every action is written to the log.",
+    "Hiding a profile or product does not change its verification status; every action is written to the log."
+  ],
+  "Tìm theo tên": [
+    "Search by name",
+    "Search by name",
+    "Search by name"
+  ],
+  "Tìm": [
+    "Search",
+    "Search",
+    "Search"
+  ],
+  "Tất cả": [
+    "All",
+    "All",
+    "All"
+  ],
+  "Đã ẩn": [
+    "Hidden",
+    "Hidden",
+    "Hidden"
+  ],
+  "Xem sản phẩm": [
+    "View products",
+    "View products",
+    "View products"
+  ],
+  "Ẩn hồ sơ": [
+    "Hide profile",
+    "Hide profile",
+    "Hide profile"
+  ],
+  "Hiện hồ sơ": [
+    "Show profile",
+    "Show profile",
+    "Show profile"
+  ],
+  "Ẩn sản phẩm": [
+    "Hide product",
+    "Hide product",
+    "Hide product"
+  ],
+  "Hiện sản phẩm": [
+    "Show product",
+    "Show product",
+    "Show product"
+  ],
+  "Chưa có sản phẩm.": [
+    "No products.",
+    "No products.",
+    "No products."
+  ],
+  "Không tải được danh sách. Vui lòng thử lại.": [
+    "Unable to load the list. Please try again.",
+    "Unable to load the list. Please try again.",
+    "Unable to load the list. Please try again."
+  ],
+  "Không tìm thấy dữ liệu.": [
+    "Data not found.",
+    "Data not found.",
+    "Data not found."
+  ],
+  "Dữ liệu không hợp lệ.": [
+    "The data is not valid.",
+    "The data is not valid.",
+    "The data is not valid."
+  ],
+  "Loại đối tượng": [
+    "Object type",
+    "Object type",
+    "Object type"
+  ],
+  "Mã đối tượng": [
+    "Object ID",
+    "Object ID",
+    "Object ID"
+  ],
+  "Lọc": [
+    "Filter",
+    "Filter",
+    "Filter"
+  ],
+  "Không tải được nhật ký. Vui lòng thử lại.": [
+    "Unable to load the log. Please try again.",
+    "Unable to load the log. Please try again.",
+    "Unable to load the log. Please try again."
+  ],
+  "Chưa có nhật ký phù hợp.": [
+    "No matching log entries.",
+    "No matching log entries.",
+    "No matching log entries."
+  ],
+  "Thời gian": [
+    "Time",
+    "Time",
+    "Time"
+  ],
+  "Hành động": [
+    "Action",
+    "Action",
+    "Action"
+  ],
+  "Đối tượng": [
+    "Object",
+    "Object",
+    "Object"
+  ],
+  "Người thực hiện": [
+    "Performed by",
+    "Performed by",
+    "Performed by"
+  ],
+  "Trước": [
+    "Before",
+    "Before",
+    "Before"
+  ],
+  "Sau": [
+    "After",
+    "After",
+    "After"
+  ],
+  "Hệ thống": [
+    "System",
+    "System",
+    "System"
+  ],
+  "Tổng quan": [
+    "Overview",
+    "Overview",
+    "Overview"
+  ],
+  "Hồ sơ & sản phẩm": [
+    "Profiles & products",
+    "Profiles & products",
+    "Profiles & products"
+  ],
+  "Nhật ký": [
+    "Log",
+    "Log",
+    "Log"
+  ],
+  "Bạn đã hỏi quá nhiều lần. Vui lòng thử lại sau một phút.": [
+    "You have asked too many questions. Please try again in a minute.",
+    "You have asked too many questions. Please try again in a minute.",
+    "You have asked too many questions. Please try again in a minute."
+  ],
+  "Câu hỏi chưa hợp lệ. Vui lòng nhập ít nhất 3 ký tự.": [
+    "The question is not valid. Please enter at least 3 characters.",
+    "The question is not valid. Please enter at least 3 characters.",
+    "The question is not valid. Please enter at least 3 characters."
+  ],
+  "Độ tin cậy cao": [
+    "High confidence",
+    "High confidence",
+    "High confidence"
+  ],
+  "Độ tin cậy trung bình": [
+    "Medium confidence",
+    "Medium confidence",
+    "Medium confidence"
+  ],
+  "Độ tin cậy thấp": [
+    "Low confidence",
+    "Low confidence",
+    "Low confidence"
+  ],
+  "Ngoài phạm vi": [
+    "Out of scope",
+    "Out of scope",
+    "Out of scope"
+  ],
+  "Câu trả lời": [
+    "Answer",
+    "Answer",
+    "Answer"
+  ],
+  "Chúng tôi chưa đủ căn cứ trong tài liệu đã duyệt để trả lời câu hỏi này.": [
+    "We do not have enough grounds in the reviewed documents to answer this question.",
+    "We do not have enough grounds in the reviewed documents to answer this question.",
+    "We do not have enough grounds in the reviewed documents to answer this question."
+  ],
+  "Nguồn trích dẫn": [
+    "Sources cited",
+    "Sources cited",
+    "Sources cited"
+  ],
+  "Trợ lý chỉ trả lời từ tài liệu đã được duyệt và không thay thế tư vấn pháp lý.": [
+    "The assistant only answers from reviewed documents and does not replace legal advice.",
+    "The assistant only answers from reviewed documents and does not replace legal advice.",
+    "The assistant only answers from reviewed documents and does not replace legal advice."
+  ],
+  "Cảm ơn phản hồi của bạn.": [
+    "Thank you for your feedback.",
+    "Thank you for your feedback.",
+    "Thank you for your feedback."
+  ],
+  "Câu trả lời có hữu ích không?": [
+    "Was this answer helpful?",
+    "Was this answer helpful?",
+    "Was this answer helpful?"
+  ],
+  "Hữu ích": [
+    "Helpful",
+    "Helpful",
+    "Helpful"
+  ],
+  "Chưa hữu ích": [
+    "Not helpful",
+    "Not helpful",
+    "Not helpful"
+  ],
+  "Không gửi được phản hồi. Vui lòng thử lại.": [
+    "Could not send your feedback. Please try again.",
+    "Could not send your feedback. Please try again.",
+    "Could not send your feedback. Please try again."
+  ],
+  "Đã chuyển câu hỏi cho chuyên gia. Chúng tôi sẽ liên hệ qua email của bạn.": [
+    "Your question has been passed to an expert. We will contact you by email.",
+    "Your question has been passed to an expert. We will contact you by email.",
+    "Your question has been passed to an expert. We will contact you by email."
+  ],
+  "Email nhận phản hồi từ chuyên gia": [
+    "Email for the expert's reply",
+    "Email for the expert's reply",
+    "Email for the expert's reply"
+  ],
+  "Chuyển chuyên gia": [
+    "Send to an expert",
+    "Send to an expert",
+    "Send to an expert"
+  ],
+  "Vui lòng nhập email hợp lệ để chuyên gia liên hệ.": [
+    "Please enter a valid email so the expert can contact you.",
+    "Please enter a valid email so the expert can contact you.",
+    "Please enter a valid email so the expert can contact you."
+  ],
+  "Không gửi được yêu cầu. Vui lòng thử lại.": [
+    "Could not send the request. Please try again.",
+    "Could not send the request. Please try again.",
+    "Could not send the request. Please try again."
+  ],
+  "Trợ lý tuân thủ EVFTA": [
+    "EVFTA compliance assistant",
+    "EVFTA compliance assistant",
+    "EVFTA compliance assistant"
+  ],
+  "Hỏi về thuế, quy tắc xuất xứ và thủ tục EVFTA. Mọi câu trả lời đều có trích dẫn từ tài liệu đã được duyệt.": [
+    "Ask about tariffs, rules of origin and EVFTA procedures. Every answer cites reviewed documents.",
+    "Ask about tariffs, rules of origin and EVFTA procedures. Every answer cites reviewed documents.",
+    "Ask about tariffs, rules of origin and EVFTA procedures. Every answer cites reviewed documents."
+  ],
+  "Câu hỏi của bạn": [
+    "Your question",
+    "Your question",
+    "Your question"
+  ],
+  "Vui lòng không nhập thông tin cá nhân vào câu hỏi.": [
+    "Please do not enter personal information in your question.",
+    "Please do not enter personal information in your question.",
+    "Please do not enter personal information in your question."
+  ],
+  "Mã HS liên quan (không bắt buộc)": [
+    "Related HS code (optional)",
+    "Related HS code (optional)",
+    "Related HS code (optional)"
+  ],
+  "Đang trả lời...": [
+    "Answering...",
+    "Answering...",
+    "Answering..."
+  ],
+  "Hỏi trợ lý": [
+    "Ask the assistant",
+    "Ask the assistant",
+    "Ask the assistant"
+  ],
+  "Đã chuyển chuyên gia": [
+    "Sent to an expert",
+    "Sent to an expert",
+    "Sent to an expert"
+  ],
+  "Có lỗi": [
+    "Error",
+    "Error",
+    "Error"
+  ],
+  "Tài liệu của trợ lý": [
+    "Assistant documents",
+    "Assistant documents",
+    "Assistant documents"
+  ],
+  "Trợ lý chỉ dùng tài liệu đã duyệt. Nạp lại nội dung sẽ đưa tài liệu về trạng thái chưa duyệt.": [
+    "The assistant only uses reviewed documents. Re-ingesting changed content resets a document to unreviewed.",
+    "The assistant only uses reviewed documents. Re-ingesting changed content resets a document to unreviewed.",
+    "The assistant only uses reviewed documents. Re-ingesting changed content resets a document to unreviewed."
+  ],
+  "Chưa có tài liệu. Nạp corpus bằng lệnh ingest rồi quay lại để duyệt.": [
+    "No documents yet. Load the corpus with the ingest command, then come back to review.",
+    "No documents yet. Load the corpus with the ingest command, then come back to review.",
+    "No documents yet. Load the corpus with the ingest command, then come back to review."
+  ],
+  "đoạn": [
+    "chunks",
+    "chunks",
+    "chunks"
+  ],
+  "Mức tin cậy": [
+    "Confidence level",
+    "Confidence level",
+    "Confidence level"
+  ],
+  "Câu hỏi gần đây": [
+    "Recent questions",
+    "Recent questions",
+    "Recent questions"
+  ],
+  "Mẫu rà soát hằng tuần": [
+    "Weekly review sample",
+    "Weekly review sample",
+    "Weekly review sample"
+  ],
+  "Chưa có câu hỏi nào ở mức tin cậy này.": [
+    "No questions at this confidence level yet.",
+    "No questions at this confidence level yet.",
+    "No questions at this confidence level yet."
+  ],
+  "Tuần này chưa có câu hỏi nào để rà soát.": [
+    "No questions to review this week.",
+    "No questions to review this week.",
+    "No questions to review this week."
+  ],
+  "Trợ lý AI": [
+    "AI assistant",
+    "AI assistant",
+    "AI assistant"
+  ],
+  "Không tìm thấy tài liệu.": [
+    "Document not found.",
+    "Document not found.",
+    "Document not found."
+  ],
+  "Câu hỏi AI trong 7 ngày": [
+    "AI questions in 7 days",
+    "AI questions in 7 days",
+    "AI questions in 7 days"
+  ],
+  "Chưa có câu hỏi nào gửi tới trợ lý AI trong 7 ngày qua.": [
+    "No questions were sent to the AI assistant in the last 7 days.",
+    "No questions were sent to the AI assistant in the last 7 days.",
+    "No questions were sent to the AI assistant in the last 7 days."
+  ],
+  "Độ tin cậy AI trung bình": [
+    "Average AI confidence",
+    "Average AI confidence",
+    "Average AI confidence"
+  ],
+  "Thang 1 (thấp) đến 3 (cao). Chưa tính câu ngoài phạm vi.": [
+    "Scale 1 (low) to 3 (high). Out-of-scope answers are not counted.",
+    "Scale 1 (low) to 3 (high). Out-of-scope answers are not counted.",
+    "Scale 1 (low) to 3 (high). Out-of-scope answers are not counted."
+  ],
+  "Yêu cầu báo giá": [
+    "Request a quote",
+    "Request a quote",
+    "Request a quote"
+  ],
+  "Nhà cung cấp Việt Nam đã xác minh": [
+    "Verified Vietnamese suppliers",
+    "Verified Vietnamese suppliers",
+    "Verified Vietnamese suppliers"
+  ],
+  "Chỉ những doanh nghiệp đã được xác minh mới xuất hiện trong danh bạ.": [
+    "Only verified businesses appear in the directory.",
+    "Only verified businesses appear in the directory.",
+    "Only verified businesses appear in the directory."
+  ],
+  "Tìm theo tên công ty, sản phẩm, mã HS hoặc chứng nhận": [
+    "Search by company name, product, HS code or certificate",
+    "Search by company name, product, HS code or certificate",
+    "Search by company name, product, HS code or certificate"
+  ],
+  "Tìm kiếm": [
+    "Search",
+    "Search",
+    "Search"
+  ],
+  "Không tải được danh bạ. Vui lòng thử lại.": [
+    "Could not load the directory. Please try again.",
+    "Could not load the directory. Please try again.",
+    "Could not load the directory. Please try again."
+  ],
+  "Chưa có nhà cung cấp phù hợp. Hãy thử bỏ bớt bộ lọc hoặc đổi từ khóa.": [
+    "No matching suppliers yet. Try removing some filters or changing the keywords.",
+    "No matching suppliers yet. Try removing some filters or changing the keywords.",
+    "No matching suppliers yet. Try removing some filters or changing the keywords."
+  ],
+  "Phân trang": [
+    "Pagination",
+    "Pagination",
+    "Pagination"
+  ],
+  "Trang trước": [
+    "Previous page",
+    "Previous page",
+    "Previous page"
+  ],
+  "Trang sau": [
+    "Next page",
+    "Next page",
+    "Next page"
+  ],
+  "Quay lại danh bạ": [
+    "Back to the directory",
+    "Back to the directory",
+    "Back to the directory"
+  ],
+  "Thành lập": [
+    "Founded",
+    "Founded",
+    "Founded"
+  ],
+  "Doanh nghiệp chưa đăng sản phẩm nào.": [
+    "This business has not listed any products yet.",
+    "This business has not listed any products yet.",
+    "This business has not listed any products yet."
+  ],
+  "chưa đọc": [
+    "unread",
+    "unread",
+    "unread"
+  ],
+  "Đánh dấu tất cả đã đọc": [
+    "Mark all as read",
+    "Mark all as read",
+    "Mark all as read"
+  ],
+  "Không tải được thông báo. Vui lòng thử lại.": [
+    "Could not load notifications. Please try again.",
+    "Could not load notifications. Please try again.",
+    "Could not load notifications. Please try again."
+  ],
+  "Chưa có thông báo. Khi có yêu cầu báo giá, tin nhắn hoặc thay đổi xác minh, bạn sẽ thấy ở đây.": [
+    "No notifications yet. Quote requests, messages and verification changes will appear here.",
+    "No notifications yet. Quote requests, messages and verification changes will appear here.",
+    "No notifications yet. Quote requests, messages and verification changes will appear here."
+  ],
+  "Hồ sơ của bạn đã được xác minh.": [
+    "Your profile has been verified.",
+    "Your profile has been verified.",
+    "Your profile has been verified."
+  ],
+  "Yêu cầu xác minh của bạn bị từ chối.": [
+    "Your verification request was rejected.",
+    "Your verification request was rejected.",
+    "Your verification request was rejected."
+  ],
+  "Quản trị viên cần bạn bổ sung thông tin để xác minh.": [
+    "An administrator needs more information from you to verify your profile.",
+    "An administrator needs more information from you to verify your profile.",
+    "An administrator needs more information from you to verify your profile."
+  ],
+  "Xác minh của bạn đã hết hạn.": [
+    "Your verification has expired.",
+    "Your verification has expired.",
+    "Your verification has expired."
+  ],
+  "Trạng thái xác minh của bạn đã thay đổi.": [
+    "Your verification status has changed.",
+    "Your verification status has changed.",
+    "Your verification status has changed."
+  ],
+  "Xác minh của bạn sắp hết hạn.": [
+    "Your verification is about to expire.",
+    "Your verification is about to expire.",
+    "Your verification is about to expire."
+  ],
+  "Bạn có yêu cầu báo giá mới.": [
+    "You have a new quote request.",
+    "You have a new quote request.",
+    "You have a new quote request."
+  ],
+  "Bạn có tin nhắn mới.": [
+    "You have a new message.",
+    "You have a new message.",
+    "You have a new message."
+  ],
+  "Có nhà cung cấp mới phù hợp với tìm kiếm của bạn.": [
+    "A new supplier matches your search.",
+    "A new supplier matches your search.",
+    "A new supplier matches your search."
+  ],
+  "Bạn đã gửi quá nhiều yêu cầu báo giá hôm nay. Vui lòng thử lại vào ngày mai.": [
+    "You have sent too many quote requests today. Please try again tomorrow.",
+    "You have sent too many quote requests today. Please try again tomorrow.",
+    "You have sent too many quote requests today. Please try again tomorrow."
+  ],
+  "Vui lòng hoàn thiện hồ sơ doanh nghiệp của bạn trước khi gửi yêu cầu báo giá.": [
+    "Please complete your company profile before sending a quote request.",
+    "Please complete your company profile before sending a quote request.",
+    "Please complete your company profile before sending a quote request."
+  ],
+  "Sản phẩm này hiện không còn nhận yêu cầu báo giá.": [
+    "This product no longer accepts quote requests.",
+    "This product no longer accepts quote requests.",
+    "This product no longer accepts quote requests."
+  ],
+  "Thông tin chưa hợp lệ. Vui lòng kiểm tra lại số lượng, giá, ngày cần hàng và điểm đến.": [
+    "The information is not valid. Please check the quantity, price, required date and destination.",
+    "The information is not valid. Please check the quantity, price, required date and destination.",
+    "The information is not valid. Please check the quantity, price, required date and destination."
+  ],
+  "Chỉ tài khoản buyer đã đăng nhập mới gửi được yêu cầu báo giá.": [
+    "Only signed-in buyer accounts can send quote requests.",
+    "Only signed-in buyer accounts can send quote requests.",
+    "Only signed-in buyer accounts can send quote requests."
+  ],
+  "Đăng nhập bằng tài khoản buyer để gửi yêu cầu báo giá cho nhà cung cấp này.": [
+    "Sign in with a buyer account to send a quote request to this supplier.",
+    "Sign in with a buyer account to send a quote request to this supplier.",
+    "Sign in with a buyer account to send a quote request to this supplier."
+  ],
+  "Đăng ký buyer": [
+    "Register as a buyer",
+    "Register as a buyer",
+    "Register as a buyer"
+  ],
+  "Chỉ tài khoản buyer mới gửi được yêu cầu báo giá.": [
+    "Only buyer accounts can send quote requests.",
+    "Only buyer accounts can send quote requests.",
+    "Only buyer accounts can send quote requests."
+  ],
+  "Đã gửi yêu cầu báo giá tới": [
+    "Quote request sent to",
+    "Quote request sent to",
+    "Quote request sent to"
+  ],
+  "Xem các yêu cầu đã gửi": [
+    "View sent requests",
+    "View sent requests",
+    "View sent requests"
+  ],
+  "Số lượng phải là số dương, tối đa 2 chữ số thập phân.": [
+    "The quantity must be a positive number with at most 2 decimal places.",
+    "The quantity must be a positive number with at most 2 decimal places.",
+    "The quantity must be a positive number with at most 2 decimal places."
+  ],
+  "Giá mục tiêu phải là số dương, tối đa 2 chữ số thập phân.": [
+    "The target price must be a positive number with at most 2 decimal places.",
+    "The target price must be a positive number with at most 2 decimal places.",
+    "The target price must be a positive number with at most 2 decimal places."
+  ],
+  "Vui lòng nhập đơn vị tính.": [
+    "Please enter the unit.",
+    "Please enter the unit.",
+    "Please enter the unit."
+  ],
+  "Vui lòng chọn ngày cần hàng.": [
+    "Please choose the required date.",
+    "Please choose the required date.",
+    "Please choose the required date."
+  ],
+  "Số lượng": [
+    "Quantity",
+    "Quantity",
+    "Quantity"
+  ],
+  "Đơn vị": [
+    "Unit",
+    "Unit",
+    "Unit"
+  ],
+  "Giá mục tiêu (không bắt buộc)": [
+    "Target price (optional)",
+    "Target price (optional)",
+    "Target price (optional)"
+  ],
+  "Ngày cần hàng": [
+    "Required date",
+    "Required date",
+    "Required date"
+  ],
+  "Quốc gia nhận hàng": [
+    "Destination country",
+    "Destination country",
+    "Destination country"
+  ],
+  "Cảng nhận hàng (không bắt buộc)": [
+    "Destination port (optional)",
+    "Destination port (optional)",
+    "Destination port (optional)"
+  ],
+  "Lời nhắn (không bắt buộc)": [
+    "Message (optional)",
+    "Message (optional)",
+    "Message (optional)"
+  ],
+  "Đang gửi...": [
+    "Sending...",
+    "Sending...",
+    "Sending..."
+  ],
+  "Mới": [
+    "New",
+    "New",
+    "New"
+  ],
+  "Đã xem": [
+    "Viewed",
+    "Viewed",
+    "Viewed"
+  ],
+  "Đã báo giá": [
+    "Quoted",
+    "Quoted",
+    "Quoted"
+  ],
+  "Không đổi được trạng thái. Vui lòng thử lại.": [
+    "Could not change the status. Please try again.",
+    "Could not change the status. Please try again.",
+    "Could not change the status. Please try again."
+  ],
+  "Không tải được danh sách yêu cầu báo giá. Vui lòng thử lại.": [
+    "Could not load the quote requests. Please try again.",
+    "Could not load the quote requests. Please try again.",
+    "Could not load the quote requests. Please try again."
+  ],
+  "Bạn chưa gửi yêu cầu báo giá nào. Tìm nhà cung cấp trong danh bạ và bấm \"Yêu cầu báo giá\".": [
+    "You have not sent any quote requests yet. Find a supplier in the directory and click \"Request for quotation\".",
+    "You have not sent any quote requests yet. Find a supplier in the directory and click \"Request for quotation\".",
+    "You have not sent any quote requests yet. Find a supplier in the directory and click \"Request for quotation\"."
+  ],
+  "Chưa có yêu cầu báo giá nào. Hoàn thiện hồ sơ và xác minh doanh nghiệp để buyer tìm thấy bạn.": [
+    "No quote requests yet. Complete your profile and get verified so buyers can find you.",
+    "No quote requests yet. Complete your profile and get verified so buyers can find you.",
+    "No quote requests yet. Complete your profile and get verified so buyers can find you."
+  ],
+  "Giá mục tiêu": [
+    "Target price",
+    "Target price",
+    "Target price"
+  ],
+  "Đánh dấu": [
+    "Mark as",
+    "Mark as",
+    "Mark as"
+  ],
+  "Yêu cầu báo giá đã gửi": [
+    "Sent quote requests",
+    "Sent quote requests",
+    "Sent quote requests"
+  ],
+  "Đăng nhập bằng tài khoản buyer để xem các yêu cầu báo giá.": [
+    "Sign in with a buyer account to see your quote requests.",
+    "Sign in with a buyer account to see your quote requests.",
+    "Sign in with a buyer account to see your quote requests."
+  ],
+  "Xem bản gốc": [
+    "View original",
+    "View original",
+    "View original"
+  ],
+  "Xem bản dịch": [
+    "View translation",
+    "View translation",
+    "View translation"
+  ],
+  "Nội dung hội thoại": [
+    "Conversation",
+    "Conversation",
+    "Conversation"
+  ],
+  "Không tải được tin nhắn. Vui lòng thử lại.": [
+    "Could not load the messages. Please try again.",
+    "Could not load the messages. Please try again.",
+    "Could not load the messages. Please try again."
+  ],
+  "Chưa có tin nhắn. Hãy gửi lời chào đầu tiên; tin nhắn sẽ được dịch sang ngôn ngữ của người nhận.": [
+    "No messages yet. Send the first greeting; messages are translated into the recipient's language.",
+    "No messages yet. Send the first greeting; messages are translated into the recipient's language.",
+    "No messages yet. Send the first greeting; messages are translated into the recipient's language."
+  ],
+  "Không gửi được tin nhắn. Vui lòng thử lại.": [
+    "Could not send the message. Please try again.",
+    "Could not send the message. Please try again.",
+    "Could not send the message. Please try again."
+  ],
+  "Tin nhắn": [
+    "Message",
+    "Message",
+    "Message"
+  ],
+  "Hội thoại": [
+    "Conversations",
+    "Conversations",
+    "Conversations"
+  ],
+  "Đăng nhập để xem hội thoại của bạn.": [
+    "Sign in to see your conversations.",
+    "Sign in to see your conversations.",
+    "Sign in to see your conversations."
+  ],
+  "Không tải được danh sách hội thoại. Vui lòng thử lại.": [
+    "Could not load the conversation list. Please try again.",
+    "Could not load the conversation list. Please try again.",
+    "Could not load the conversation list. Please try again."
+  ],
+  "Chưa có hội thoại nào. Hội thoại được mở tự động khi có yêu cầu báo giá.": [
+    "No conversations yet. A conversation opens automatically when a quote request is sent.",
+    "No conversations yet. A conversation opens automatically when a quote request is sent.",
+    "No conversations yet. A conversation opens automatically when a quote request is sent."
+  ],
+  "Danh sách hội thoại": [
+    "Conversation list",
+    "Conversation list",
+    "Conversation list"
+  ],
+  "Mở hội thoại": [
+    "Open conversation",
+    "Open conversation",
+    "Open conversation"
+  ],
+  "Mật khẩu không đúng.": [
+    "The password is incorrect.",
+    "The password is incorrect.",
+    "The password is incorrect."
+  ],
+  "Tài khoản quản trị không xóa được tại đây.": [
+    "Administrator accounts cannot be deleted here.",
+    "Administrator accounts cannot be deleted here.",
+    "Administrator accounts cannot be deleted here."
+  ],
+  "Tài khoản của tôi": [
+    "My account",
+    "My account",
+    "My account"
+  ],
+  "Đăng nhập để quản lý tài khoản.": [
+    "Sign in to manage your account.",
+    "Sign in to manage your account.",
+    "Sign in to manage your account."
+  ],
+  "Vui lòng nhập mật khẩu để xác nhận.": [
+    "Please enter your password to confirm.",
+    "Please enter your password to confirm.",
+    "Please enter your password to confirm."
+  ],
+  "Xóa tài khoản": [
+    "Delete account",
+    "Delete account",
+    "Delete account"
+  ],
+  "Email, số điện thoại và thông tin liên hệ của công ty sẽ bị xóa; công ty của bạn không còn xuất hiện trong danh bạ. Nhật ký thao tác được giữ lại để phục vụ kiểm toán nhưng không còn gắn với email của bạn. Việc này không thể hoàn tác.": [
+    "Your email, phone number and the company's contact details will be erased and your company will no longer appear in the directory. The activity log is kept for auditing but is no longer linked to your email. This cannot be undone.",
+    "Your email, phone number and the company's contact details will be erased and your company will no longer appear in the directory. The activity log is kept for auditing but is no longer linked to your email. This cannot be undone.",
+    "Your email, phone number and the company's contact details will be erased and your company will no longer appear in the directory. The activity log is kept for auditing but is no longer linked to your email. This cannot be undone."
+  ],
+  "Xóa tài khoản của tôi": [
+    "Delete my account",
+    "Delete my account",
+    "Delete my account"
+  ],
+  "Nhập mật khẩu để xác nhận": [
+    "Enter your password to confirm",
+    "Enter your password to confirm",
+    "Enter your password to confirm"
+  ],
+  "Đang xóa...": [
+    "Deleting...",
+    "Deleting...",
+    "Deleting..."
+  ],
+  "Xóa vĩnh viễn": [
+    "Delete permanently",
+    "Delete permanently",
+    "Delete permanently"
+  ],
+  "Hoàn thiện hồ sơ doanh nghiệp để bắt đầu.": [
+    "Complete your company profile to get started.",
+    "Complete your company profile to get started.",
+    "Complete your company profile to get started."
+  ],
+  "Chưa có ai xem hồ sơ. Hoàn thiện hồ sơ và xác minh để buyer tìm thấy bạn.": [
+    "Nobody has viewed your profile yet. Complete it and get verified so buyers can find you.",
+    "Nobody has viewed your profile yet. Complete it and get verified so buyers can find you.",
+    "Nobody has viewed your profile yet. Complete it and get verified so buyers can find you."
+  ],
+  "Chưa có yêu cầu báo giá. Buyer sẽ gửi khi thấy sản phẩm của bạn trong danh bạ.": [
+    "No quote requests yet. Buyers will send them when they find your products in the directory.",
+    "No quote requests yet. Buyers will send them when they find your products in the directory.",
+    "No quote requests yet. Buyers will send them when they find your products in the directory."
+  ],
+  "Doanh nghiệp chưa được xác minh. Gửi yêu cầu xác minh để xuất hiện trong danh bạ.": [
+    "Your business is not verified. Submit a verification request to appear in the directory.",
+    "Your business is not verified. Submit a verification request to appear in the directory.",
+    "Your business is not verified. Submit a verification request to appear in the directory."
+  ],
+  "Chưa có lần tính thuế nào. Dùng máy tính thuế để thấy tổng tiền tiết kiệm nhờ EVFTA.": [
+    "No tariff calculations yet. Use the tariff calculator to see how much EVFTA saves you.",
+    "No tariff calculations yet. Use the tariff calculator to see how much EVFTA saves you.",
+    "No tariff calculations yet. Use the tariff calculator to see how much EVFTA saves you."
+  ],
+  "Bạn chưa hỏi trợ lý tuân thủ. Đặt câu hỏi đầu tiên để nhận trả lời có trích dẫn.": [
+    "You have not asked the compliance assistant yet. Ask your first question to get a cited answer.",
+    "You have not asked the compliance assistant yet. Ask your first question to get a cited answer.",
+    "You have not asked the compliance assistant yet. Ask your first question to get a cited answer."
+  ],
+  "Tính năng lưu tìm kiếm sắp ra mắt. Trong lúc này hãy dùng danh bạ để tìm nhà cung cấp.": [
+    "Saved searches are coming soon. Meanwhile, use the directory to find suppliers.",
+    "Saved searches are coming soon. Meanwhile, use the directory to find suppliers.",
+    "Saved searches are coming soon. Meanwhile, use the directory to find suppliers."
+  ],
+  "Bạn chưa gửi yêu cầu báo giá. Tìm nhà cung cấp trong danh bạ và gửi yêu cầu đầu tiên.": [
+    "You have not sent a quote request. Find a supplier in the directory and send your first one.",
+    "You have not sent a quote request. Find a supplier in the directory and send your first one.",
+    "You have not sent a quote request. Find a supplier in the directory and send your first one."
+  ],
+  "Chưa có nhà cung cấp nào bạn đã xem. Khám phá danh bạ để bắt đầu.": [
+    "You have not viewed any suppliers yet. Explore the directory to get started.",
+    "You have not viewed any suppliers yet. Explore the directory to get started.",
+    "You have not viewed any suppliers yet. Explore the directory to get started."
+  ],
+  "Chọn nhóm hàng quan tâm trong hồ sơ để thấy nhà cung cấp mới được xác minh.": [
+    "Choose your product groups of interest in your profile to see newly verified suppliers.",
+    "Choose your product groups of interest in your profile to see newly verified suppliers.",
+    "Choose your product groups of interest in your profile to see newly verified suppliers."
+  ],
+  "Tuần này chưa có nhà cung cấp mới được xác minh trong nhóm hàng của bạn.": [
+    "No new suppliers were verified in your product groups this week.",
+    "No new suppliers were verified in your product groups this week.",
+    "No new suppliers were verified in your product groups this week."
+  ],
+  "Không tải được bảng điều khiển. Vui lòng thử lại.": [
+    "Could not load the dashboard. Please try again.",
+    "Could not load the dashboard. Please try again.",
+    "Could not load the dashboard. Please try again."
+  ],
+  "Chưa chọn": [
+    "Not selected",
+    "Not selected",
+    "Not selected"
+  ],
+  "Hoàn thiện hồ sơ": [
+    "Profile completeness",
+    "Profile completeness",
+    "Profile completeness"
+  ],
+  "Còn thiếu": [
+    "Missing",
+    "Missing",
+    "Missing"
+  ],
+  "Lượt xem hồ sơ tuần này": [
+    "Profile views this week",
+    "Profile views this week",
+    "Profile views this week"
+  ],
+  "Tuần trước": [
+    "Last week",
+    "Last week",
+    "Last week"
+  ],
+  "mới": [
+    "new",
+    "new",
+    "new"
+  ],
+  "tổng": [
+    "total",
+    "total",
+    "total"
+  ],
+  "trong 7 ngày": [
+    "in the last 7 days",
+    "in the last 7 days",
+    "in the last 7 days"
+  ],
+  "Còn": [
+    "Left",
+    "Left",
+    "Left"
+  ],
+  "ngày": [
+    "days",
+    "days",
+    "days"
+  ],
+  "hết hạn": [
+    "expires",
+    "expires",
+    "expires"
+  ],
+  "Tiết kiệm thuế nhờ EVFTA": [
+    "Tariff savings from EVFTA",
+    "Tariff savings from EVFTA",
+    "Tariff savings from EVFTA"
+  ],
+  "từ": [
+    "from",
+    "from",
+    "from"
+  ],
+  "lần tính": [
+    "calculations",
+    "calculations",
+    "calculations"
+  ],
+  "Mở máy tính thuế": [
+    "Open the tariff calculator",
+    "Open the tariff calculator",
+    "Open the tariff calculator"
+  ],
+  "Câu hỏi gần đây cho trợ lý": [
+    "Recent questions to the assistant",
+    "Recent questions to the assistant",
+    "Recent questions to the assistant"
+  ],
+  "Bảng điều khiển": [
+    "Dashboard",
+    "Dashboard",
+    "Dashboard"
+  ],
+  "Đăng nhập bằng tài khoản buyer để xem bảng điều khiển.": [
+    "Sign in with a buyer account to see your dashboard.",
+    "Sign in with a buyer account to see your dashboard.",
+    "Sign in with a buyer account to see your dashboard."
+  ],
+  "Xem tất cả": [
+    "View all",
+    "View all",
+    "View all"
+  ],
+  "Tìm kiếm đã lưu": [
+    "Saved searches",
+    "Saved searches",
+    "Saved searches"
+  ],
+  "Nhà cung cấp xem gần đây": [
+    "Recently viewed suppliers",
+    "Recently viewed suppliers",
+    "Recently viewed suppliers"
+  ],
+  "Nhà cung cấp mới được xác minh tuần này": [
+    "Suppliers verified this week",
+    "Suppliers verified this week",
+    "Suppliers verified this week"
+  ],
+  "Không tải được tỷ lệ quay lại. Vui lòng thử lại.": [
+    "Could not load the return-visit rate. Please try again.",
+    "Could not load the return-visit rate. Please try again.",
+    "Could not load the return-visit rate. Please try again."
+  ],
+  "Tỷ lệ quay lại có thông tin mới": [
+    "Return visits with new information",
+    "Return visits with new information",
+    "Return visits with new information"
+  ],
+  "Mục tiêu": [
+    "Target",
+    "Target",
+    "Target"
+  ],
+  "Chưa có lượt quay lại nào. Số liệu xuất hiện khi người dùng mở lại bảng điều khiển.": [
+    "No return visits yet. Figures appear when users reopen the dashboard.",
+    "No return visits yet. Figures appear when users reopen the dashboard.",
+    "No return visits yet. Figures appear when users reopen the dashboard."
+  ],
+  "Tuần bắt đầu": [
+    "Week starting",
+    "Week starting",
+    "Week starting"
+  ],
+  "Lượt quay lại": [
+    "Return visits",
+    "Return visits",
+    "Return visits"
+  ],
+  "Có thông tin mới": [
+    "With new information",
+    "With new information",
+    "With new information"
+  ],
+  "Nền tảng kết nối giao thương B2B trực tiếp với hệ sinh thái xác minh đa tầng L1 - L2 - L3, giúp Buyer toàn cầu kết nối an toàn với nhà cung ứng uy tín tại Việt Nam.": [
+    "A B2B trade platform with a multi-level L1 - L2 - L3 verification ecosystem that helps global buyers connect safely with reputable suppliers in Vietnam.",
+    "A B2B trade platform with a multi-level L1 - L2 - L3 verification ecosystem that helps global buyers connect safely with reputable suppliers in Vietnam.",
+    "A B2B trade platform with a multi-level L1 - L2 - L3 verification ecosystem that helps global buyers connect safely with reputable suppliers in Vietnam."
+  ],
+  "Xác thực thực địa & Pháp lý doanh nghiệp chuẩn hóa": [
+    "Standardised on-site and legal verification of businesses",
+    "Standardised on-site and legal verification of businesses",
+    "Standardised on-site and legal verification of businesses"
+  ],
+  "Khám phá": [
+    "Explore",
+    "Explore",
+    "Explore"
+  ],
+  "Tiêu chuẩn tin cậy": [
+    "Trust standards",
+    "Trust standards",
+    "Trust standards"
+  ],
+  "Xác minh L1 - Pháp lý cơ bản": [
+    "L1 verification - Basic legal standing",
+    "L1 verification - Basic legal standing",
+    "L1 verification - Basic legal standing"
+  ],
+  "Xác minh L2 - Năng lực nhà xưởng": [
+    "L2 verification - Factory capability",
+    "L2 verification - Factory capability",
+    "L2 verification - Factory capability"
+  ],
+  "Xác minh L3 - Kiểm toán VYBE độc lập": [
+    "L3 verification - Independent VYBE audit",
+    "L3 verification - Independent VYBE audit",
+    "L3 verification - Independent VYBE audit"
+  ],
+  "Chứng chỉ ISO, HACCP, GlobalGAP": [
+    "ISO, HACCP and GlobalGAP certificates",
+    "ISO, HACCP and GlobalGAP certificates",
+    "ISO, HACCP and GlobalGAP certificates"
+  ],
+  "Liên hệ": [
+    "Contact",
+    "Contact",
+    "Contact"
+  ],
+  "Điều khoản dịch vụ": [
+    "Terms of service",
+    "Terms of service",
+    "Terms of service"
+  ],
+  "Chính sách bảo mật": [
+    "Privacy policy",
+    "Privacy policy",
+    "Privacy policy"
+  ],
+  "Bảo vệ dữ liệu Buyer & Supplier": [
+    "Buyer and supplier data protection",
+    "Buyer and supplier data protection",
+    "Buyer and supplier data protection"
+  ],
+  "Hà Nội & TP. Hồ Chí Minh, Việt Nam": [
+    "Hanoi & Ho Chi Minh City, Vietnam",
+    "Hanoi & Ho Chi Minh City, Vietnam",
+    "Hanoi & Ho Chi Minh City, Vietnam"
+  ],
+  "Nội dung này đang được đội pháp lý hoàn thiện và sẽ được đăng sớm.": [
+    "This content is being finalised by the legal team and will be published soon.",
+    "This content is being finalised by the legal team and will be published soon.",
+    "This content is being finalised by the legal team and will be published soon."
+  ],
+  "Điều khoản sử dụng dành cho Người mua": [
+    "Terms of Use for Buyers",
+    "Terms of Use for Buyers",
+    "Terms of Use for Buyers"
+  ],
+  "Điều khoản sử dụng dành cho Doanh nghiệp": [
+    "Terms of Use for Enterprises",
+    "Terms of Use for Enterprises",
+    "Terms of Use for Enterprises"
+  ],
+  "Chọn bản điều khoản áp dụng cho vai trò của bạn.": [
+    "Choose the terms that apply to your role.",
+    "Choose the terms that apply to your role.",
+    "Choose the terms that apply to your role."
+  ],
+  "Dành cho Doanh nghiệp (nhà xuất khẩu)": [
+    "For Enterprises (exporters)",
+    "For Enterprises (exporters)",
+    "For Enterprises (exporters)"
+  ],
+  "Dành cho Người mua": [
+    "For Buyers",
+    "For Buyers",
+    "For Buyers"
+  ],
+  "Doanh nghiệp của bạn cần được xác minh trước khi gửi yêu cầu báo giá.": [
+    "Your company must be verified before you can send quote requests.",
+    "Your company must be verified before you can send quote requests.",
+    "Your company must be verified before you can send quote requests."
+  ],
+  "Nền tảng B2B kết nối nhà xuất khẩu Việt Nam với người mua tại EU: máy tính EVFTA, xác minh doanh nghiệp và trợ lý tuân thủ có trích nguồn.": [
+    "A B2B platform connecting Vietnamese exporters with EU buyers: EVFTA calculators, business verification and a compliance assistant that cites its sources.",
+    "A B2B platform connecting Vietnamese exporters with EU buyers: EVFTA calculators, business verification and a compliance assistant that cites its sources.",
+    "A B2B platform connecting Vietnamese exporters with EU buyers: EVFTA calculators, business verification and a compliance assistant that cites its sources."
+  ],
+  "Nhà cung cấp đã xác minh": [
+    "Verified suppliers",
+    "Verified suppliers",
+    "Verified suppliers"
+  ],
+  "Pháp lý": [
+    "Legal",
+    "Legal",
+    "Legal"
+  ],
+  "Cấp độ xác minh phản ánh mức độ đối chiếu bằng chứng của nền tảng, không phải bảo đảm về hàng hóa hay giao dịch. Kết quả máy tính chỉ mang tính tham khảo; cơ quan cấp chứng nhận xuất xứ chính thức là Bộ Công Thương.": [
+    "The verification level reflects how far the platform has checked the evidence; it is not a guarantee of goods or transactions. Calculator results are indicative only; the official issuing authority for certificates of origin is the Ministry of Industry and Trade (Bộ Công Thương).",
+    "The verification level reflects how far the platform has checked the evidence; it is not a guarantee of goods or transactions. Calculator results are indicative only; the official issuing authority for certificates of origin is the Ministry of Industry and Trade (Bộ Công Thương).",
+    "The verification level reflects how far the platform has checked the evidence; it is not a guarantee of goods or transactions. Calculator results are indicative only; the official issuing authority for certificates of origin is the Ministry of Industry and Trade (Bộ Công Thương)."
+  ],
+  "Bảo lưu mọi quyền.": [
+    "All rights reserved.",
+    "All rights reserved.",
+    "All rights reserved."
+  ],
+  "Máy tính tiết kiệm thuế": [
+    "Tariff savings calculator",
+    "Tariff savings calculator",
+    "Tariff savings calculator"
+  ],
+  "Máy tính quy tắc xuất xứ": [
+    "Rules of origin calculator",
+    "Rules of origin calculator",
+    "Rules of origin calculator"
+  ],
+  "Dữ liệu mới thêm, mới nhập hoặc vừa sửa. Không hiện công khai và máy tính tuân thủ chưa dùng.": [
+    "Newly added, imported or just edited data. Not shown publicly and not yet used by the compliance calculator.",
+    "Données récemment ajoutées, importées ou modifiées. Non publiques et pas encore utilisées par le calculateur de conformité.",
+    "追加・インポート・編集したばかりのデータです。公開されず、コンプライアンス計算機にもまだ使われません。"
+  ],
+  "Đã có người duyệt. Sửa lại sẽ đưa dòng về Chưa duyệt. Dòng thuế và quy tắc xuất xứ đã duyệt không xóa được: đặt Đến ngày để ngừng áp dụng.": [
+    "Already approved. Editing puts the row back to Pending. Approved tariff lines and origin rules cannot be deleted: set an End date to stop applying them.",
+    "Déjà approuvé. Toute modification remet la ligne en attente. Les lignes tarifaires et règles d'origine approuvées ne peuvent pas être supprimées : renseignez une date de fin.",
+    "承認済みです。編集すると未承認に戻ります。承認済みの関税ラインと原産地規則は削除できません。終了日を設定して適用を止めてください。"
+  ],
+  "Thuế theo phần trăm trị giá hàng. Chỉ loại này mới cho ra con số thuế trong máy tính.": [
+    "Duty as a percentage of the goods' value. Only this type produces a duty figure in the calculator.",
+    "Droit en pourcentage de la valeur des marchandises. Seul ce type produit un chiffre dans le calculateur.",
+    "商品価額に対する割合の関税です。計算機で税額が出るのはこの種類だけです。"
+  ],
+  "Thuế tuyệt đối: số tiền cố định trên mỗi đơn vị (kg, tấn…), ghi ở trường thuế tuyệt đối. Máy tính không tự quy đổi mà trả về \"cần xem xét\".": [
+    "Specific duty: a fixed amount per unit (kg, tonne…), recorded in the specific-duty field. The calculator does not convert it and returns \"needs review\".",
+    "Droit spécifique : montant fixe par unité (kg, tonne…), saisi dans le champ dédié. Le calculateur ne le convertit pas et renvoie « à examiner ».",
+    "従量税：単位（kg、トン等）あたりの固定額で、従量税欄に記載します。計算機は換算せず「要確認」を返します。"
+  ],
+  "Thuế hỗn hợp: kết hợp phần trăm và thuế tuyệt đối. Máy tính trả về \"cần xem xét\".": [
+    "Mixed duty: a percentage combined with a specific amount. The calculator returns \"needs review\".",
+    "Droit mixte : pourcentage combiné à un montant spécifique. Le calculateur renvoie « à examiner ».",
+    "混合税：従価税と従量税の組み合わせです。計算機は「要確認」を返します。"
+  ],
+  "Thuế tối huệ quốc áp cho hàng không hưởng ưu đãi EVFTA, tính bằng %.": [
+    "Most-favoured-nation duty applied to goods not enjoying EVFTA preference, in %.",
+    "Droit de la nation la plus favorisée appliqué aux marchandises sans préférence EVFTA, en %.",
+    "EVFTA優遇を受けない商品に適用される最恵国待遇税率（%）です。"
+  ],
+  "Thuế ưu đãi EVFTA hiện hành, tính bằng %.": [
+    "Current EVFTA preferential duty, in %.",
+    "Droit préférentiel EVFTA en vigueur, en %.",
+    "現行のEVFTA特恵税率（%）です。"
+  ],
+  "Có = hàng chịu hạn ngạch thuế quan. Máy tính trả về \"cần xem xét\", không trả 0%.": [
+    "Yes = goods subject to a tariff quota. The calculator returns \"needs review\", never 0%.",
+    "Oui = marchandises soumises à un contingent tarifaire. Le calculateur renvoie « à examiner », jamais 0 %.",
+    "はい＝関税割当の対象商品です。計算機は0%ではなく「要確認」を返します。"
+  ],
+  "Mã ISO-2 của nước EU, hoặc EU nếu áp dụng biểu thuế chung của cả liên minh thuế quan.": [
+    "ISO-2 code of the EU country, or EU when the common tariff of the customs union applies.",
+    "Code ISO-2 du pays de l'UE, ou EU si le tarif commun de l'union douanière s'applique.",
+    "EU加盟国のISO-2コード。関税同盟の共通関税を適用する場合は EU。"
+  ],
+  "Từ ngày / Đến ngày": [
+    "Start date / End date",
+    "Date de début / Date de fin",
+    "開始日 / 終了日"
+  ],
+  "Ngày bắt đầu hiệu lực và ngày đã hết hiệu lực. Đến ngày để trống nghĩa là không thời hạn.": [
+    "The date validity starts and the date it has ended. An empty End date means no expiry.",
+    "Date de début de validité et date à laquelle elle a pris fin. Une date de fin vide signifie sans échéance.",
+    "有効期間の開始日と失効日です。終了日が空欄の場合は無期限です。"
+  ],
+  "Xuất xứ thuần túy: hàng được sản xuất hoàn toàn tại nước xuất khẩu.": [
+    "Wholly obtained: the goods are produced entirely in the exporting country.",
+    "Entièrement obtenu : les marchandises sont produites entièrement dans le pays exportateur.",
+    "完全生産：商品が輸出国内で完全に生産されたものです。"
+  ],
+  "Chuyển đổi nhóm HS: nguyên liệu không xuất xứ phải khác nhóm HS 4 số với thành phẩm.": [
+    "Change of tariff heading: non-originating materials must fall under a different 4-digit HS heading than the finished product.",
+    "Changement de position tarifaire : les matières non originaires doivent relever d'une position SH à 4 chiffres différente du produit fini.",
+    "関税分類変更：非原産材料は完成品と異なるHS4桁の項に分類される必要があります。"
+  ],
+  "Nguyên liệu không xuất xứ tối đa một tỷ lệ % giá xuất xưởng. Bắt buộc nhập Ngưỡng NOM.": [
+    "Non-originating materials may not exceed a percentage of the ex-works price. The NOM threshold is required.",
+    "Les matières non originaires ne peuvent dépasser un pourcentage du prix départ usine. Le seuil NOM est obligatoire.",
+    "非原産材料は工場渡し価格の一定割合以下でなければなりません。NOM上限の入力が必須です。"
+  ],
+  "Đạt CTH hoặc MaxNOM là được. Bắt buộc nhập Ngưỡng NOM.": [
+    "Meeting either CTH or MaxNOM is enough. The NOM threshold is required.",
+    "Il suffit de satisfaire CTH ou MaxNOM. Le seuil NOM est obligatoire.",
+    "CTHまたはMaxNOMのどちらかを満たせば十分です。NOM上限の入力が必須です。"
+  ],
+  "Chỉ nhập cho MaxNOM và CTH_OR_MaxNOM; phải để trống với WO và CTH.": [
+    "Only for MaxNOM and CTH_OR_MaxNOM; must be empty for WO and CTH.",
+    "Uniquement pour MaxNOM et CTH_OR_MaxNOM ; doit rester vide pour WO et CTH.",
+    "MaxNOMとCTH_OR_MaxNOMのみ入力します。WOとCTHでは空欄にしてください。"
+  ],
+  "Có = quy tắc phức tạp; máy tính luôn trả về \"chưa kết luận\" và chuyển cho chuyên gia.": [
+    "Yes = complex rule; the calculator always returns \"inconclusive\" and refers to an expert.",
+    "Oui = règle complexe ; le calculateur renvoie toujours « non concluant » et oriente vers un expert.",
+    "はい＝複雑な規則です。計算機は常に「判定不能」を返し、専門家に委ねます。"
+  ],
+  "Định danh duy nhất: chữ thường, số, gạch dưới, bắt đầu bằng chữ (vd iso_9001). Không đổi được sau khi tạo.": [
+    "Unique identifier: lowercase letters, digits, underscores, starting with a letter (e.g. iso_9001). Cannot be changed after creation.",
+    "Identifiant unique : minuscules, chiffres, tirets bas, commençant par une lettre (ex. iso_9001). Non modifiable après création.",
+    "一意の識別子：小文字・数字・アンダースコア、先頭は英字（例 iso_9001）。作成後は変更できません。"
+  ],
+  "Nhóm gom loại bằng chứng: origin, quality, social, technical, lab…": [
+    "Group of evidence types: origin, quality, social, technical, lab…",
+    "Groupe de types de preuves : origin, quality, social, technical, lab…",
+    "証拠種別のグループ：origin、quality、social、technical、lab など。"
+  ],
+  "Số tháng bằng chứng có hiệu lực kể từ ngày cấp. Để trống nếu không tự tính hạn.": [
+    "Months the evidence stays valid from its issue date. Leave empty if no expiry is calculated.",
+    "Nombre de mois de validité de la preuve à compter de sa date d'émission. Laisser vide si aucune échéance n'est calculée.",
+    "証拠が発行日から有効な月数。有効期限を自動計算しない場合は空欄。"
+  ],
+  "Không = exporter không thể nộp loại bằng chứng này nữa.": [
+    "No = exporters can no longer submit this evidence type.",
+    "Non = les exportateurs ne peuvent plus soumettre ce type de preuve.",
+    "いいえ＝輸出者はこの証拠種別を提出できなくなります。"
+  ],
+  "Nhóm hàng trong danh mục HS (vd agriculture, seafood).": [
+    "Product category in the HS catalog (e.g. agriculture, seafood).",
+    "Catégorie de produits du catalogue SH (ex. agriculture, seafood).",
+    "HSカタログの商品カテゴリ（例 agriculture、seafood）。"
+  ],
+  "Tính vào điều kiện đạt EVFTA-verified của nhà xuất khẩu.": [
+    "Counts toward the exporter's EVFTA-verified requirements.",
+    "Compte dans les conditions EVFTA-verified de l'exportateur.",
+    "輸出者のEVFTA-verified要件に含まれます。"
+  ],
+  "Chỉ nhắc nhà xuất khẩu, không tính vào điều kiện đạt.": [
+    "Only a reminder to the exporter; not counted toward the requirements.",
+    "Simple rappel pour l'exportateur ; ne compte pas dans les conditions.",
+    "輸出者への注意喚起のみで、要件には含まれません。"
+  ],
+  "Từ ngày": [
+    "Start date",
+    "Date de début",
+    "開始日"
+  ],
+  "Đến ngày": [
+    "End date",
+    "Date de fin",
+    "終了日"
+  ],
+  "Ngày bắt đầu hiệu lực.": [
+    "Date validity starts.",
+    "Date de début de validité.",
+    "有効期間の開始日。"
+  ],
+  "Ngày ĐÃ hết hiệu lực, phải sau Từ ngày. Để trống = không thời hạn.": [
+    "The date validity HAS ended; must be after the Start date. Empty = no expiry.",
+    "Date à laquelle la validité A pris fin ; doit suivre la date de début. Vide = sans échéance.",
+    "失効済みとなる日付。開始日より後にしてください。空欄＝無期限。"
+  ],
+  "6–8 chữ số, phải có trong danh mục HS.": [
+    "6–8 digits, must exist in the HS catalog.",
+    "6 à 8 chiffres, doit exister dans le catalogue SH.",
+    "6～8桁。HSカタログに存在する必要があります。"
+  ],
+  "Xem chú thích: chỉ ad_valorem cho ra con số thuế.": [
+    "See the legend: only ad_valorem produces a duty figure.",
+    "Voir la légende : seul ad_valorem produit un chiffre.",
+    "凡例を参照：税額が出るのは ad_valorem のみです。"
+  ],
+  "0–100, tối đa 4 chữ số thập phân.": [
+    "0–100, up to 4 decimal places.",
+    "0 à 100, jusqu'à 4 décimales.",
+    "0～100、小数点以下4桁まで。"
+  ],
+  "Thuế tuyệt đối/hỗn hợp": [
+    "Specific/mixed duty",
+    "Droit spécifique/mixte",
+    "従量税／混合税"
+  ],
+  "Dạng văn bản, vd \"176 EUR/100 kg\".": [
+    "Free text, e.g. \"176 EUR/100 kg\".",
+    "Texte libre, ex. « 176 EUR/100 kg ».",
+    "テキスト形式（例 \"176 EUR/100 kg\"）。"
+  ],
+  "EVFTA hiện hành (%)": [
+    "Current EVFTA (%)",
+    "EVFTA en vigueur (%)",
+    "現行EVFTA（%）"
+  ],
+  "MFN (%)": [
+    "MFN (%)",
+    "NPF (%)",
+    "MFN（%）"
+  ],
+  "Lộ trình cắt giảm": [
+    "Reduction schedule",
+    "Calendrier de réduction",
+    "削減スケジュール"
+  ],
+  "Ký hiệu nhóm cắt giảm, vd A, B5.": [
+    "Reduction category code, e.g. A, B5.",
+    "Code de catégorie de réduction, ex. A, B5.",
+    "削減カテゴリ記号（例 A、B5）。"
+  ],
+  "Ngày về 0%": [
+    "Date reaching 0%",
+    "Date d'atteinte de 0 %",
+    "0%になる日"
+  ],
+  "Ghi chú hạn ngạch": [
+    "Quota note",
+    "Note sur le contingent",
+    "関税割当メモ"
+  ],
+  "Điều kiện áp dụng": [
+    "Conditions of application",
+    "Conditions d'application",
+    "適用条件"
+  ],
+  "Nguồn (URL)": [
+    "Source (URL)",
+    "Source (URL)",
+    "出典（URL）"
+  ],
+  "Ngưỡng NOM (%)": [
+    "NOM threshold (%)",
+    "Seuil NOM (%)",
+    "NOM上限（%）"
+  ],
+  "Bắt buộc với MaxNOM và CTH_OR_MaxNOM; để trống với WO và CTH.": [
+    "Required for MaxNOM and CTH_OR_MaxNOM; leave empty for WO and CTH.",
+    "Obligatoire pour MaxNOM et CTH_OR_MaxNOM ; laisser vide pour WO et CTH.",
+    "MaxNOMとCTH_OR_MaxNOMでは必須、WOとCTHでは空欄にします。"
+  ],
+  "Nguyên văn quy tắc": [
+    "Rule text",
+    "Texte de la règle",
+    "規則の原文"
+  ],
+  "Nguồn": [
+    "Source",
+    "Source",
+    "出典"
+  ],
+  "Chữ thường, số, gạch dưới; không đổi được sau khi tạo.": [
+    "Lowercase letters, digits, underscores; cannot be changed after creation.",
+    "Minuscules, chiffres, tirets bas ; non modifiable après création.",
+    "小文字・数字・アンダースコア。作成後は変更できません。"
+  ],
+  "Tên (tiếng Việt)": [
+    "Name (Vietnamese)",
+    "Nom (vietnamien)",
+    "名称（ベトナム語）"
+  ],
+  "Tên (tiếng Anh)": [
+    "Name (English)",
+    "Nom (anglais)",
+    "名称（英語）"
+  ],
+  "Số nguyên > 0; để trống nếu không tự tính hạn.": [
+    "Integer > 0; leave empty if no expiry is calculated.",
+    "Entier > 0 ; laisser vide si aucune échéance n'est calculée.",
+    "0より大きい整数。有効期限を自動計算しない場合は空欄。"
+  ],
+  "Nhóm hàng trong danh mục HS, vd agriculture.": [
+    "Product category in the HS catalog, e.g. agriculture.",
+    "Catégorie de produits du catalogue SH, ex. agriculture.",
+    "HSカタログの商品カテゴリ（例 agriculture）。"
+  ],
+  "Mã loại bằng chứng đã tồn tại.": [
+    "The evidence type code already exists.",
+    "Ce code de type de preuve existe déjà.",
+    "この証拠種別コードは既に存在します。"
+  ],
+  "Bỏ chọn = chỉ nhắc.": [
+    "Untick = reminder only.",
+    "Décocher = simple rappel.",
+    "チェックを外す＝注意喚起のみ。"
+  ],
+  "Mã HS không có trong danh mục.": [
+    "The HS code is not in the catalog.",
+    "Le code SH n'est pas dans le catalogue.",
+    "このHSコードはカタログにありません。"
+  ],
+  "Ngày hết hiệu lực phải sau ngày bắt đầu.": [
+    "The end date must be after the start date.",
+    "La date de fin doit être postérieure à la date de début.",
+    "終了日は開始日より後にしてください。"
+  ],
+  "Ngưỡng % bắt buộc với MaxNOM/CTH_OR_MaxNOM và phải để trống với WO/CTH.": [
+    "The % threshold is required for MaxNOM/CTH_OR_MaxNOM and must be empty for WO/CTH.",
+    "Le seuil % est obligatoire pour MaxNOM/CTH_OR_MaxNOM et doit rester vide pour WO/CTH.",
+    "MaxNOM/CTH_OR_MaxNOMでは上限%が必須、WO/CTHでは空欄にしてください。"
+  ],
+  "Nhóm hàng không có trong danh mục HS.": [
+    "The product category is not in the HS catalog.",
+    "La catégorie de produits n'est pas dans le catalogue SH.",
+    "この商品カテゴリはHSカタログにありません。"
+  ],
+  "Loại bằng chứng không tồn tại.": [
+    "The evidence type does not exist.",
+    "Ce type de preuve n'existe pas.",
+    "この証拠種別は存在しません。"
+  ],
+  "Luật này đã tồn tại.": [
+    "This rule already exists.",
+    "Cette règle existe déjà.",
+    "このルールは既に存在します。"
+  ],
+  "Trường bắt buộc không được để trống.": [
+    "Required fields cannot be empty.",
+    "Les champs obligatoires ne peuvent pas être vides.",
+    "必須項目は空欄にできません。"
+  ],
+  "Không tải được file. Vui lòng thử lại.": [
+    "Could not download the file. Please try again.",
+    "Impossible de télécharger le fichier. Veuillez réessayer.",
+    "ファイルをダウンロードできませんでした。もう一度お試しください。"
+  ],
+  "File quá lớn (tối đa 2 MB, 5000 dòng).": [
+    "File too large (max 2 MB, 5000 rows).",
+    "Fichier trop volumineux (2 Mo et 5000 lignes maximum).",
+    "ファイルが大きすぎます（最大2 MB、5000行）。"
+  ],
+  "File không hợp lệ: cần file .xlsx có sheet \"data\" và đủ cột bắt buộc.": [
+    "Invalid file: an .xlsx file with a \"data\" sheet and all required columns is needed.",
+    "Fichier invalide : un fichier .xlsx avec une feuille « data » et toutes les colonnes obligatoires est requis.",
+    "無効なファイル：\"data\"シートと必須列をすべて含む.xlsxファイルが必要です。"
+  ],
+  "Chú thích các cột và giá trị": [
+    "Legend: columns and values",
+    "Légende : colonnes et valeurs",
+    "列と値の凡例"
+  ],
+  "Vui lòng nhập": [
+    "Please fill in",
+    "Veuillez renseigner",
+    "入力してください"
+  ],
+  "Sửa dòng": [
+    "Edit row",
+    "Modifier la ligne",
+    "行を編集"
+  ],
+  "Thêm dòng": [
+    "Add row",
+    "Ajouter une ligne",
+    "行を追加"
+  ],
+  "Dòng này đã duyệt. Sau khi lưu, dòng sẽ về Chưa duyệt và phải được duyệt lại.": [
+    "This row is approved. After saving it returns to Pending and must be approved again.",
+    "Cette ligne est approuvée. Après enregistrement, elle repasse en attente et doit être approuvée à nouveau.",
+    "この行は承認済みです。保存すると未承認に戻り、再承認が必要です。"
+  ],
+  "Lưu": [
+    "Save",
+    "Enregistrer",
+    "保存"
+  ],
+  "Thêm": [
+    "Add",
+    "Ajouter",
+    "追加"
+  ],
+  "Tải template": [
+    "Download template",
+    "Télécharger le modèle",
+    "テンプレートをダウンロード"
+  ],
+  "Xuất Excel": [
+    "Export Excel",
+    "Exporter en Excel",
+    "Excelにエクスポート"
+  ],
+  "Nhập Excel": [
+    "Import Excel",
+    "Importer depuis Excel",
+    "Excelからインポート"
+  ],
+  "Tìm theo mã, tên, ghi chú…": [
+    "Search by code, name, note…",
+    "Rechercher par code, nom, note…",
+    "コード・名称・メモで検索…"
+  ],
+  "Chưa có dữ liệu. Dùng nút Thêm hoặc Nhập Excel để bắt đầu.": [
+    "No data yet. Use Add or Import Excel to get started.",
+    "Aucune donnée. Utilisez Ajouter ou Importer depuis Excel pour commencer.",
+    "データがありません。「追加」または「Excelからインポート」で始めてください。"
+  ],
+  "Không có dòng nào khớp.": [
+    "No matching rows.",
+    "Aucune ligne correspondante.",
+    "一致する行がありません。"
+  ],
+  "Đã nhập xong": [
+    "Import complete",
+    "Import terminé",
+    "インポート完了"
+  ],
+  "Dòng mới": [
+    "New rows",
+    "Nouvelles lignes",
+    "新規行"
+  ],
+  "Cập nhật": [
+    "Updated",
+    "Mis à jour",
+    "更新"
+  ],
+  "Không đổi": [
+    "Unchanged",
+    "Inchangé",
+    "変更なし"
+  ],
+  "Cập nhật (sẽ về chưa duyệt)": [
+    "Updated (will return to pending)",
+    "Mis à jour (repasse en attente)",
+    "更新（未承認に戻ります）"
+  ],
+  "Dòng": [
+    "Row",
+    "Ligne",
+    "行"
+  ],
+  "Chọn file .xlsx": [
+    "Choose an .xlsx file",
+    "Choisir un fichier .xlsx",
+    ".xlsxファイルを選択"
+  ],
+  "Nhập vào hệ thống": [
+    "Import into the system",
+    "Importer dans le système",
+    "システムにインポート"
+  ],
+  "File có lỗi, chưa ghi gì. Sửa file rồi chọn lại.": [
+    "The file has errors and nothing was written. Fix the file and choose it again.",
+    "Le fichier comporte des erreurs et rien n'a été écrit. Corrigez-le puis sélectionnez-le à nouveau.",
+    "ファイルにエラーがあり、何も書き込まれていません。修正して再度選択してください。"
+  ],
+  "Dòng nhập vào luôn ở trạng thái Chưa duyệt. Dòng trùng khóa với dòng đã có sẽ được cập nhật và về Chưa duyệt. Cột trạng thái duyệt trong file bị bỏ qua.": [
+    "Imported rows always start as Pending. Rows whose key matches an existing row are updated and return to Pending. The review-status column in the file is ignored.",
+    "Les lignes importées sont toujours en attente. Une ligne dont la clé correspond à une ligne existante est mise à jour et repasse en attente. La colonne de statut d'approbation du fichier est ignorée.",
+    "インポートした行は常に未承認になります。既存行とキーが一致する行は更新され、未承認に戻ります。ファイル内の承認状況の列は無視されます。"
+  ],
+  "Logo công ty": [
+    "Company logo",
+    "Logo de l'entreprise",
+    "会社ロゴ"
+  ],
+  "Thêm logo": [
+    "Add logo",
+    "Ajouter un logo",
+    "ロゴを追加"
+  ],
+  "Đổi logo": [
+    "Change logo",
+    "Changer le logo",
+    "ロゴを変更"
+  ],
+  "Logo đã được tải lên.": [
+    "Logo uploaded.",
+    "Logo téléversé.",
+    "ロゴをアップロードしました。"
+  ],
+  "PNG, JPEG hoặc WebP, tối đa 2MB.": [
+    "PNG, JPEG or WebP, up to 2 MB.",
+    "PNG, JPEG ou WebP, 2 Mo maximum.",
+    "PNG、JPEG、WebP（最大2MB）。"
+  ],
+  "Logo phải là PNG, JPEG hoặc WebP.": [
+    "Logo must be PNG, JPEG or WebP.",
+    "Le logo doit être au format PNG, JPEG ou WebP.",
+    "ロゴはPNG、JPEG、WebPのいずれかにしてください。"
+  ],
+  "Logo tối đa 2MB.": [
+    "Logo must be 2 MB or smaller.",
+    "Le logo ne doit pas dépasser 2 Mo.",
+    "ロゴは2MB以下にしてください。"
+  ],
+  "Không tải được logo lên. Vui lòng thử lại.": [
+    "Could not upload the logo. Please try again.",
+    "Impossible de téléverser le logo. Veuillez réessayer.",
+    "ロゴをアップロードできませんでした。もう一度お試しください。"
+  ],
+  "Công cụ tuân thủ": [
+    "Compliance tools",
+    "Outils de conformité",
+    "コンプライアンスツール"
+  ],
+  "Máy tính thuế EVFTA": [
+    "EVFTA tariff calculator",
+    "Calculateur de droits EVFTA",
+    "EVFTA関税計算ツール"
+  ],
+  "Quy tắc xuất xứ & EUR.1 nháp": [
+    "Rules of origin & EUR.1 draft",
+    "Règles d'origine et brouillon EUR.1",
+    "原産地規則とEUR.1ドラフト"
+  ],
+  "Trợ lý AI tuân thủ": [
+    "AI compliance assistant",
+    "Assistant IA de conformité",
+    "AIコンプライアンスアシスタント"
+  ],
+  "Menu exporter": [
+    "Exporter menu",
+    "Menu exportateur",
+    "輸出者メニュー"
+  ],
+  "Tin nhắn với buyer": [
+    "Messages with buyers",
+    "Messages avec les acheteurs",
+    "バイヤーとのメッセージ"
+  ],
+  "Vui lòng chọn quốc gia trong danh sách.": [
+    "Please choose a country from the list.",
+    "Veuillez choisir un pays dans la liste.",
+    "リストから国を選択してください。"
   ]
 }

@@ -1,0 +1,10 @@
+Subject: {% if outcome == 'approve' %}Your profile has been verified{% elif outcome == 'reject' %}Your verification request was rejected{% elif outcome == 'request_info' %}More information is needed for verification{% else %}Your verification has expired{% endif %}
+
+Hello {{ company_name }},
+
+{% if outcome == 'approve' %}Your profile has been verified by an administrator.{% elif outcome == 'reject' %}Your verification request was rejected.{% elif outcome == 'request_info' %}An administrator needs more information from you to verify your profile.{% else %}Your verification has expired. You can submit a new verification request.{% endif %}
+{% if reason and outcome in ('reject', 'request_info') %}Reason: {{ reason }}{% endif %}
+
+View details: {{ link }}
+
+evfta.eu

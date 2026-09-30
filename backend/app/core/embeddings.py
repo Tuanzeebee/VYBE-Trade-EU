@@ -1,0 +1,54 @@
+"""Mô hình nhúng văn bản thành vector (AGENTS.md §5.5): nghiệp vụ chỉ gọi interface EmbeddingModel.
+
+Nhà cung cấp và số chiều thật là quyết định Q5 (chưa chốt). Hiện dùng FakeEmbedding xác định (băm)
+để truy xuất và test chạy được; đổi số chiều cần migration tạo lại cột vector và nạp lại corpus.
+"""
+
+import hashlib
+import math
+import re
+import unicodedata
+from typing import Protocol
+
+EMBEDDING_DIM = 1024  # Q5 chưa chốt: giả định phổ biến của mô hình đa ngữ; đổi ở đây và ở migration
+
+
+class EmbeddingModel(Protocol):
+    dimension: int
+
+    async def embed(self, texts: list[str]) -> list[list[float]]: ...
+
+
+_WORD = re.compile(r"\w+", re.UNICODE)
+
+
+def _fold(text: str) -> str:
+    decomposed = unicodedata.normalize("NFKD", text.lower().replace("đ", "d"))
+    return "".join(c for c in decomposed if not unicodedata.combining(c))
+
+
+class FakeEmbedding:
+    """Túi từ băm vào `dimension` chiều rồi chuẩn hóa L2. Xác định; chung từ thì gần nhau."""
+
+    def __init__(self, dimension: int = EMBEDDING_DIM) -> None:
+        self.dimension = dimension
+
+    def _one(self, text: str) -> list[float]:
+        vector = [0.0] * self.dimension
+        for word in _WORD.findall(_fold(text)):
+            digest = hashlib.md5(word.encode("utf-8"), usedforsecurity=False).digest()
+            index = int.from_bytes(digest[:4], "big") % self.dimension
+            vector[index] += 1.0
+        norm = math.sqrt(sum(x * x for x in vector))
+        if norm == 0:
+            vector[0] = 1.0  # văn bản không có từ: vector cố định thay vì chia cho 0
+            return vector
+        return [x / norm for x in vector]
+
+    async def embed(self, texts: list[str]) -> list[list[float]]:
+        return [self._one(t) for t in texts]
+
+
+def get_embedding_model() -> EmbeddingModel:
+    """Nhà cung cấp thật sẽ chọn theo cấu hình khi Q5 chốt; hiện chỉ có bản giả."""
+    return FakeEmbedding()

@@ -199,11 +199,11 @@ Mỗi module ghi: bảng dữ liệu → API → màn hình → job nền → te
 **Bảng**
 - `audit_logs` (I6): actor_id, action_type, entity_type, entity_id, before_state jsonb, after_state jsonb, created_at — **append-only bằng trigger + REVOKE**.
 - `companies.verification_status` (unverified/pending/verified/rejected), `verification_level` (basic/evfta_verified), verified_at, expires_at (I7).
-- `evidences`: loại (chứng nhận chất lượng, EUR.1 đã cấp — che giá, tự chứng nhận lô ≤ 6.000 EUR, gạo thơm NĐ 103/2020, EUDR, IUU), file, issued_at, expires_at (xuất xứ +12 tháng), approval_status.
-- `required_evidence_rules`: nhóm hàng → loại bằng chứng bắt buộc (dữ liệu, không code cứng).
+- `evidences`: loại (EUR.1 đã cấp — che giá, tự chứng nhận lô ≤ 6.000 EUR, gạo thơm NĐ 103/2020, EUDR, IUU; và chứng nhận chất lượng **tách theo loại có cấu trúc** — *danh sách loại do luật TM duyệt trước khi nhập*: hệ thống quản lý ISO 9001, ISO 14001, HACCP, BRCGS, IFS; trách nhiệm xã hội BSCI, WRAP, SMETA; kỹ thuật CE marking; kết quả kiểm nghiệm phòng lab kèm tên phòng lab và số hiệu báo cáo), file, certificate_number, issuer (để đối chiếu với tổ chức cấp), issued_at, expires_at (xuất xứ +12 tháng), approval_status.
+- `required_evidence_rules`: nhóm hàng → loại bằng chứng bắt buộc (dữ liệu do luật TM nhập, không code cứng). Với mã cà phê 0901.11 và 0901.21, nếu luật TM yêu cầu thì checklist **nhắc** nộp hồ sơ EUDR (chỉ nhắc, không loại tự động, không phải công cụ EUDR — X4).
 - `verification_requests`, `verification_decisions` (reviewer, decision, **reason bắt buộc** khi reject/request_info, decided_at) — append-only.
 
-**Quy tắc:** `evfta_verified` = verified **và** đủ bằng chứng bắt buộc còn hạn. Mọi quyết định đi qua **một** hàm `verification.service.decide()` → ghi decision + audit + phát `VerificationStatusChanged`.
+**Quy tắc:** `evfta_verified` = verified **và** đủ bằng chứng bắt buộc còn hạn. Mọi quyết định đi qua **một** hàm `verification.service.decide()` → ghi decision + audit + phát `VerificationStatusChanged`. Điểm hoàn thiện hồ sơ (B3) và mọi điểm uy tín/rủi ro sau này là khái niệm **khác** xác minh: không có tính năng nào ngoài `decide()` đổi trạng thái xác minh hay loại doanh nghiệp (xem `docs/roadmap/2026-09-29-nghien-cuu-trong-so-uy-tin.md`).
 
 | API | Mô tả |
 |---|---|
@@ -215,7 +215,7 @@ Mỗi module ghi: bảng dữ liệu → API → màn hình → job nền → te
 | `GET /api/admin/audit-logs?entity=` | Lọc theo đối tượng |
 | `GET /api/admin/stats` | Đã xác minh, chờ duyệt, câu hỏi AI tuần, độ tin cậy TB (I5) |
 
-**Job nền:** quét hằng ngày — hết hạn thì hạ mức/trạng thái, bằng chứng hết hạn thì hạ `evfta_verified`, sắp hết hạn thì gửi `expiry_alert`.
+**Job nền:** quét hằng ngày — hết hạn thì hạ mức/trạng thái, bằng chứng hết hạn thì hạ `evfta_verified`, sắp hết hạn thì gửi `expiry_alert`, và tính lại `profile_completeness_score` (B3) của công ty có bằng chứng hết hạn (bằng chứng hết hạn không phát sự kiện nào).
 
 **Test:** pending → verified trong <5 phút thao tác; 100% quyết định có lý do + audit; thử `UPDATE audit_logs` ở DB phải lỗi.
 

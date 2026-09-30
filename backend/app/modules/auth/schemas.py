@@ -1,39 +1,59 @@
 import uuid
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, field_validator
 
-from app.modules.auth.models import UserRole
+from app.core.security import MIN_PASSWORD_LENGTH
 
 Language = Literal["vi", "en"]
+Role = Literal["exporter", "buyer", "admin"]
+
+
+def _no_blank(v: str) -> str:
+    if not v.strip():
+        raise ValueError("password must not be blank")
+    return v
 
 
 class RegisterIn(BaseModel):
     email: EmailStr
-    password: str = Field(min_length=10, max_length=128)
-    name: str = Field(min_length=1, max_length=120)
-    company_name: str = Field(min_length=1, max_length=200)
-    role: Literal["buyer", "exporter"]  # admin không tự đăng ký được
+    password: str = Field(min_length=MIN_PASSWORD_LENGTH, max_length=256)
+    role: Literal["exporter", "buyer"]  # admin chỉ tạo bằng scripts/create_admin.py
+    phone: str | None = Field(default=None, max_length=32)
     preferred_language: Language = "vi"
-    consent_accepted: Literal[True]
+    accept_terms: Literal[True]
+
+    _pw = field_validator("password")(_no_blank)
 
 
 class LoginIn(BaseModel):
     email: EmailStr
-    password: str = Field(max_length=128)
+    password: str = Field(min_length=1, max_length=256)
 
-
-class UserOut(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-
-    id: uuid.UUID
-    email: str
-    name: str
-    company_name: str | None
-    role: UserRole
-    preferred_language: Language
+    _pw = field_validator("password")(_no_blank)
 
 
 class MePatch(BaseModel):
-    name: str | None = Field(default=None, min_length=1, max_length=120)
     preferred_language: Language | None = None
+    phone: str | None = Field(default=None, max_length=32)
+
+
+class CurrentUser(BaseModel):
+    id: uuid.UUID
+    email: str
+    role: Role
+    preferred_language: Language
+
+
+class Contact(BaseModel):
+    """Địa chỉ và ngôn ngữ nhận thông báo của một người dùng."""
+
+    email: str
+    preferred_language: str
+    role: str = "exporter"
+
+
+class DeleteAccountIn(BaseModel):
+    """Xóa tài khoản là không thể hoàn tác nên phải nhập lại mật khẩu."""
+
+    password: str = Field(min_length=1, max_length=256)

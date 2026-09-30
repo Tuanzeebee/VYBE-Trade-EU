@@ -1,0 +1,8 @@
+<!doctype html>
+<html lang="en"><body style="font-family:Arial,sans-serif;color:#0f172a">
+<p>Hello {{ company_name }},</p>
+<p>{% if outcome == 'approve' %}Your profile has been verified by an administrator.{% elif outcome == 'reject' %}Your verification request was rejected.{% elif outcome == 'request_info' %}An administrator needs more information from you to verify your profile.{% else %}Your verification has expired. You can submit a new verification request.{% endif %}</p>
+<p>{% if reason and outcome in ('reject', 'request_info') %}Reason: {{ reason }}{% endif %}</p>
+<p><a href="{{ link }}" style="display:inline-block;background:#083832;color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none">View details</a></p>
+<p style="color:#64748b;font-size:12px">evfta.eu</p>
+</body></html>

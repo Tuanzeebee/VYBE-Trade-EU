@@ -4,12 +4,20 @@ from logging.config import fileConfig
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import create_async_engine
 
+# Import models của từng module ở đây khi module có bảng, để autogenerate thấy chúng.
+import app.core.audit
+import app.modules.auth.models
+import app.modules.catalog.models
+import app.modules.companies.models
+import app.modules.compliance.models
+import app.modules.copilot.models
+import app.modules.dashboard.models
+import app.modules.messaging.models
+import app.modules.notifications.models
+import app.modules.verification.models  # noqa: F401
 from alembic import context
 from app.core.config import get_settings
 from app.core.db import Base
-
-# Import models của từng module ở đây khi module có bảng, để autogenerate thấy chúng.
-from app.modules.auth import models as _auth_models  # noqa: F401
 
 config = context.config
 if config.config_file_name is not None:
@@ -18,19 +26,31 @@ if config.config_file_name is not None:
 target_metadata = Base.metadata
 
 
+def include_object(
+    obj: object, name: str | None, type_: str, reflected: bool, compare_to: object
+) -> bool:
+    """Bảng và chỉ mục procrastinate_* do Procrastinate quản lý (migration 0013): bỏ qua."""
+    return not (
+        reflected and name is not None and name.startswith(("procrastinate_", "idx_procrastinate_"))
+    )
+
+
 def run_migrations_offline() -> None:
     context.configure(
         url=get_settings().database_url,
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
+        include_object=include_object,
     )
     with context.begin_transaction():
         context.run_migrations()
 
 
 def do_run_migrations(connection: Connection) -> None:
-    context.configure(connection=connection, target_metadata=target_metadata)
+    context.configure(
+        connection=connection, target_metadata=target_metadata, include_object=include_object
+    )
     with context.begin_transaction():
         context.run_migrations()
 

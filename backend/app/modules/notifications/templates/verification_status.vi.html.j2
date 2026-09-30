@@ -1,0 +1,8 @@
+<!doctype html>
+<html lang="vi"><body style="font-family:Arial,sans-serif;color:#0f172a">
+<p>Xin chào {{ company_name }},</p>
+<p>{% if outcome == 'approve' %}Hồ sơ của bạn đã được xác minh bởi quản trị viên.{% elif outcome == 'reject' %}Yêu cầu xác minh của bạn bị từ chối.{% elif outcome == 'request_info' %}Quản trị viên cần bạn bổ sung thông tin để xác minh.{% else %}Xác minh của bạn đã hết hạn. Bạn có thể gửi yêu cầu xác minh mới.{% endif %}</p>
+<p>{% if reason and outcome in ('reject', 'request_info') %}Lý do: {{ reason }}{% endif %}</p>
+<p><a href="{{ link }}" style="display:inline-block;background:#083832;color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none">Xem chi tiết</a></p>
+<p style="color:#64748b;font-size:12px">evfta.eu</p>
+</body></html>

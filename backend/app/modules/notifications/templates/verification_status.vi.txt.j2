@@ -1,0 +1,10 @@
+Subject: {% if outcome == 'approve' %}Hồ sơ của bạn đã được xác minh{% elif outcome == 'reject' %}Yêu cầu xác minh bị từ chối{% elif outcome == 'request_info' %}Cần bổ sung thông tin xác minh{% else %}Xác minh của bạn đã hết hạn{% endif %}
+
+Xin chào {{ company_name }},
+
+{% if outcome == 'approve' %}Hồ sơ của bạn đã được xác minh bởi quản trị viên.{% elif outcome == 'reject' %}Yêu cầu xác minh của bạn bị từ chối.{% elif outcome == 'request_info' %}Quản trị viên cần bạn bổ sung thông tin để xác minh.{% else %}Xác minh của bạn đã hết hạn. Bạn có thể gửi yêu cầu xác minh mới.{% endif %}
+{% if reason and outcome in ('reject', 'request_info') %}Lý do: {{ reason }}{% endif %}
+
+Xem chi tiết: {{ link }}
+
+evfta.eu

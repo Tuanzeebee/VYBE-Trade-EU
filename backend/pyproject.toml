@@ -8,7 +8,15 @@ dependencies = [
     "asyncpg>=0.31.0",
     "boto3>=1.43.104",
     "fastapi[standard]>=0.141.1",
+    "jinja2>=3.1.6",
+    "openpyxl>=3.1.5",
+    "pgvector>=0.5.0",
+    "procrastinate>=3.10.0",
+    "psycopg[binary,pool]>=3.3.6",
     "pydantic-settings>=2.15.0",
+    "pypdf>=6.19.0",
+    "reportlab>=5.0.1",
+    "slowapi>=0.1.10",
     "sqlalchemy[asyncio]>=2.1.1",
 ]
 
@@ -24,7 +32,8 @@ select = ["E", "F", "I", "UP", "B", "ASYNC", "S", "RUF"]
 ignore = ["RUF001", "RUF002", "RUF003"]  # cho phép chữ tiếng Việt trong chuỗi/comment
 
 [tool.ruff.lint.per-file-ignores]
-"**/tests/**" = ["S101", "S105", "S106"]
+"**/tests/**" = ["S101", "E501"]  # dữ liệu synthetic trong test có thể dài
+"app/modules/copilot/prompt.py" = ["E501"]  # văn bản prompt
 
 [tool.mypy]
 strict = true
@@ -32,7 +41,7 @@ python_version = "3.12"
 plugins = ["pydantic.mypy"]
 
 [[tool.mypy.overrides]]
-module = ["boto3.*", "botocore.*"]
+module = ["boto3.*", "botocore.*", "reportlab.*", "asyncpg.*", "pgvector.*", "openpyxl.*"]
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]
@@ -40,6 +49,7 @@ asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "session"
 asyncio_default_test_loop_scope = "session"
 testpaths = ["app"]
+markers = ["slow: đo hiệu năng với dữ liệu lớn (vẫn chạy mặc định)"]
 
 [dependency-groups]
 dev = [

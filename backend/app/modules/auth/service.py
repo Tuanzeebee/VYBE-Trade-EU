@@ -1,192 +1,269 @@
-"""API công khai của module auth: tài khoản, mật khẩu, phiên, phân quyền.
+"""API công khai của module auth.
 
-Khung lấy từ VYBE .NET (ApplicationUser: AccessFailedCount/LockoutEnd/IsActive, email unique),
-bỏ lỗi AuthController cho qua khi mật khẩu rỗng.
+Module khác chỉ dùng get_current_user, require_role và schema CurrentUser.
 """
 
-import hashlib
 import secrets
+import uuid
 from collections.abc import Awaitable, Callable
 from datetime import UTC, datetime, timedelta
 from typing import Annotated
 
-from argon2 import PasswordHasher
-from argon2.exceptions import InvalidHashError, VerificationError
-from fastapi import Depends, Request
+from fastapi import Cookie, Depends
 from sqlalchemy import delete, select
-from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.audit import record
 from app.core.config import get_settings
 from app.core.db import get_session
 from app.core.errors import AppError
+from app.core.security import (
+    MIN_PASSWORD_LENGTH,
+    hash_password,
+    hash_token,
+    new_session_token,
+    verify_password,
+)
 from app.modules.auth.models import Session, User, UserRole
+from app.modules.auth.schemas import (
+    Contact,
+    CurrentUser,
+    DeleteAccountIn,
+    LoginIn,
+    MePatch,
+    RegisterIn,
+)
 
-MIN_PASSWORD = 10
+COOKIE_NAME = "evfta_session"
 MAX_FAILED_LOGINS = 5
-LOCK_DURATION = timedelta(minutes=15)
-
-_hasher = PasswordHasher()
-# Băm sẵn để email không tồn tại cũng tốn thời gian như email có thật (chống dò email).
-_DUMMY_HASH = _hasher.hash("evfta-dummy-password")
+LOCK_MINUTES = 15
+_DUMMY_HASH = hash_password("dummy-password-for-timing")
 
 
-def _now() -> datetime:
-    return datetime.now(UTC)
+def validate_password(password: str) -> str:
+    if len(password) < MIN_PASSWORD_LENGTH or not password.strip():
+        raise ValueError("password too short or blank")
+    return password
 
 
-def _invalid_credentials() -> AppError:
-    return AppError("invalid_credentials", "Email hoặc mật khẩu không đúng.", 401)
-
-
-def _locked() -> AppError:
-    return AppError(
-        "account_locked",
-        "Tài khoản tạm khóa 15 phút do nhập sai mật khẩu nhiều lần.",
-        423,
+def _to_current(user: User) -> CurrentUser:
+    return CurrentUser.model_validate(
+        {
+            "id": user.id,
+            "email": user.email,
+            "role": user.role.value,
+            "preferred_language": user.preferred_language,
+        }
     )
 
 
-def _verify(password_hash: str, password: str) -> bool:
-    try:
-        return _hasher.verify(password_hash, password)
-    except (VerificationError, InvalidHashError):
-        return False
-
-
-def _token_hash(token: str) -> str:
-    return hashlib.sha256(token.encode()).hexdigest()
-
-
-async def create_user(
-    session: AsyncSession,
-    *,
-    email: str,
-    password: str,
-    name: str,
-    role: UserRole,
-    company_name: str | None = None,
-    preferred_language: str = "vi",
-    consent_accepted: bool = False,
-) -> User:
-    """Dùng chung cho đăng ký, lệnh create_admin và seed_demo."""
-    if len(password) < MIN_PASSWORD:
-        raise AppError("weak_password", "Mật khẩu cần ít nhất 10 ký tự.", 422)
-    email = email.strip().lower()
-    if await session.scalar(select(User.id).where(User.email == email)):
-        raise AppError("email_taken", "Email này đã có tài khoản.", 409)
-    user = User(
-        email=email,
-        name=name.strip(),
-        company_name=company_name.strip() if company_name else None,
-        password_hash=_hasher.hash(password),
-        role=role,
-        preferred_language=preferred_language,
-        consent_accepted_at=_now() if consent_accepted else None,
-        consent_version=get_settings().consent_version if consent_accepted else None,
-    )
-    session.add(user)
-    try:
-        await session.commit()
-    except IntegrityError as exc:  # hai request đăng ký cùng email đến cùng lúc
-        await session.rollback()
-        raise AppError("email_taken", "Email này đã có tài khoản.", 409) from exc
-    return user
-
-
-async def authenticate(session: AsyncSession, email: str, password: str) -> User:
-    if not password:  # bài học VYBE A1: mật khẩu rỗng không bao giờ được qua
-        raise _invalid_credentials()
-    user = await session.scalar(select(User).where(User.email == email.strip().lower()))
-    if user is None or not user.is_active:
-        _verify(_DUMMY_HASH, password)
-        raise _invalid_credentials()
-
-    now = _now()
-    if user.locked_until and user.locked_until > now:
-        raise _locked()
-
-    if not _verify(user.password_hash, password):
-        user.failed_login_count += 1
-        just_locked = user.failed_login_count >= MAX_FAILED_LOGINS
-        if just_locked:
-            user.locked_until = now + LOCK_DURATION
-            user.failed_login_count = 0
-        await session.commit()
-        raise _locked() if just_locked else _invalid_credentials()
-
-    user.failed_login_count = 0
-    user.locked_until = None
-    user.last_login_at = now
-    if _hasher.check_needs_rehash(user.password_hash):
-        user.password_hash = _hasher.hash(password)
-    await session.commit()
-    return user
-
-
-async def create_session(session: AsyncSession, user: User) -> str:
-    """Trả token thô để đặt vào cookie; DB chỉ giữ hash."""
-    token = secrets.token_urlsafe(32)
+def _open_session(session: AsyncSession, user: User) -> str:
+    token = new_session_token()
     session.add(
         Session(
             user_id=user.id,
-            token_hash=_token_hash(token),
-            expires_at=_now() + timedelta(days=get_settings().session_days),
+            token_hash=hash_token(token),
+            expires_at=datetime.now(UTC) + timedelta(days=get_settings().session_days),
         )
     )
+    return token
+
+
+async def register(session: AsyncSession, data: RegisterIn) -> str:
+    """Tạo tài khoản exporter/buyer, lưu consent và mở phiên. Trả token phiên."""
+    email = data.email.lower()
+    if await session.scalar(select(User.id).where(User.email == email)):
+        raise AppError("email_taken", "Email already registered", 409)
+    user = User(
+        email=email,
+        phone=data.phone,
+        password_hash=hash_password(data.password),
+        role=UserRole(data.role),
+        preferred_language=data.preferred_language,
+        consent_accepted_at=datetime.now(UTC),
+        consent_version=get_settings().consent_version,
+    )
+    session.add(user)
+    await session.flush()
+    token = _open_session(session, user)
     await session.commit()
     return token
 
 
-async def revoke_session(session: AsyncSession, token: str) -> None:
-    await session.execute(delete(Session).where(Session.token_hash == _token_hash(token)))
+async def login(session: AsyncSession, data: LoginIn) -> str:
+    """Sai 5 lần liên tiếp → khóa 15 phút. Trả token phiên."""
+    now = datetime.now(UTC)
+    user = await session.scalar(
+        select(User).where(User.email == data.email.lower(), User.deleted_at.is_(None))
+    )
+    if user is None:
+        verify_password(_DUMMY_HASH, data.password)  # cân bằng thời gian phản hồi
+        raise AppError("invalid_credentials", "Invalid email or password", 401)
+    if user.locked_until and user.locked_until > now:
+        raise AppError("account_locked", "Account locked, try again later", 423)
+    if not verify_password(user.password_hash, data.password):
+        user.failed_login_count += 1
+        if user.failed_login_count >= MAX_FAILED_LOGINS:
+            user.locked_until = now + timedelta(minutes=LOCK_MINUTES)
+            user.failed_login_count = 0
+        await session.commit()
+        raise AppError("invalid_credentials", "Invalid email or password", 401)
+    user.failed_login_count = 0
+    user.locked_until = None
+    user.last_login_at = now
+    token = _open_session(session, user)
     await session.commit()
+    return token
 
 
-async def user_from_token(session: AsyncSession, token: str) -> User | None:
-    return await session.scalar(
+async def logout(session: AsyncSession, token: str | None) -> None:
+    if token:
+        await session.execute(delete(Session).where(Session.token_hash == hash_token(token)))
+        await session.commit()
+
+
+async def _user_from_token(session: AsyncSession, token: str | None) -> User | None:
+    if not token:
+        return None
+    user: User | None = await session.scalar(
         select(User)
         .join(Session, Session.user_id == User.id)
         .where(
-            Session.token_hash == _token_hash(token),
-            Session.expires_at > _now(),
-            User.is_active.is_(True),
+            Session.token_hash == hash_token(token),
+            Session.expires_at > datetime.now(UTC),
+            User.deleted_at.is_(None),
         )
+    )
+    return user
+
+
+async def get_current_user(
+    session: Annotated[AsyncSession, Depends(get_session)],
+    evfta_session: Annotated[str | None, Cookie()] = None,
+) -> CurrentUser:
+    """Dependency: 401 khi thiếu phiên hoặc phiên hết hạn."""
+    user = await _user_from_token(session, evfta_session)
+    if user is None:
+        raise AppError("unauthenticated", "Login required", 401)
+    return _to_current(user)
+
+
+async def get_optional_user(
+    session: Annotated[AsyncSession, Depends(get_session)],
+    evfta_session: Annotated[str | None, Cookie()] = None,
+) -> CurrentUser | None:
+    """Dependency cho endpoint công khai: có phiên thì trả người dùng, khách thì None."""
+    user = await _user_from_token(session, evfta_session)
+    return _to_current(user) if user else None
+
+
+def require_role(*roles: str) -> Callable[..., Awaitable[CurrentUser]]:
+    """Dependency cấp router: 401 khi thiếu phiên, 403 khi sai vai trò."""
+
+    async def dep(user: Annotated[CurrentUser, Depends(get_current_user)]) -> CurrentUser:
+        if user.role not in roles:
+            raise AppError("forbidden", "Not allowed for this role", 403)
+        return user
+
+    return dep
+
+
+async def update_me(session: AsyncSession, user_id: uuid.UUID, data: MePatch) -> CurrentUser:
+    user = await session.get_one(User, user_id)
+    if data.preferred_language is not None:
+        user.preferred_language = data.preferred_language
+    if data.phone is not None:
+        user.phone = data.phone
+    await session.commit()
+    return _to_current(user)
+
+
+async def get_contact(session: AsyncSession, user_id: uuid.UUID) -> Contact | None:
+    """Email và ngôn ngữ của người dùng còn hoạt động (đã xóa tài khoản → None)."""
+    user = await session.scalar(select(User).where(User.id == user_id, User.deleted_at.is_(None)))
+    if user is None:
+        return None
+    return Contact(
+        email=user.email, preferred_language=user.preferred_language, role=user.role.value
     )
 
 
-async def update_me(
-    session: AsyncSession, user: User, *, name: str | None, preferred_language: str | None
-) -> User:
-    if name is not None:
-        user.name = name.strip()
-    if preferred_language is not None:
-        user.preferred_language = preferred_language
+async def get_admin_by_email(session: AsyncSession, email: str) -> CurrentUser | None:
+    """Admin theo email (script nhập dữ liệu cần một actor thật để ghi audit)."""
+    user = await session.scalar(
+        select(User).where(
+            User.email == email.lower(), User.role == UserRole.admin, User.deleted_at.is_(None)
+        )
+    )
+    return _to_current(user) if user else None
+
+
+async def create_admin(session: AsyncSession, email: str, password: str) -> uuid.UUID:
+    """Chỉ gọi từ scripts/create_admin.py — không có API tạo admin."""
+    validate_password(password)
+    user = User(
+        email=email.lower(),
+        password_hash=hash_password(password),
+        role=UserRole.admin,
+        preferred_language="vi",
+        consent_accepted_at=datetime.now(UTC),
+        consent_version=get_settings().consent_version,
+    )
+    session.add(user)
+    await session.flush()
+    await record(
+        session,
+        actor_id=None,
+        action_type="user.create_admin",
+        entity_type="user",
+        entity_id=str(user.id),
+        before=None,
+        after={"email": user.email, "role": "admin"},
+    )
     await session.commit()
-    return user
+    return user.id
 
 
-async def list_users(session: AsyncSession) -> list[User]:
-    return list(await session.scalars(select(User).order_by(User.created_at.desc())))
+# ── Xóa tài khoản (J2): ẩn danh hóa PII, giữ audit ─────────────────────────────
+AnonymizeHook = Callable[[AsyncSession, uuid.UUID], Awaitable[None]]
+_anonymize_hooks: list[AnonymizeHook] = []
 
 
-# --- Dependency phân quyền (lớp 1, gắn trên router). Service vẫn tự kiểm chủ sở hữu (lớp 2).
+def register_anonymize_hook(hook: AnonymizeHook) -> None:
+    """Module khác đăng ký việc dọn PII của riêng mình; chạy CÙNG transaction với việc xóa để
+    không có trạng thái nửa vời (tài khoản đã xóa nhưng công ty vẫn hiện)."""
+    if hook not in _anonymize_hooks:
+        _anonymize_hooks.append(hook)
 
 
-async def current_user(
-    request: Request, session: Annotated[AsyncSession, Depends(get_session)]
-) -> User:
-    token = request.cookies.get(get_settings().session_cookie_name)
-    user = await user_from_token(session, token) if token else None
-    if user is None:
-        raise AppError("unauthenticated", "Vui lòng đăng nhập.", 401)
-    return user
-
-
-def require_role(*roles: UserRole) -> Callable[..., Awaitable[User]]:
-    async def dependency(user: Annotated[User, Depends(current_user)]) -> User:
-        if user.role not in roles:
-            raise AppError("forbidden", "Bạn không có quyền truy cập.", 403)
-        return user
-
-    return dependency
+async def anonymize_user(session: AsyncSession, user: CurrentUser, data: DeleteAccountIn) -> None:
+    """Xóa tài khoản bằng ẩn danh hóa: email, điện thoại, mật khẩu không dùng lại được, mọi phiên
+    bị hủy, module khác dọn PII của mình. audit_logs giữ nguyên và ghi thêm `user.delete`
+    (không kèm email)."""
+    row = await session.scalar(select(User).where(User.id == user.id, User.deleted_at.is_(None)))
+    if row is None:
+        raise AppError("unauthenticated", "Login required", 401)
+    if row.role == UserRole.admin:
+        raise AppError("forbidden", "Admin accounts cannot be deleted here", 403)
+    if not verify_password(row.password_hash, data.password):
+        raise AppError("wrong_password", "Password is incorrect", 403)
+    record_before = {"role": row.role.value, "preferred_language": row.preferred_language}
+    row.email = f"deleted-{row.id}@invalid"
+    row.phone = None
+    row.password_hash = hash_password(secrets.token_urlsafe(32))
+    row.locked_until = None
+    row.failed_login_count = 0
+    row.deleted_at = datetime.now(UTC)
+    await session.execute(delete(Session).where(Session.user_id == row.id))
+    for hook in _anonymize_hooks:
+        await hook(session, row.id)
+    await record(
+        session,
+        actor_id=row.id,
+        action_type="user.delete",
+        entity_type="user",
+        entity_id=str(row.id),
+        before=record_before,
+        after={"deleted": True},
+    )
+    await session.commit()

@@ -4,8 +4,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useEffect } from 'react';
+import { useLocale } from 'next-intl';
+import { usePathname, useRouter } from '../i18n/navigation';
 import { translateText } from '../i18n/translate';
+import { createApiClient } from '../lib/api/client';
 
 export type LanguageCode = 'vi' | 'en' | 'fr' | 'ja';
 
@@ -17,7 +20,7 @@ export interface LanguageOption {
   country: string;
 }
 
-export const LANGUAGES: LanguageOption[] = [
+const ALL_LANGUAGES: LanguageOption[] = [
   {
     code: 'vi',
     name: 'Tiếng Việt',
@@ -47,6 +50,9 @@ export const LANGUAGES: LanguageOption[] = [
     country: '日本 (Japan)'
   }
 ];
+
+// MVP chỉ có vi/en; ngôn ngữ thứ 3 (fr, ja) là P2 — ẩn khỏi giao diện, giữ dữ liệu dịch.
+export const LANGUAGES = ALL_LANGUAGES.filter((option) => option.code === 'vi' || option.code === 'en');
 
 export const TRANSLATIONS = {
   vi: {
@@ -418,19 +424,21 @@ interface LanguageContextType {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguageState] = useState<LanguageCode>('vi');
-
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem('vybe_language') as LanguageCode;
-      if (LANGUAGES.some((option) => option.code === saved)) setLanguageState(saved);
-    } catch { /* Keep the default language when storage is unavailable. */ }
-  }, []);
+  // Ngôn ngữ nằm trên URL (/vi, /en) — next-intl là nguồn sự thật, không còn localStorage.
+  const locale = useLocale();
+  const language: LanguageCode = LANGUAGES.some((option) => option.code === locale) ? (locale as LanguageCode) : 'vi';
+  const router = useRouter();
+  const pathname = usePathname();
 
   const setLanguage = (lang: LanguageCode) => {
-    setLanguageState(lang);
-    try { localStorage.setItem('vybe_language', lang); }
-    catch { /* Language selection still works when storage is unavailable. */ }
+    if (!LANGUAGES.some((option) => option.code === lang)) return;
+    const search = typeof window === 'undefined' ? '' : window.location.search;
+    router.replace(`${pathname}${search}`, { locale: lang });
+    // Người đã đăng nhập: lưu ngôn ngữ ưa dùng để email, thông báo và dịch tin nhắn theo đúng ngôn ngữ (A3, F3).
+    // Khách nhận 401 và bị bỏ qua; ngôn ngữ trên URL vẫn là nguồn sự thật cho giao diện.
+    void createApiClient()
+      .PATCH('/api/me', { body: { preferred_language: lang as 'vi' | 'en' } })
+      .catch(() => undefined);
   };
 
   const currentLanguageOption = LANGUAGES.find(l => l.code === language) || LANGUAGES[0];
