@@ -41,6 +41,12 @@ class Settings(BaseSettings):
     ollama_timeout_seconds: float = 120.0
     # Origin của frontend được gọi API kèm cookie
     cors_origins: list[str] = ["http://localhost:3000"]
+    # Dữ liệu tuân thủ minh hoạ (AGENTS.md §6.2 ngoại lệ DEMO): chỉ staging/dev được bật. Khi bật,
+    # dòng is_demo chưa duyệt được trả kèm data_status="demo_unreviewed". ENV=prod + bật → từ chối.
+    demo_compliance_data: bool = False
+    # Điểm tín nhiệm seller (ADR-0004): công khai trên hồ sơ khi bật; tắt thì chỉ owner và admin
+    # thấy. Production giữ tắt cho tới khi pháp lý/GDPR duyệt.
+    trust_score_public: bool = False
 
     @model_validator(mode="after")
     def _no_dev_defaults_outside_dev(self) -> "Settings":
@@ -57,6 +63,8 @@ class Settings(BaseSettings):
             problems.append("COOKIE_SECURE phải bật")
         if any(o.startswith("http://") for o in self.cors_origins):
             problems.append("CORS_ORIGINS phải dùng https")
+        if self.env == "prod" and self.demo_compliance_data:
+            problems.append("DEMO_COMPLIANCE_DATA không được bật ở production (AGENTS.md §6.2)")
         if problems:
             raise ValueError("Cấu hình không an toàn ngoài môi trường dev: " + "; ".join(problems))
         return self

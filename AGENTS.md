@@ -92,7 +92,7 @@ frontend/messages/{vi,en}.json
 docs/
 ```
 
-Module: `auth`, `companies`, `catalog`, `compliance`, `verification`, `copilot`, `directory`, `messaging`, `matching`, `notifications`, `dashboard`, `admin`.
+Module: `auth`, `companies`, `catalog`, `compliance`, `verification`, `copilot`, `directory`, `messaging`, `matching`, `notifications`, `dashboard`, `admin`, `markets` (thống kê thương mại, gợi ý thị trường, báo cáo go-to-market), `billing` (đơn chuyển khoản tối giản, quyền dùng).
 
 ---
 
@@ -102,7 +102,7 @@ Module: `auth`, `companies`, `catalog`, `compliance`, `verification`, `copilot`,
 2. **Router mỏng.** Router chỉ parse input, kiểm quyền, gọi service, trả schema. Không có logic nghiệp vụ và không có query SQL trong router.
 3. **Logic tính toán là hàm thuần.** Máy tính thuế, RoO, điểm hoàn thiện, điểm tin cậy AI nằm trong hàm không đụng DB/HTTP, để test bằng bảng ca chuẩn.
 4. **Phân quyền hai lớp.** Dependency `require_role(...)` trên router **và** service tự kiểm chủ sở hữu (`owner_user_id`). Không bao giờ chỉ ẩn nút ở UI.
-5. **Không gọi thẳng nhà cung cấp ngoài.** Chỉ qua interface: `ChatModel`, `TranslationService`, `NotificationChannel`, `Storage`, `EmbeddingModel`. Test dùng bản fake.
+5. **Không gọi thẳng nhà cung cấp ngoài.** Chỉ qua interface: `ChatModel`, `TranslationService`, `NotificationChannel`, `Storage`, `EmbeddingModel`, `CompanyLookup`, `DomainChecker`, `WebsiteProbe`, `Geocoder`, `TradeStatsSource` (ADR-0003). Test dùng bản fake. Gọi ra ngoài chỉ từ job nền, không chặn request của người dùng.
 6. **Cấu hình là dữ liệu.** Thuế suất, quy tắc xuất xứ, danh sách bằng chứng bắt buộc, trọng số hoàn thiện hồ sơ nằm trong bảng DB, không viết cứng trong code.
 7. **Tiền và tỷ lệ dùng `Decimal` / `numeric`.** Cấm float cho tiền.
 8. **Nhóm URL API:** `/api/public/*` (không cần phiên, có rate limit), `/api/me/*`, `/api/exporter/*`, `/api/buyer/*`, `/api/admin/*`.
@@ -114,9 +114,11 @@ Module: `auth`, `companies`, `catalog`, `compliance`, `verification`, `copilot`,
 Đây là rủi ro pháp lý của công ty. Mỗi quy tắc phải có test giữ nó.
 
 1. **Không bao giờ đoán luật tuân thủ.** Không tự điền thuế suất, ngưỡng xuất xứ hay điều khoản EVFTA từ kiến thức của model. Dữ liệu chỉ đến từ bảng do người duyệt luật TM nhập và duyệt.
-2. Dòng `tariff_lines` / `product_specific_rules` thiếu `reviewed_by` **không bao giờ** lộ ra API công khai.
+2. Dòng `tariff_lines` / `product_specific_rules` / `tariff_quotas` / `import_country_terms` / `sector_alerts` thiếu `reviewed_by` **không bao giờ** lộ ra API công khai.
+   - **Ngoại lệ DEMO (sửa đổi 01/10/2026):** chỉ khi cờ `DEMO_COMPLIANCE_DATA` bật **và** `ENV` khác `prod`, dòng có `is_demo = true AND reviewed_by IS NULL` được trả kèm `data_status = "demo_unreviewed"` và giao diện hiện banner "Dữ liệu minh hoạ — chưa được chuyên gia pháp lý duyệt". Dòng nháp không gắn `is_demo` vẫn không bao giờ lộ. `ENV=prod` mà bật cờ → ứng dụng từ chối khởi động.
 3. Mã HS ngoài danh mục hỗ trợ → trả `unsupported`, **không có con số nào**.
 4. Có hạn ngạch hoặc thuế tuyệt đối/hỗn hợp → `needs_review`, không trả 0%. (Ca kiểm: gạo ST25.)
+   - **Sửa đổi hạn ngạch (01/10/2026, cần luật TM ký trước khi dùng dữ liệu thật ở production):** máy tính chỉ được trả kịch bản `quota_scenarios` (trong / ngoài hạn ngạch) khi có dòng `tariff_quotas` **đã duyệt** và phân nhóm sản phẩm người dùng chọn nằm trong danh sách phân nhóm đủ điều kiện **đã duyệt**. Kịch bản luôn kèm điều kiện (xuất xứ đạt, được phân bổ hạn ngạch, chứng nhận/giấy phép) và không bao giờ trình bày như 0% vô điều kiện. Thuế tuyệt đối chỉ tính khi có khối lượng người dùng nhập; thuế hỗn hợp vẫn `needs_review`. Mọi trường hợp khác (ST25, phân nhóm ngoài danh sách, thiếu dữ liệu đã duyệt) → `needs_review`, không số.
 5. RoO có ba trạng thái riêng `pass` / `fail` / `inconclusive`; `requires_expert = true` → luôn `inconclusive`.
 6. EUR.1 chỉ là **bản nháp**: chỉ sinh khi RoO = `pass`; watermark `DRAFT — for review before submission to issuing authority` trên mọi trang; ghi rõ cơ quan cấp chính thức là **Bộ Công Thương**. Không có tính năng nào "cấp" C/O.
 7. Mọi lần chạy máy tính ghi đúng một bản ghi `compliance_checks`, kể cả khách.
@@ -164,7 +166,13 @@ Module: `auth`, `companies`, `catalog`, `compliance`, `verification`, `copilot`,
 ## 10. Phạm vi
 
 - **P0** bắt buộc · **P1** cắt đầu tiên nếu trễ (hiện có K1, K2) · **P2** không làm.
-- **Không làm:** thanh toán/escrow/gói Member, ghép đối tác bằng AI, logistics, danh bạ Provider, công cụ ESG/CSRD/EUDR, cấp C/O chính thức, ngôn ngữ thứ 3, app native, AI đọc giấy tờ (OCR/risk score).
+- **Không làm:** escrow / thanh toán qua nền tảng / cổng thẻ / stablecoin (giai đoạn 2, sau khi có ~100 người dùng), ghép đối tác bằng AI ngôn ngữ tự nhiên, dịch vụ logistics do nền tảng vận hành, công cụ ESG/CSRD/EUDR, cấp C/O chính thức, ngôn ngữ thứ 3, app native.
+- **Đưa vào phạm vi theo yêu cầu khách sau demo 30/09/2026** (backlog mã `U*`, spec `docs/superpowers/specs/2026-10-01-demo-feedback-upgrade-design.md`):
+  - nhà cung cấp dịch vụ (logistics, hải quan, kế toán-thuế…) là một loại seller, xác minh giấy phép hành nghề;
+  - hành trình trả phí **tối giản**: đơn hàng → chuyển khoản → admin xác nhận đã nhận tiền → cấp quyền dùng (ADR-0005);
+  - AI đọc giấy tờ **chỉ gợi ý** trường cho người dùng xác nhận, không bao giờ quyết định xác minh (§6.9);
+  - thống kê thương mại, gợi ý thị trường và báo cáo go-to-market (số liệu chỉ từ dữ liệu đã nhập, AI chỉ viết lời văn);
+  - xác minh theo cấp và điểm tín nhiệm seller có giải thích (ADR-0004).
 - Được yêu cầu tính năng ngoài phạm vi → nêu rằng nó thuộc P2 / lộ trình seed và hỏi lại, không tự thêm.
 
 ---

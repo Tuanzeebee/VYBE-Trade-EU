@@ -35,11 +35,21 @@ def test_a_fully_configured_production_starts() -> None:
         ({"database_url": "postgresql+asyncpg://evfta:evfta@db:5432/evfta"}, "DATABASE_URL"),
         ({"cookie_secure": False}, "COOKIE_SECURE"),
         ({"cors_origins": ["http://evfta.eu"]}, "CORS_ORIGINS"),
+        ({"demo_compliance_data": True}, "DEMO_COMPLIANCE_DATA"),
     ],
 )
 def test_each_unsafe_default_stops_startup(over: dict[str, object], needle: str) -> None:
     with pytest.raises(ValidationError, match=needle):
         make(**over)
+
+
+def test_demo_compliance_data_defaults_off_and_is_allowed_on_staging() -> None:
+    assert Settings(_env_file=None).demo_compliance_data is False
+    assert make(env="staging", demo_compliance_data=True).demo_compliance_data is True
+
+
+def test_trust_score_is_private_by_default() -> None:
+    assert Settings(_env_file=None).trust_score_public is False
 
 
 def test_every_problem_is_reported_at_once() -> None:
