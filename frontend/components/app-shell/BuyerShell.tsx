@@ -3,7 +3,19 @@
 // Khung riêng cho buyer đã đăng nhập: sidebar (desktop), thanh menu dưới (điện thoại 390px), header gọn.
 // Guest hoặc role khác giữ khung công khai cũ; buyer chưa có hồ sơ công ty bị đưa tới onboarding.
 import React, { useEffect, useState } from 'react';
-import { Bell, Bot, Building2, Calculator, FileText, LayoutDashboard, LogOut, MessageSquare, Search, UserRound } from 'lucide-react';
+import {
+  Bell,
+  Bot,
+  Building2,
+  Calculator,
+  FileText,
+  LayoutDashboard,
+  LogOut,
+  MessageSquare,
+  Search,
+  UserRound,
+  Globe,
+} from 'lucide-react';
 import LanguageSelect from '../LanguageSelect';
 import NotificationBell from '../NotificationBell';
 import { PublicShell } from './PublicShell';
@@ -25,6 +37,7 @@ export const BUYER_NAV = [
 
 const TOOLS = [
   { href: '/tools/tariff', label: 'Công cụ tính thuế', icon: Calculator },
+  { href: '/tools/market-insights', label: 'Gợi ý thị trường EU', icon: Globe },
   { href: '/copilot', label: 'Trợ lý AI tuân thủ', icon: Bot },
 ] as const;
 

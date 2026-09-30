@@ -14,7 +14,26 @@ import ProductDialog from './ProductDialog';
 import TariffPanel from './TariffPanel';
 import CompanyProfileView from './CompanyProfileView';
 import LanguageSelect from './LanguageSelect';
-import { Home, Building2, ShieldCheck, Package, Handshake, Bell, ChevronDown, ChevronRight, Award, ExternalLink, Edit3, Eye, User, MessageSquare, Calculator, FileSignature, Bot } from 'lucide-react';
+import {
+  Home,
+  Building2,
+  ShieldCheck,
+  Package,
+  Handshake,
+  Bell,
+  ChevronDown,
+  ChevronRight,
+  Award,
+  ExternalLink,
+  Edit3,
+  Eye,
+  User,
+  MessageSquare,
+  Calculator,
+  FileSignature,
+  Bot,
+  Globe,
+} from 'lucide-react';
 import EvidenceManager from './EvidenceManager';
 import VerificationPanel from './VerificationPanel';
 import { useLanguage } from "../context/LanguageContext";
@@ -102,6 +121,7 @@ export default function SellerWorkspace({
             ];
   const toolLinks = [
     { href: '/tools/tariff', label: 'Công cụ tính thuế', icon: Calculator },
+    { href: '/tools/market-insights', label: 'Gợi ý thị trường EU', icon: Globe },
     { href: '/tools/origin', label: 'Quy tắc xuất xứ & EUR.1 nháp', icon: FileSignature },
     { href: '/copilot', label: 'Trợ lý AI tuân thủ', icon: Bot },
   ] as const;

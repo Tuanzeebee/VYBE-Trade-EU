@@ -1610,6 +1610,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/public/markets/recommendation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Market Recommendation */
+        get: operations["market_recommendation_api_public_markets_recommendation_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/exporter/evidence-types": {
         parameters: {
             query?: never;
@@ -2624,6 +2641,17 @@ export interface components {
             /** Logo Key */
             logo_key?: string | null;
         };
+        /** CompetitorOut */
+        CompetitorOut: {
+            /** Partner */
+            partner: string;
+            /** Value */
+            value: string;
+            /** Share */
+            share: string;
+            /** Unit Price */
+            unit_price: string | null;
+        };
         /** CompletenessData */
         CompletenessData: {
             /** Score */
@@ -3113,6 +3141,17 @@ export interface components {
             /** Code */
             code: string;
         };
+        /** FamilyOut */
+        FamilyOut: {
+            /** Family */
+            family: string;
+            /** Name Vi */
+            name_vi: string;
+            /** Name En */
+            name_en: string;
+            /** Products */
+            products: string[];
+        };
         /** FeedbackIn */
         FeedbackIn: {
             /** Was Helpful */
@@ -3179,6 +3218,66 @@ export interface components {
             email: string;
             /** Password */
             password: string;
+        };
+        /** MarketOut */
+        MarketOut: {
+            /** Country */
+            country: string;
+            /** Score */
+            score: string;
+            /** Import Value */
+            import_value: string;
+            /** Import Cagr */
+            import_cagr: string | null;
+            /** Vn Value */
+            vn_value: string;
+            /** Vn Share */
+            vn_share: string;
+            /** Vn Cagr */
+            vn_cagr: string | null;
+            /** World Unit Price */
+            world_unit_price: string | null;
+            /** Vn Unit Price */
+            vn_unit_price: string | null;
+            /** Reasons */
+            reasons?: components["schemas"]["ReasonOut"][];
+        };
+        /** MarketRecommendationOut */
+        MarketRecommendationOut: {
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "ok" | "no_data";
+            /** Query */
+            query: string;
+            family: components["schemas"]["FamilyOut"] | null;
+            /** Year */
+            year: number | null;
+            /** Source */
+            source: string;
+            /** Retrieved At */
+            retrieved_at: string | null;
+            /** Top Markets */
+            top_markets: components["schemas"]["MarketOut"][];
+            /** Potential Markets */
+            potential_markets: components["schemas"]["MarketOut"][];
+            /** Countries */
+            countries: components["schemas"]["MarketOut"][];
+            /** Competitors */
+            competitors: components["schemas"]["CompetitorOut"][];
+            /** Vn Extra Eu Share */
+            vn_extra_eu_share: string | null;
+            /** Vn Rank */
+            vn_rank: number | null;
+            /** Hhi */
+            hhi: string | null;
+            /** Weights */
+            weights: {
+                [key: string]: string;
+            };
+            /** Suggestions */
+            suggestions?: components["schemas"]["FamilyOut"][];
         };
         /** MarketRowOut */
         MarketRowOut: {
@@ -3988,6 +4087,18 @@ export interface components {
              * Format: date-time
              */
             created_at: string;
+        };
+        /**
+         * ReasonOut
+         * @description Lý do bằng số: code để giao diện dựng câu, value/year là số đã tính từ thống kê.
+         */
+        ReasonOut: {
+            /** Code */
+            code: string;
+            /** Value */
+            value?: string | null;
+            /** Year */
+            year?: number | null;
         };
         /** RegisterIn */
         RegisterIn: {
@@ -9350,6 +9461,38 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["TradeImportBatchOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    market_recommendation_api_public_markets_recommendation_get: {
+        parameters: {
+            query?: {
+                q?: string;
+                hs?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MarketRecommendationOut"];
                 };
             };
             /** @description Validation Error */

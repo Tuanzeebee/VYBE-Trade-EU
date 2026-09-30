@@ -7254,6 +7254,67 @@
         }
       }
     },
+    "/api/public/markets/recommendation": {
+      "get": {
+        "tags": [
+          "markets"
+        ],
+        "summary": "Market Recommendation",
+        "operationId": "market_recommendation_api_public_markets_recommendation_get",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 100,
+              "default": "",
+              "title": "Q"
+            }
+          },
+          {
+            "name": "hs",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[0-9]{4,8}$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Hs"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarketRecommendationOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/exporter/evidence-types": {
       "get": {
         "tags": [
@@ -11445,6 +11506,44 @@
         "title": "CompanyPatch",
         "description": "Chỉ các trường gửi lên mới được sửa; danh sách gửi lên thay thế danh sách cũ."
       },
+      "CompetitorOut": {
+        "properties": {
+          "partner": {
+            "type": "string",
+            "title": "Partner"
+          },
+          "value": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Value"
+          },
+          "share": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Share"
+          },
+          "unit_price": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit Price"
+          }
+        },
+        "type": "object",
+        "required": [
+          "partner",
+          "value",
+          "share",
+          "unit_price"
+        ],
+        "title": "CompetitorOut"
+      },
       "CompletenessData": {
         "properties": {
           "score": {
@@ -13041,6 +13140,37 @@
         ],
         "title": "FacilityCodeOut"
       },
+      "FamilyOut": {
+        "properties": {
+          "family": {
+            "type": "string",
+            "title": "Family"
+          },
+          "name_vi": {
+            "type": "string",
+            "title": "Name Vi"
+          },
+          "name_en": {
+            "type": "string",
+            "title": "Name En"
+          },
+          "products": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Products"
+          }
+        },
+        "type": "object",
+        "required": [
+          "family",
+          "name_vi",
+          "name_en",
+          "products"
+        ],
+        "title": "FamilyOut"
+      },
       "FeedbackIn": {
         "properties": {
           "was_helpful": {
@@ -13227,6 +13357,251 @@
           "password"
         ],
         "title": "LoginIn"
+      },
+      "MarketOut": {
+        "properties": {
+          "country": {
+            "type": "string",
+            "title": "Country"
+          },
+          "score": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Score"
+          },
+          "import_value": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Import Value"
+          },
+          "import_cagr": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Import Cagr"
+          },
+          "vn_value": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Vn Value"
+          },
+          "vn_share": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Vn Share"
+          },
+          "vn_cagr": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vn Cagr"
+          },
+          "world_unit_price": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "World Unit Price"
+          },
+          "vn_unit_price": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vn Unit Price"
+          },
+          "reasons": {
+            "items": {
+              "$ref": "#/components/schemas/ReasonOut"
+            },
+            "type": "array",
+            "title": "Reasons"
+          }
+        },
+        "type": "object",
+        "required": [
+          "country",
+          "score",
+          "import_value",
+          "import_cagr",
+          "vn_value",
+          "vn_share",
+          "vn_cagr",
+          "world_unit_price",
+          "vn_unit_price"
+        ],
+        "title": "MarketOut"
+      },
+      "MarketRecommendationOut": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "ok",
+              "no_data"
+            ],
+            "title": "Status"
+          },
+          "query": {
+            "type": "string",
+            "title": "Query"
+          },
+          "family": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/FamilyOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Year"
+          },
+          "source": {
+            "type": "string",
+            "title": "Source"
+          },
+          "retrieved_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Retrieved At"
+          },
+          "top_markets": {
+            "items": {
+              "$ref": "#/components/schemas/MarketOut"
+            },
+            "type": "array",
+            "title": "Top Markets"
+          },
+          "potential_markets": {
+            "items": {
+              "$ref": "#/components/schemas/MarketOut"
+            },
+            "type": "array",
+            "title": "Potential Markets"
+          },
+          "countries": {
+            "items": {
+              "$ref": "#/components/schemas/MarketOut"
+            },
+            "type": "array",
+            "title": "Countries"
+          },
+          "competitors": {
+            "items": {
+              "$ref": "#/components/schemas/CompetitorOut"
+            },
+            "type": "array",
+            "title": "Competitors"
+          },
+          "vn_extra_eu_share": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vn Extra Eu Share"
+          },
+          "vn_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vn Rank"
+          },
+          "hhi": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hhi"
+          },
+          "weights": {
+            "additionalProperties": {
+              "type": "string",
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+            },
+            "type": "object",
+            "title": "Weights"
+          },
+          "suggestions": {
+            "items": {
+              "$ref": "#/components/schemas/FamilyOut"
+            },
+            "type": "array",
+            "title": "Suggestions"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "query",
+          "family",
+          "year",
+          "source",
+          "retrieved_at",
+          "top_markets",
+          "potential_markets",
+          "countries",
+          "competitors",
+          "vn_extra_eu_share",
+          "vn_rank",
+          "hhi",
+          "weights"
+        ],
+        "title": "MarketRecommendationOut"
       },
       "MarketRowOut": {
         "properties": {
@@ -15967,6 +16342,43 @@
           "created_at"
         ],
         "title": "QuoteOut"
+      },
+      "ReasonOut": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          },
+          "year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Year"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code"
+        ],
+        "title": "ReasonOut",
+        "description": "Lý do bằng số: code để giao diện dựng câu, value/year là số đã tính từ thống kê."
       },
       "RegisterIn": {
         "properties": {

@@ -1,0 +1,7 @@
+# Trọng số điểm gợi ý thị trường (U16). BẢN NHÁP — PO / chuyên gia thị trường duyệt trước khi dùng
+# chính thức. Tổng không cần bằng 1 (điểm chuẩn hoá theo tổng trọng số).
+metric,weight,note
+size,0.35,Quy mô nhập khẩu từ thế giới (năm gần nhất, thang log)
+growth,0.25,Tăng trưởng nhập khẩu bình quân năm
+vn_share,0.25,Thị phần hiện có của hàng Việt Nam (chỗ đứng sẵn có)
+vn_growth,0.15,Tăng trưởng hàng Việt Nam bình quân năm

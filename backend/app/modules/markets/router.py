@@ -7,8 +7,13 @@ from app.core.db import get_session
 from app.core.spreadsheet import read_upload
 from app.modules.auth.schemas import CurrentUser
 from app.modules.auth.service import require_role
-from app.modules.markets import service
-from app.modules.markets.schemas import PriorityProductOut, TradeImportBatchOut, TradeImportIn
+from app.modules.markets import recommendation, service
+from app.modules.markets.schemas import (
+    MarketRecommendationOut,
+    PriorityProductOut,
+    TradeImportBatchOut,
+    TradeImportIn,
+)
 
 router = APIRouter(tags=["markets"])
 DB = Annotated[AsyncSession, Depends(get_session)]
@@ -41,3 +46,13 @@ async def upload_trade_file(
     source: Annotated[Literal["eurostat_comext", "curated"], Query()] = "curated",
 ) -> TradeImportBatchOut:
     return await service.import_file(session, admin, await read_upload(file), source)
+
+
+# ── Công khai: gợi ý thị trường (U16). Rate limit áp cho toàn bộ /api/public/*. ─────────────
+@router.get("/api/public/markets/recommendation")
+async def market_recommendation(
+    session: DB,
+    q: Annotated[str, Query(max_length=100)] = "",
+    hs: Annotated[str | None, Query(pattern=r"^[0-9]{4,8}$")] = None,
+) -> MarketRecommendationOut:
+    return await recommendation.market_recommendation(session, q, hs)

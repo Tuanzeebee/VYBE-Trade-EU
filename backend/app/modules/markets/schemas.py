@@ -1,6 +1,7 @@
 import datetime as dt
 import uuid
-from typing import Annotated, Any
+from decimal import Decimal
+from typing import Annotated, Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
@@ -42,3 +43,57 @@ class TradeImportBatchOut(BaseModel):
     error: str | None
     created_at: dt.datetime
     finished_at: dt.datetime | None
+
+
+# ── Gợi ý thị trường (U16) ───────────────────────────────────────────────────
+class ReasonOut(BaseModel):
+    """Lý do bằng số: code để giao diện dựng câu, value/year là số đã tính từ thống kê."""
+
+    code: str
+    value: Decimal | None = None
+    year: int | None = None
+
+
+class MarketOut(BaseModel):
+    country: str
+    score: Decimal
+    import_value: Decimal
+    import_cagr: Decimal | None
+    vn_value: Decimal
+    vn_share: Decimal
+    vn_cagr: Decimal | None
+    world_unit_price: Decimal | None
+    vn_unit_price: Decimal | None
+    reasons: list[ReasonOut] = Field(default_factory=list)
+
+
+class CompetitorOut(BaseModel):
+    partner: str
+    value: Decimal
+    share: Decimal
+    unit_price: Decimal | None
+
+
+class FamilyOut(BaseModel):
+    family: str
+    name_vi: str
+    name_en: str
+    products: list[str]
+
+
+class MarketRecommendationOut(BaseModel):
+    status: Literal["ok", "no_data"]
+    query: str
+    family: FamilyOut | None
+    year: int | None
+    source: str
+    retrieved_at: dt.datetime | None
+    top_markets: list[MarketOut]
+    potential_markets: list[MarketOut]
+    countries: list[MarketOut]
+    competitors: list[CompetitorOut]
+    vn_extra_eu_share: Decimal | None
+    vn_rank: int | None
+    hhi: Decimal | None
+    weights: dict[str, Decimal]
+    suggestions: list[FamilyOut] = Field(default_factory=list)

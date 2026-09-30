@@ -13643,5 +13643,205 @@
     "Invalid file: a CSV with columns reporter, partner, product, year, flow, value_eur, quantity_kg is required.",
     "Fichier invalide : CSV avec les colonnes reporter, partner, product, year, flow, value_eur, quantity_kg requis.",
     "無効なファイル：reporter、partner、product、year、flow、value_eur、quantity_kg列のCSVが必要です。"
+  ],
+  "Gợi ý thị trường EU": [
+    "EU market recommendations",
+    "Recommandations de marchés UE",
+    "EU市場の提案"
+  ],
+  "Nhập tên sản phẩm để xem nước EU nhập khẩu nhiều, tăng trưởng tốt và nơi hàng Việt Nam còn dư địa — tính từ thống kê hải quan EU (Eurostat).": [
+    "Enter a product to see which EU countries import the most, grow fastest and where Vietnamese goods still have room — computed from EU customs statistics (Eurostat).",
+    "Saisissez un produit pour voir les pays de l'UE qui importent le plus, croissent le plus et où les produits vietnamiens ont encore de la marge — d'après les statistiques douanières de l'UE (Eurostat).",
+    "製品を入力すると、EUで輸入が多く成長している国と、ベトナム産品に余地がある国をEU税関統計（Eurostat）から表示します。"
+  ],
+  "Đang phân tích…": [
+    "Analysing…",
+    "Analyse…",
+    "分析中…"
+  ],
+  "Xem gợi ý": [
+    "Show recommendations",
+    "Voir les recommandations",
+    "提案を見る"
+  ],
+  "cá tra": [
+    "pangasius",
+    "pangasius",
+    "パンガシウス"
+  ],
+  "tôm": [
+    "shrimp",
+    "crevettes",
+    "エビ"
+  ],
+  "hạt điều": [
+    "cashew",
+    "noix de cajou",
+    "カシューナッツ"
+  ],
+  "gạo": [
+    "rice",
+    "riz",
+    "米"
+  ],
+  "hạt tiêu": [
+    "pepper",
+    "poivre",
+    "胡椒"
+  ],
+  "cà phê": [
+    "coffee",
+    "café",
+    "コーヒー"
+  ],
+  "sầu riêng": [
+    "durian",
+    "durian",
+    "ドリアン"
+  ],
+  "mật ong": [
+    "honey",
+    "miel",
+    "はちみつ"
+  ],
+  "Vui lòng nhập tên sản phẩm.": [
+    "Please enter a product name.",
+    "Veuillez saisir un nom de produit.",
+    "製品名を入力してください。"
+  ],
+  "Chưa có thống kê đã nạp cho nhóm sản phẩm này.": [
+    "No statistics have been loaded for this product group yet.",
+    "Aucune statistique chargée pour ce groupe de produits.",
+    "この製品群の統計はまだ取り込まれていません。"
+  ],
+  "Chưa nhận ra sản phẩm này. Thử một nhóm có sẵn:": [
+    "We don't recognise this product yet. Try an available group:",
+    "Produit non reconnu. Essayez un groupe disponible :",
+    "この製品はまだ認識できません。次のグループをお試しください："
+  ],
+  "Thị trường tiêu thụ chính": [
+    "Main consumer markets",
+    "Principaux marchés de consommation",
+    "主要消費市場"
+  ],
+  "Thị trường tiềm năng": [
+    "Potential markets",
+    "Marchés potentiels",
+    "潜在市場"
+  ],
+  "Đối thủ cạnh tranh": [
+    "Competitors",
+    "Concurrents",
+    "競合"
+  ],
+  "Nguồn cung ngoài EU vào EU": [
+    "Extra-EU suppliers to the EU",
+    "Fournisseurs hors UE vers l'UE",
+    "EU域外からEUへの供給国"
+  ],
+  "Việt Nam đứng thứ {0}": [
+    "Vietnam ranks #{0}",
+    "Le Vietnam est n°{0}",
+    "ベトナムは{0}位"
+  ],
+  "Việt Nam chưa có trong nhóm nguồn cung": [
+    "Vietnam is not among the suppliers yet",
+    "Le Vietnam ne figure pas encore parmi les fournisseurs",
+    "ベトナムはまだ供給国に入っていません"
+  ],
+  "Nước cung cấp": [
+    "Supplier country",
+    "Pays fournisseur",
+    "供給国"
+  ],
+  "Trị giá": [
+    "Value",
+    "Valeur",
+    "金額"
+  ],
+  "Thị phần": [
+    "Share",
+    "Part",
+    "シェア"
+  ],
+  "Đơn giá (EUR/kg)": [
+    "Unit price (EUR/kg)",
+    "Prix unitaire (EUR/kg)",
+    "単価（EUR/kg）"
+  ],
+  "So sánh các nước": [
+    "Country comparison",
+    "Comparaison des pays",
+    "国別比較"
+  ],
+  "Nhập khẩu": [
+    "Imports",
+    "Importations",
+    "輸入"
+  ],
+  "Tăng trưởng/năm": [
+    "Growth/year",
+    "Croissance/an",
+    "年成長率"
+  ],
+  "Thị phần Việt Nam": [
+    "Vietnam's share",
+    "Part du Vietnam",
+    "ベトナムのシェア"
+  ],
+  "Đơn giá hàng VN (EUR/kg)": [
+    "Vietnamese unit price (EUR/kg)",
+    "Prix unitaire vietnamien (EUR/kg)",
+    "ベトナム産単価（EUR/kg）"
+  ],
+  "Điểm": [
+    "Score",
+    "Score",
+    "スコア"
+  ],
+  "cập nhật": [
+    "updated",
+    "mis à jour",
+    "更新"
+  ],
+  "Điểm tổng hợp quy mô, tăng trưởng, thị phần và tăng trưởng của hàng Việt Nam; nhóm xét là 10 nước nhập khẩu nhiều nhất. Gợi ý mang tính tham khảo, không thay thế nghiên cứu thị trường.": [
+    "The score combines size, growth, Vietnam's share and the growth of Vietnamese goods; the 10 largest importers are considered. Recommendations are indicative and do not replace market research.",
+    "Le score combine taille, croissance, part du Vietnam et croissance des produits vietnamiens ; les 10 plus grands importateurs sont pris en compte. Recommandations indicatives, ne remplacent pas une étude de marché.",
+    "スコアは規模・成長率・ベトナムのシェア・ベトナム産品の成長率を合成し、輸入上位10か国を対象とします。提案は参考情報であり、市場調査に代わるものではありません。"
+  ],
+  "Tính thuế nhập khẩu cho sản phẩm này": [
+    "Calculate import duty for this product",
+    "Calculer les droits d'importation de ce produit",
+    "この製品の輸入関税を計算"
+  ],
+  "Nhập khẩu năm {0}: {1}": [
+    "Imports in {0}: {1}",
+    "Importations en {0} : {1}",
+    "{0}年の輸入：{1}"
+  ],
+  "Hàng Việt Nam chiếm {0} nhập khẩu": [
+    "Vietnamese goods are {0} of imports",
+    "Les produits vietnamiens représentent {0} des importations",
+    "輸入の{0}がベトナム産"
+  ],
+  "Nhập khẩu tăng bình quân {0}/năm": [
+    "Imports grow {0}/year on average",
+    "Importations en hausse de {0}/an en moyenne",
+    "輸入は年平均{0}増加"
+  ],
+  "Hàng Việt Nam tăng bình quân {0}/năm": [
+    "Vietnamese goods grow {0}/year on average",
+    "Produits vietnamiens en hausse de {0}/an en moyenne",
+    "ベトナム産品は年平均{0}増加"
+  ],
+  "Đơn giá hàng Việt Nam cao hơn mặt bằng {0} lần": [
+    "Vietnamese unit price is {0}× the market average",
+    "Prix unitaire vietnamien {0} fois la moyenne",
+    "ベトナム産単価は平均の{0}倍"
+  ],
+  "Hàng Việt Nam mới chiếm {0} — còn dư địa": [
+    "Vietnamese goods hold only {0} — room to grow",
+    "Les produits vietnamiens ne détiennent que {0} — marge de progression",
+    "ベトナム産品のシェアは{0}のみ — 伸びしろあり"
   ]
 }
