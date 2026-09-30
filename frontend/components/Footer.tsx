@@ -1,120 +1,66 @@
 'use client';
 import React from 'react';
 import { useLanguage } from '../context/LanguageContext.tsx';
-import { ShieldCheck, Mail, Phone, MapPin, Globe } from 'lucide-react';
+import { Mail, MapPin } from 'lucide-react';
 import { Link } from '../i18n/navigation';
 
-export interface FooterProps {
-  onNavigate?: (page: any) => void;
-}
+// Chân trang: mô tả đúng sản phẩm (máy tính EVFTA, xác minh, trợ lý có trích nguồn), liên kết thật tới
+// công cụ và trang pháp lý. Không hứa hẹn cấp độ xác minh L1–L3 cũ (mô hình hiện tại: trạng thái + mức).
+const COLUMN_TITLE = 'text-slate-200 font-bold text-xs uppercase tracking-wider';
+const LINK = 'hover:text-white transition-colors';
 
-export default function Footer({ onNavigate }: FooterProps) {
-  const { tr, t } = useLanguage();
+export default function Footer() {
+  const { tr } = useLanguage();
 
   return (
     <footer className="w-full bg-[#0b1324] text-slate-400 text-xs border-t border-slate-800 pt-12 pb-8">
       <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 pb-10 border-b border-slate-800/80">
-          
-          {/* Col 1: Brand Info */}
-          <div className="lg:col-span-2 space-y-3">
-            <div className="flex items-center gap-2.5">
-              <div className="w-7 h-7 flex items-center justify-center text-teal-400">
-                <svg viewBox="0 0 32 32" className="w-6 h-6" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M 16 26 C 14 18 8 13 4 10 C 3 9 4 7 5 7 C 11 8 15 13 16 26 Z" fill="#2dd4bf" />
-                  <path d="M 16 26 C 18 18 24 13 28 10 C 29 9 28 7 27 7 C 21 8 17 13 16 26 Z" fill="#2dd4bf" />
-                </svg>
-              </div>
-              <span className="text-white font-bold text-base tracking-wide uppercase">
-                VYBE TRADE
-              </span>
-            </div>
-            <p className="text-slate-400 text-xs leading-relaxed max-w-sm">
-              {tr("Nền tảng kết nối giao thương B2B trực tiếp với hệ sinh thái xác minh đa tầng L1 - L2 - L3, giúp Buyer toàn cầu kết nối an toàn với nhà cung ứng uy tín tại Việt Nam.")}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 pb-10 border-b border-slate-800/80">
+          <div className="space-y-3 sm:col-span-2 lg:col-span-1">
+            <span className="text-white font-bold text-base tracking-wide uppercase">VYBE TRADE</span>
+            <p className="text-slate-400 leading-relaxed max-w-sm">
+              {tr('Nền tảng B2B kết nối nhà xuất khẩu Việt Nam với người mua tại EU: máy tính EVFTA, xác minh doanh nghiệp và trợ lý tuân thủ có trích nguồn.')}
             </p>
-            <div className="flex items-center gap-2 pt-1 text-slate-300">
-              <ShieldCheck className="w-4 h-4 text-teal-400" />
-              <span className="font-semibold text-slate-200">
-                {tr("Xác thực thực địa & Pháp lý doanh nghiệp chuẩn hóa")}
-              </span>
-            </div>
           </div>
 
-          {/* Col 2: Navigation Links */}
-          <div className="space-y-2.5">
-            <h4 className="text-slate-200 font-bold text-xs uppercase tracking-wider">
-              {tr("Khám phá")}
-            </h4>
+          <nav aria-label={tr('Khám phá')} className="space-y-2.5">
+            <h4 className={COLUMN_TITLE}>{tr('Khám phá')}</h4>
             <ul className="space-y-2">
-              <li>
-                <button onClick={() => onNavigate?.('buyer-directory')} className="hover:text-white transition-colors cursor-pointer">
-                  {tr(t.nav.buyer)}
-                </button>
-              </li>
-              <li>
-                <button onClick={() => onNavigate?.('product')} className="hover:text-white transition-colors cursor-pointer">
-                  {tr(t.nav.products)}
-                </button>
-              </li>
-              <li>
-                <button onClick={() => onNavigate?.('pricing')} className="hover:text-white transition-colors cursor-pointer">
-                  {tr(t.nav.pricing)}
-                </button>
-              </li>
-              <li>
-                <button onClick={() => onNavigate?.('solutions')} className="hover:text-white transition-colors cursor-pointer">
-                  {tr(t.nav.solutions)}
-                </button>
-              </li>
+              <li><Link href="/suppliers" className={LINK}>{tr('Nhà cung cấp đã xác minh')}</Link></li>
+              <li><Link href="/tools/tariff" className={LINK}>{tr('Máy tính tiết kiệm thuế')}</Link></li>
+              <li><Link href="/tools/origin" className={LINK}>{tr('Máy tính quy tắc xuất xứ')}</Link></li>
+              <li><Link href="/copilot" className={LINK}>{tr('Trợ lý tuân thủ EVFTA')}</Link></li>
             </ul>
-          </div>
+          </nav>
 
-          {/* Col 3: Legal & Trust */}
-          <div className="space-y-2.5">
-            <h4 className="text-slate-200 font-bold text-xs uppercase tracking-wider">
-              {tr("Tiêu chuẩn tin cậy")}
-            </h4>
+          <nav aria-label={tr('Pháp lý')} className="space-y-2.5">
+            <h4 className={COLUMN_TITLE}>{tr('Pháp lý')}</h4>
             <ul className="space-y-2">
-              <li className="text-slate-400">{tr("Xác minh L1 - Pháp lý cơ bản")}</li>
-              <li className="text-slate-400">{tr("Xác minh L2 - Năng lực nhà xưởng")}</li>
-              <li className="text-slate-400">{tr("Xác minh L3 - Kiểm toán VYBE độc lập")}</li>
-              <li className="text-slate-400">{tr("Chứng chỉ ISO, HACCP, GlobalGAP")}</li>
+              <li><Link href="/terms" className={LINK}>{tr('Điều khoản dịch vụ')}</Link></li>
+              <li><Link href="/privacy" className={LINK}>{tr('Chính sách bảo mật')}</Link></li>
             </ul>
-          </div>
+          </nav>
 
-          {/* Col 4: Contact */}
           <div className="space-y-2.5">
-            <h4 className="text-slate-200 font-bold text-xs uppercase tracking-wider">
-              {tr("Liên hệ")}
-            </h4>
-            <ul className="space-y-2 text-slate-400">
+            <h4 className={COLUMN_TITLE}>{tr('Liên hệ')}</h4>
+            <ul className="space-y-2">
               <li className="flex items-center gap-2">
-                <MapPin className="w-3.5 h-3.5 text-slate-500 shrink-0" />
-                <span>{tr("Hà Nội & TP. Hồ Chí Minh, Việt Nam")}</span>
+                <MapPin className="w-3.5 h-3.5 text-slate-500 shrink-0" aria-hidden="true" />
+                <span>{tr('Hà Nội & TP. Hồ Chí Minh, Việt Nam')}</span>
               </li>
               <li className="flex items-center gap-2">
-                <Mail className="w-3.5 h-3.5 text-slate-500 shrink-0" />
-                <span>support@vybetrade.com</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <Globe className="w-3.5 h-3.5 text-slate-500 shrink-0" />
-                <span>www.vybetrade.com</span>
+                <Mail className="w-3.5 h-3.5 text-slate-500 shrink-0" aria-hidden="true" />
+                <a href="mailto:support@vybetrade.com" className={LINK}>support@vybetrade.com</a>
               </li>
             </ul>
           </div>
-
         </div>
 
-        {/* Bottom Bar */}
-        <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-slate-500 text-[11px]">
-          <p>© {new Date().getFullYear()} VYBE TRADE Inc. All rights reserved.</p>
-          <div className="flex items-center gap-4">
-            <Link href="/terms" className="hover:text-slate-200 underline-offset-2 hover:underline">{tr("Điều khoản dịch vụ")}</Link>
-            <span>•</span>
-            <Link href="/privacy" className="hover:text-slate-200 underline-offset-2 hover:underline">{tr("Chính sách bảo mật")}</Link>
-            <span>•</span>
-            <Link href="/privacy" className="hover:text-slate-200 underline-offset-2 hover:underline">{tr("Bảo vệ dữ liệu Buyer & Supplier")}</Link>
-          </div>
+        <div className="pt-6 space-y-2 text-slate-400 text-[11px]">
+          <p>
+            {tr('Cấp độ xác minh phản ánh mức độ đối chiếu bằng chứng của nền tảng, không phải bảo đảm về hàng hóa hay giao dịch. Kết quả máy tính chỉ mang tính tham khảo; cơ quan cấp chứng nhận xuất xứ chính thức là Bộ Công Thương.')}
+          </p>
+          <p>© {new Date().getFullYear()} VYBE TRADE. {tr('Bảo lưu mọi quyền.')}</p>
         </div>
       </div>
     </footer>
