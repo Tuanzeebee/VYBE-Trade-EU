@@ -11743,5 +11743,300 @@
     "Please enter a service name.",
     "Veuillez saisir le nom du service.",
     "サービス名を入力してください。"
+  ],
+  "Sản phẩm mới đăng (7 ngày)": [
+    "New products (last 7 days)",
+    "Nouveaux produits (7 derniers jours)",
+    "新規掲載製品（7日間）"
+  ],
+  "Sản phẩm hiện ngay khi đăng; xem lại ở đây và ẩn nếu không phù hợp. Cờ \"Lệch ngành\" = nhóm hàng của mã HS khác ngành công ty khai.": [
+    "Products go live when posted; review them here and hide any that are unsuitable. \"Industry mismatch\" = the HS code's product group differs from the company's declared industry.",
+    "Les produits sont publiés immédiatement ; vérifiez-les ici et masquez ceux qui ne conviennent pas. « Secteur incohérent » = le groupe du code SH diffère du secteur déclaré.",
+    "製品は掲載と同時に公開されます。ここで確認し、不適切なものは非表示にしてください。「業種不一致」= HSコードの品目群が申告業種と異なります。"
+  ],
+  "Không có sản phẩm mới.": [
+    "No new products.",
+    "Aucun nouveau produit.",
+    "新しい製品はありません。"
+  ],
+  "Lệch ngành": [
+    "Industry mismatch",
+    "Secteur incohérent",
+    "業種不一致"
+  ],
+  "Gợi ý mã HS theo tên sản phẩm": [
+    "HS codes suggested from the product name",
+    "Codes SH suggérés d'après le nom du produit",
+    "製品名から提案されたHSコード"
+  ],
+  "Không chắc mã HS? Gõ tên sản phẩm ở trên (ví dụ \"cá tra\", \"hạt điều\") rồi chọn gợi ý phù hợp nhất.": [
+    "Not sure of the HS code? Type the product name above (e.g. \"pangasius\", \"cashew\") and pick the best suggestion.",
+    "Pas sûr du code SH ? Saisissez le nom du produit ci-dessus (ex. « pangasius », « noix de cajou ») puis choisissez la meilleure suggestion.",
+    "HSコードが分からない場合は、上に製品名（例: 「パンガシウス」「カシューナッツ」）を入力し、最適な候補を選んでください。"
+  ],
+  "Giá bán": [
+    "Selling price",
+    "Prix de vente",
+    "販売価格"
+  ],
+  "Cách báo giá": [
+    "Pricing method",
+    "Mode de tarification",
+    "価格の提示方法"
+  ],
+  "Giá theo số lượng đặt": [
+    "Price by order quantity",
+    "Prix selon la quantité",
+    "数量別価格"
+  ],
+  "Mua càng nhiều giá càng tốt — như Alibaba. Bậc đầu tiên thường là MOQ.": [
+    "The more buyers order, the better the price — like Alibaba. The first tier is usually the MOQ.",
+    "Plus la commande est grande, meilleur est le prix — comme sur Alibaba. Le premier palier correspond en général au MOQ.",
+    "注文量が多いほど単価が下がります（Alibaba方式）。最初の段階は通常MOQです。"
+  ],
+  "Từ số lượng": [
+    "From quantity",
+    "À partir de",
+    "数量（以上）"
+  ],
+  "Đơn giá": [
+    "Unit price",
+    "Prix unitaire",
+    "単価"
+  ],
+  "Xóa bậc giá": [
+    "Remove price tier",
+    "Supprimer le palier",
+    "価格段階を削除"
+  ],
+  "+ Thêm bậc giá": [
+    "+ Add price tier",
+    "+ Ajouter un palier",
+    "+ 価格段階を追加"
+  ],
+  "Giá ước tính": [
+    "Estimated price",
+    "Prix estimé",
+    "概算価格"
+  ],
+  "Đến (nếu là khoảng giá)": [
+    "To (for a price range)",
+    "Jusqu'à (fourchette de prix)",
+    "上限（価格幅の場合）"
+  ],
+  "Mặc định = bậc giá đầu": [
+    "Defaults to the first tier",
+    "Par défaut = premier palier",
+    "既定 = 最初の段階"
+  ],
+  "Ví dụ: bao 25 kg cho nhà hàng, túi 1 kg cho siêu thị. Buyer lọc theo quy cách phù hợp kênh bán.": [
+    "e.g. 25 kg sacks for restaurants, 1 kg bags for supermarkets. Buyers filter by the packaging that suits their channel.",
+    "ex. sacs de 25 kg pour la restauration, sachets de 1 kg pour la grande distribution. Les acheteurs filtrent selon leur canal.",
+    "例: 飲食店向け25kg袋、スーパー向け1kg袋。バイヤーは販売チャネルに合う包装で絞り込みます。"
+  ],
+  "Khối lượng": [
+    "Size",
+    "Quantité",
+    "容量"
+  ],
+  "Loại bao bì": [
+    "Packaging type",
+    "Type d'emballage",
+    "包装の種類"
+  ],
+  "Phù hợp kênh": [
+    "Suitable channel",
+    "Canal adapté",
+    "適したチャネル"
+  ],
+  "Xóa quy cách": [
+    "Remove packaging",
+    "Supprimer le conditionnement",
+    "包装を削除"
+  ],
+  "+ Thêm quy cách": [
+    "+ Add packaging",
+    "+ Ajouter un conditionnement",
+    "+ 包装を追加"
+  ],
+  "Hình thức kinh doanh sản phẩm": [
+    "How you sell this product",
+    "Mode de commercialisation",
+    "販売形態"
+  ],
+  "Chọn (không bắt buộc)": [
+    "Select (optional)",
+    "Choisir (facultatif)",
+    "選択（任意）"
+  ],
+  "Ngôn ngữ mô tả": [
+    "Description language",
+    "Langue de la description",
+    "説明の言語"
+  ],
+  "Giống, tiêu chuẩn, độ ẩm, hạn dùng…": [
+    "Variety, grade, moisture, shelf life…",
+    "Variété, qualité, humidité, durée de conservation…",
+    "品種・規格・水分・賞味期限など…"
+  ],
+  "Dịch máy — sửa được": [
+    "Machine translation — editable",
+    "Traduction automatique — modifiable",
+    "機械翻訳（編集可）"
+  ],
+  "Viết bằng tiếng Việt": [
+    "Write in Vietnamese",
+    "Rédiger en vietnamien",
+    "ベトナム語で書く"
+  ],
+  "Viết bằng tiếng Anh": [
+    "Write in English",
+    "Rédiger en anglais",
+    "英語で書く"
+  ],
+  "Chỉ cần viết một ngôn ngữ — hệ thống tự dịch sang tiếng Anh cho buyer quốc tế.": [
+    "Write in one language only — we translate it into English for international buyers.",
+    "Une seule langue suffit — nous traduisons en anglais pour les acheteurs internationaux.",
+    "1つの言語で書くだけで、海外バイヤー向けに英語へ自動翻訳します。"
+  ],
+  "Chỉ cần viết một ngôn ngữ — hệ thống tự dịch sang tiếng Việt.": [
+    "Write in one language only — we translate it into Vietnamese.",
+    "Une seule langue suffit — nous traduisons en vietnamien.",
+    "1つの言語で書くだけで、ベトナム語へ自動翻訳します。"
+  ],
+  "Bản tiếng Anh": [
+    "English version",
+    "Version anglaise",
+    "英語版"
+  ],
+  "Bản tiếng Việt": [
+    "Vietnamese version",
+    "Version vietnamienne",
+    "ベトナム語版"
+  ],
+  "+ Tự viết bản tiếng Anh (không bắt buộc)": [
+    "+ Write the English version yourself (optional)",
+    "+ Rédiger vous-même la version anglaise (facultatif)",
+    "+ 英語版を自分で書く（任意）"
+  ],
+  "+ Tự viết bản tiếng Việt (không bắt buộc)": [
+    "+ Write the Vietnamese version yourself (optional)",
+    "+ Rédiger vous-même la version vietnamienne (facultatif)",
+    "+ ベトナム語版を自分で書く（任意）"
+  ],
+  "Gia công OEM (in nhãn cho khách)": [
+    "OEM manufacturing (buyer's label)",
+    "Fabrication OEM (marque du client)",
+    "OEM製造（顧客ブランド）"
+  ],
+  "Bán thương hiệu riêng": [
+    "Own brand",
+    "Marque propre",
+    "自社ブランド"
+  ],
+  "Túi / bao": [
+    "Bag",
+    "Sachet / sac",
+    "袋"
+  ],
+  "Bao tải": [
+    "Sack",
+    "Sac en toile",
+    "大袋"
+  ],
+  "Thùng carton": [
+    "Carton",
+    "Carton",
+    "段ボール箱"
+  ],
+  "Hộp": [
+    "Box",
+    "Boîte",
+    "箱"
+  ],
+  "Lon": [
+    "Can",
+    "Boîte de conserve",
+    "缶"
+  ],
+  "Chai": [
+    "Bottle",
+    "Bouteille",
+    "瓶"
+  ],
+  "Hũ": [
+    "Jar",
+    "Pot",
+    "ジャー"
+  ],
+  "Hàng xá (bulk)": [
+    "Bulk",
+    "Vrac",
+    "ばら積み"
+  ],
+  "Mọi kênh": [
+    "Any channel",
+    "Tous canaux",
+    "全チャネル"
+  ],
+  "Nhà hàng, khách sạn (Horeca)": [
+    "Hotels & restaurants (HoReCa)",
+    "Hôtellerie-restauration (CHR)",
+    "ホテル・飲食店（HoReCa）"
+  ],
+  "Siêu thị, bán lẻ": [
+    "Supermarkets & retail",
+    "Grande distribution, commerce de détail",
+    "スーパー・小売"
+  ],
+  "Nhà máy chế biến": [
+    "Food processors",
+    "Industrie de transformation",
+    "加工工場"
+  ],
+  "Bậc giá": [
+    "Price tiers",
+    "Paliers de prix",
+    "価格段階"
+  ],
+  "Quy cách:": [
+    "Packaging:",
+    "Conditionnement :",
+    "包装:"
+  ],
+  "Sửa sản phẩm": [
+    "Edit product",
+    "Modifier le produit",
+    "製品を編集"
+  ],
+  "Đang lưu…": [
+    "Saving…",
+    "Enregistrement…",
+    "保存中…"
+  ],
+  "Sản phẩm \"{0}\": mỗi bậc giá cần cả số lượng và đơn giá.": [
+    "Product \"{0}\": each price tier needs both a quantity and a unit price.",
+    "Produit « {0} » : chaque palier doit avoir une quantité et un prix unitaire.",
+    "製品「{0}」: 各価格段階には数量と単価の両方が必要です。"
+  ],
+  "Sản phẩm \"{0}\": hai bậc giá không được cùng số lượng.": [
+    "Product \"{0}\": two price tiers cannot have the same quantity.",
+    "Produit « {0} » : deux paliers ne peuvent pas avoir la même quantité.",
+    "製品「{0}」: 同じ数量の価格段階は設定できません。"
+  ],
+  "Sản phẩm \"{0}\" chưa nhập bậc giá.": [
+    "Product \"{0}\" has no price tiers yet.",
+    "Le produit « {0} » n'a pas encore de palier de prix.",
+    "製品「{0}」に価格段階がありません。"
+  ],
+  "Quy cách đóng gói không hợp lệ (số dương, tối đa 3 chữ số thập phân).": [
+    "Invalid packaging size (positive number, up to 3 decimals).",
+    "Conditionnement invalide (nombre positif, 3 décimales max).",
+    "包装容量が不正です（正の数、小数点以下3桁まで）。"
+  ],
+  "Không xóa được sản phẩm. Vui lòng thử lại.": [
+    "Could not delete the product. Please try again.",
+    "Impossible de supprimer le produit. Veuillez réessayer.",
+    "製品を削除できませんでした。もう一度お試しください。"
   ]
 }

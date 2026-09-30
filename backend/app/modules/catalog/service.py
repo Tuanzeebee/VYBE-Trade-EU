@@ -79,10 +79,19 @@ async def search_hs_codes(
                     func.lower(HsCode.name_en).like(func.lower(pattern), escape="\\"),
                 )
             )
+        # Danh mục đủ HS 2022 (U3) có hàng nghìn mã: xếp mã giống cụm từ đã gõ nhất lên đầu
+        # (pg_trgm), sau cờ hỗ trợ máy tính.
+        relevance = func.greatest(
+            func.similarity(
+                func.immutable_unaccent(func.lower(HsCode.name_vi)),
+                func.immutable_unaccent(func.lower(q)),
+            ),
+            func.similarity(func.lower(HsCode.name_en), func.lower(q)),
+        )
         query = (
             select(HsCode)
             .where(and_(*conditions))
-            .order_by(HsCode.is_calculator_supported.desc(), HsCode.code)
+            .order_by(HsCode.is_calculator_supported.desc(), relevance.desc(), HsCode.code)
         )
     rows = (await session.scalars(query.limit(limit))).all()
     return [_to_out(hs) for hs in rows]
@@ -111,6 +120,46 @@ async def upsert_hs_codes(session: AsyncSession, rows: Sequence[HsCodeIn]) -> in
         )
     await session.commit()
     return len(rows)
+
+
+async def merge_nomenclature(
+    session: AsyncSession, rows: Sequence[HsCodeIn], curated_vi: set[str]
+) -> tuple[int, int]:
+    """Nạp danh mục HS đầy đủ (U3) mà không đụng mã đã có.
+
+    Mã chưa có → thêm (is_calculator_supported luôn false). Mã đã có giữ nguyên tên, nhóm hàng và
+    cờ hỗ trợ; ngoại lệ duy nhất: mã đang dùng tên tiếng Anh làm tên tiếng Việt (nạp đợt trước) mà
+    nay có tên tiếng Việt thông dụng → chỉ đổi name_vi. Trả (số mã thêm, số mã đổi tên)."""
+    existing = {
+        hs.code: hs
+        for hs in await session.scalars(
+            select(HsCode).where(HsCode.code.in_([r.code for r in rows]))
+        )
+    }
+    inserted = renamed = 0
+    for row in rows:
+        current = existing.get(row.code)
+        if current is None:
+            session.add(
+                HsCode(
+                    code=row.code,
+                    name_vi=row.name_vi,
+                    name_en=row.name_en,
+                    chapter=row.code[:2],
+                    category=row.category,
+                    is_calculator_supported=False,
+                )
+            )
+            inserted += 1
+        elif (
+            row.code in curated_vi
+            and current.name_vi == current.name_en
+            and current.name_vi != row.name_vi
+        ):
+            current.name_vi = row.name_vi
+            renamed += 1
+    await session.commit()
+    return inserted, renamed
 
 
 async def list_categories(session: AsyncSession) -> set[str]:

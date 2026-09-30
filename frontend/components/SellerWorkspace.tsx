@@ -9,7 +9,8 @@ import { getMyCompany, type CompanyOut } from '../lib/companyApi';
 import NotificationBell from './NotificationBell';
 import VerificationStatusCard, { STATUS_BADGE } from './VerificationStatusCard';
 import type { DemoUser } from '../lib/demoAuth';
-import { formatMoq, formatPrice, getMyProducts, type ProductOut } from '../lib/productsApi';
+import { draftFromProduct, emptyDraft, formatMoq, formatPackaging, formatPrice, formatTiers, getMyProducts, type ProductDraft, type ProductOut } from '../lib/productsApi';
+import ProductDialog from './ProductDialog';
 import TariffPanel from './TariffPanel';
 import CompanyProfileView from './CompanyProfileView';
 import LanguageSelect from './LanguageSelect';
@@ -70,6 +71,13 @@ export default function SellerWorkspace({
     };
   }, []);
   const [taxOpenId, setTaxOpenId] = useState<string | null>(null);
+  // U3: thêm/sửa một sản phẩm ngay trong workspace.
+  const [dialogDraft, setDialogDraft] = useState<ProductDraft | null>(null);
+  const upsertProduct = (saved: ProductOut) =>
+    setProductsState((current) => {
+      const list = Array.isArray(current) ? current : [];
+      return list.some((p) => p.id === saved.id) ? list.map((p) => (p.id === saved.id ? saved : p)) : [...list, saved];
+    });
   const productsList: ProductOut[] = Array.isArray(productsState) ? productsState : [];
   const productsFailed = productsState === 'error';
   const hsLabel = (p: ProductOut) => `${p.hs_formatted} — ${language === 'en' ? p.hs_name_en : p.hs_name_vi}`;
@@ -446,8 +454,9 @@ export default function SellerWorkspace({
                   <h3 className="text-lg font-bold text-slate-900">{tr("Danh mục sản phẩm cung cấp")}</h3>
                   <p className="text-xs text-slate-500 mt-0.5">{tr("Các mặt hàng chính đã được đối soát thông số kỹ thuật và bao bì xuất khẩu")}</p>
                 </div>
-                <button 
-                  onClick={() => onNavigateOnboarding()}
+                <button
+                  type="button"
+                  onClick={() => setDialogDraft(emptyDraft())}
                   className="px-4 py-2 rounded-xl bg-[#083832] text-white text-xs font-semibold hover:bg-[#062924] transition-colors cursor-pointer"
                 >
                   {tr("+ Thêm sản phẩm mới")}</button>
@@ -486,10 +495,26 @@ export default function SellerWorkspace({
                           <span className="text-slate-500">{tr("MOQ:")}</span>
                           <span className="font-semibold text-slate-800 text-right">{formatMoq(product, tr) || '—'}</span>
                         </div>
+                        {(product.price_tiers ?? []).length > 0 && (
+                          <ul aria-label={tr('Bậc giá')} className="pt-1 space-y-0.5 text-[11px] text-slate-600">
+                            {formatTiers(product, tr).map((line) => <li key={line}>{line}</li>)}
+                          </ul>
+                        )}
+                        {(product.packagings ?? []).length > 0 && (
+                          <p className="text-[11px] text-slate-600">
+                            {tr('Quy cách:')} {(product.packagings ?? []).map((x) => formatPackaging(x, tr)).join(' • ')}
+                          </p>
+                        )}
                       </div>
                     </div>
 
                     <div className="pt-4 mt-2 space-y-2">
+                      <button
+                        type="button"
+                        onClick={() => setDialogDraft(draftFromProduct(product))}
+                        className="w-full py-2 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-800 text-xs font-semibold transition-colors cursor-pointer"
+                      >
+                        {tr("Sửa sản phẩm")}</button>
                       <button
                         type="button"
                         aria-expanded={taxOpenId === product.id}
@@ -516,6 +541,21 @@ export default function SellerWorkspace({
               TAB: CƠ HỘI KẾT NỐI (RFQ / OPPORTUNITIES)
              ----------------------------------------------------------------------- */}
           {activeTab === 'rfq' && <RfqInbox role="exporter" />}
+
+          {dialogDraft && (
+            <ProductDialog
+              initial={dialogDraft}
+              onClose={() => setDialogDraft(null)}
+              onSaved={(saved) => {
+                upsertProduct(saved);
+                setDialogDraft(null);
+              }}
+              onDeleted={(id) => {
+                setProductsState((current) => (Array.isArray(current) ? current.filter((p) => p.id !== id) : current));
+                setDialogDraft(null);
+              }}
+            />
+          )}
 
           {/* -----------------------------------------------------------------------
               TAB: THÔNG BÁO (NOTIFICATIONS)

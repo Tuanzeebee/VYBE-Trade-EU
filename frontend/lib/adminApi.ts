@@ -204,7 +204,7 @@ export const getStats = () => read(() => createApiClient().GET('/api/admin/stats
 export const listCompanies = (query: { q?: string; status?: AdminCompany['verification_status']; hidden?: boolean; limit?: number; offset?: number } = {}) =>
   read(() => createApiClient().GET('/api/admin/companies', { params: { query } }));
 
-export const listProducts = (query: { company_id?: string; q?: string; limit?: number; offset?: number } = {}) =>
+export const listProducts = (query: { company_id?: string; q?: string; limit?: number; offset?: number; recent_days?: number } = {}) =>
   read(() => createApiClient().GET('/api/admin/products', { params: { query } }));
 
 export const listAuditLogs = (query: { entity_type?: string; entity_id?: string; action_type?: string; limit?: number; offset?: number } = {}) =>

@@ -19,6 +19,7 @@ const draft = (patch: Partial<ProductDraft> = {}): ProductDraft => ({
   ...emptyDraft(),
   name: 'Gạo thơm Jasmine',
   hs: RICE,
+  pricingMode: 'estimate',
   priceMin: '480',
   unit: 'tonne',
   moq: '25',
@@ -72,8 +73,12 @@ describe('draftToBody — bản nháp → ProductIn', () => {
       hs_code: '100630',
       description_vi: 'Gạo thơm',
       description_en: null,
+      description_source_lang: 'vi',
       price_min: '480.50',
       price_max: '560',
+      price_tiers: [],
+      brand_model: null,
+      packagings: [],
       currency: 'EUR',
       unit: 'tonne',
       moq: '25',
@@ -107,7 +112,7 @@ describe('draftToBody — bản nháp → ProductIn', () => {
   it.each(['-1', '0', 'abc', '1e6', '10.999', '1,5', '1000000000000', '1 000', '.5', '5.'])(
     'giá không hợp lệ %s bị chặn trước khi gửi',
     (bad) => {
-      expect(() => draftToBody(draft({ priceMin: bad }))).toThrow(/Giá thấp nhất không hợp lệ/);
+      expect(() => draftToBody(draft({ priceMin: bad }))).toThrow(/Giá ước tính không hợp lệ/);
     },
   );
 
@@ -308,5 +313,71 @@ describe('uploadProductImage', () => {
     await expect(uploadProductImage(file('image/png'))).rejects.toThrow('Không tải được ảnh lên');
     vi.stubGlobal('fetch', vi.fn(async () => Promise.reject(new TypeError('network'))));
     await expect(uploadProductImage(file('image/png'))).rejects.toThrow('Không tải được ảnh lên');
+  });
+});
+
+describe('U3 — bậc giá theo số lượng, quy cách, OEM, mô tả một ngôn ngữ', () => {
+  it('bậc giá: sắp theo số lượng, không gửi giá thấp/cao nhất, MOQ được bỏ trống', () => {
+    const body = draftToBody(
+      draft({
+        pricingMode: 'tiers',
+        priceMin: '',
+        moq: '',
+        tiers: [
+          { minQuantity: '100', unitPrice: '520' },
+          { minQuantity: '25', unitPrice: '560' },
+          { minQuantity: '', unitPrice: '' },
+        ],
+      }),
+    );
+    expect(body.price_tiers).toEqual([
+      { min_quantity: '25', unit_price: '560' },
+      { min_quantity: '100', unit_price: '520' },
+    ]);
+    expect([body.price_min, body.price_max, body.moq]).toEqual([null, null, null]);
+  });
+
+  it('bậc giá thiếu số lượng hoặc đơn giá, hoặc trùng số lượng → lỗi rõ', () => {
+    expect(() => draftToBody(draft({ pricingMode: 'tiers', tiers: [{ minQuantity: '25', unitPrice: '' }] }))).toThrow(/mỗi bậc giá cần cả/);
+    expect(() =>
+      draftToBody(draft({ pricingMode: 'tiers', tiers: [{ minQuantity: '25', unitPrice: '1' }, { minQuantity: '25', unitPrice: '2' }] })),
+    ).toThrow(/không được cùng số lượng/);
+    expect(() => draftToBody(draft({ pricingMode: 'tiers', tiers: [{ minQuantity: '', unitPrice: '' }] }))).toThrow(/chưa nhập bậc giá/);
+  });
+
+  it('quy cách đóng gói, OEM và ngôn ngữ mô tả được gửi lên', () => {
+    const body = draftToBody(
+      draft({
+        brandModel: 'oem',
+        descriptionLang: 'en',
+        descriptionEn: 'Fragrant rice',
+        packagings: [
+          { packSize: '25', packUnit: 'kg', packType: 'bag', channel: 'horeca' },
+          { packSize: '', packUnit: 'kg', packType: 'bag', channel: 'any' },
+        ],
+      }),
+    );
+    expect(body.brand_model).toBe('oem');
+    expect(body.description_source_lang).toBe('en');
+    expect(body.packagings).toEqual([{ pack_size: '25', pack_unit: 'kg', pack_type: 'bag', channel: 'horeca' }]);
+    expect(() => draftToBody(draft({ packagings: [{ packSize: '-1', packUnit: 'kg', packType: 'bag', channel: 'any' }] }))).toThrow(/Quy cách đóng gói/);
+  });
+
+  it('draftFromProduct: sản phẩm có bậc giá mở ở chế độ bậc giá, cờ dịch máy được giữ', () => {
+    const d = draftFromProduct(
+      SERVER('p9', {
+        price_tiers: [{ min_quantity: '25.00', unit_price: '560.00' }],
+        packagings: [{ pack_size: '25.000', pack_unit: 'kg', pack_type: 'bag', channel: 'retail' }],
+        brand_model: 'own_brand',
+        description_en: 'Machine text',
+        description_en_machine: true,
+      }),
+    );
+    expect(d.pricingMode).toBe('tiers');
+    expect(d.tiers).toEqual([{ minQuantity: '25.00', unitPrice: '560.00' }]);
+    expect(d.priceMin).toBe('');
+    expect(d.brandModel).toBe('own_brand');
+    expect(d.descriptionEnMachine).toBe(true);
+    expect(d.packagings[0].channel).toBe('retail');
   });
 });

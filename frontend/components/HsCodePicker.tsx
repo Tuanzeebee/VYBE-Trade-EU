@@ -37,6 +37,13 @@ export default function HsCodePicker({ label, value, onChange, required, disable
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(-1);
 
+  // Mã được chọn từ bên ngoài (U3: gợi ý theo tên sản phẩm) → hiện đúng mã đó trong ô.
+  const valueCode = value?.code ?? null;
+  useEffect(() => {
+    if (value) setText(display(value));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [valueCode, language]);
+
   // Lấy gợi ý sau khi ngừng gõ; kết quả của lần gõ cũ bị bỏ (cancelled) để không ghi đè lần mới.
   useEffect(() => {
     if (!query) return;

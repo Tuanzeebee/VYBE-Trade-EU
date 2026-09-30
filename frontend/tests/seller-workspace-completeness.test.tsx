@@ -79,12 +79,12 @@ describe('SellerWorkspace — mức độ hoàn thiện hồ sơ (B3)', () => {
     expect(onNavigateOnboarding.mock.calls).toEqual([[1], [2]]);
   });
 
-  it('nút "Thêm sản phẩm mới" ở tab Sản phẩm không truyền sự kiện chuột làm số bước', async () => {
+  it('nút "Thêm sản phẩm mới" mở hộp thoại ngay trong workspace, không đẩy về wizard (U3)', async () => {
     serve();
     const { onNavigateOnboarding } = renderWorkspace('products');
     fireEvent.click(await screen.findByRole('button', { name: /Thêm sản phẩm mới/ }));
-    expect(onNavigateOnboarding).toHaveBeenCalledTimes(1);
-    expect(onNavigateOnboarding.mock.calls[0]).toEqual([]);
+    expect(await screen.findByRole('dialog', { name: 'Thêm sản phẩm' })).toBeInTheDocument();
+    expect(onNavigateOnboarding).not.toHaveBeenCalled();
   });
 
   it('thẻ hoàn thiện chỉ nằm ở tab Hồ sơ', async () => {

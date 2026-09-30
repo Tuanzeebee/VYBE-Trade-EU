@@ -1640,6 +1640,13 @@ export interface components {
              * @enum {string}
              */
             approval_status: "pending" | "approved" | "hidden";
+            /** Created At */
+            created_at?: string | null;
+            /**
+             * Industry Mismatch
+             * @default false
+             */
+            industry_mismatch?: boolean;
         };
         /**
          * AdminProductPatch
@@ -2783,6 +2790,38 @@ export interface components {
          * @enum {string}
          */
         NotificationType: "message" | "rfq" | "verification_status" | "new_match" | "expiry_alert";
+        /** PackagingIn */
+        PackagingIn: {
+            /** Pack Size */
+            pack_size: number | string;
+            /**
+             * Pack Unit
+             * @enum {string}
+             */
+            pack_unit: "g" | "kg" | "tonne" | "ml" | "liter" | "piece";
+            /**
+             * Pack Type
+             * @enum {string}
+             */
+            pack_type: "bag" | "sack" | "carton" | "box" | "can" | "bottle" | "jar" | "bulk" | "other";
+            /**
+             * Channel
+             * @default any
+             * @enum {string}
+             */
+            channel?: "horeca" | "retail" | "industrial" | "any";
+        };
+        /** PackagingOut */
+        PackagingOut: {
+            /** Pack Size */
+            pack_size: string;
+            /** Pack Unit */
+            pack_unit: string;
+            /** Pack Type */
+            pack_type: string;
+            /** Channel */
+            channel: string;
+        };
         /** PresignIn */
         PresignIn: {
             /**
@@ -2802,6 +2841,23 @@ export interface components {
             upload_url: string;
             /** Key */
             key: string;
+        };
+        /**
+         * PriceTierIn
+         * @description Từ min_quantity (cùng đơn vị với MOQ) trở lên thì đơn giá là unit_price (theo đơn vị giá).
+         */
+        PriceTierIn: {
+            /** Min Quantity */
+            min_quantity: number | string;
+            /** Unit Price */
+            unit_price: number | string;
+        };
+        /** PriceTierOut */
+        PriceTierOut: {
+            /** Min Quantity */
+            min_quantity: string;
+            /** Unit Price */
+            unit_price: string;
         };
         /** ProductImageOut */
         ProductImageOut: {
@@ -2843,6 +2899,14 @@ export interface components {
             is_active?: boolean;
             /** Image Keys */
             image_keys?: string[];
+            /** Brand Model */
+            brand_model?: ("oem" | "own_brand" | "both") | null;
+            /** Description Source Lang */
+            description_source_lang?: ("vi" | "en") | null;
+            /** Packagings */
+            packagings?: components["schemas"]["PackagingIn"][];
+            /** Price Tiers */
+            price_tiers?: components["schemas"]["PriceTierIn"][];
         };
         /** ProductOut */
         ProductOut: {
@@ -2891,6 +2955,24 @@ export interface components {
              * Format: date-time
              */
             created_at: string;
+            /** Brand Model */
+            brand_model?: string | null;
+            /** Description Source Lang */
+            description_source_lang?: string | null;
+            /**
+             * Description Vi Machine
+             * @default false
+             */
+            description_vi_machine?: boolean;
+            /**
+             * Description En Machine
+             * @default false
+             */
+            description_en_machine?: boolean;
+            /** Packagings */
+            packagings?: components["schemas"]["PackagingOut"][];
+            /** Price Tiers */
+            price_tiers?: components["schemas"]["PriceTierOut"][];
         };
         /**
          * ProductPatch
@@ -2921,6 +3003,14 @@ export interface components {
             is_active?: boolean | null;
             /** Image Keys */
             image_keys?: string[] | null;
+            /** Brand Model */
+            brand_model?: ("oem" | "own_brand" | "both") | null;
+            /** Description Source Lang */
+            description_source_lang?: ("vi" | "en") | null;
+            /** Packagings */
+            packagings?: components["schemas"]["PackagingIn"][] | null;
+            /** Price Tiers */
+            price_tiers?: components["schemas"]["PriceTierIn"][] | null;
         };
         /** ProfileViewsData */
         ProfileViewsData: {
@@ -3024,6 +3114,22 @@ export interface components {
             moq_unit: string | null;
             /** Images */
             images: string[];
+            /** Brand Model */
+            brand_model?: string | null;
+            /**
+             * Description Vi Machine
+             * @default false
+             */
+            description_vi_machine?: boolean;
+            /**
+             * Description En Machine
+             * @default false
+             */
+            description_en_machine?: boolean;
+            /** Packagings */
+            packagings?: components["schemas"]["PackagingOut"][];
+            /** Price Tiers */
+            price_tiers?: components["schemas"]["PriceTierOut"][];
         };
         /** QuestionBrief */
         QuestionBrief: {
@@ -4187,6 +4293,7 @@ export interface operations {
                 q?: string | null;
                 limit?: number;
                 offset?: number;
+                recent_days?: number | null;
             };
             header?: never;
             path?: never;

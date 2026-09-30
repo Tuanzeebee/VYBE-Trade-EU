@@ -315,6 +315,14 @@ class Product(Base):
             postgresql_using="gin",
         ),
         Index("ix_products_company_hs", "company_id", "hs_code"),
+        CheckConstraint(
+            "brand_model IS NULL OR brand_model IN ('oem', 'own_brand', 'both')",
+            name="brand_model_known",
+        ),
+        CheckConstraint(
+            "description_source_lang IS NULL OR description_source_lang IN ('vi', 'en')",
+            name="source_lang_known",
+        ),
     )
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
@@ -339,6 +347,15 @@ class Product(Base):
         default=ApprovalStatus.approved,
         server_default=ApprovalStatus.approved.value,
     )
+    # U3: gia công OEM hay bán thương hiệu riêng; mô tả chỉ bắt buộc một ngôn ngữ, bản kia dịch máy.
+    brand_model: Mapped[str | None] = mapped_column(String(16))
+    description_source_lang: Mapped[str | None] = mapped_column(String(2))
+    description_vi_machine: Mapped[bool] = mapped_column(
+        Boolean, default=False, server_default=text("false")
+    )
+    description_en_machine: Mapped[bool] = mapped_column(
+        Boolean, default=False, server_default=text("false")
+    )
     # clock_timestamp() (không phải now()) để thứ tự tạo không trùng trong cùng một transaction.
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=text("clock_timestamp()")
@@ -350,6 +367,51 @@ class Product(Base):
     images: Mapped[list["ProductImage"]] = relationship(
         cascade="all, delete-orphan", lazy="selectin", order_by="ProductImage.position"
     )
+    packagings: Mapped[list["ProductPackaging"]] = relationship(
+        cascade="all, delete-orphan", lazy="selectin", order_by="ProductPackaging.position"
+    )
+    price_tiers: Mapped[list["ProductPriceTier"]] = relationship(
+        cascade="all, delete-orphan", lazy="selectin", order_by="ProductPriceTier.min_quantity"
+    )
+
+
+class ProductPackaging(Base):
+    """Quy cách đóng gói (U3): 20 kg/bao, 1 kg/túi… và kênh (Horeca, siêu thị, công nghiệp)."""
+
+    __tablename__ = "product_packagings"
+    __table_args__ = (
+        CheckConstraint("pack_size > 0", name="pack_size_positive"),
+        CheckConstraint(
+            "channel IN ('horeca', 'retail', 'industrial', 'any')", name="channel_known"
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    product_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("products.id", ondelete="CASCADE"), index=True
+    )
+    pack_size: Mapped[Decimal] = mapped_column(Numeric(12, 3))
+    pack_unit: Mapped[str] = mapped_column(String(16))
+    pack_type: Mapped[str] = mapped_column(String(16))
+    channel: Mapped[str] = mapped_column(String(16), default="any", server_default="any")
+    position: Mapped[int] = mapped_column(SmallInteger)
+
+
+class ProductPriceTier(Base):
+    """Bậc giá theo số lượng (U3, kiểu Alibaba): từ min_quantity (đơn vị MOQ) giá unit_price."""
+
+    __tablename__ = "product_price_tiers"
+    __table_args__ = (
+        UniqueConstraint("product_id", "min_quantity"),
+        CheckConstraint("min_quantity > 0 AND unit_price > 0", name="positive_amounts"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    product_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("products.id", ondelete="CASCADE"), index=True
+    )
+    min_quantity: Mapped[Decimal] = mapped_column(Numeric(14, 2))
+    unit_price: Mapped[Decimal] = mapped_column(Numeric(14, 2))
 
 
 class ProductImage(Base):

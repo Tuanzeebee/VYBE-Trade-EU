@@ -245,6 +245,54 @@ def _check_price_order(low: Decimal | None, high: Decimal | None) -> None:
         raise ValueError("price_min must not exceed price_max")
 
 
+# U3: quy cách đóng gói, bậc giá theo số lượng, OEM / thương hiệu riêng
+BrandModel = Literal["oem", "own_brand", "both"]
+SourceLang = Literal["vi", "en"]
+PackUnit = Literal["g", "kg", "tonne", "ml", "liter", "piece"]
+PackType = Literal["bag", "sack", "carton", "box", "can", "bottle", "jar", "bulk", "other"]
+Channel = Literal["horeca", "retail", "industrial", "any"]
+PackSize = Annotated[Decimal, Field(gt=0, max_digits=12, decimal_places=3)]
+MAX_PACKAGINGS = 10
+MAX_PRICE_TIERS = 6
+
+
+class PackagingIn(BaseModel):
+    pack_size: PackSize
+    pack_unit: PackUnit
+    pack_type: PackType
+    channel: Channel = "any"
+
+
+class PackagingOut(BaseModel):
+    pack_size: Decimal
+    pack_unit: str
+    pack_type: str
+    channel: str
+
+
+class PriceTierIn(BaseModel):
+    """Từ min_quantity (cùng đơn vị với MOQ) trở lên thì đơn giá là unit_price (theo đơn vị giá)."""
+
+    min_quantity: Amount
+    unit_price: Amount
+
+
+class PriceTierOut(BaseModel):
+    min_quantity: Decimal
+    unit_price: Decimal
+
+
+def _check_tiers(tiers: list[PriceTierIn] | None) -> list[PriceTierIn] | None:
+    """Bậc giá sắp theo số lượng tăng dần; không được trùng số lượng."""
+    if tiers is None:
+        return None
+    ordered = sorted(tiers, key=lambda t: t.min_quantity)
+    quantities = [t.min_quantity for t in ordered]
+    if len(set(quantities)) != len(quantities):
+        raise ValueError("price tiers must have distinct min_quantity")
+    return ordered
+
+
 class ProductIn(BaseModel):
     name: ProductName
     hs_code: (
@@ -260,6 +308,12 @@ class ProductIn(BaseModel):
     moq_unit: Unit | None = None
     is_active: bool = True
     image_keys: list[ImageKey] = Field(default_factory=list, max_length=MAX_IMAGES)
+    brand_model: BrandModel | None = None
+    description_source_lang: SourceLang | None = None
+    packagings: list[PackagingIn] = Field(default_factory=list, max_length=MAX_PACKAGINGS)
+    price_tiers: list[PriceTierIn] = Field(default_factory=list, max_length=MAX_PRICE_TIERS)
+
+    _tiers = field_validator("price_tiers")(_check_tiers)
 
     @model_validator(mode="after")
     def _prices(self) -> "ProductIn":
@@ -282,6 +336,12 @@ class ProductPatch(BaseModel):
     moq_unit: Unit | None = None
     is_active: bool | None = None
     image_keys: list[ImageKey] | None = Field(default=None, max_length=MAX_IMAGES)
+    brand_model: BrandModel | None = None
+    description_source_lang: SourceLang | None = None
+    packagings: list[PackagingIn] | None = Field(default=None, max_length=MAX_PACKAGINGS)
+    price_tiers: list[PriceTierIn] | None = Field(default=None, max_length=MAX_PRICE_TIERS)
+
+    _tiers = field_validator("price_tiers")(_check_tiers)
 
     @model_validator(mode="after")
     def _prices(self) -> "ProductPatch":
@@ -313,6 +373,12 @@ class ProductOut(BaseModel):
     approval_status: Literal["pending", "approved", "hidden"]
     images: list[ProductImageOut]
     created_at: datetime
+    brand_model: str | None = None
+    description_source_lang: str | None = None
+    description_vi_machine: bool = False
+    description_en_machine: bool = False
+    packagings: list[PackagingOut] = Field(default_factory=list)
+    price_tiers: list[PriceTierOut] = Field(default_factory=list)
 
 
 class ReviewProductOut(BaseModel):
@@ -352,6 +418,11 @@ class PublicProductOut(BaseModel):
     moq: Decimal | None
     moq_unit: str | None
     images: list[str]
+    brand_model: str | None = None
+    description_vi_machine: bool = False
+    description_en_machine: bool = False
+    packagings: list[PackagingOut] = Field(default_factory=list)
+    price_tiers: list[PriceTierOut] = Field(default_factory=list)
 
 
 class PublicCompanyOut(BaseModel):
@@ -455,6 +526,9 @@ class AdminProductOut(BaseModel):
     description_en: str | None
     is_active: bool
     approval_status: Literal["pending", "approved", "hidden"]
+    created_at: datetime | None = None
+    # U3: nhóm hàng của mã HS khác ngành công ty khai → cờ để admin xem lại (không tự ẩn).
+    industry_mismatch: bool = False
 
 
 class AdminProductPatch(BaseModel):

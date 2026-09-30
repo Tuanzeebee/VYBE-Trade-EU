@@ -22,7 +22,7 @@ const ACCOUNT: DemoUser = {
 };
 
 const RICE = { code: '100630', formatted: '1006.30', name_vi: 'Gạo xát', name_en: 'Semi-milled or wholly milled rice' };
-const valid = (name = 'Gạo thơm'): ProductDraft => ({ ...emptyDraft(), name, hs: RICE, priceMin: '480', priceMax: '560', unit: 'tonne', moq: '25', moqUnit: 'tonne' });
+const valid = (name = 'Gạo thơm'): ProductDraft => ({ ...emptyDraft(), name, hs: RICE, pricingMode: 'estimate', priceMin: '480', priceMax: '560', unit: 'tonne', moq: '25', moqUnit: 'tonne' });
 
 interface Options {
   initialStep?: number;
@@ -62,7 +62,7 @@ describe('SellerOnboarding bước 2 — sản phẩm (B5)', () => {
 
   it('bỏ các thành phần của form cũ: sản phẩm chính, quy cách, năng lực, thị trường theo sản phẩm, gợi ý mẫu', () => {
     renderOnboarding({ initialProducts: [valid()] });
-    for (const gone of [/Sản phẩm chính/, /Quy cách đóng gói/, /Năng lực cung ứng/, /Gạo ST25 Hữu Cơ/, /Thêm thị trường/]) {
+    for (const gone of [/Sản phẩm chính/, /Năng lực cung ứng/, /Gạo ST25 Hữu Cơ/, /Thêm thị trường/]) {
       expect(screen.queryByText(gone)).not.toBeInTheDocument();
     }
     expect(screen.queryByTitle(/Thêm thị trường/)).not.toBeInTheDocument();

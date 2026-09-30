@@ -39,6 +39,10 @@ class Settings(BaseSettings):
     ollama_chat_model: str = "qwen2.5:7b"
     ollama_embed_model: str = "bge-m3"  # 1024 chiều, khớp EMBEDDING_DIM
     ollama_timeout_seconds: float = 120.0
+    # Dịch máy (U3 mô tả sản phẩm một ngôn ngữ; F3 tin nhắn): unavailable | chat | deepl
+    translation_backend: str = "unavailable"
+    deepl_api_key: str | None = None
+    deepl_api_url: str = "https://api-free.deepl.com"
     # Origin của frontend được gọi API kèm cookie
     cors_origins: list[str] = ["http://localhost:3000"]
     # Dữ liệu tuân thủ minh hoạ (AGENTS.md §6.2 ngoại lệ DEMO): chỉ staging/dev được bật. Khi bật,

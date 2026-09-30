@@ -561,6 +561,24 @@
             }
           },
           {
+            "name": "recent_days",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "maximum": 90,
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Recent Days"
+            }
+          },
+          {
             "name": "evfta_session",
             "in": "cookie",
             "required": false,
@@ -6954,6 +6972,23 @@
               "hidden"
             ],
             "title": "Approval Status"
+          },
+          "created_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created At"
+          },
+          "industry_mismatch": {
+            "type": "boolean",
+            "title": "Industry Mismatch",
+            "default": false
           }
         },
         "type": "object",
@@ -11044,6 +11079,97 @@
         "title": "NotificationType",
         "description": "Năm loại của spec §4.9. RFQ và tin nhắn do F1/F2 tạo."
       },
+      "PackagingIn": {
+        "properties": {
+          "pack_size": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,9}|(?=[\\d.]{1,13}0*$)\\d{0,9}\\.\\d{0,3}0*$)"
+              }
+            ],
+            "title": "Pack Size"
+          },
+          "pack_unit": {
+            "type": "string",
+            "enum": [
+              "g",
+              "kg",
+              "tonne",
+              "ml",
+              "liter",
+              "piece"
+            ],
+            "title": "Pack Unit"
+          },
+          "pack_type": {
+            "type": "string",
+            "enum": [
+              "bag",
+              "sack",
+              "carton",
+              "box",
+              "can",
+              "bottle",
+              "jar",
+              "bulk",
+              "other"
+            ],
+            "title": "Pack Type"
+          },
+          "channel": {
+            "type": "string",
+            "enum": [
+              "horeca",
+              "retail",
+              "industrial",
+              "any"
+            ],
+            "title": "Channel",
+            "default": "any"
+          }
+        },
+        "type": "object",
+        "required": [
+          "pack_size",
+          "pack_unit",
+          "pack_type"
+        ],
+        "title": "PackagingIn"
+      },
+      "PackagingOut": {
+        "properties": {
+          "pack_size": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Pack Size"
+          },
+          "pack_unit": {
+            "type": "string",
+            "title": "Pack Unit"
+          },
+          "pack_type": {
+            "type": "string",
+            "title": "Pack Type"
+          },
+          "channel": {
+            "type": "string",
+            "title": "Channel"
+          }
+        },
+        "type": "object",
+        "required": [
+          "pack_size",
+          "pack_unit",
+          "pack_type",
+          "channel"
+        ],
+        "title": "PackagingOut"
+      },
       "PresignIn": {
         "properties": {
           "purpose": {
@@ -11090,6 +11216,63 @@
           "key"
         ],
         "title": "PresignOut"
+      },
+      "PriceTierIn": {
+        "properties": {
+          "min_quantity": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,12}|(?=[\\d.]{1,15}0*$)\\d{0,12}\\.\\d{0,2}0*$)"
+              }
+            ],
+            "title": "Min Quantity"
+          },
+          "unit_price": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,12}|(?=[\\d.]{1,15}0*$)\\d{0,12}\\.\\d{0,2}0*$)"
+              }
+            ],
+            "title": "Unit Price"
+          }
+        },
+        "type": "object",
+        "required": [
+          "min_quantity",
+          "unit_price"
+        ],
+        "title": "PriceTierIn",
+        "description": "Từ min_quantity (cùng đơn vị với MOQ) trở lên thì đơn giá là unit_price (theo đơn vị giá)."
+      },
+      "PriceTierOut": {
+        "properties": {
+          "min_quantity": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Min Quantity"
+          },
+          "unit_price": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Unit Price"
+          }
+        },
+        "type": "object",
+        "required": [
+          "min_quantity",
+          "unit_price"
+        ],
+        "title": "PriceTierOut"
       },
       "ProductImageOut": {
         "properties": {
@@ -11259,6 +11442,53 @@
             "type": "array",
             "maxItems": 10,
             "title": "Image Keys"
+          },
+          "brand_model": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "oem",
+                  "own_brand",
+                  "both"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Brand Model"
+          },
+          "description_source_lang": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "vi",
+                  "en"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description Source Lang"
+          },
+          "packagings": {
+            "items": {
+              "$ref": "#/components/schemas/PackagingIn"
+            },
+            "type": "array",
+            "maxItems": 10,
+            "title": "Packagings"
+          },
+          "price_tiers": {
+            "items": {
+              "$ref": "#/components/schemas/PriceTierIn"
+            },
+            "type": "array",
+            "maxItems": 6,
+            "title": "Price Tiers"
           }
         },
         "type": "object",
@@ -11403,6 +11633,52 @@
             "type": "string",
             "format": "date-time",
             "title": "Created At"
+          },
+          "brand_model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Brand Model"
+          },
+          "description_source_lang": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description Source Lang"
+          },
+          "description_vi_machine": {
+            "type": "boolean",
+            "title": "Description Vi Machine",
+            "default": false
+          },
+          "description_en_machine": {
+            "type": "boolean",
+            "title": "Description En Machine",
+            "default": false
+          },
+          "packagings": {
+            "items": {
+              "$ref": "#/components/schemas/PackagingOut"
+            },
+            "type": "array",
+            "title": "Packagings"
+          },
+          "price_tiers": {
+            "items": {
+              "$ref": "#/components/schemas/PriceTierOut"
+            },
+            "type": "array",
+            "title": "Price Tiers"
           }
         },
         "type": "object",
@@ -11611,6 +11887,67 @@
               }
             ],
             "title": "Image Keys"
+          },
+          "brand_model": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "oem",
+                  "own_brand",
+                  "both"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Brand Model"
+          },
+          "description_source_lang": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "vi",
+                  "en"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description Source Lang"
+          },
+          "packagings": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/PackagingIn"
+                },
+                "type": "array",
+                "maxItems": 10
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Packagings"
+          },
+          "price_tiers": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/PriceTierIn"
+                },
+                "type": "array",
+                "maxItems": 6
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price Tiers"
           }
         },
         "type": "object",
@@ -11948,6 +12285,41 @@
             },
             "type": "array",
             "title": "Images"
+          },
+          "brand_model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Brand Model"
+          },
+          "description_vi_machine": {
+            "type": "boolean",
+            "title": "Description Vi Machine",
+            "default": false
+          },
+          "description_en_machine": {
+            "type": "boolean",
+            "title": "Description En Machine",
+            "default": false
+          },
+          "packagings": {
+            "items": {
+              "$ref": "#/components/schemas/PackagingOut"
+            },
+            "type": "array",
+            "title": "Packagings"
+          },
+          "price_tiers": {
+            "items": {
+              "$ref": "#/components/schemas/PriceTierOut"
+            },
+            "type": "array",
+            "title": "Price Tiers"
           }
         },
         "type": "object",

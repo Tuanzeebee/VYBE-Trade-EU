@@ -75,7 +75,7 @@ function serve(world: { stats?: unknown; companies?: unknown[]; products?: unkno
       if (world.fail) return json(500, {});
       if (url.pathname === '/api/admin/stats') return json(200, world.stats ?? { verified_count: 0, pending_count: 0, ai_queries_this_week: 0, avg_confidence: null });
       if (url.pathname === '/api/admin/companies') return json(200, world.companies ?? []);
-      if (url.pathname === '/api/admin/products') return json(200, world.products ?? []);
+      if (url.pathname === '/api/admin/products') return json(200, url.searchParams.has('recent_days') ? [] : world.products ?? []);
       if (url.pathname === '/api/admin/audit-logs') return json(200, world.logs ?? []);
       throw new Error(`unexpected ${req.method} ${url.pathname}`);
     }),

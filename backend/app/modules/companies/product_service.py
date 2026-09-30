@@ -1,8 +1,10 @@
 """Sản phẩm của exporter (B5) và hồ sơ công khai. Một phần API công khai của module companies."""
 
+import logging
 import uuid
+from collections.abc import Awaitable, Callable
 from dataclasses import dataclass
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from typing import Any
 
 from sqlalchemy import Select, and_, exists, func, or_, select
@@ -11,9 +13,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.audit import record
 from app.core.errors import AppError
 from app.core.storage import Storage
+from app.core.translation import TranslationError, TranslationService
 from app.modules.auth.schemas import CurrentUser
 from app.modules.catalog.schemas import HsCodeOut
-from app.modules.catalog.service import get_hs_code
+from app.modules.catalog.service import categories_for_codes, get_hs_code
 from app.modules.companies import completeness_service
 from app.modules.companies.models import (
     ApprovalStatus,
@@ -22,6 +25,8 @@ from app.modules.companies.models import (
     CompanyType,
     Product,
     ProductImage,
+    ProductPackaging,
+    ProductPriceTier,
     VerificationStatus,
 )
 from app.modules.companies.schemas import (
@@ -30,6 +35,10 @@ from app.modules.companies.schemas import (
     ExporterCardOut,
     ExporterPage,
     OrderableProduct,
+    PackagingIn,
+    PackagingOut,
+    PriceTierIn,
+    PriceTierOut,
     ProductImageOut,
     ProductIn,
     ProductOut,
@@ -42,7 +51,103 @@ from app.modules.companies.schemas import (
 from app.modules.companies.service import _own_company
 
 # Cột NOT NULL: gửi null tường minh khi sửa là lỗi.
-_NOT_NULL = ("name", "hs_code", "currency", "is_active")
+_NOT_NULL = ("name", "hs_code", "currency", "is_active", "packagings", "price_tiers")
+_LIST_FIELDS = ("image_keys", "packagings", "price_tiers")
+
+log = logging.getLogger(__name__)
+
+# ── Dịch mô tả sản phẩm (U3): chỉ bắt buộc một ngôn ngữ, bản kia dịch máy bằng job nền ─────────
+TranslationEnqueuer = Callable[[uuid.UUID], Awaitable[None]]
+
+
+async def _defer_translation(product_id: uuid.UUID) -> None:
+    """Đẩy job dịch mô tả. Lỗi hàng đợi không làm hỏng việc lưu sản phẩm."""
+    try:
+        from app.jobs.translate_product import translate_product
+
+        await translate_product.defer_async(product_id=str(product_id))
+    except Exception:
+        log.exception("Không xếp được job dịch mô tả cho sản phẩm %s", product_id)
+
+
+_enqueue_translation: TranslationEnqueuer = _defer_translation
+
+
+def set_translation_enqueuer(enqueuer: TranslationEnqueuer) -> TranslationEnqueuer:
+    """Thay bộ xếp hàng (test). Trả về bộ cũ để khôi phục."""
+    global _enqueue_translation
+    previous, _enqueue_translation = _enqueue_translation, enqueuer
+    return previous
+
+
+def _needs_translation(product: Product) -> bool:
+    """Có đúng một bản do người viết, bản còn lại trống hoặc là bản dịch máy cũ."""
+    vi = (product.description_vi or "").strip()
+    en = (product.description_en or "").strip()
+    vi_human = bool(vi) and not product.description_vi_machine
+    en_human = bool(en) and not product.description_en_machine
+    return vi_human != en_human
+
+
+def _mark_human_edits(product: Product, changes: dict[str, Any]) -> None:
+    """Người dùng tự gửi mô tả ở ngôn ngữ nào thì bản đó là của người, không còn là dịch máy."""
+    for lang in ("vi", "en"):
+        field = f"description_{lang}"
+        if field in changes:
+            setattr(product, f"{field}_machine", False)
+
+
+async def translate_missing_description(
+    session: AsyncSession, translator: TranslationService, product_id: uuid.UUID
+) -> bool:
+    """Dịch mô tả sang ngôn ngữ còn thiếu (job gọi). Trả True nếu đã ghi bản dịch.
+
+    Không bao giờ ghi đè bản do người viết; lỗi dịch thì để trống (không dịch giả).
+    """
+    product = await session.get(Product, product_id)
+    if product is None or not _needs_translation(product):
+        return False
+    vi_human = bool((product.description_vi or "").strip()) and not product.description_vi_machine
+    source, target = ("vi", "en") if vi_human else ("en", "vi")
+    text = getattr(product, f"description_{source}") or ""
+    try:
+        translated = (await translator.translate(text, source, target)).strip()
+    except TranslationError:
+        log.info("Chưa dịch được mô tả sản phẩm %s (%s→%s)", product_id, source, target)
+        return False
+    if not translated:
+        return False
+    setattr(product, f"description_{target}", translated[:5000])
+    setattr(product, f"description_{target}_machine", True)
+    await session.commit()
+    return True
+
+
+def _set_packagings(product: Product, packagings: list[PackagingIn]) -> None:
+    product.packagings = [
+        ProductPackaging(
+            pack_size=p.pack_size,
+            pack_unit=p.pack_unit,
+            pack_type=p.pack_type,
+            channel=p.channel,
+            position=index,
+        )
+        for index, p in enumerate(packagings)
+    ]
+
+
+def _set_tiers(product: Product, tiers: list[PriceTierIn]) -> None:
+    """Bậc giá thay cho giá thấp/cao nhất (demo 30/9). Khi có bậc giá, price_min/price_max là
+    tóm tắt suy ra từ bậc giá để thẻ danh bạ, RFQ và hồ sơ công khai vẫn đọc được như cũ; MOQ mặc
+    định bằng số lượng của bậc đầu tiên nếu người dùng chưa khai."""
+    product.price_tiers = [
+        ProductPriceTier(min_quantity=t.min_quantity, unit_price=t.unit_price) for t in tiers
+    ]
+    if tiers:
+        prices = [t.unit_price for t in tiers]
+        product.price_min, product.price_max = min(prices), max(prices)
+        if product.moq is None:
+            product.moq = tiers[0].min_quantity
 
 
 async def _owned_exporter(session: AsyncSession, user: CurrentUser) -> Company:
@@ -109,6 +214,23 @@ async def _out(
             for image in product.images
         ],
         created_at=product.created_at,
+        brand_model=product.brand_model,
+        description_source_lang=product.description_source_lang,
+        description_vi_machine=product.description_vi_machine,
+        description_en_machine=product.description_en_machine,
+        packagings=[
+            PackagingOut(
+                pack_size=p.pack_size,
+                pack_unit=p.pack_unit,
+                pack_type=p.pack_type,
+                channel=p.channel,
+            )
+            for p in product.packagings
+        ],
+        price_tiers=[
+            PriceTierOut(min_quantity=t.min_quantity, unit_price=t.unit_price)
+            for t in product.price_tiers
+        ],
     )
 
 
@@ -194,14 +316,18 @@ async def create_product(
     company = await _owned_exporter(session, user)
     hs = await _resolve_hs(session, data.hs_code)
     _check_image_keys(company.id, data.image_keys)
-    values: dict[str, Any] = data.model_dump(exclude={"hs_code", "image_keys"})
+    values: dict[str, Any] = data.model_dump(exclude={"hs_code", *_LIST_FIELDS})
     product = Product(company_id=company.id, hs_code=hs.code, **values)
     _set_images(product, data.image_keys)
+    _set_packagings(product, data.packagings)
+    _set_tiers(product, data.price_tiers)
     session.add(product)
     await session.flush()
     await completeness_service.refresh_score(session, company)
     await session.commit()
     await session.refresh(product)
+    if _needs_translation(product):
+        await _enqueue_translation(product.id)
     return await _out(session, storage, product, {hs.code: hs})
 
 
@@ -223,18 +349,27 @@ async def update_product(
     keys = changes.pop("image_keys", None)
     if keys is not None:
         _check_image_keys(company.id, keys)
+    changes.pop("packagings", None)
+    changes.pop("price_tiers", None)
     low = changes.get("price_min", product.price_min)
     high = changes.get("price_max", product.price_max)
     if low is not None and high is not None and low > high:
         raise AppError("invalid_price_range", "price_min must not exceed price_max", 422)
+    _mark_human_edits(product, changes)
     for field, value in changes.items():
         setattr(product, field, value)
     if keys is not None:
         _set_images(product, keys)
+    if data.packagings is not None:
+        _set_packagings(product, data.packagings)
+    if data.price_tiers is not None:
+        _set_tiers(product, data.price_tiers)
     await session.flush()
     await completeness_service.refresh_score(session, company)
     await session.commit()
     await session.refresh(product)
+    if _needs_translation(product):
+        await _enqueue_translation(product.id)
     return await _out(session, storage, product, {})
 
 
@@ -525,6 +660,14 @@ _ADMIN_TEXT_FIELDS = ("name", "description_vi", "description_en", "is_active")
 
 async def _to_admin_out(session: AsyncSession, product: Product) -> AdminProductOut:
     company = await session.get_one(Company, product.company_id)
+    category = (await categories_for_codes(session, [product.hs_code])).get(product.hs_code)
+    # Chỉ so khi cả hai đều rõ ràng; ngành "Khác" hoặc mã HS chưa có nhóm hàng thì không gắn cờ.
+    mismatch = bool(
+        category
+        and company.industry_sector
+        and company.industry_sector != "other"
+        and category != company.industry_sector
+    )
     return AdminProductOut(
         id=product.id,
         company_id=product.company_id,
@@ -535,20 +678,34 @@ async def _to_admin_out(session: AsyncSession, product: Product) -> AdminProduct
         description_en=product.description_en,
         is_active=product.is_active,
         approval_status=product.approval_status.value,
+        created_at=product.created_at,
+        industry_mismatch=mismatch,
     )
 
 
 async def admin_list_products(
-    session: AsyncSession, *, company_id: uuid.UUID | None, q: str | None, limit: int, offset: int
+    session: AsyncSession,
+    *,
+    company_id: uuid.UUID | None,
+    q: str | None,
+    limit: int,
+    offset: int,
+    recent_days: int | None = None,
 ) -> list[AdminProductOut]:
+    """recent_days: chỉ sản phẩm đăng trong N ngày (U3 hậu kiểm sản phẩm mới), mới nhất trước."""
     query = select(Product)
     if company_id is not None:
         query = query.where(Product.company_id == company_id)
     if q:
         query = query.where(Product.name.ilike(f"%{q.strip()}%"))
-    rows = await session.scalars(
-        query.order_by(Product.created_at, Product.id).limit(limit).offset(offset)
-    )
+    if recent_days is not None:
+        since = datetime.now(UTC) - timedelta(days=recent_days)
+        query = query.where(Product.created_at >= since).order_by(
+            Product.created_at.desc(), Product.id
+        )
+    else:
+        query = query.order_by(Product.created_at, Product.id)
+    rows = await session.scalars(query.limit(limit).offset(offset))
     return [await _to_admin_out(session, p) for p in rows]
 
 

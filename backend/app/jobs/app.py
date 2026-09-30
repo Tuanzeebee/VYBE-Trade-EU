@@ -20,5 +20,6 @@ app = App(
         "app.jobs.verification_expiry",
         "app.jobs.send_email",
         "app.jobs.generate_eur1",
+        "app.jobs.translate_product",
     ],
 )
