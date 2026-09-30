@@ -1,6 +1,6 @@
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { NextIntlClientProvider } from 'next-intl';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import ProductsEditor from '@/components/ProductsEditor';
 import { LanguageProvider } from '@/context/LanguageContext';
@@ -255,5 +255,42 @@ describe('ProductsEditor', () => {
     fireEvent.change(within(card()).getByLabelText(/Tên sản phẩm/), { target: { value: 'Gạo ST25 đặc biệt' } });
     await pick('ca phe', /0901\.11/);
     expect(latest[0].name).toBe('Gạo ST25 đặc biệt');
+  });
+
+  it('StrictMode: đổi sang mã HS khác thì tên tự điền đổi theo', async () => {
+    stubHs([RICE, COFFEE]);
+    render(
+      <React.StrictMode>
+        <Harness initial={[emptyDraft()]} />
+      </React.StrictMode>
+    );
+    await pick('gao', /1006\.30/);
+    await pick('ca phe', /0901\.11/);
+    expect(latest[0].name).toBe('Cà phê chưa rang, chưa khử caffeine');
+  });
+
+  it('StrictMode: seller sửa tay tên đã tự điền rồi đổi mã HS thì giữ tên', async () => {
+    stubHs([RICE, COFFEE]);
+    render(
+      <React.StrictMode>
+        <Harness initial={[emptyDraft()]} />
+      </React.StrictMode>
+    );
+    await pick('gao', /1006\.30/);
+    fireEvent.change(within(card()).getByLabelText(/Tên sản phẩm/), { target: { value: 'Gạo ST25 đặc biệt' } });
+    await pick('ca phe', /0901\.11/);
+    expect(latest[0].name).toBe('Gạo ST25 đặc biệt');
+  });
+
+  it('tên HS dài 300 ký tự: cắt xuống 255 ký tự', async () => {
+    const LONG_NAME = {
+      ...COFFEE,
+      name_vi: 'A'.repeat(300),
+    };
+    stubHs([LONG_NAME]);
+    render(<Harness initial={[emptyDraft()]} />);
+    await pick('ca phe', /0901\.11/);
+    expect(latest[0].name).toBe('A'.repeat(255));
+    expect(latest[0].name.length).toBe(255);
   });
 });
