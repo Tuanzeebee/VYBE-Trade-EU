@@ -5,7 +5,9 @@ Loại bằng chứng và quy tắc bắt buộc là DỮ LIỆU do luật TM du
 """
 
 import datetime as dt
+import logging
 import uuid
+from collections.abc import Awaitable, Callable
 from typing import Any
 
 from sqlalchemy import Select, func, or_, select
@@ -44,6 +46,9 @@ ENTITY = "evidence"
 OTHER_TYPE = "other"  # loại "Khác" (U4): seller tự ghi tên giấy tờ
 
 
+log = logging.getLogger(__name__)
+
+
 def _today() -> dt.date:
     return dt.datetime.now(dt.UTC).date()
 
@@ -59,6 +64,28 @@ def snapshot(row: Evidence) -> dict[str, Any]:
         "custom_type_name": row.custom_type_name,
         "approval_status": row.approval_status.value,
     }
+
+
+# ── Job AI đọc chứng nhận (U24; test thay bằng bản ghi trong bộ nhớ) ─────────────
+ExtractionEnqueuer = Callable[[uuid.UUID], Awaitable[None]]
+
+
+async def _defer_extraction(evidence_id: uuid.UUID) -> None:
+    try:
+        from app.jobs.extract_evidence import extract_evidence
+
+        await extract_evidence.defer_async(evidence_id=str(evidence_id))
+    except Exception:
+        log.exception("Không xếp được job đọc chứng nhận %s", evidence_id)
+
+
+_enqueue_extraction: ExtractionEnqueuer = _defer_extraction
+
+
+def set_extraction_enqueuer(enqueuer: ExtractionEnqueuer) -> ExtractionEnqueuer:
+    global _enqueue_extraction
+    previous, _enqueue_extraction = _enqueue_extraction, enqueuer
+    return previous
 
 
 async def _exporter_company_id(session: AsyncSession, user: CurrentUser) -> uuid.UUID:
@@ -184,6 +211,7 @@ async def create_evidence(
     )
     await after_change(session, company_id)
     await session.refresh(row)
+    await _enqueue_extraction(row.id)
     return await to_out(session, storage, row)
 
 
@@ -222,6 +250,7 @@ async def update_evidence(
         row.certificate_number = patch.certificate_number
     if "issuer" in fields:
         row.issuer = patch.issuer
+    file_changed = file_key != before.get("file_key")
     row.approval_status = ApprovalStatus.pending  # sửa xong phải duyệt lại
     row.reviewed_by = None
     row.reviewed_at = None
@@ -239,6 +268,8 @@ async def update_evidence(
     )
     await after_change(session, company_id)
     await session.refresh(row)
+    if file_changed:
+        await _enqueue_extraction(row.id)
     return await to_out(session, storage, row)
 
 

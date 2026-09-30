@@ -14978,5 +14978,105 @@
     "Companies can always see their own score and each component in their workspace.",
     "Les entreprises voient toujours leur score et chaque composante dans leur espace.",
     "企業は自社のスコアと各構成要素をいつでも管理画面で確認できます。"
+  ],
+  "AI đọc được": [
+    "Read by AI",
+    "Lu par l'IA",
+    "AIの読み取り"
+  ],
+  "Chưa có gợi ý từ AI cho giấy tờ này.": [
+    "No AI suggestion for this document yet.",
+    "Pas encore de suggestion de l'IA pour ce document.",
+    "この書類のAI提案はまだありません。"
+  ],
+  "Gợi ý từ AI (kiểm tra lại trước khi áp)": [
+    "AI suggestion (check before applying)",
+    "Suggestion de l'IA (vérifiez avant d'appliquer)",
+    "AIの提案（適用前に確認してください）"
+  ],
+  "Gợi ý từ AI": [
+    "AI suggestion",
+    "Suggestion de l'IA",
+    "AIの提案"
+  ],
+  "So sánh với AI đọc giấy tờ": [
+    "Compare with the AI reading",
+    "Comparer avec la lecture de l'IA",
+    "AIの読み取りと比較"
+  ],
+  "Trường": [
+    "Field",
+    "Champ",
+    "項目"
+  ],
+  "Xem gợi ý từ AI": [
+    "See AI suggestion",
+    "Voir la suggestion de l'IA",
+    "AIの提案を見る"
+  ],
+  "Áp gợi ý đã chọn": [
+    "Apply selected suggestions",
+    "Appliquer les suggestions choisies",
+    "選択した提案を適用"
+  ],
+  "Loại giấy tờ": [
+    "Document type",
+    "Type de document",
+    "書類の種類"
+  ],
+  "Đơn vị được cấp": [
+    "Holder",
+    "Titulaire",
+    "取得者"
+  ],
+  "Địa chỉ đơn vị được cấp": [
+    "Holder address",
+    "Adresse du titulaire",
+    "取得者の住所"
+  ],
+  "AI đang chờ đọc giấy tờ…": [
+    "AI is waiting to read the document…",
+    "L'IA va lire le document…",
+    "AIが書類の読み取りを待っています…"
+  ],
+  "AI đang đọc giấy tờ…": [
+    "AI is reading the document…",
+    "L'IA lit le document…",
+    "AIが書類を読み取り中…"
+  ],
+  "AI chưa đọc được giấy tờ này.": [
+    "AI could not read this document.",
+    "L'IA n'a pas pu lire ce document.",
+    "AIはこの書類を読み取れませんでした。"
+  ],
+  "Bản scan (ảnh) chưa đọc tự động được; vui lòng nhập tay nếu cần.": [
+    "Scanned images cannot be read automatically yet; please enter details by hand if needed.",
+    "Les scans ne sont pas encore lus automatiquement ; saisissez les informations si besoin.",
+    "スキャン画像はまだ自動で読み取れません。必要なら手入力してください。"
+  ],
+  "Đã áp gợi ý. Bằng chứng sẽ được duyệt lại.": [
+    "Suggestions applied. The evidence will be reviewed again.",
+    "Suggestions appliquées. La preuve sera revérifiée.",
+    "提案を適用しました。証拠は再審査されます。"
+  ],
+  "Không áp được gợi ý. Vui lòng thử lại.": [
+    "Could not apply the suggestions. Please try again.",
+    "Impossible d'appliquer les suggestions. Réessayez.",
+    "提案を適用できませんでした。もう一度お試しください。"
+  ],
+  "Seller khai": [
+    "Declared by seller",
+    "Déclaré par le vendeur",
+    "セラーの申告"
+  ],
+  "Khớp": [
+    "Match",
+    "Correspond",
+    "一致"
+  ],
+  "Lệch": [
+    "Mismatch",
+    "Écart",
+    "不一致"
   ]
 }

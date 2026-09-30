@@ -2491,6 +2491,57 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/exporter/evidences/{evidence_id}/extraction": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Evidence Extraction */
+        get: operations["evidence_extraction_api_exporter_evidences__evidence_id__extraction_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/exporter/evidences/{evidence_id}/extraction/apply": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Apply Evidence Extraction */
+        post: operations["apply_evidence_extraction_api_exporter_evidences__evidence_id__extraction_apply_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/evidences/{evidence_id}/extraction": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Admin Evidence Extraction */
+        get: operations["admin_evidence_extraction_api_admin_evidences__evidence_id__extraction_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -3931,6 +3982,51 @@ export interface components {
             verification: components["schemas"]["VerificationTile"];
             tariff_savings: components["schemas"]["SavingsTile"];
             copilot: components["schemas"]["CopilotTile"];
+        };
+        /** ExtractionApplyIn */
+        ExtractionApplyIn: {
+            /** Fields */
+            fields: ("certificate_number" | "issuer" | "issued_at" | "expires_at")[];
+        };
+        /** ExtractionFieldCompare */
+        ExtractionFieldCompare: {
+            /** Field */
+            field: string;
+            /** Declared */
+            declared: string | null;
+            /** Extracted */
+            extracted: string | null;
+            /** Match */
+            match: boolean | null;
+        };
+        /** ExtractionOut */
+        ExtractionOut: {
+            /**
+             * Evidence Id
+             * Format: uuid
+             */
+            evidence_id: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "queued" | "running" | "ready" | "failed" | "skipped";
+            /** Method */
+            method: ("text" | "vision") | null;
+            /** Model */
+            model: string | null;
+            /** Fields */
+            fields: {
+                [key: string]: string | null;
+            };
+            /** Error */
+            error: string | null;
+            /** Finished At */
+            finished_at: string | null;
+            /** Applied At */
+            applied_at: string | null;
+            /** Comparison */
+            comparison?: components["schemas"]["ExtractionFieldCompare"][];
         };
         /** FacilityCodeIn */
         FacilityCodeIn: {
@@ -12764,6 +12860,109 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["TrustCriterionOut"][];
+                };
+            };
+        };
+    };
+    evidence_extraction_api_exporter_evidences__evidence_id__extraction_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                evidence_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExtractionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    apply_evidence_extraction_api_exporter_evidences__evidence_id__extraction_apply_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                evidence_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ExtractionApplyIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EvidenceOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    admin_evidence_extraction_api_admin_evidences__evidence_id__extraction_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                evidence_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExtractionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

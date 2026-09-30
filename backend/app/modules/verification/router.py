@@ -17,6 +17,7 @@ from app.modules.verification import (
     checks_service,
     consistency_service,
     evidence_service,
+    extraction_service,
     request_service,
     tier_service,
     trust_service,
@@ -38,6 +39,8 @@ from app.modules.verification.schemas import (
     EvidenceOut,
     EvidencePatch,
     EvidenceTypePublic,
+    ExtractionApplyIn,
+    ExtractionOut,
     FindingOut,
     ManualCheckIn,
     QueueItem,
@@ -322,3 +325,21 @@ async def public_trust_score(slug: str, session: DB) -> TrustScoreOut:
 @router.get("/api/public/trust-criteria")
 async def trust_criteria(session: DB) -> list[TrustCriterionOut]:
     return await trust_service.public_criteria(session)
+
+
+# ── AI đọc chứng nhận (U24): chỉ gợi ý; seller chọn áp, admin xem so sánh ─────────────────────
+@router.get("/api/exporter/evidences/{evidence_id}/extraction")
+async def evidence_extraction(evidence_id: uuid.UUID, user: Exporter, session: DB) -> ExtractionOut:
+    return await extraction_service.get_for_owner(session, user, evidence_id)
+
+
+@router.post("/api/exporter/evidences/{evidence_id}/extraction/apply")
+async def apply_evidence_extraction(
+    evidence_id: uuid.UUID, data: ExtractionApplyIn, user: Exporter, session: DB, storage: Store
+) -> EvidenceOut:
+    return await extraction_service.apply_for_owner(session, user, storage, evidence_id, data)
+
+
+@router.get("/api/admin/evidences/{evidence_id}/extraction")
+async def admin_evidence_extraction(evidence_id: uuid.UUID, _: Admin, session: DB) -> ExtractionOut:
+    return await extraction_service.get_for_admin(session, evidence_id)

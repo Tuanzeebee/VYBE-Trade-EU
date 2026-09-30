@@ -10,14 +10,10 @@ from app.core.errors import AppError
 from app.modules.auth.schemas import CurrentUser
 from app.modules.companies import product_service
 from app.modules.companies import service as companies
+from app.modules.verification import extraction_service
 from app.modules.verification.consistency import ConsistencyFacts, evaluate
 from app.modules.verification.models import ApprovalStatus, Evidence
 from app.modules.verification.schemas import FindingOut
-
-
-async def extracted_addresses(session: AsyncSession, company_id: uuid.UUID) -> list[str]:
-    """Địa chỉ đọc được từ chứng nhận (U24 cung cấp); chưa có trích xuất → rỗng."""
-    return []
 
 
 async def findings_for(session: AsyncSession, company_id: uuid.UUID) -> list[FindingOut]:
@@ -37,7 +33,7 @@ async def findings_for(session: AsyncSession, company_id: uuid.UUID) -> list[Fin
         export_markets=list(company.export_markets),
         evidence_types=evidence_types,
         registered_address=company.address,
-        extracted_addresses=await extracted_addresses(session, company_id),
+        extracted_addresses=await extraction_service.extracted_addresses(session, company_id),
     )
     return [
         FindingOut(

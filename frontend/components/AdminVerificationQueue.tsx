@@ -6,6 +6,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { TIER_LABELS } from './TierBadge';
 import { REQUIREMENT_STATES, REQUIREMENT_TONES } from './VerificationTier';
 import { AdminChecks, FindingList } from './VerificationChecks';
+import { AdminExtractionCompare } from './EvidenceSuggestion';
 import { useLanguage } from '../context/LanguageContext';
 import { decideRequest, getQueue, reviewEvidence, type Decision, type QueueItem } from '../lib/adminApi';
 
@@ -244,6 +245,7 @@ export default function AdminVerificationQueue() {
                       {e.issued_at ?? tr('Chưa có ngày cấp')}
                       {e.expires_at && ` → ${e.expires_at}`}
                     </p>
+                    <AdminExtractionCompare evidenceId={e.id} />
                     <div className="mt-2 flex flex-wrap items-end gap-2">
                       <a href={e.file_url} target="_blank" rel="noreferrer" className="text-xs font-semibold text-teal-700 hover:underline">
                         {tr('Xem file')}

@@ -219,3 +219,30 @@ class TrustScoreOut(BaseModel):
     disclaimer_en: str
     components: list[TrustComponentOut]
     self_declared: list[str]  # dữ kiện tự khai, trọng số 0
+
+
+# ── AI đọc chứng nhận (U24) — chỉ gợi ý ───────────────────────────────────────
+class ExtractionFieldCompare(BaseModel):
+    field: str
+    declared: str | None
+    extracted: str | None
+    match: bool | None
+
+
+class ExtractionOut(BaseModel):
+    evidence_id: uuid.UUID
+    status: Literal["queued", "running", "ready", "failed", "skipped"]
+    method: Literal["text", "vision"] | None
+    model: str | None
+    fields: dict[str, str | None]
+    error: str | None
+    finished_at: dt.datetime | None
+    applied_at: dt.datetime | None
+    comparison: list[ExtractionFieldCompare] = Field(default_factory=list)
+
+
+class ExtractionApplyIn(BaseModel):
+    fields: Annotated[
+        list[Literal["certificate_number", "issuer", "issued_at", "expires_at"]],
+        Field(min_length=1, max_length=4),
+    ]

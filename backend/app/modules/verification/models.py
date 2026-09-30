@@ -308,3 +308,37 @@ class TrustCriterion(Base):
     is_demo: Mapped[bool] = mapped_column(Boolean, default=False, server_default=text("false"))
     reviewed_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id"))
     reviewed_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class EvidenceExtraction(Base):
+    """AI đọc chứng nhận (U24) — CHỈ gợi ý. Seller xác nhận mới áp vào bằng chứng; admin thấy so
+    sánh khi duyệt. Không đổi approval_status, không gọi decide()."""
+
+    __tablename__ = "evidence_extractions"
+    __table_args__ = (
+        CheckConstraint(
+            "status IN ('queued', 'running', 'ready', 'failed', 'skipped')", name="status"
+        ),
+        CheckConstraint("method IS NULL OR method IN ('text', 'vision')", name="method"),
+        Index("ix_evidence_extractions_company", "company_id", "status"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, primary_key=True, default=uuid.uuid4, server_default=text("gen_random_uuid()")
+    )
+    evidence_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("evidences.id", ondelete="CASCADE"), unique=True
+    )
+    company_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("companies.id"))
+    status: Mapped[str] = mapped_column(String(16), default="queued", server_default="queued")
+    method: Mapped[str | None] = mapped_column(String(16))
+    model: Mapped[str | None] = mapped_column(String(64))
+    fields: Mapped[dict[str, Any]] = mapped_column(
+        JSONB, default=dict, server_default=text("'{}'::jsonb")
+    )
+    error: Mapped[str | None] = mapped_column(String(64))
+    created_at: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=text("clock_timestamp()")
+    )
+    finished_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
+    applied_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))

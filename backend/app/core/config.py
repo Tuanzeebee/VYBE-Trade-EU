@@ -45,6 +45,8 @@ class Settings(BaseSettings):
     ollama_chat_model: str = "qwen2.5:7b"
     ollama_embed_model: str = "bge-m3"  # 1024 chiều, khớp EMBEDDING_DIM
     ollama_timeout_seconds: float = 120.0
+    # U24: model đọc ảnh cho chứng nhận dạng scan (vd llama3.2-vision); trống = bỏ qua bản scan.
+    ollama_vision_model: str | None = None
     # Dịch máy (U3 mô tả sản phẩm một ngôn ngữ; F3 tin nhắn): unavailable | chat | deepl
     translation_backend: str = "unavailable"
     deepl_api_key: str | None = None

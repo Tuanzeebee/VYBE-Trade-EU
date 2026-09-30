@@ -30,6 +30,14 @@ COVERED = {
         "delete",
     ): "verification: test_other_exporter_cannot_touch_my_evidence",
     (
+        "/api/exporter/evidences/{evidence_id}/extraction",
+        "get",
+    ): "verification: test_extraction_is_owner_only_and_never_changes_status",
+    (
+        "/api/exporter/evidences/{evidence_id}/extraction/apply",
+        "post",
+    ): "verification: test_extraction_is_owner_only_and_never_changes_status",
+    (
         "/api/exporter/products/{product_id}",
         "get",
     ): "companies: test_products_api (sản phẩm của người khác 404)",

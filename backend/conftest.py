@@ -54,6 +54,9 @@ class FakeStorage:
     async def presign_get(self, key: str) -> str:
         return f"https://fake/{key}"
 
+    async def get(self, key: str) -> bytes:
+        return FakeStorage.objects.get(key, b"")
+
     async def presign_put(self, key: str, content_type: str) -> str:
         return f"https://fake/{key}"
 

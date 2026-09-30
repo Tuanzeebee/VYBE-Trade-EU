@@ -5,6 +5,7 @@ Nhà cung cấp thật là quyết định Q5 (chưa chốt). Mặc định Fake
 tiên trong prompt. Test tiêm bản giả có kịch bản (bịa trích dẫn, làm theo chỉ dẫn chèn, lỗi...).
 """
 
+import base64
 import json
 import re
 from collections.abc import Callable
@@ -93,3 +94,55 @@ def get_chat_model() -> ChatModel:
     if settings.chat_backend != "fake":
         raise ValueError(f"CHAT_BACKEND không hợp lệ: {settings.chat_backend}")
     return FakeChatModel()
+
+
+class VisionModel(Protocol):
+    """Model đọc ảnh (U24: chứng nhận dạng scan). Chỉ có khi cấu hình Ollama vision."""
+
+    name: str
+
+    async def read_image(self, system: str, user: str, image: bytes) -> str: ...
+
+
+class OllamaVisionModel:
+    def __init__(
+        self,
+        base_url: str,
+        model: str,
+        timeout: float = 120.0,
+        client: httpx.AsyncClient | None = None,
+    ) -> None:
+        self.name = f"ollama:{model}"
+        self._model = model
+        self._client = client or httpx.AsyncClient(base_url=base_url, timeout=timeout)
+
+    async def read_image(self, system: str, user: str, image: bytes) -> str:
+        response = await self._client.post(
+            "/api/chat",
+            json={
+                "model": self._model,
+                "stream": False,
+                "format": "json",
+                "options": {"temperature": 0},
+                "messages": [
+                    {"role": "system", "content": system},
+                    {
+                        "role": "user",
+                        "content": user,
+                        "images": [base64.b64encode(image).decode("ascii")],
+                    },
+                ],
+            },
+        )
+        response.raise_for_status()
+        return str(response.json()["message"]["content"])
+
+
+def get_vision_model() -> VisionModel | None:
+    """Model đọc ảnh khi CHAT_BACKEND=ollama và có OLLAMA_VISION_MODEL; không thì None (bỏ qua)."""
+    settings = get_settings()
+    if settings.chat_backend == "ollama" and settings.ollama_vision_model:
+        return OllamaVisionModel(
+            settings.ollama_base_url, settings.ollama_vision_model, settings.ollama_timeout_seconds
+        )
+    return None

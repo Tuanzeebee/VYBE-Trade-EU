@@ -3,6 +3,7 @@
 // Bằng chứng của exporter (C6): danh sách kiểm theo nhóm hàng, danh sách đã nộp và form nộp mới.
 // Không phải kết quả xác minh: bằng chứng do quản trị viên duyệt; xác minh doanh nghiệp là quyết định riêng.
 import React, { useCallback, useEffect, useState } from 'react';
+import { EvidenceSuggestion } from './EvidenceSuggestion';
 import { useLanguage } from '../context/LanguageContext';
 import {
   createEvidence,
@@ -189,6 +190,7 @@ export default function EvidenceManager({ onCountChange }: Props) {
                     {e.expires_at && <div>{tr('Ngày hết hạn')}: {e.expires_at}</div>}
                   </dl>
                   {e.reject_reason && <p className="mt-2 text-xs text-rose-700">{tr('Lý do từ chối')}: {e.reject_reason}</p>}
+                  {e.approval_status === 'pending' && <EvidenceSuggestion evidenceId={e.id} onApplied={() => void refresh()} />}
                   <div className="mt-2 flex gap-4 text-xs font-semibold">
                     <a href={e.file_url} target="_blank" rel="noreferrer" className="text-teal-700 hover:underline">
                       {tr('Xem file')}
