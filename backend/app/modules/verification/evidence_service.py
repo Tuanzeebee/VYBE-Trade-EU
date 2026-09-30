@@ -41,6 +41,7 @@ from app.modules.verification.schemas import (
 )
 
 ENTITY = "evidence"
+OTHER_TYPE = "other"  # loại "Khác" (U4): seller tự ghi tên giấy tờ
 
 
 def _today() -> dt.date:
@@ -53,8 +54,9 @@ def snapshot(row: Evidence) -> dict[str, Any]:
         "file_key": row.file_key,
         "certificate_number": row.certificate_number,
         "issuer": row.issuer,
-        "issued_at": row.issued_at.isoformat(),
+        "issued_at": row.issued_at.isoformat() if row.issued_at else None,
         "expires_at": row.expires_at.isoformat() if row.expires_at else None,
+        "custom_type_name": row.custom_type_name,
         "approval_status": row.approval_status.value,
     }
 
@@ -82,11 +84,19 @@ def _check_file_key(company_id: uuid.UUID, key: str) -> None:
         raise AppError("invalid_file_key", "File was not uploaded for this company", 422)
 
 
-def _check_dates(issued_at: dt.date, expires_at: dt.date | None) -> None:
-    if issued_at > _today():
+def check_dates(issued_at: dt.date | None, expires_at: dt.date | None) -> None:
+    if issued_at is not None and issued_at > _today():
         raise AppError("invalid_dates", "issued_at cannot be in the future", 422)
-    if expires_at is not None and expires_at <= issued_at:
+    if issued_at is not None and expires_at is not None and expires_at <= issued_at:
         raise AppError("invalid_dates", "expires_at must be after issued_at", 422)
+
+
+def _custom_name(type_code: str, name: str | None) -> str | None:
+    """Loại "Khác" bắt buộc ghi tên giấy tờ; loại khác không lưu tên tự ghi."""
+    name = (name or "").strip() or None
+    if type_code == OTHER_TYPE and name is None:
+        raise AppError("custom_type_name_required", "Name the document for type 'other'", 422)
+    return name if type_code == OTHER_TYPE else None
 
 
 async def to_out(session: AsyncSession, storage: Storage, row: Evidence) -> EvidenceOut:
@@ -100,6 +110,7 @@ async def to_out(session: AsyncSession, storage: Storage, row: Evidence) -> Evid
         issuer=row.issuer,
         issued_at=row.issued_at,
         expires_at=row.expires_at,
+        custom_type_name=row.custom_type_name,
         approval_status=row.approval_status.value,
         reject_reason=row.reject_reason,
         file_url=await storage.presign_get(row.file_key),
@@ -148,7 +159,7 @@ async def create_evidence(
     type_row = await _usable_type(session, data.type_code)
     _check_file_key(company_id, data.file_key)
     expires_at = evidence_expiry(data.issued_at, type_row.validity_months, data.expires_at)
-    _check_dates(data.issued_at, expires_at)
+    check_dates(data.issued_at, expires_at)
     row = Evidence(
         company_id=company_id,
         type_code=data.type_code,
@@ -157,6 +168,7 @@ async def create_evidence(
         issuer=data.issuer,
         issued_at=data.issued_at,
         expires_at=expires_at,
+        custom_type_name=_custom_name(data.type_code, data.custom_type_name),
         approval_status=ApprovalStatus.pending,
     )
     session.add(row)
@@ -186,17 +198,19 @@ async def update_evidence(
     row = await _get_owned(session, company_id, evidence_id)
     before = snapshot(row)
     fields = patch.model_fields_set
-    for required in ("type_code", "file_key", "issued_at"):
+    for required in ("type_code", "file_key"):
         if required in fields and getattr(patch, required) is None:
             raise AppError("invalid_patch", f"{required} cannot be null", 422)
     type_code = patch.type_code if "type_code" in fields and patch.type_code else row.type_code
     type_row = await _usable_type(session, type_code)
     file_key = patch.file_key if "file_key" in fields and patch.file_key else row.file_key
     _check_file_key(company_id, file_key)
-    issued_at = patch.issued_at if "issued_at" in fields and patch.issued_at else row.issued_at
+    issued_at = patch.issued_at if "issued_at" in fields else row.issued_at
     supplied = patch.expires_at if "expires_at" in fields else row.expires_at
     expires_at = evidence_expiry(issued_at, type_row.validity_months, supplied)
-    _check_dates(issued_at, expires_at)
+    check_dates(issued_at, expires_at)
+    custom = patch.custom_type_name if "custom_type_name" in fields else row.custom_type_name
+    row.custom_type_name = _custom_name(type_code, custom)
 
     row.type_code, row.file_key, row.issued_at, row.expires_at = (
         type_code,

@@ -9815,8 +9815,15 @@
             "title": "Issuer"
           },
           "issued_at": {
-            "type": "string",
-            "format": "date",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Issued At"
           },
           "expires_at": {
@@ -9830,13 +9837,24 @@
               }
             ],
             "title": "Expires At"
+          },
+          "custom_type_name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Custom Type Name"
           }
         },
         "type": "object",
         "required": [
           "type_code",
-          "file_key",
-          "issued_at"
+          "file_key"
         ],
         "title": "EvidenceIn"
       },
@@ -9882,8 +9900,15 @@
             "title": "Issuer"
           },
           "issued_at": {
-            "type": "string",
-            "format": "date",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Issued At"
           },
           "expires_at": {
@@ -9897,6 +9922,17 @@
               }
             ],
             "title": "Expires At"
+          },
+          "custom_type_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Custom Type Name"
           },
           "approval_status": {
             "type": "string",
@@ -10014,6 +10050,18 @@
               }
             ],
             "title": "Expires At"
+          },
+          "custom_type_name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Custom Type Name"
           }
         },
         "type": "object",
@@ -10041,6 +10089,30 @@
               }
             ],
             "title": "Reason"
+          },
+          "issued_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Issued At"
+          },
+          "expires_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expires At"
           }
         },
         "type": "object",

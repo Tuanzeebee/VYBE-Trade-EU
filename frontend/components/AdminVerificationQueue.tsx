@@ -53,10 +53,15 @@ export default function AdminVerificationQueue() {
     void run(() => decideRequest(item.request_id, decision, reason));
   };
 
+  // U4: ngày cấp / hết hạn admin đọc trên giấy tờ (seller có thể nộp không kèm ngày).
+  const [dates, setDates] = useState<Record<string, { issuedAt?: string; expiresAt?: string }>>({});
+  const setDate = (id: string, field: 'issuedAt' | 'expiresAt', value: string) =>
+    setDates((d) => ({ ...d, [id]: { ...d[id], [field]: value } }));
+
   const review = (evidenceId: string, decision: 'approve' | 'reject') => {
     const reason = (reasons[evidenceId] ?? '').trim();
     if (decision === 'reject' && !reason) return setError(NEED_REASON);
-    void run(() => reviewEvidence(evidenceId, decision, reason));
+    void run(() => reviewEvidence(evidenceId, decision, reason, decision === 'approve' ? dates[evidenceId] : {}));
   };
 
   const button = 'rounded-lg px-3 py-1.5 text-xs font-semibold disabled:opacity-60';
@@ -161,13 +166,13 @@ export default function AdminVerificationQueue() {
                 {item.evidences.map((e) => (
                   <div key={e.id} className="rounded-xl border border-slate-200 p-3 text-sm">
                     <div className="flex flex-wrap items-center justify-between gap-2">
-                      <strong>{language === 'en' ? e.type_name_en : e.type_name_vi}</strong>
+                      <strong>{e.custom_type_name || (language === 'en' ? e.type_name_en : e.type_name_vi)}</strong>
                       <span className="text-[11px] font-semibold text-slate-600">{tr(STATUS_LABEL[e.approval_status])}</span>
                     </div>
                     <p className="mt-1 text-xs text-slate-600">
                       {e.certificate_number && `${e.certificate_number} · `}
                       {e.issuer && `${e.issuer} · `}
-                      {e.issued_at}
+                      {e.issued_at ?? tr('Chưa có ngày cấp')}
                       {e.expires_at && ` → ${e.expires_at}`}
                     </p>
                     <div className="mt-2 flex flex-wrap items-end gap-2">
@@ -176,6 +181,26 @@ export default function AdminVerificationQueue() {
                       </a>
                       {e.approval_status === 'pending' && (
                         <>
+                          <label className="text-xs text-slate-600">
+                            {tr('Ngày cấp')}
+                            <input
+                              type="date"
+                              aria-label={tr('Ngày cấp đọc trên giấy tờ')}
+                              value={dates[e.id]?.issuedAt ?? e.issued_at ?? ''}
+                              onChange={(ev) => setDate(e.id, 'issuedAt', ev.target.value)}
+                              className="ml-1 rounded-lg border border-slate-200 px-2 py-1 text-xs"
+                            />
+                          </label>
+                          <label className="text-xs text-slate-600">
+                            {tr('Ngày hết hạn')}
+                            <input
+                              type="date"
+                              aria-label={tr('Ngày hết hạn đọc trên giấy tờ')}
+                              value={dates[e.id]?.expiresAt ?? e.expires_at ?? ''}
+                              onChange={(ev) => setDate(e.id, 'expiresAt', ev.target.value)}
+                              className="ml-1 rounded-lg border border-slate-200 px-2 py-1 text-xs"
+                            />
+                          </label>
                           <button type="button" disabled={busy} onClick={() => review(e.id, 'approve')} className={`${button} bg-emerald-700 text-white`}>
                             {tr('Duyệt bằng chứng')}
                           </button>

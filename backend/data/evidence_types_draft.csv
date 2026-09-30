@@ -20,3 +20,15 @@ wrap,"WRAP (trách nhiệm xã hội)","WRAP social compliance",social,,Nghiên 
 smeta,"SMETA (trách nhiệm xã hội)","SMETA social compliance",social,,Nghiên cứu PO 29/09/2026
 ce_marking,"Dấu CE","CE marking",technical,,Nghiên cứu PO 29/09/2026
 lab_test_report,"Kết quả kiểm nghiệm của phòng lab","Laboratory test report",lab,,Nghiên cứu PO 29/09/2026
+# Bổ sung sau demo 30/09/2026 (U4, ADR-0004) — CHƯA duyệt. Giấy tờ pháp lý, bằng chứng xuất khẩu thật
+# (khách: "xuất đi châu Âu phải có hợp đồng, vận đơn"), audit bên thứ ba, giấy phép của nhà cung cấp dịch vụ.
+business_registration,"Giấy chứng nhận đăng ký doanh nghiệp","Business registration certificate",legal,,Demo 30/09/2026 (U4)
+export_contract,"Hợp đồng xuất khẩu (che giá)","Export sales contract (prices masked)",export,,Demo 30/09/2026 (U4)
+bill_of_lading,"Vận đơn (B/L)","Bill of lading",export,,Demo 30/09/2026 (U4)
+customs_declaration,"Tờ khai hải quan xuất khẩu","Export customs declaration",export,,Demo 30/09/2026 (U4)
+third_party_audit,"Báo cáo đánh giá nhà máy của bên thứ ba (SGS, BV, TÜV, Intertek)","Third-party factory audit report (SGS, BV, TÜV, Intertek)",audit,,ADR-0004 (U4)
+customs_broker_recognition,"Quyết định công nhận đại lý làm thủ tục hải quan","Customs broker recognition decision",licence,,ADR-0004 (U4)
+multimodal_transport_licence,"Giấy phép kinh doanh vận tải đa phương thức quốc tế","International multimodal transport licence",licence,,ADR-0004 (U4) — ghi ngày hết hạn in trên giấy phép (thường 5 năm)
+accounting_service_certificate,"Giấy chứng nhận đủ điều kiện kinh doanh dịch vụ kế toán","Accounting services eligibility certificate",licence,,ADR-0004 (U4)
+tax_agent_certificate,"Giấy xác nhận đủ điều kiện kinh doanh dịch vụ làm thủ tục về thuế","Tax agent services eligibility certificate",licence,,ADR-0004 (U4)
+other,"Khác (ghi tên giấy tờ)","Other (name the document)",other,,Demo 30/09/2026 (U4)

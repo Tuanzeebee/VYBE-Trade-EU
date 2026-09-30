@@ -221,7 +221,7 @@ describe('Hàng đợi xác minh (I1, I2)', () => {
     fireEvent.change(within(row).getByLabelText(/Lý do từ chối bằng chứng/), { target: { value: 'Ảnh mờ' } });
     fireEvent.click(within(row).getByRole('button', { name: /Từ chối bằng chứng/ }));
     await waitFor(() => expect(posts()).toHaveLength(1));
-    expect(posts()[0].body).toEqual({ decision: 'reject', reason: 'Ảnh mờ' });
+    expect(posts()[0].body).toEqual({ decision: 'reject', reason: 'Ảnh mờ', issued_at: null, expires_at: null });
   });
 
   it('công ty không có bằng chứng: nói rõ', async () => {
@@ -247,5 +247,20 @@ describe('Hàng đợi xác minh (I1, I2)', () => {
     serve([item()]);
     renderQueue('en');
     expect(await screen.findByRole('button', { name: 'Approve verification' })).toBeInTheDocument();
+  });
+});
+
+describe('Hàng đợi xác minh — ngày trên giấy tờ do admin nhập (U4)', () => {
+  afterEach(() => vi.unstubAllGlobals());
+
+  it('duyệt bằng chứng gửi kèm ngày cấp / hết hạn admin đọc trên giấy tờ', async () => {
+    serve([item()]);
+    renderQueue();
+    const row = await screen.findByRole('listitem', { name: /Công ty A/ });
+    fireEvent.change(within(row).getByLabelText('Ngày cấp đọc trên giấy tờ'), { target: { value: '2026-01-05' } });
+    fireEvent.change(within(row).getByLabelText('Ngày hết hạn đọc trên giấy tờ'), { target: { value: '2029-01-04' } });
+    fireEvent.click(within(row).getByRole('button', { name: /Duyệt bằng chứng/ }));
+    await waitFor(() => expect(posts()).toHaveLength(1));
+    expect(posts()[0].body).toMatchObject({ decision: 'approve', issued_at: '2026-01-05', expires_at: '2029-01-04' });
   });
 });

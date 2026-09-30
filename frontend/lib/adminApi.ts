@@ -61,14 +61,28 @@ export function decideRequest(requestId: string, decision: Decision, reason: str
   );
 }
 
-export function reviewEvidence(evidenceId: string, decision: 'approve' | 'reject', reason: string): Promise<void> {
+/** U4: admin nhập ngày đọc trên giấy tờ khi duyệt (seller không bắt buộc nhập). */
+export function reviewEvidence(
+  evidenceId: string,
+  decision: 'approve' | 'reject',
+  reason: string,
+  dates: { issuedAt?: string; expiresAt?: string } = {},
+): Promise<void> {
   return act(
     () =>
       createApiClient().POST('/api/admin/evidences/{evidence_id}/review', {
         params: { path: { evidence_id: evidenceId } },
-        body: { decision, reason: reason.trim() || null },
+        body: {
+          decision,
+          reason: reason.trim() || null,
+          issued_at: dates.issuedAt || null,
+          expires_at: dates.expiresAt || null,
+        },
       }),
-    { 422: 'Cần nhập lý do khi từ chối bằng chứng.', 404: 'Không tìm thấy bằng chứng.' },
+    {
+      422: 'Từ chối cần lý do; duyệt loại giấy tờ có hạn dùng cần ngày cấp (không ở tương lai, trước ngày hết hạn).',
+      404: 'Không tìm thấy bằng chứng.',
+    },
   );
 }
 

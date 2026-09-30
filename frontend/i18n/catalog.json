@@ -12038,5 +12038,60 @@
     "Could not delete the product. Please try again.",
     "Impossible de supprimer le produit. Veuillez réessayer.",
     "製品を削除できませんでした。もう一度お試しください。"
+  ],
+  "Chưa có ngày cấp": [
+    "No issue date yet",
+    "Pas encore de date d'émission",
+    "発行日未入力"
+  ],
+  "Ngày cấp đọc trên giấy tờ": [
+    "Issue date as read on the document",
+    "Date d'émission lue sur le document",
+    "書類に記載の発行日"
+  ],
+  "Ngày hết hạn đọc trên giấy tờ": [
+    "Expiry date as read on the document",
+    "Date d'expiration lue sur le document",
+    "書類に記載の有効期限"
+  ],
+  "Tên giấy tờ": [
+    "Document name",
+    "Nom du document",
+    "書類名"
+  ],
+  "Ví dụ: Giấy chứng nhận Halal": [
+    "e.g. Halal certificate",
+    "ex. Certificat halal",
+    "例: ハラール認証"
+  ],
+  "PDF, PNG hoặc JPEG, tối đa 10MB. Chỉ cần loại giấy tờ và file — quản trị viên đọc thông tin trên giấy tờ khi duyệt.": [
+    "PDF, PNG or JPEG, max 10MB. Only the document type and file are needed — our team reads the details from the document when reviewing.",
+    "PDF, PNG ou JPEG, 10 Mo max. Seuls le type et le fichier sont requis — notre équipe lit les détails sur le document lors de l'examen.",
+    "PDF・PNG・JPEG、最大10MB。書類の種類とファイルだけで十分です。審査時に運営チームが書類から詳細を読み取ります。"
+  ],
+  "Vui lòng ghi tên giấy tờ.": [
+    "Please name the document.",
+    "Veuillez indiquer le nom du document.",
+    "書類名を入力してください。"
+  ],
+  "Ẩn thông tin thêm": [
+    "Hide extra details",
+    "Masquer les détails",
+    "詳細を隠す"
+  ],
+  "Thông tin thêm (không bắt buộc): số, tổ chức cấp, ngày": [
+    "Extra details (optional): number, issuer, dates",
+    "Détails (facultatif) : numéro, émetteur, dates",
+    "詳細（任意）: 番号・発行機関・日付"
+  ],
+  "Bằng chứng chưa hợp lệ. Vui lòng kiểm tra loại giấy tờ và file.": [
+    "Invalid evidence. Please check the document type and file.",
+    "Justificatif invalide. Vérifiez le type de document et le fichier.",
+    "証拠書類が不正です。書類の種類とファイルをご確認ください。"
+  ],
+  "Từ chối cần lý do; duyệt loại giấy tờ có hạn dùng cần ngày cấp (không ở tương lai, trước ngày hết hạn).": [
+    "Rejecting needs a reason; approving a document type with a validity period needs an issue date (not in the future, before expiry).",
+    "Un refus doit être motivé ; approuver un document à durée de validité exige une date d'émission (pas future, avant l'expiration).",
+    "却下には理由が必要です。有効期間のある書類の承認には発行日（未来日不可・期限前）が必要です。"
   ]
 }

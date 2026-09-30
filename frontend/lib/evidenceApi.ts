@@ -50,9 +50,15 @@ export interface EvidenceInput {
   fileKey: string;
   certificateNumber: string;
   issuer: string;
+  /** U4: không bắt buộc — admin nhập khi duyệt nếu cần. */
   issuedAt: string;
   expiresAt: string;
+  /** Loại "Khác": tên giấy tờ do người nộp ghi. */
+  customTypeName?: string;
 }
+
+/** Mã loại "Khác" (U4) — khớp backend evidence_service.OTHER_TYPE. */
+export const OTHER_EVIDENCE_TYPE = 'other';
 
 const blank = (value: string) => (value.trim() === '' ? null : value.trim());
 
@@ -65,15 +71,16 @@ export async function createEvidence(input: EvidenceInput): Promise<Evidence> {
         file_key: input.fileKey,
         certificate_number: blank(input.certificateNumber),
         issuer: blank(input.issuer),
-        issued_at: input.issuedAt,
+        issued_at: blank(input.issuedAt),
         expires_at: blank(input.expiresAt),
+        custom_type_name: blank(input.customTypeName ?? ''),
       },
     });
   } catch {
     throw new Error(NETWORK);
   }
   if (result.response.status === 422) {
-    throw new Error('Bằng chứng chưa hợp lệ. Vui lòng kiểm tra loại, ngày cấp, ngày hết hạn và file.');
+    throw new Error('Bằng chứng chưa hợp lệ. Vui lòng kiểm tra loại giấy tờ và file.');
   }
   if (!result.response.ok || !result.data) throw new Error(NETWORK);
   return result.data;

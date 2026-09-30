@@ -110,8 +110,11 @@ class Evidence(Base):
     file_key: Mapped[str] = mapped_column(String(512))
     certificate_number: Mapped[str | None] = mapped_column(String(128))
     issuer: Mapped[str | None] = mapped_column(String(255))
-    issued_at: Mapped[dt.date] = mapped_column(Date)
+    # U4: không bắt buộc — seller chỉ cần loại + file; admin nhập ngày khi duyệt loại có hạn dùng.
+    issued_at: Mapped[dt.date | None] = mapped_column(Date)
     expires_at: Mapped[dt.date | None] = mapped_column(Date)  # ngày ĐÃ hết hiệu lực
+    # Loại "Khác": tên giấy tờ do seller tự ghi.
+    custom_type_name: Mapped[str | None] = mapped_column(String(255))
     approval_status: Mapped[ApprovalStatus] = mapped_column(
         Enum(ApprovalStatus, name="evidence_approval_status"),
         default=ApprovalStatus.pending,

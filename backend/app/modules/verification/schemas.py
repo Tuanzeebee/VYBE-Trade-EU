@@ -15,8 +15,10 @@ class EvidenceIn(BaseModel):
     file_key: Annotated[str, Field(min_length=1, max_length=512)]
     certificate_number: Annotated[str | None, Field(max_length=128)] = None
     issuer: Annotated[str | None, Field(max_length=255)] = None
-    issued_at: dt.date
+    # U4: không bắt buộc (khách: "chỉ cần tải lên là xong").
+    issued_at: dt.date | None = None
     expires_at: dt.date | None = None
+    custom_type_name: Annotated[str | None, Field(max_length=255)] = None
 
 
 class EvidencePatch(BaseModel):
@@ -28,6 +30,7 @@ class EvidencePatch(BaseModel):
     issuer: Annotated[str | None, Field(max_length=255)] = None
     issued_at: dt.date | None = None
     expires_at: dt.date | None = None
+    custom_type_name: Annotated[str | None, Field(max_length=255)] = None
 
 
 class EvidenceOut(BaseModel):
@@ -39,8 +42,9 @@ class EvidenceOut(BaseModel):
     type_name_en: str
     certificate_number: str | None
     issuer: str | None
-    issued_at: dt.date
+    issued_at: dt.date | None
     expires_at: dt.date | None
+    custom_type_name: str | None = None
     approval_status: ApprovalStatusLiteral
     reject_reason: str | None
     file_url: str  # URL tải xuống có hạn ngắn (pre-signed)

@@ -2395,13 +2395,12 @@ export interface components {
             certificate_number?: string | null;
             /** Issuer */
             issuer?: string | null;
-            /**
-             * Issued At
-             * Format: date
-             */
-            issued_at: string;
+            /** Issued At */
+            issued_at?: string | null;
             /** Expires At */
             expires_at?: string | null;
+            /** Custom Type Name */
+            custom_type_name?: string | null;
         };
         /** EvidenceOut */
         EvidenceOut: {
@@ -2420,13 +2419,12 @@ export interface components {
             certificate_number: string | null;
             /** Issuer */
             issuer: string | null;
-            /**
-             * Issued At
-             * Format: date
-             */
-            issued_at: string;
+            /** Issued At */
+            issued_at: string | null;
             /** Expires At */
             expires_at: string | null;
+            /** Custom Type Name */
+            custom_type_name?: string | null;
             /**
              * Approval Status
              * @enum {string}
@@ -2454,6 +2452,8 @@ export interface components {
             issued_at?: string | null;
             /** Expires At */
             expires_at?: string | null;
+            /** Custom Type Name */
+            custom_type_name?: string | null;
         };
         /** EvidenceReviewIn */
         EvidenceReviewIn: {
@@ -2464,6 +2464,10 @@ export interface components {
             decision: "approve" | "reject";
             /** Reason */
             reason?: string | null;
+            /** Issued At */
+            issued_at?: string | null;
+            /** Expires At */
+            expires_at?: string | null;
         };
         /** EvidenceTypeIn */
         EvidenceTypeIn: {

@@ -13,6 +13,7 @@ import {
   uploadEvidenceFile,
   type ChecklistItem,
   type Evidence,
+  OTHER_EVIDENCE_TYPE,
   type EvidenceType,
 } from '../lib/evidenceApi';
 
@@ -61,6 +62,8 @@ export default function EvidenceManager({ onCountChange }: Props) {
   const [issuer, setIssuer] = useState('');
   const [issuedAt, setIssuedAt] = useState('');
   const [expiresAt, setExpiresAt] = useState('');
+  const [customName, setCustomName] = useState('');
+  const [showDetails, setShowDetails] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [fileKey, setFileKey] = useState(0); // đổi key để xóa ô chọn file
   const [error, setError] = useState('');
@@ -88,10 +91,11 @@ export default function EvidenceManager({ onCountChange }: Props) {
     event.preventDefault();
     setError('');
     if (!typeCode) return setError('Vui lòng chọn loại bằng chứng.');
+    if (typeCode === OTHER_EVIDENCE_TYPE && !customName.trim()) return setError('Vui lòng ghi tên giấy tờ.');
     if (!file) return setError('Vui lòng chọn file bằng chứng.');
-    if (!issuedAt) return setError('Vui lòng nhập ngày cấp.');
-    if (issuedAt > today()) return setError('Ngày cấp không được ở tương lai.');
-    if (autoExpiry === null && expiresAt && expiresAt <= issuedAt) return setError('Ngày hết hạn phải sau ngày cấp.');
+    // U4: ngày cấp, số, tổ chức cấp không bắt buộc — chỉ kiểm khi người dùng tự điền.
+    if (issuedAt && issuedAt > today()) return setError('Ngày cấp không được ở tương lai.');
+    if (autoExpiry === null && issuedAt && expiresAt && expiresAt <= issuedAt) return setError('Ngày hết hạn phải sau ngày cấp.');
     setBusy(true);
     try {
       const key = await uploadEvidenceFile(file);
@@ -102,8 +106,11 @@ export default function EvidenceManager({ onCountChange }: Props) {
         issuer,
         issuedAt,
         expiresAt: autoExpiry === null ? expiresAt : '',
+        customTypeName: typeCode === OTHER_EVIDENCE_TYPE ? customName : '',
       });
       setTypeCode('');
+      setCustomName('');
+      setShowDetails(false);
       setNumber('');
       setIssuer('');
       setIssuedAt('');
@@ -168,7 +175,7 @@ export default function EvidenceManager({ onCountChange }: Props) {
         ) : (
           <ul className="mt-3 space-y-3">
             {items.map((e) => {
-              const title = language === 'en' ? e.type_name_en : e.type_name_vi;
+              const title = e.custom_type_name || (language === 'en' ? e.type_name_en : e.type_name_vi);
               return (
                 <li key={e.id} aria-label={title} className="rounded-xl border border-slate-200 p-3 text-sm">
                   <div className="flex flex-wrap items-center justify-between gap-2">
@@ -178,7 +185,7 @@ export default function EvidenceManager({ onCountChange }: Props) {
                   <dl className="mt-2 grid gap-x-4 gap-y-1 text-xs text-slate-600 sm:grid-cols-2">
                     {e.certificate_number && <div>{tr('Số chứng chỉ')}: {e.certificate_number}</div>}
                     {e.issuer && <div>{tr('Tổ chức cấp')}: {e.issuer}</div>}
-                    <div>{tr('Ngày cấp')}: {e.issued_at}</div>
+                    {e.issued_at && <div>{tr('Ngày cấp')}: {e.issued_at}</div>}
                     {e.expires_at && <div>{tr('Ngày hết hạn')}: {e.expires_at}</div>}
                   </dl>
                   {e.reject_reason && <p className="mt-2 text-xs text-rose-700">{tr('Lý do từ chối')}: {e.reject_reason}</p>}
@@ -208,6 +215,28 @@ export default function EvidenceManager({ onCountChange }: Props) {
             ))}
           </select>
         </div>
+        {typeCode === OTHER_EVIDENCE_TYPE && (
+          <div>
+            <label htmlFor="ev-custom" className={label}>{tr('Tên giấy tờ')} *</label>
+            <input id="ev-custom" value={customName} maxLength={255} onChange={(e) => setCustomName(e.target.value)} className={field} placeholder={tr('Ví dụ: Giấy chứng nhận Halal')} />
+          </div>
+        )}
+        <div>
+          <label htmlFor="ev-file" className={label}>{tr('File bằng chứng')}</label>
+          <input
+            key={fileKey}
+            id="ev-file"
+            type="file"
+            accept="application/pdf,image/png,image/jpeg"
+            onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+            className={field}
+          />
+          <p className="mt-1 text-[11px] text-slate-500">{tr('PDF, PNG hoặc JPEG, tối đa 10MB. Chỉ cần loại giấy tờ và file — quản trị viên đọc thông tin trên giấy tờ khi duyệt.')}</p>
+        </div>
+        <button type="button" aria-expanded={showDetails} onClick={() => setShowDetails((v) => !v)} className="text-xs font-semibold text-teal-800 hover:underline">
+          {tr(showDetails ? 'Ẩn thông tin thêm' : 'Thông tin thêm (không bắt buộc): số, tổ chức cấp, ngày')}
+        </button>
+        {showDetails && (
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
             <label htmlFor="ev-number" className={label}>{tr('Số chứng chỉ')}</label>
@@ -232,18 +261,7 @@ export default function EvidenceManager({ onCountChange }: Props) {
             </p>
           )}
         </div>
-        <div>
-          <label htmlFor="ev-file" className={label}>{tr('File bằng chứng')}</label>
-          <input
-            key={fileKey}
-            id="ev-file"
-            type="file"
-            accept="application/pdf,image/png,image/jpeg"
-            onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-            className={field}
-          />
-          <p className="mt-1 text-[11px] text-slate-500">{tr('PDF, PNG hoặc JPEG, tối đa 10MB.')}</p>
-        </div>
+        )}
         {error && (
           <p role="alert" className="rounded-xl bg-rose-50 p-3 text-sm text-rose-700">
             {tr(error)}
