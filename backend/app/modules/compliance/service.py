@@ -41,11 +41,14 @@ from app.modules.compliance.schemas import (
     RooOut,
     TariffIn,
     TariffOut,
+    TariffPreviewOut,
 )
 
 # EU là liên minh thuế quan: biểu thuế chung lưu ở destination 'EU' (một dòng/HS cho 27 nước).
 UNION_DESTINATION = "EU"
 HEADING_LENGTH = 6  # mã HS 6 số — cấp danh mục và dòng thuế
+# Cơ sở tính chỉ để lấy thuế suất (%); không hiển thị tiền nào ở màn xem thuế.
+_RATE_BASIS = Decimal(100)
 
 
 def _reviewed_lines(hs_code: str, destination: str, on_date: dt.date) -> Select[TariffLine]:
@@ -292,6 +295,34 @@ async def calculate_tariff(
         condition_note=result.condition_note,
         quota_note_en=result.quota_note_en,
         condition_note_en=result.condition_note_en,
+    )
+
+
+async def preview_tariff(session: AsyncSession, hs_code: str) -> TariffPreviewOut:
+    """Xem thuế MFN so với EVFTA của một mã HS. Chỉ đọc: KHÔNG ghi compliance_checks
+    (không phải lần chạy máy tính chủ động). Dùng cùng dòng đã duyệt và cùng hàm thuần với C2."""
+    code = catalog.normalize_code(hs_code)
+    if code is None:
+        raise AppError("invalid_hs_code", "HS code must be 6 to 8 digits", 422)
+    lines = await lookup_lines(session, code, dt.datetime.now(dt.UTC).date())
+    line = lines[0] if lines else None
+    result = tariff_savings(
+        None if line is None else _line_data(line), len(lines), _RATE_BASIS, None
+    )
+    ok = result.status == "ok" and line is not None
+    return TariffPreviewOut(
+        status=result.status,
+        hs_code=code,
+        hs_formatted=catalog.format_code(code),
+        mfn_rate=result.mfn_rate,
+        evfta_rate=result.evfta_rate,
+        staging_category=line.staging_category if ok and line is not None else None,
+        zero_from=line.zero_from if ok and line is not None else None,
+        quota_note=result.quota_note,
+        condition_note=result.condition_note,
+        quota_note_en=result.quota_note_en,
+        condition_note_en=result.condition_note_en,
+        source_url=line.source_url if line is not None else None,
     )
 
 

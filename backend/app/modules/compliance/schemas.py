@@ -68,6 +68,23 @@ class TariffOut(BaseModel):
     condition_note_en: str | None
 
 
+class TariffPreviewOut(BaseModel):
+    """Xem thuế tại sản phẩm (chỉ đọc). `unsupported` và `needs_review` không có con số nào."""
+
+    status: Literal["ok", "unsupported", "needs_review"]
+    hs_code: str
+    hs_formatted: str
+    mfn_rate: Decimal | None
+    evfta_rate: Decimal | None
+    staging_category: str | None
+    zero_from: dt.date | None
+    quota_note: str | None
+    condition_note: str | None
+    quota_note_en: str | None
+    condition_note_en: str | None
+    source_url: str | None
+
+
 class MarketsIn(BaseModel):
     """Số tiền nhận dạng CHUỖI JSON (không nhận số). roo_status lấy từ máy tính xuất xứ."""
 

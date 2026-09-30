@@ -1,7 +1,7 @@
 import uuid
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, UploadFile
+from fastapi import APIRouter, Depends, Query, UploadFile
 from fastapi.responses import Response, StreamingResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -31,6 +31,7 @@ from app.modules.compliance.schemas import (
     RooOut,
     TariffIn,
     TariffOut,
+    TariffPreviewOut,
 )
 
 router = APIRouter(tags=["compliance"])
@@ -56,6 +57,15 @@ async def calculate_tariff(
     session: Annotated[AsyncSession, Depends(get_session)],
 ) -> TariffOut:
     return await service.calculate_tariff(session, data, user)
+
+
+@router.get("/api/exporter/tariff-preview")
+async def tariff_preview(
+    hs_code: Annotated[str, Query(max_length=32)],
+    _: Annotated[CurrentUser, Depends(require_role("exporter"))],
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> TariffPreviewOut:
+    return await service.preview_tariff(session, hs_code)
 
 
 @router.post("/api/public/roo")
