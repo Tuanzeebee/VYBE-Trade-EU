@@ -229,6 +229,7 @@ describe('Máy tính quy tắc xuất xứ (C4)', () => {
     expect(region).toHaveTextContent('69');
     expect(region).toHaveTextContent('70');
     expect(region).toHaveTextContent('Bộ Công Thương');
+    expect(within(region).getByRole('link', { name: /thị trường EU nên xuất/ })).toHaveAttribute('href', '/vi/tools/tariff?roo=pass');
   });
 
   it('fail: hiện "Không đạt" khác với chưa kết luận', async () => {

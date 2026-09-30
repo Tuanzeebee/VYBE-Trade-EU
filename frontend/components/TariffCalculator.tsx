@@ -16,6 +16,10 @@ const ERRORS = {
   invalid: 'Dữ liệu chưa hợp lệ. Vui lòng kiểm tra lại mã HS, nước nhập khẩu và giá trị lô hàng.',
   network: 'Không kết nối được máy chủ. Vui lòng thử lại.',
 } as const;
+const MISSING_INPUTS = 'Vui lòng bấm Tính tiết kiệm thuế trước khi xem thị trường nên xuất.';
+
+/** Đầu vào của lần tính thuế đã thành công — bảng xếp hạng chỉ dùng đúng các giá trị này. */
+type Submitted = { hsCode: string; amount: string; roo: RooStatus | '' };
 
 /** '12.0000' → '12%' (bỏ số 0 thừa; chỉ để hiển thị). */
 const percent = (rate: string) => `${Number(rate)}%`;
@@ -74,7 +78,7 @@ function Result({ data }: { data: TariffResult }) {
         {tr('Kết quả chỉ mang tính tham khảo, không thay thế tư vấn pháp lý hoặc xác nhận của cơ quan hải quan.')}
       </p>
       <a
-        href={`/suppliers?hs=${data.hs_code}`}
+        href={`/suppliers?hs=${data.hs_code.slice(0, 6)}`}
         className="mt-4 inline-block rounded-xl bg-[#083832] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#062924]"
       >
         {tr('Xem nhà cung cấp cho mã HS này')}
@@ -95,11 +99,27 @@ export default function TariffCalculator({ initialRoo }: { initialRoo?: RooStatu
   const [roo, setRoo] = useState<RooStatus | ''>(initialRoo ?? '');
   const [markets, setMarkets] = useState<MarketsResult | null>(null);
   const [marketsBusy, setMarketsBusy] = useState(false);
+  const [submitted, setSubmitted] = useState<Submitted | null>(null);
+
+  // Đổi mã HS, giá trị hoặc kết quả RoO thì bảng xếp hạng cũ không còn mô tả đầu vào hiện tại.
+  const changeHs = (option: HsCodeOption | null) => {
+    setHs(option);
+    setMarkets(null);
+  };
+  const changeValue = (next: string) => {
+    setValue(next);
+    setMarkets(null);
+  };
+  const changeRoo = (next: RooStatus | '') => {
+    setRoo(next);
+    setMarkets(null);
+  };
 
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();
     setResult(null);
     setMarkets(null);
+    setSubmitted(null);
     setError('');
     if (!hs) return setError('Vui lòng chọn mã HS.');
     const amount = parseAmount(value);
@@ -118,17 +138,22 @@ export default function TariffCalculator({ initialRoo }: { initialRoo?: RooStatu
       shipmentsPerYear: count,
     });
     setBusy(false);
-    if (outcome.ok) setResult(outcome.data);
-    else setError(ERRORS[outcome.error]);
+    if (outcome.ok) {
+      setResult(outcome.data);
+      setSubmitted({ hsCode: hs.code, amount, roo });
+    } else setError(ERRORS[outcome.error]);
   };
 
   const showMarkets = async () => {
-    if (!hs) return;
-    const amount = parseAmount(value);
-    if (!amount) return;
+    if (!submitted) return setError(MISSING_INPUTS);
     setMarketsBusy(true);
+    setMarkets(null);
     setError('');
-    const outcome = await rankMarkets({ hsCode: hs.code, productValue: amount, rooStatus: roo || undefined });
+    const outcome = await rankMarkets({
+      hsCode: submitted.hsCode,
+      productValue: submitted.amount,
+      rooStatus: submitted.roo || undefined,
+    });
     setMarketsBusy(false);
     if (outcome.ok) setMarkets(outcome.data);
     else setError(ERRORS[outcome.error]);
@@ -145,7 +170,7 @@ export default function TariffCalculator({ initialRoo }: { initialRoo?: RooStatu
         {tr('Nhập mã HS, nước EU nhập khẩu và giá trị lô hàng để ước tính thuế nhập khẩu tiết kiệm được nhờ EVFTA.')}
       </p>
       <form onSubmit={submit} noValidate className="mt-8 space-y-5">
-        <HsCodePicker label={tr('Sản phẩm (mã HS)')} value={hs} onChange={setHs} />
+        <HsCodePicker label={tr('Sản phẩm (mã HS)')} value={hs} onChange={changeHs} />
         <div>
           <label htmlFor="tariff-destination" className={label}>
             {tr('Nước EU nhập khẩu')}
@@ -162,7 +187,7 @@ export default function TariffCalculator({ initialRoo }: { initialRoo?: RooStatu
           <label htmlFor="tariff-value" className={label}>
             {tr('Giá trị lô hàng (EUR)')}
           </label>
-          <input id="tariff-value" inputMode="decimal" value={value} onChange={(e) => setValue(e.target.value)} className={field} />
+          <input id="tariff-value" inputMode="decimal" value={value} onChange={(e) => changeValue(e.target.value)} className={field} />
         </div>
         <div>
           <label htmlFor="tariff-shipments" className={label}>
@@ -174,7 +199,7 @@ export default function TariffCalculator({ initialRoo }: { initialRoo?: RooStatu
           <label htmlFor="tariff-roo" className={label}>
             {tr('Kết quả kiểm tra xuất xứ (nếu đã có)')}
           </label>
-          <select id="tariff-roo" value={roo} onChange={(e) => setRoo(isRooStatus(e.target.value) ? e.target.value : '')} className={field}>
+          <select id="tariff-roo" value={roo} onChange={(e) => changeRoo(isRooStatus(e.target.value) ? e.target.value : '')} className={field}>
             <option value="">{tr('Chưa kiểm tra')}</option>
             <option value="pass">{tr('Đạt')}</option>
             <option value="fail">{tr('Không đạt')}</option>

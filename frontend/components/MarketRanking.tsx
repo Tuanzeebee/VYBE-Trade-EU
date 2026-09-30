@@ -30,6 +30,9 @@ export default function MarketRanking({ data }: { data: MarketsResult }) {
   return (
     <section aria-label={tr('Thị trường nên xuất')} className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
       <h2 className="text-lg font-extrabold text-slate-900">{tr('Thị trường nên xuất')}</h2>
+      <p className="mt-1 text-sm font-semibold text-slate-800">
+        {tr('Mã HS')} {data.hs_formatted} · {tr('Giá trị lô hàng (EUR)')}: {money(data.product_value)}
+      </p>
       <p className="mt-1 text-sm text-slate-600">
         {data.basis === 'evfta'
           ? tr('Tính theo thuế ưu đãi EVFTA (hàng đạt quy tắc xuất xứ, có C/O).')
@@ -51,7 +54,8 @@ export default function MarketRanking({ data }: { data: MarketsResult }) {
                 </div>
                 <div>
                   <dt className="text-xs font-semibold text-slate-500">
-                    {tr('VAT nhập khẩu')} ({Number(row.vat_rate)}%)
+                    {tr('VAT nhập khẩu')}
+                    {row.vat_rate != null && ` (${Number(row.vat_rate)}%)`}
                   </dt>
                   <dd className="font-semibold text-slate-900">{row.vat ? money(row.vat) : '—'}</dd>
                 </div>

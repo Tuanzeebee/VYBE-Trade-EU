@@ -48,9 +48,36 @@ const json = (status: number, body: unknown) =>
   new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } });
 
 let tariffBodies: unknown[] = [];
+let marketBodies: unknown[] = [];
 
-function serve(tariff: () => Response | Promise<Response>) {
+const RANKED = (over: Record<string, unknown> = {}) => ({
+  check_id: 'm-1',
+  status: 'ok',
+  basis: 'mfn',
+  hs_code: '090111',
+  hs_formatted: '0901.11',
+  product_value: '10000.00',
+  duty_rate: '12.0000',
+  rows: [
+    {
+      country: 'FR',
+      status: 'ranked',
+      rank: 1,
+      duty: '1200.00',
+      vat_rate: '5.5000',
+      vat: '616.00',
+      total: '1816.00',
+      label_languages: 'fr',
+      note: null,
+      note_en: null,
+    },
+  ],
+  ...over,
+});
+
+function serve(tariff: () => Response | Promise<Response>, markets: () => Response | Promise<Response> = () => json(200, RANKED())) {
   tariffBodies = [];
+  marketBodies = [];
   vi.stubGlobal(
     'fetch',
     vi.fn(async (req: Request) => {
@@ -60,16 +87,20 @@ function serve(tariff: () => Response | Promise<Response>) {
         tariffBodies.push(await req.json());
         return tariff();
       }
+      if (path === '/api/public/markets') {
+        marketBodies.push(await req.json());
+        return markets();
+      }
       throw new Error(`unexpected ${path}`);
     }),
   );
 }
 
-function renderCalc(locale: 'vi' | 'en' = 'vi') {
+function renderCalc(locale: 'vi' | 'en' = 'vi', initialRoo?: 'pass' | 'fail' | 'inconclusive') {
   render(
     <NextIntlClientProvider locale={locale} messages={{}}>
       <LanguageProvider>
-        <TariffCalculator />
+        <TariffCalculator initialRoo={initialRoo} />
       </LanguageProvider>
     </NextIntlClientProvider>,
   );
@@ -141,6 +172,16 @@ describe('Máy tính tiết kiệm thuế (C2)', () => {
     expect(region).toHaveTextContent('6%');
     expect(screen.getByText(/chỉ mang tính tham khảo/)).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /Xem nhà cung cấp/ })).toHaveAttribute('href', expect.stringContaining('/suppliers?hs=090111'));
+  });
+
+  it('mã 8 số: link nhà cung cấp dùng nhóm 6 số (danh bạ lọc theo 6 số)', async () => {
+    serve(() => json(200, result({ ...OK, hs_code: '03061792', hs_formatted: '0306.17.92' })));
+    renderCalc();
+    await pickCoffee();
+    fillValue('10000');
+    submit();
+    await screen.findByRole('region', { name: 'Kết quả' });
+    expect(screen.getByRole('link', { name: /Xem nhà cung cấp/ })).toHaveAttribute('href', '/suppliers?hs=030617');
   });
 
   it('unsupported: báo chưa hỗ trợ, không có con số nào', async () => {
@@ -245,5 +286,81 @@ describe('Máy tính tiết kiệm thuế (C2)', () => {
     serve(() => json(200, OK));
     renderCalc('en');
     expect(screen.getByRole('button', { name: /Calculate/ })).toBeInTheDocument();
+  });
+
+  describe('thị trường nên xuất', () => {
+    const showMarkets = () => screen.queryByRole('button', { name: 'Xem thị trường nên xuất' });
+    const rankingRegion = () => screen.queryByRole('region', { name: 'Thị trường nên xuất' });
+    async function calculate() {
+      renderCalc();
+      await pickCoffee();
+      fillValue('10000');
+      submit();
+      await screen.findByRole('region', { name: 'Kết quả' });
+    }
+
+    it.each(['unsupported', 'needs_review'])('nút chỉ hiện khi thuế ok, không hiện với %s', async (status) => {
+      serve(() => json(200, result({ status })));
+      await calculate();
+      expect(showMarkets()).not.toBeInTheDocument();
+    });
+
+    it('thuế ok: có nút, gửi đúng mã HS, giá trị và kết quả RoO đã tính', async () => {
+      serve(() => json(200, OK));
+      renderCalc('vi', 'pass');
+      await pickCoffee();
+      fillValue('10000.50');
+      submit();
+      await screen.findByRole('region', { name: 'Kết quả' });
+      fireEvent.click(showMarkets()!);
+      await screen.findByRole('region', { name: 'Thị trường nên xuất' });
+      expect(marketBodies).toEqual([{ hs_code: '090111', product_value: '10000.50', roo_status: 'pass' }]);
+    });
+
+    it('sửa ô giá trị sau khi tính: xếp hạng dùng giá trị đã tính, không dùng ô đang gõ', async () => {
+      serve(() => json(200, OK));
+      await calculate();
+      fillValue('999999');
+      fireEvent.click(showMarkets()!);
+      await screen.findByRole('region', { name: 'Thị trường nên xuất' });
+      expect(marketBodies).toEqual([{ hs_code: '090111', product_value: '10000' }]);
+    });
+
+    it.each([
+      ['giá trị', async () => fillValue('20000')],
+      ['kết quả RoO', async () => fireEvent.change(screen.getByLabelText(/Kết quả kiểm tra xuất xứ/), { target: { value: 'fail' } })],
+      [
+        'mã HS',
+        async () => {
+          fireEvent.change(screen.getByRole('combobox', { name: /Sản phẩm/ }), { target: { value: 'ca phe' } });
+          fireEvent.click(await screen.findByRole('option', { name: /0901\.11/ }));
+        },
+      ],
+    ])('đổi %s thì bảng xếp hạng cũ biến mất', async (_name, change) => {
+      serve(() => json(200, OK));
+      await calculate();
+      fireEvent.click(showMarkets()!);
+      await screen.findByRole('region', { name: 'Thị trường nên xuất' });
+      await change();
+      await waitFor(() => expect(rankingRegion()).not.toBeInTheDocument());
+    });
+
+    it('tính lại thì bảng xếp hạng cũ biến mất', async () => {
+      serve(() => json(200, OK));
+      await calculate();
+      fireEvent.click(showMarkets()!);
+      await screen.findByRole('region', { name: 'Thị trường nên xuất' });
+      submit();
+      await waitFor(() => expect(rankingRegion()).not.toBeInTheDocument());
+    });
+
+    it('tiêu đề bảng xếp hạng nêu mã HS và giá trị đã xếp hạng', async () => {
+      serve(() => json(200, OK));
+      await calculate();
+      fireEvent.click(showMarkets()!);
+      const ranking = await screen.findByRole('region', { name: 'Thị trường nên xuất' });
+      expect(ranking).toHaveTextContent('0901.11');
+      expect(ranking).toHaveTextContent('10.000');
+    });
   });
 });
