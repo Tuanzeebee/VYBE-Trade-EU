@@ -89,6 +89,7 @@ export default function SellerOnboarding({ account, initialStep = 2, initialComp
   const [products, setProducts] = useState<ProductDraft[]>(initialProducts ?? []);
   const [services, setServices] = useState<ServiceDraft[]>(initialServices ?? []);
   const [productError, setProductError] = useState('');
+  const [step2Tab, setStep2Tab] = useState<'products' | 'capacity'>('products');
 
   // Form State for Step 1: Thông tin doanh nghiệp
   // Hồ sơ lưu lên server (B1) — không điền sẵn dữ liệu demo.
@@ -896,21 +897,52 @@ export default function SellerOnboarding({ account, initialStep = 2, initialComp
                   {/* Top Header Row: Title, Subtitle, and + Thêm sản phẩm Button */}
                   {sellsProducts && (
                     <>
-                      <div className="flex items-start justify-between flex-wrap gap-3 pb-1 border-b border-slate-100">
-                        <div>
-                          <h3 className="text-lg sm:text-xl font-bold text-slate-900">
-                            {tr("Sản phẩm cung cấp")}</h3>
-                          <p className="text-xs sm:text-[13px] text-slate-500 mt-0.5 font-normal">
-                            {tr("Gõ tên sản phẩm, hệ thống gợi ý mã HS. Buyer tìm thấy bạn qua tên sản phẩm, giá và MOQ.")}</p>
-                        </div>
+                      <div role="tablist" aria-label={tr("Sản phẩm và năng lực")} className="flex gap-1 border-b border-slate-200">
+                        {([
+                          ['products', tr("Sản phẩm cung cấp")],
+                          ['capacity', tr("Năng lực đáp ứng")],
+                        ] as const).map(([key, label]) => (
+                          <button
+                            key={key}
+                            type="button"
+                            role="tab"
+                            id={`step2-tab-${key}`}
+                            aria-selected={step2Tab === key}
+                            aria-controls={`step2-panel-${key}`}
+                            onClick={() => setStep2Tab(key)}
+                            className={`px-4 py-2.5 text-xs sm:text-sm font-semibold -mb-px border-b-2 transition-colors cursor-pointer ${
+                              step2Tab === key
+                                ? 'border-[#083832] text-[#083832]'
+                                : 'border-transparent text-slate-500 hover:text-slate-800'
+                            }`}
+                          >
+                            {label}
+                          </button>
+                        ))}
                       </div>
 
-                      <ProductsEditor
-                        products={products}
-                        onChange={(next) => { setProducts(next); setProductError(''); }}
-                      />
+                      <div
+                        role="tabpanel"
+                        id="step2-panel-products"
+                        aria-labelledby="step2-tab-products"
+                        hidden={step2Tab !== 'products'}
+                        className="space-y-5"
+                      >
+                        <p className="text-xs sm:text-[13px] text-slate-500 font-normal">
+                          {tr("Gõ tên sản phẩm, hệ thống gợi ý mã HS. Buyer tìm thấy bạn qua tên sản phẩm, giá và MOQ.")}</p>
+                        <ProductsEditor
+                          products={products}
+                          onChange={(next) => { setProducts(next); setProductError(''); }}
+                        />
+                      </div>
 
-                      <section aria-labelledby="capacity-heading" className="rounded-2xl border border-slate-200 bg-slate-50/60 p-4 sm:p-5 space-y-4">
+                      <section
+                        role="tabpanel"
+                        id="step2-panel-capacity"
+                        aria-labelledby="step2-tab-capacity"
+                        hidden={step2Tab !== 'capacity'}
+                        className="rounded-2xl border border-slate-200 bg-slate-50/60 p-4 sm:p-5 space-y-4"
+                      >
                         <div>
                           <h3 id="capacity-heading" className="text-sm sm:text-base font-bold text-slate-900">{tr("Năng lực đáp ứng")}</h3>
                           <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5">{tr("Không bắt buộc, nhưng buyer cần biết bạn đáp ứng được đơn lớn đến đâu.")}</p>

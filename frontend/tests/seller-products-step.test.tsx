@@ -106,6 +106,7 @@ describe('SellerOnboarding bước 2 — sản phẩm (B5)', () => {
 describe('SellerOnboarding bước 2 — năng lực và thị trường xuất khẩu cấp công ty (U2)', () => {
   it('có ô chọn thị trường xuất khẩu (không giới hạn ở EU); nạp sẵn từ hồ sơ đã lưu', () => {
     renderOnboarding({ initialStep: 2, initialCompany: { markets: 'EU,DE,US' } });
+    fireEvent.click(screen.getByRole('tab', { name: 'Năng lực đáp ứng' }));
     expect(screen.getByRole('checkbox', { name: 'Châu Âu (EU)' })).toBeChecked();
     expect(screen.getByRole('checkbox', { name: 'Germany' })).toBeChecked();
     expect(screen.getByRole('checkbox', { name: 'United States' })).toBeChecked();
@@ -114,6 +115,7 @@ describe('SellerOnboarding bước 2 — năng lực và thị trường xuất 
 
   it('tick / bỏ tick cập nhật lựa chọn', () => {
     renderOnboarding({ initialStep: 2 });
+    fireEvent.click(screen.getByRole('tab', { name: 'Năng lực đáp ứng' }));
     const fr = screen.getByRole('checkbox', { name: 'France' });
     fireEvent.click(fr);
     expect(fr).toBeChecked();
@@ -123,6 +125,7 @@ describe('SellerOnboarding bước 2 — năng lực và thị trường xuất 
 
   it('có khu năng lực đáp ứng: sản lượng, quy mô nhân sự, mã vùng trồng', () => {
     renderOnboarding({ initialStep: 2, initialCompany: { growingAreaCodes: 'VN-DL-1' } });
+    fireEvent.click(screen.getByRole('tab', { name: 'Năng lực đáp ứng' }));
     expect(screen.getByRole('heading', { name: 'Năng lực đáp ứng' })).toBeInTheDocument();
     expect(screen.getByLabelText('Sản lượng có thể cung cấp')).toBeInTheDocument();
     expect(screen.getByLabelText('Quy mô nhân sự')).toBeInTheDocument();
