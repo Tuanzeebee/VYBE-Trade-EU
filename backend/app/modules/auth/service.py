@@ -69,11 +69,31 @@ def _open_session(session: AsyncSession, user: User) -> str:
     return token
 
 
+# ── Danh sách chặn định danh (I11) ─────────────────────────────────────────────
+# verification sở hữu danh sách chặn nhưng phụ thuộc auth → đăng ký hàm kiểm vào đây (đảo phụ thuộc,
+# như register_anonymize_hook). Khóa: email, phone, tax_id, website.
+IdentifierGuard = Callable[[AsyncSession, dict[str, str | None]], Awaitable[bool]]
+_identifier_guards: list[IdentifierGuard] = []
+
+
+def register_identifier_guard(guard: IdentifierGuard) -> None:
+    if guard not in _identifier_guards:
+        _identifier_guards.append(guard)
+
+
+async def ensure_identifiers_allowed(session: AsyncSession, **values: str | None) -> None:
+    """403 nếu định danh nằm trong danh sách chặn; thông điệp chung, không nói trường nào."""
+    for guard in _identifier_guards:
+        if await guard(session, values):
+            raise AppError("identifier_blocked", "These details cannot be used on evfta.eu", 403)
+
+
 async def register(session: AsyncSession, data: RegisterIn) -> str:
     """Tạo tài khoản exporter/buyer, lưu consent và mở phiên. Trả token phiên."""
     email = data.email.lower()
     if await session.scalar(select(User.id).where(User.email == email)):
         raise AppError("email_taken", "Email already registered", 409)
+    await ensure_identifiers_allowed(session, email=email, phone=data.phone)
     user = User(
         email=email,
         phone=data.phone,
@@ -173,6 +193,7 @@ async def update_me(session: AsyncSession, user_id: uuid.UUID, data: MePatch) ->
     if data.preferred_language is not None:
         user.preferred_language = data.preferred_language
     if data.phone is not None:
+        await ensure_identifiers_allowed(session, phone=data.phone)
         user.phone = data.phone
     await session.commit()
     return _to_current(user)
@@ -186,6 +207,20 @@ async def get_contact(session: AsyncSession, user_id: uuid.UUID) -> Contact | No
     return Contact(
         email=user.email, preferred_language=user.preferred_language, role=user.role.value
     )
+
+
+async def get_login_identities(
+    session: AsyncSession, user_ids: list[uuid.UUID]
+) -> dict[uuid.UUID, tuple[str, str | None]]:
+    """Email đăng nhập và điện thoại của người dùng còn hoạt động (gom cụm chống mạo danh, I11)."""
+    if not user_ids:
+        return {}
+    rows = await session.execute(
+        select(User.id, User.email, User.phone).where(
+            User.id.in_(user_ids), User.deleted_at.is_(None)
+        )
+    )
+    return {uid: (email, phone) for uid, email, phone in rows}
 
 
 async def get_admin_by_email(session: AsyncSession, email: str) -> CurrentUser | None:

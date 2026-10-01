@@ -8,6 +8,7 @@ import AdminBilling from './AdminBilling';
 import AdminComplianceData from './AdminComplianceData';
 import AdminConsultingLeads from './AdminConsultingLeads';
 import AdminMarkets from './AdminMarkets';
+import AdminIdentity from './AdminIdentity';
 import AdminModeration from './AdminModeration';
 import AdminOverview from './AdminOverview';
 import AdminVerificationQueue from './AdminVerificationQueue';
@@ -17,6 +18,7 @@ const TABS = [
   { key: 'overview', label: 'Tổng quan' },
   { key: 'queue', label: 'Chờ duyệt' },
   { key: 'moderation', label: 'Hồ sơ & sản phẩm' },
+  { key: 'identity', label: 'Danh tính & chặn' },
   { key: 'data', label: 'Dữ liệu tuân thủ' },
   { key: 'markets', label: 'Thị trường' },
   { key: 'leads', label: 'Yêu cầu tư vấn' },
@@ -29,6 +31,7 @@ const PANELS = {
   overview: AdminOverview,
   queue: AdminVerificationQueue,
   moderation: AdminModeration,
+  identity: AdminIdentity,
   data: AdminComplianceData,
   markets: AdminMarkets,
   leads: AdminConsultingLeads,

@@ -352,12 +352,13 @@ async def test_approve_upgrades_level_when_evidence_is_complete(
 ) -> None:
     """Đã có bằng chứng bắt buộc được duyệt: duyệt xác minh xong thì lên evfta_verified ngay."""
     from app.modules.companies.tests.helpers import product_body
-    from app.modules.verification.tests.helpers import add_rule
+    from app.modules.verification.tests.helpers import add_rule, prove_ownership
 
     company_id = await new_exporter(api_client, "a@x.vn", "Công ty A")
     await api_client.post("/api/exporter/products", json=product_body(hs_code="090121"))
     evidence = await add_evidence(db_session, company_id, reviewer_id)
     await add_rule(db_session, reviewer_id, "iso_9001")
+    await prove_ownership(db_session, company_id)
     evidence.approval_status = ApprovalStatus.approved
     await db_session.flush()
     request_id = (await api_client.post(SUBMIT)).json()["id"]

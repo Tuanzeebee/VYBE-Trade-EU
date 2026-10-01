@@ -18,6 +18,7 @@ from app.modules.verification import (
     consistency_service,
     evidence_service,
     extraction_service,
+    identity_service,
     request_service,
     tier_service,
     trust_service,
@@ -30,6 +31,14 @@ from app.modules.verification.admin_schemas import (
     RuleIn,
     RuleOut,
     RulePatch,
+)
+from app.modules.verification.identity_schemas import (
+    BlocklistIn,
+    BlocklistOut,
+    ClusterOut,
+    CompanyIdentityOut,
+    IdentityCheckIn,
+    IdentityCheckOut,
 )
 from app.modules.verification.schemas import (
     ChecklistItem,
@@ -343,3 +352,42 @@ async def apply_evidence_extraction(
 @router.get("/api/admin/evidences/{evidence_id}/extraction")
 async def admin_evidence_extraction(evidence_id: uuid.UUID, _: Admin, session: DB) -> ExtractionOut:
     return await extraction_service.get_for_admin(session, evidence_id)
+
+
+# ── Chống mạo danh (I11): tín hiệu chỉ xếp ưu tiên, không đổi trạng thái xác minh ──────────
+@router.get("/api/admin/companies/{company_id}/identity")
+async def company_identity(company_id: uuid.UUID, _: Admin, session: DB) -> CompanyIdentityOut:
+    return await identity_service.company_identity(session, company_id)
+
+
+@router.post("/api/admin/companies/{company_id}/identity-checks", status_code=201)
+async def record_identity_check(
+    company_id: uuid.UUID, data: IdentityCheckIn, admin: Admin, session: DB
+) -> IdentityCheckOut:
+    return await identity_service.record_check(session, admin, company_id, data)
+
+
+@router.get("/api/admin/identity-clusters")
+async def identity_clusters(_: Admin, session: DB) -> list[ClusterOut]:
+    return await identity_service.list_clusters(session)
+
+
+@router.get("/api/admin/identity-clusters/export.xlsx")
+async def identity_clusters_export(_: Admin, session: DB) -> Response:
+    return xlsx_response(await identity_service.export_clusters(session), "identity-clusters.xlsx")
+
+
+@router.get("/api/admin/blocklist")
+async def list_blocklist(_: Admin, session: DB) -> list[BlocklistOut]:
+    return await identity_service.list_blocklist(session)
+
+
+@router.post("/api/admin/blocklist", status_code=201)
+async def add_blocklist(data: BlocklistIn, admin: Admin, session: DB) -> BlocklistOut:
+    return await identity_service.add_blocklist(session, admin, data)
+
+
+@router.delete("/api/admin/blocklist/{entry_id}", status_code=204)
+async def remove_blocklist(entry_id: uuid.UUID, admin: Admin, session: DB) -> Response:
+    await identity_service.remove_blocklist(session, admin, entry_id)
+    return Response(status_code=204)
