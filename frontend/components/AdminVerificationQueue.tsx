@@ -7,12 +7,20 @@ import { useLanguage } from '../context/LanguageContext';
 import {
   decideRequest,
   getQueue,
+  listCertificationBodies,
   recordIdentityCheck,
   reviewEvidence,
+  uploadCheckSnapshot,
+  type CertificationBody,
   type Decision,
   type IdentityCheckInput,
   type QueueItem,
 } from '../lib/adminApi';
+import { fetchFilterOptions } from '../lib/suppliersApi';
+import EvidenceCrossCheck, { RESULTS } from './admin-queue/EvidenceCrossCheck';
+
+// ponytail: nguồn tra MST cố định; chuyển sang bảng `sources` (dữ liệu có người duyệt) ở I10.
+const TAX_LOOKUP = 'https://tracuunnt.gdt.gov.vn/tcnnt/mstdn.jsp';
 
 const STATUS_LABEL: Record<string, string> = {
   pending: 'Chờ duyệt',
@@ -36,6 +44,7 @@ const SIGNAL_LABEL: Record<string, string> = {
   representative_changed_recently: 'Vừa đổi người đại diện',
   free_email: 'Email liên hệ là email miễn phí',
   email_domain_mismatch: 'Email liên hệ khác tên miền website',
+  evidence_mismatch: 'Bằng chứng có kết quả kiểm lệch',
 };
 const SEVERITY_STYLE: Record<string, string> = {
   high: 'bg-rose-100 text-rose-800',
@@ -46,12 +55,6 @@ const CHECK_TYPES: [IdentityCheckInput['check_type'], string][] = [
   ['phone_callback', 'Gọi lại số trên hồ sơ đăng ký chính thức'],
   ['email_domain', 'Email thuộc tên miền chính thức'],
   ['registry_lookup', 'Tra sổ đăng ký / MST'],
-];
-const RESULTS: [IdentityCheckInput['result'], string][] = [
-  ['match', 'Khớp'],
-  ['mismatch', 'Không khớp'],
-  ['not_found', 'Không tìm thấy'],
-  ['unchecked', 'Chưa kiểm được'],
 ];
 const TAX_STATUS: ['active' | 'inactive' | 'unknown', string][] = [
   ['unknown', 'Không rõ'],
@@ -64,6 +67,10 @@ type CheckForm = {
   result: IdentityCheckInput['result'];
   note: string;
   representative: string;
+  registered_name: string;
+  registered_address: string;
+  source: string;
+  snapshot: File | null;
   founded_year: string;
   tax_status: 'active' | 'inactive' | 'unknown';
   name_changed: boolean;
@@ -74,17 +81,26 @@ const EMPTY_CHECK: CheckForm = {
   result: 'match',
   note: '',
   representative: '',
+  registered_name: '',
+  registered_address: '',
+  source: TAX_LOOKUP,
+  snapshot: null,
   founded_year: '',
   tax_status: 'unknown',
   name_changed: false,
   representative_changed: false,
 };
 
-function toCheckInput(form: CheckForm): IdentityCheckInput {
+function toCheckInput(form: CheckForm, snapshotKey: string | null): IdentityCheckInput {
   const body: IdentityCheckInput = { check_type: form.check_type, result: form.result, note: form.note.trim() || null };
   if (form.check_type === 'registry_lookup') {
+    // I8: tra sổ đăng ký / MST phải lưu nguồn và ảnh chụp kết quả.
+    body.source = form.source.trim() || null;
+    body.snapshot_key = snapshotKey;
     body.registry = {
       legal_representative: form.representative.trim() || null,
+      registered_name: form.registered_name.trim() || null,
+      registered_address: form.registered_address.trim() || null,
       founded_year: form.founded_year ? Number(form.founded_year) : null,
       tax_status: form.tax_status,
       name_changed_recently: form.name_changed,
@@ -102,6 +118,8 @@ export default function AdminVerificationQueue() {
   const [busy, setBusy] = useState(false);
   const [reasons, setReasons] = useState<Record<string, string>>({});
   const [checks, setChecks] = useState<Record<string, CheckForm>>({});
+  const [bodies, setBodies] = useState<CertificationBody[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
 
   const load = useCallback(async () => {
     const queue = await getQueue();
@@ -112,6 +130,12 @@ export default function AdminVerificationQueue() {
   useEffect(() => {
     void load();
   }, [load]);
+
+  useEffect(() => {
+    // I8: chỉ tổ chức cấp đã duyệt mới dùng được để kiểm chéo / soạn email xác nhận.
+    void listCertificationBodies().then((rows) => setBodies((rows ?? []).filter((b) => b.reviewed_by !== null)));
+    void fetchFilterOptions().then((options) => setCategories(options?.categories ?? []));
+  }, []);
 
   const setReason = (key: string, value: string) => setReasons((r) => ({ ...r, [key]: value }));
 
@@ -145,7 +169,13 @@ export default function AdminVerificationQueue() {
     setChecks((c) => ({ ...c, [companyId]: { ...(c[companyId] ?? EMPTY_CHECK), ...patch } }));
   const saveCheck = (companyId: string) =>
     void run(async () => {
-      await recordIdentityCheck(companyId, toCheckInput(checkOf(companyId)));
+      const form = checkOf(companyId);
+      let snapshotKey: string | null = null;
+      if (form.check_type === 'registry_lookup') {
+        if (!form.snapshot) throw new Error('Vui lòng chọn ảnh chụp kết quả tra cứu.');
+        snapshotKey = await uploadCheckSnapshot(companyId, form.snapshot);
+      }
+      await recordIdentityCheck(companyId, toCheckInput(form, snapshotKey));
       setChecks((c) => ({ ...c, [companyId]: EMPTY_CHECK }));
     });
 
@@ -223,6 +253,15 @@ export default function AdminVerificationQueue() {
                         </>
                       )}
                     </div>
+                    <EvidenceCrossCheck
+                      companyId={item.company_id}
+                      evidence={e}
+                      checks={(item.checks ?? []).filter((c) => c.evidence_id === e.id)}
+                      bodies={bodies}
+                      categories={categories}
+                      busy={busy}
+                      run={run}
+                    />
                   </div>
                 ))}
               </div>
@@ -267,6 +306,25 @@ export default function AdminVerificationQueue() {
                 </div>
                 {checkOf(item.company_id).check_type === 'registry_lookup' && (
                   <div className="mt-2 flex flex-wrap items-end gap-2">
+                    <label className="text-xs text-slate-700">
+                      {tr('Nguồn tra cứu')}
+                      <input value={checkOf(item.company_id).source} onChange={(e) => setCheck(item.company_id, { source: e.target.value })} className={`${small} ml-1 w-64`} />
+                    </label>
+                    <a href={TAX_LOOKUP} target="_blank" rel="noreferrer" className="text-xs font-semibold text-teal-700 hover:underline">
+                      {tr('Mở trang tra cứu MST')}
+                    </a>
+                    <label className="text-xs text-slate-700">
+                      {tr('Ảnh chụp kết quả')}
+                      <input type="file" accept="image/png,image/jpeg,application/pdf" onChange={(e) => setCheck(item.company_id, { snapshot: e.target.files?.[0] ?? null })} className="ml-1 text-xs" />
+                    </label>
+                    <label className="text-xs text-slate-700">
+                      {tr('Tên pháp nhân theo sổ đăng ký')}
+                      <input value={checkOf(item.company_id).registered_name} onChange={(e) => setCheck(item.company_id, { registered_name: e.target.value })} className={`${small} ml-1`} />
+                    </label>
+                    <label className="text-xs text-slate-700">
+                      {tr('Địa chỉ theo sổ đăng ký')}
+                      <input value={checkOf(item.company_id).registered_address} onChange={(e) => setCheck(item.company_id, { registered_address: e.target.value })} className={`${small} ml-1`} />
+                    </label>
                     <label className="text-xs text-slate-700">
                       {tr('Người đại diện theo sổ đăng ký')}
                       <input value={checkOf(item.company_id).representative} onChange={(e) => setCheck(item.company_id, { representative: e.target.value })} className={`${small} ml-1`} />

@@ -1,6 +1,13 @@
-// Khai báo bốn nhóm dữ liệu tuân thủ: cột bảng, trường form, chú thích và lời gọi API (C1, C4, C6).
+// Khai báo các nhóm dữ liệu tuân thủ: cột bảng, trường form, chú thích và lời gọi API (C1, C4, C6, I8).
 // Chuỗi tiếng Việt ở đây được dịch khi hiển thị bằng tr() (xem i18n/catalog.json).
 import {
+  createCertificationBody,
+  deleteCertificationBody,
+  listCertificationBodies,
+  reviewCertificationBody,
+  updateCertificationBody,
+  type CertificationBodyInput,
+  type CertificationBodyPatch,
   createEvidenceRule,
   createEvidenceType,
   createRooRule,
@@ -143,6 +150,12 @@ const RULE_LEGEND: LegendItem[] = [
   { term: 'Nhóm hàng', text: 'Nhóm hàng trong danh mục HS (vd agriculture, seafood).' },
   { term: 'Bắt buộc', text: 'Tính vào điều kiện đạt EVFTA-verified của nhà xuất khẩu.' },
   { term: 'Chỉ nhắc', text: 'Chỉ nhắc nhà xuất khẩu, không tính vào điều kiện đạt.' },
+];
+
+const BODY_LEGEND: LegendItem[] = [
+  { term: 'Email xác nhận', text: 'Địa chỉ nhận thư hỏi xác nhận chứng nhận. Phải thuộc domain chính thức; hệ thống không bao giờ dùng địa chỉ ghi trên file chứng nhận.' },
+  { term: 'IAF MLA', text: 'Có = đơn vị công nhận là thành viên thỏa thuận thừa nhận lẫn nhau của IAF.' },
+  { term: 'Chưa duyệt', text: 'Tổ chức cấp chưa duyệt không dùng được để kiểm chéo hoặc soạn email xác nhận.' },
 ];
 
 const validity: Field[] = [
@@ -305,6 +318,42 @@ export const DATASETS: Dataset[] = [
     update: (id, body) => updateEvidenceRule(id, body as EvidenceRulePatch),
     review: reviewEvidenceRule,
     remove: deleteEvidenceRule,
+  },
+  {
+    key: 'bodies',
+    label: 'Tổ chức cấp chứng nhận',
+    columns: ['Tên', 'Domain chính thức', 'Email xác nhận', 'Đơn vị công nhận', 'IAF MLA'],
+    fields: [
+      { key: 'name', label: 'Tên', kind: 'text', required: true },
+      { key: 'official_domain', label: 'Domain chính thức', kind: 'text', required: true, help: 'Ví dụ sgs.com.' },
+      { key: 'contact_email', label: 'Email xác nhận', kind: 'text', required: true, help: 'Phải thuộc domain chính thức. Email xác nhận chỉ gửi tới địa chỉ này, không lấy từ file chứng nhận.' },
+      { key: 'lookup_url', label: 'Trang tra cứu', kind: 'text', help: 'Bắt đầu bằng http:// hoặc https://.' },
+      { key: 'accreditation_body', label: 'Đơn vị công nhận', kind: 'text', help: 'Ví dụ BoA, UKAS.' },
+      { key: 'iaf_mla', label: 'IAF MLA', kind: 'bool', initial: false },
+    ],
+    legend: BODY_LEGEND,
+    xlsxPath: '/api/admin/certification-bodies',
+    xlsxName: 'certification-bodies',
+    load: async () =>
+      ((await listCertificationBodies()) ?? null)?.map((r) => ({
+        id: r.id,
+        reviewed: r.reviewed_by !== null,
+        canDelete: true,
+        cells: [r.name, r.official_domain, r.contact_email, r.accreditation_body ?? '—', yesNo(r.iaf_mla)],
+        values: {
+          name: r.name,
+          official_domain: r.official_domain,
+          contact_email: r.contact_email,
+          lookup_url: text(r.lookup_url),
+          accreditation_body: text(r.accreditation_body),
+          iaf_mla: r.iaf_mla,
+        },
+        search: searchable(r.name, r.official_domain, r.contact_email, r.accreditation_body),
+      })) ?? null,
+    create: (body) => createCertificationBody(body as unknown as CertificationBodyInput),
+    update: (id, body) => updateCertificationBody(id, body as CertificationBodyPatch),
+    review: reviewCertificationBody,
+    remove: deleteCertificationBody,
   },
 ];
 

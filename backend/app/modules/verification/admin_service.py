@@ -279,6 +279,13 @@ async def review_evidence(
     reason = (data.reason or "").strip() or None
     if data.decision == "reject" and reason is None:
         raise AppError("reason_required", "A reason is required to reject evidence", 422)
+    if data.decision == "approve" and not await evidence_service.latest_external_results(
+        session, [row.id]
+    ):
+        # I8: bằng chứng đã duyệt phải có ≥ 1 lần kiểm chéo nguồn ngoài (nguồn, ảnh, người, ngày).
+        raise AppError(
+            "cross_check_required", "Record a cross-check with source and snapshot first", 409
+        )
     before = evidence_service.snapshot(row)
     row.approval_status = (
         ApprovalStatus.approved if data.decision == "approve" else ApprovalStatus.rejected

@@ -163,6 +163,12 @@ class CheckType(StrEnum):
     registry_lookup = "registry_lookup"  # tra sổ đăng ký / MST
     phone_callback = "phone_callback"  # gọi lại số trên hồ sơ đăng ký chính thức
     email_domain = "email_domain"  # email thuộc domain chính thức
+    issuer_email = "issuer_email"  # I8: tổ chức cấp xác nhận qua email (địa chỉ từ bảng đã duyệt)
+    internal_consistency = "internal_consistency"  # I8: so khớp nội bộ bằng quy tắc
+
+
+# Kiểm chéo với nguồn NGOÀI (I8): chỉ loại này mới tính "đã kiểm chéo" cho evfta_verified.
+EXTERNAL_CHECKS = (CheckType.registry_lookup, CheckType.issuer_email)
 
 
 class CheckResult(StrEnum):
@@ -188,10 +194,41 @@ class EvidenceCheck(Base):
     check_type: Mapped[CheckType] = mapped_column(Enum(CheckType, name="evidence_check_type"))
     result: Mapped[CheckResult] = mapped_column(Enum(CheckResult, name="evidence_check_result"))
     facts: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
+    source: Mapped[str | None] = mapped_column(Text)  # I8: URL / tên nguồn đã tra
+    certification_body_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("certification_bodies.id")
+    )
     snapshot_key: Mapped[str | None] = mapped_column(String(512))
     note: Mapped[str | None] = mapped_column(Text)
     checked_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id"))  # NULL = hệ thống
     checked_at: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=text("clock_timestamp()")
+    )
+
+
+class CertificationBody(Base):
+    """Tổ chức cấp chứng nhận (I8) — DỮ LIỆU cấu hình có người duyệt. Dòng chưa duyệt không dùng
+    được để kiểm chéo. Email xác nhận chỉ gửi tới `contact_email` ở đây, không lấy từ file."""
+
+    __tablename__ = "certification_bodies"
+    __table_args__ = (
+        CheckConstraint(
+            "(reviewed_by IS NULL) = (reviewed_at IS NULL)", name="reviewed_by_and_at_together"
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, primary_key=True, default=uuid.uuid4, server_default=text("gen_random_uuid()")
+    )
+    name: Mapped[str] = mapped_column(String(255), unique=True)
+    official_domain: Mapped[str] = mapped_column(String(255))
+    contact_email: Mapped[str] = mapped_column(String(320))
+    lookup_url: Mapped[str | None] = mapped_column(String(512))
+    accreditation_body: Mapped[str | None] = mapped_column(String(255))
+    iaf_mla: Mapped[bool] = mapped_column(Boolean, default=False, server_default=text("false"))
+    reviewed_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id"))
+    reviewed_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[dt.datetime] = mapped_column(
         DateTime(timezone=True), server_default=text("clock_timestamp()")
     )
 

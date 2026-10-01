@@ -15,6 +15,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.audit import record
 from app.core.errors import AppError
 from app.core.spreadsheet import Column, build_workbook
+from app.core.storage import Storage
 from app.modules.auth import service as auth
 from app.modules.auth.schemas import CurrentUser
 from app.modules.companies import service as companies
@@ -62,14 +63,25 @@ def _registry(facts: dict[str, object] | None) -> RegistryFacts | None:
     if not facts:
         return None
     founded = facts.get("founded_year")
-    rep = facts.get("legal_representative_hash")
+
+    def text(key: str) -> str | None:
+        value = facts.get(key)
+        return value if isinstance(value, str) and value else None
+
     return RegistryFacts(
         founded_year=founded if isinstance(founded, int) else None,
         tax_status=str(facts.get("tax_status") or "unknown"),
         name_changed_recently=bool(facts.get("name_changed_recently")),
         representative_changed_recently=bool(facts.get("representative_changed_recently")),
-        legal_representative_hash=rep if isinstance(rep, str) else None,
+        legal_representative_hash=text("legal_representative_hash"),
+        registered_name=text("registered_name"),
+        registered_address=text("registered_address"),
     )
+
+
+async def latest_registry(session: AsyncSession, company_id: uuid.UUID) -> RegistryFacts | None:
+    """Kết quả tra sổ đăng ký mới nhất của một công ty (I8 so khớp nội bộ)."""
+    return (await _latest_registry(session)).get(company_id)
 
 
 async def _latest_registry(session: AsyncSession) -> dict[uuid.UUID, RegistryFacts]:
@@ -236,18 +248,26 @@ async def company_identity(session: AsyncSession, company_id: uuid.UUID) -> Comp
 
 
 async def record_check(
-    session: AsyncSession, admin: CurrentUser, company_id: uuid.UUID, data: IdentityCheckIn
+    session: AsyncSession,
+    admin: CurrentUser,
+    storage: Storage,
+    company_id: uuid.UUID,
+    data: IdentityCheckIn,
 ) -> IdentityCheckOut:
     """Admin ghi kết quả kiểm danh tính (tra sổ đăng ký, gọi lại số chính thức, email theo domain).
     Sau đó đồng bộ mức evfta_verified qua sync_level → decide() (quyền sở hữu là điều kiện)."""
     if admin.role != "admin":
         raise AppError("forbidden", "Not allowed", 403)
     await _ensure_company(session, company_id)
+    if data.snapshot_key:
+        await evidence_service.ensure_snapshot(storage, company_id, data.snapshot_key)
     check_type = CheckType(data.check_type)
     facts = None
     if data.registry is not None:
         reg = data.registry
         facts = {
+            "registered_name": (reg.registered_name or "").strip() or None,
+            "registered_address": (reg.registered_address or "").strip() or None,
             "founded_year": reg.founded_year,
             "tax_status": reg.tax_status,
             "name_changed_recently": reg.name_changed_recently,
@@ -266,6 +286,8 @@ async def record_check(
         check_type=check_type,
         result=CheckResult(data.result),
         facts=facts,
+        source=(data.source or "").strip() or None,
+        snapshot_key=data.snapshot_key,
         note=(data.note or "").strip() or None,
         checked_by=admin.id,
     )
@@ -278,7 +300,13 @@ async def record_check(
         entity_type="company",
         entity_id=str(company_id),
         before=None,
-        after={"check_type": data.check_type, "result": data.result, "facts": facts},
+        after={
+            "check_type": data.check_type,
+            "result": data.result,
+            "facts": facts,
+            "source": row.source,
+            "snapshot_key": row.snapshot_key,
+        },
     )
     await session.refresh(row)
     out = IdentityCheckOut.model_validate(row)

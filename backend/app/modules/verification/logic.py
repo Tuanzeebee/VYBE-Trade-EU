@@ -14,6 +14,7 @@ class EvidenceFact:
     type_code: str
     approval_status: str  # pending | approved | rejected
     expires_at: dt.date | None
+    cross_checked: bool = False  # I8: lần kiểm chéo nguồn ngoài mới nhất cho kết quả match
 
 
 def add_months(start: dt.date, months: int) -> dt.date:
@@ -49,14 +50,14 @@ def is_evfta_verified(
     *,
     ownership_proven: bool,
 ) -> bool:
-    """EVFTA-verified = công ty verified VÀ đã chứng minh quyền sở hữu (I11) VÀ có bằng chứng còn
-    hạn cho MỌI loại bắt buộc.
+    """EVFTA-verified = công ty verified VÀ đã chứng minh quyền sở hữu (I11) VÀ MỌI loại bắt buộc có
+    bằng chứng còn hạn đã kiểm chéo với nguồn cấp cho kết quả match (I8).
 
     Không có loại bắt buộc nào (thiếu dữ liệu luật TM) → False: không tự nâng mức khi thiếu căn cứ.
     """
     if status != "verified" or not required or not ownership_proven:
         return False
-    valid_types = {e.type_code for e in evidence if is_valid(e, today)}
+    valid_types = {e.type_code for e in evidence if is_valid(e, today) and e.cross_checked}
     return required <= valid_types
 
 

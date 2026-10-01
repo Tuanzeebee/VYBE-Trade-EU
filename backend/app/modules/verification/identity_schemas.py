@@ -15,6 +15,8 @@ class RegistryFactsIn(BaseModel):
     """Dữ kiện admin đọc từ sổ đăng ký chính thức. Tên người đại diện chỉ dùng để băm, không lưu."""
 
     legal_representative: Annotated[str | None, Field(max_length=255)] = None
+    registered_name: Annotated[str | None, Field(max_length=500)] = None  # tên pháp nhân theo sổ
+    registered_address: Annotated[str | None, Field(max_length=500)] = None
     founded_year: Annotated[int | None, Field(ge=1900, le=2100)] = None
     tax_status: Literal["active", "inactive", "unknown"] = "unknown"
     name_changed_recently: bool = False
@@ -26,11 +28,16 @@ class IdentityCheckIn(BaseModel):
     result: Literal["match", "mismatch", "not_found", "unchecked"]
     note: Note = None
     registry: RegistryFactsIn | None = None
+    source: Annotated[str | None, Field(max_length=500)] = None  # URL / tên nguồn đã tra
+    snapshot_key: Annotated[str | None, Field(max_length=512)] = None  # ảnh chụp kết quả tra
 
     @model_validator(mode="after")
     def _registry_only_for_lookup(self) -> "IdentityCheckIn":
         if self.registry is not None and self.check_type != "registry_lookup":
             raise ValueError("registry facts are only accepted for registry_lookup")
+        if self.check_type == "registry_lookup" and not (self.source and self.snapshot_key):
+            # I8: tra MST / sổ đăng ký phải lưu nguồn và ảnh chụp kết quả.
+            raise ValueError("registry_lookup requires source and snapshot_key")
         return self
 
 
@@ -42,6 +49,7 @@ class IdentityCheckOut(BaseModel):
     check_type: str
     result: str
     facts: dict[str, Any] | None
+    source: str | None
     note: str | None
     checked_by: uuid.UUID | None
     checked_at: dt.datetime

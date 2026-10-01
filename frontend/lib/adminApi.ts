@@ -66,7 +66,11 @@ export function reviewEvidence(evidenceId: string, decision: 'approve' | 'reject
         params: { path: { evidence_id: evidenceId } },
         body: { decision, reason: reason.trim() || null },
       }),
-    { 422: 'Cần nhập lý do khi từ chối bằng chứng.', 404: 'Không tìm thấy bằng chứng.' },
+    {
+      422: 'Cần nhập lý do khi từ chối bằng chứng.',
+      404: 'Không tìm thấy bằng chứng.',
+      409: 'Cần ít nhất một lần kiểm chéo có nguồn và ảnh chụp trước khi duyệt.',
+    },
   );
 }
 
@@ -107,6 +111,8 @@ const SAVE_ERRORS: Record<string, string> = {
   not_found: 'Không tìm thấy dòng dữ liệu.',
   rule_not_found: 'Không tìm thấy dòng dữ liệu.',
   evidence_type_not_found: 'Không tìm thấy dòng dữ liệu.',
+  certification_body_exists: 'Tổ chức cấp này đã tồn tại.',
+  certification_body_not_found: 'Không tìm thấy dòng dữ liệu.',
 };
 
 type ErrorBody = { error?: { code?: string; message?: string }; detail?: { loc: (string | number)[]; msg: string }[] };
@@ -263,3 +269,65 @@ export const removeBlocklist = (id: string) =>
   act(() => createApiClient().DELETE('/api/admin/blocklist/{entry_id}', { params: { path: { entry_id: id } } }), {
     404: 'Không tìm thấy dòng dữ liệu.',
   });
+
+// ── Kiểm chéo bằng chứng với nguồn cấp (I8) ────────────────────────────────────
+export type CertificationBody = components['schemas']['CertificationBodyOut'];
+export type CertificationBodyInput = components['schemas']['CertificationBodyIn'];
+export type CertificationBodyPatch = components['schemas']['CertificationBodyPatch'];
+export type EvidenceCheck = components['schemas']['EvidenceCheckOut'];
+export type EvidenceCheckInput = components['schemas']['EvidenceCheckIn'];
+export type ConsistencyInput = components['schemas']['ConsistencyIn'];
+export type EmailDraft = components['schemas']['EmailDraftOut'];
+export const SNAPSHOT_TYPES = ['image/png', 'image/jpeg', 'application/pdf'] as const;
+
+export const listCertificationBodies = () => read(() => createApiClient().GET('/api/admin/certification-bodies'));
+export const createCertificationBody = (body: CertificationBodyInput) =>
+  save(() => createApiClient().POST('/api/admin/certification-bodies', { body }));
+export const updateCertificationBody = (id: string, body: CertificationBodyPatch) =>
+  save(() => createApiClient().PATCH('/api/admin/certification-bodies/{body_id}', { params: { path: { body_id: id } }, body }));
+export const reviewCertificationBody = (id: string) =>
+  act(() => createApiClient().POST('/api/admin/certification-bodies/{body_id}/review', { params: { path: { body_id: id } } }), REVIEW_ERRORS);
+export const deleteCertificationBody = (id: string) =>
+  act(() => createApiClient().DELETE('/api/admin/certification-bodies/{body_id}', { params: { path: { body_id: id } } }), {
+    404: 'Không tìm thấy dòng dữ liệu.',
+    409: 'Tổ chức cấp đã được dùng trong kết quả kiểm nên không xóa được.',
+  });
+
+/** Tải ảnh chụp kết quả tra cứu lên thư mục kiểm của công ty; trả khóa để ghi vào lần kiểm. */
+export async function uploadCheckSnapshot(companyId: string, file: File): Promise<string> {
+  if (!(SNAPSHOT_TYPES as readonly string[]).includes(file.type)) throw new Error('Ảnh chụp phải là PNG, JPEG hoặc PDF.');
+  try {
+    const { data, response } = await createApiClient().POST('/api/admin/companies/{company_id}/check-snapshots', {
+      params: { path: { company_id: companyId } },
+      body: { content_type: file.type as (typeof SNAPSHOT_TYPES)[number] },
+    });
+    if (!response.ok || !data) throw new Error();
+    const put = await fetch(new Request(data.upload_url, { method: 'PUT', headers: { 'content-type': file.type }, body: file }));
+    if (!put.ok) throw new Error();
+    return data.key;
+  } catch {
+    throw new Error('Không tải được ảnh chụp. Vui lòng thử lại.');
+  }
+}
+
+const CHECK_ERRORS = {
+  404: 'Không tìm thấy bằng chứng.',
+  422: 'Cần nguồn, ảnh chụp đã tải lên và tổ chức cấp đã duyệt (khi xác nhận qua email).',
+};
+export const recordEvidenceCheck = (evidenceId: string, body: EvidenceCheckInput) =>
+  act(() => createApiClient().POST('/api/admin/evidences/{evidence_id}/checks', { params: { path: { evidence_id: evidenceId } }, body }), CHECK_ERRORS);
+export const recordConsistency = (evidenceId: string, body: ConsistencyInput) =>
+  act(() => createApiClient().POST('/api/admin/evidences/{evidence_id}/consistency', { params: { path: { evidence_id: evidenceId } }, body }), CHECK_ERRORS);
+
+export async function getIssuerEmail(evidenceId: string, bodyId: string): Promise<EmailDraft> {
+  const draft = await read(() =>
+    createApiClient().GET('/api/admin/evidences/{evidence_id}/issuer-email', {
+      params: { path: { evidence_id: evidenceId }, query: { body_id: bodyId } },
+    }),
+  );
+  if (!draft) throw new Error('Không soạn được email. Tổ chức cấp phải đã được duyệt.');
+  return draft;
+}
+
+export const mailtoLink = (draft: EmailDraft) =>
+  `mailto:${encodeURIComponent(draft.to)}?subject=${encodeURIComponent(draft.subject)}&body=${encodeURIComponent(draft.body)}`;

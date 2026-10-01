@@ -14,7 +14,8 @@ from app.core.events import publish
 from app.core.storage import Storage
 from app.modules.auth.schemas import CurrentUser
 from app.modules.companies import service as companies
-from app.modules.verification import evidence_service, identity_service
+from app.modules.verification import crosscheck_service, evidence_service, identity_service
+from app.modules.verification.crosscheck_schemas import EvidenceCheckOut
 from app.modules.verification.events import VerificationStatusChanged
 from app.modules.verification.identity import SEVERITY_RANK
 from app.modules.verification.models import (
@@ -24,7 +25,12 @@ from app.modules.verification.models import (
     RequestStatus,
     VerificationRequest,
 )
-from app.modules.verification.schemas import DecisionIn, QueueItem, VerificationRequestOut
+from app.modules.verification.schemas import (
+    DecisionIn,
+    QueueItem,
+    SignalOut,
+    VerificationRequestOut,
+)
 from app.modules.verification.service import decide
 
 _DECISIONS = {
@@ -98,6 +104,15 @@ async def list_my_requests(
     return [_out(r) for r in rows]
 
 
+def _has_evidence_mismatch(checks: list[EvidenceCheckOut]) -> bool:
+    """I8: lần kiểm MỚI NHẤT của một loại kiểm trên một bằng chứng cho kết quả lệch.
+    `checks` đã sắp mới nhất trước."""
+    latest: dict[tuple[object, str], str] = {}
+    for c in checks:
+        latest.setdefault((c.evidence_id, c.check_type), c.result)
+    return "mismatch" in latest.values()
+
+
 async def queue(session: AsyncSession, storage: Storage) -> list[QueueItem]:
     """Yêu cầu đang chờ, cũ nhất trước, kèm bằng chứng và URL xem file có hạn ngắn."""
     requests = list(
@@ -119,6 +134,12 @@ async def queue(session: AsyncSession, storage: Storage) -> list[QueueItem]:
                 .order_by(Evidence.created_at)
             )
         )
+        checks = await crosscheck_service.checks_for(
+            session, storage, [e.id for e in evidence_rows]
+        )
+        signals = list(flags[request.company_id])
+        if _has_evidence_mismatch(checks):
+            signals.insert(0, SignalOut(code="evidence_mismatch", severity="high"))
         items.append(
             QueueItem(
                 request_id=request.id,
@@ -130,7 +151,8 @@ async def queue(session: AsyncSession, storage: Storage) -> list[QueueItem]:
                 evidences=[
                     await evidence_service.to_out(session, storage, e) for e in evidence_rows
                 ],
-                signals=flags[request.company_id],
+                checks=checks,
+                signals=signals,
                 ownership_proven=await evidence_service.ownership_proven_for(
                     session, request.company_id
                 ),

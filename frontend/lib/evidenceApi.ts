@@ -75,6 +75,10 @@ export async function createEvidence(input: EvidenceInput): Promise<Evidence> {
   if (result.response.status === 422) {
     throw new Error('Bằng chứng chưa hợp lệ. Vui lòng kiểm tra loại, ngày cấp, ngày hết hạn và file.');
   }
+  if (result.response.status === 403) {
+    // I11: file nằm trong danh sách chặn — không nói lý do cụ thể.
+    throw new Error('Không thể dùng thông tin này trên evfta.eu. Vui lòng liên hệ bộ phận hỗ trợ.');
+  }
   if (!result.response.ok || !result.data) throw new Error(NETWORK);
   return result.data;
 }
@@ -87,6 +91,10 @@ export async function deleteEvidence(id: string): Promise<void> {
     }));
   } catch {
     throw new Error(NETWORK);
+  }
+  if (response.status === 409) {
+    // I8: bằng chứng đã được kiểm chéo thì giữ nguyên để đối chiếu.
+    throw new Error('Bằng chứng đã được kiểm chéo nên không xóa được. Vui lòng nộp bằng chứng mới nếu cần thay thế.');
   }
   if (!response.ok) throw new Error('Không xóa được bằng chứng. Vui lòng thử lại.');
 }

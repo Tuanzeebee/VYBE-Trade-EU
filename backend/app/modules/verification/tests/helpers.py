@@ -10,6 +10,7 @@ from app.modules.verification.models import (
     CheckResult,
     CheckSubject,
     CheckType,
+    Evidence,
     EvidenceCheck,
     EvidenceType,
     RequiredEvidenceRule,
@@ -75,6 +76,26 @@ async def prove_ownership(
         )
     )
     await session.flush()
+
+
+async def cross_check(session: AsyncSession, evidence: Evidence, result: str = "match") -> None:
+    """Ghi một lần kiểm chéo nguồn ngoài (I8) — điều kiện để duyệt bằng chứng và lên evfta_verified."""
+    session.add(
+        EvidenceCheck(
+            company_id=evidence.company_id,
+            evidence_id=evidence.id,
+            subject=CheckSubject.evidence,
+            check_type=CheckType.registry_lookup,
+            result=CheckResult(result),
+            source="https://www.iafcertsearch.org/",
+            snapshot_key=f"checks/{evidence.company_id}/snap.png",
+        )
+    )
+    await session.flush()
+
+
+def snapshot_key(company_id: uuid.UUID | str) -> str:
+    return f"checks/{company_id}/{uuid.uuid4().hex}.png"
 
 
 def body(company_id: str, **over: Any) -> dict[str, Any]:

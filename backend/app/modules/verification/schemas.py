@@ -4,6 +4,8 @@ from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from app.modules.verification.crosscheck_schemas import EvidenceCheckOut
+
 ApprovalStatusLiteral = Literal["pending", "approved", "rejected"]
 ChecklistStateLiteral = Literal["missing", "pending", "approved", "expired", "rejected"]
 
@@ -93,6 +95,7 @@ class QueueItem(BaseModel):
     country: str
     submitted_at: dt.datetime
     evidences: list[EvidenceOut]  # xem bằng chứng ngay trên dòng
+    checks: list[EvidenceCheckOut] = []  # I8: mọi lần kiểm của các bằng chứng đã nộp
     signals: list[SignalOut] = []  # I11: có cờ cao thì lên đầu hàng đợi
     ownership_proven: bool = False  # I11: đã gọi lại số chính thức và khớp
 

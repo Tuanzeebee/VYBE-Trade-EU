@@ -11278,5 +11278,245 @@
     "Record check result",
     "Record check result",
     "Record check result"
+  ],
+  "Kiểm chéo": [
+    "Cross-checks",
+    "Cross-checks",
+    "Cross-checks"
+  ],
+  "Kết quả kiểm": [
+    "Check results",
+    "Check results",
+    "Check results"
+  ],
+  "Xem ảnh chụp": [
+    "View snapshot",
+    "View snapshot",
+    "View snapshot"
+  ],
+  "Kiểm với nguồn ngoài": [
+    "Check against an external source",
+    "Check against an external source",
+    "Check against an external source"
+  ],
+  "Cách kiểm": [
+    "Method",
+    "Method",
+    "Method"
+  ],
+  "Tra cứu tổ chức cấp / IAF": [
+    "Issuer / IAF lookup",
+    "Issuer / IAF lookup",
+    "Issuer / IAF lookup"
+  ],
+  "Email xác nhận của tổ chức cấp": [
+    "Confirmation email from the issuer",
+    "Confirmation email from the issuer",
+    "Confirmation email from the issuer"
+  ],
+  "Soạn email xác nhận": [
+    "Draft confirmation email",
+    "Draft confirmation email",
+    "Draft confirmation email"
+  ],
+  "Mở trang tra cứu": [
+    "Open lookup page",
+    "Open lookup page",
+    "Open lookup page"
+  ],
+  "Ảnh chụp kết quả": [
+    "Result snapshot",
+    "Result snapshot",
+    "Result snapshot"
+  ],
+  "Ghi kiểm chéo": [
+    "Record cross-check",
+    "Record cross-check",
+    "Record cross-check"
+  ],
+  "So khớp nội bộ (trường trên chứng nhận)": [
+    "Internal consistency (fields on the certificate)",
+    "Internal consistency (fields on the certificate)",
+    "Internal consistency (fields on the certificate)"
+  ],
+  "Tên đơn vị trên chứng nhận": [
+    "Holder name on certificate",
+    "Holder name on certificate",
+    "Holder name on certificate"
+  ],
+  "Địa chỉ trên chứng nhận": [
+    "Holder address on certificate",
+    "Holder address on certificate",
+    "Holder address on certificate"
+  ],
+  "Phạm vi nhóm hàng": [
+    "Product category scope",
+    "Product category scope",
+    "Product category scope"
+  ],
+  "So khớp": [
+    "Compare",
+    "Compare",
+    "Compare"
+  ],
+  "Nguồn tra cứu": [
+    "Lookup source",
+    "Lookup source",
+    "Lookup source"
+  ],
+  "Mở trang tra cứu MST": [
+    "Open tax ID lookup",
+    "Open tax ID lookup",
+    "Open tax ID lookup"
+  ],
+  "Tên pháp nhân theo sổ đăng ký": [
+    "Legal name per registry",
+    "Legal name per registry",
+    "Legal name per registry"
+  ],
+  "Địa chỉ theo sổ đăng ký": [
+    "Address per registry",
+    "Address per registry",
+    "Address per registry"
+  ],
+  "So khớp nội bộ": [
+    "Internal consistency",
+    "Internal consistency",
+    "Internal consistency"
+  ],
+  "Tên đơn vị": [
+    "Holder name",
+    "Holder name",
+    "Holder name"
+  ],
+  "Tên miền email": [
+    "Email domain",
+    "Email domain",
+    "Email domain"
+  ],
+  "Trùng MST": [
+    "Duplicate tax ID",
+    "Duplicate tax ID",
+    "Duplicate tax ID"
+  ],
+  "Trùng số chứng nhận": [
+    "Duplicate certificate number",
+    "Duplicate certificate number",
+    "Duplicate certificate number"
+  ],
+  "Bằng chứng có kết quả kiểm lệch": [
+    "Evidence has a mismatching check",
+    "Evidence has a mismatching check",
+    "Evidence has a mismatching check"
+  ],
+  "Vui lòng chọn ảnh chụp kết quả tra cứu.": [
+    "Please choose a snapshot of the lookup result.",
+    "Please choose a snapshot of the lookup result.",
+    "Please choose a snapshot of the lookup result."
+  ],
+  "Vui lòng chọn tổ chức cấp.": [
+    "Please choose an issuer.",
+    "Please choose an issuer.",
+    "Please choose an issuer."
+  ],
+  "Cần ít nhất một lần kiểm chéo có nguồn và ảnh chụp trước khi duyệt.": [
+    "At least one cross-check with a source and snapshot is required before approval.",
+    "At least one cross-check with a source and snapshot is required before approval.",
+    "At least one cross-check with a source and snapshot is required before approval."
+  ],
+  "Tổ chức cấp đã được dùng trong kết quả kiểm nên không xóa được.": [
+    "This issuer is referenced by check results and cannot be deleted.",
+    "This issuer is referenced by check results and cannot be deleted.",
+    "This issuer is referenced by check results and cannot be deleted."
+  ],
+  "Ảnh chụp phải là PNG, JPEG hoặc PDF.": [
+    "The snapshot must be PNG, JPEG or PDF.",
+    "The snapshot must be PNG, JPEG or PDF.",
+    "The snapshot must be PNG, JPEG or PDF."
+  ],
+  "Không tải được ảnh chụp. Vui lòng thử lại.": [
+    "Could not upload the snapshot. Please try again.",
+    "Could not upload the snapshot. Please try again.",
+    "Could not upload the snapshot. Please try again."
+  ],
+  "Cần nguồn, ảnh chụp đã tải lên và tổ chức cấp đã duyệt (khi xác nhận qua email).": [
+    "A source, an uploaded snapshot and a reviewed issuer (for email confirmation) are required.",
+    "A source, an uploaded snapshot and a reviewed issuer (for email confirmation) are required.",
+    "A source, an uploaded snapshot and a reviewed issuer (for email confirmation) are required."
+  ],
+  "Không soạn được email. Tổ chức cấp phải đã được duyệt.": [
+    "Could not draft the email. The issuer must be reviewed.",
+    "Could not draft the email. The issuer must be reviewed.",
+    "Could not draft the email. The issuer must be reviewed."
+  ],
+  "Tổ chức cấp này đã tồn tại.": [
+    "This issuer already exists.",
+    "This issuer already exists.",
+    "This issuer already exists."
+  ],
+  "Bằng chứng đã được kiểm chéo nên không xóa được. Vui lòng nộp bằng chứng mới nếu cần thay thế.": [
+    "This evidence has been cross-checked and cannot be deleted. Please submit new evidence to replace it.",
+    "This evidence has been cross-checked and cannot be deleted. Please submit new evidence to replace it.",
+    "This evidence has been cross-checked and cannot be deleted. Please submit new evidence to replace it."
+  ],
+  "Domain chính thức": [
+    "Official domain",
+    "Official domain",
+    "Official domain"
+  ],
+  "Email xác nhận": [
+    "Confirmation email",
+    "Confirmation email",
+    "Confirmation email"
+  ],
+  "Đơn vị công nhận": [
+    "Accreditation body",
+    "Accreditation body",
+    "Accreditation body"
+  ],
+  "IAF MLA": [
+    "IAF MLA member",
+    "IAF MLA member",
+    "IAF MLA member"
+  ],
+  "Trang tra cứu": [
+    "Lookup page",
+    "Lookup page",
+    "Lookup page"
+  ],
+  "Ví dụ sgs.com.": [
+    "For example sgs.com.",
+    "For example sgs.com.",
+    "For example sgs.com."
+  ],
+  "Phải thuộc domain chính thức. Email xác nhận chỉ gửi tới địa chỉ này, không lấy từ file chứng nhận.": [
+    "Must belong to the official domain. Confirmation emails go only to this address, never to one taken from the certificate file.",
+    "Must belong to the official domain. Confirmation emails go only to this address, never to one taken from the certificate file.",
+    "Must belong to the official domain. Confirmation emails go only to this address, never to one taken from the certificate file."
+  ],
+  "Bắt đầu bằng http:// hoặc https://.": [
+    "Starts with http:// or https://.",
+    "Starts with http:// or https://.",
+    "Starts with http:// or https://."
+  ],
+  "Ví dụ BoA, UKAS.": [
+    "For example BoA, UKAS.",
+    "For example BoA, UKAS.",
+    "For example BoA, UKAS."
+  ],
+  "Địa chỉ nhận thư hỏi xác nhận chứng nhận. Phải thuộc domain chính thức; hệ thống không bao giờ dùng địa chỉ ghi trên file chứng nhận.": [
+    "Address that receives certificate confirmation requests. Must belong to the official domain; the system never uses an address printed on the certificate file.",
+    "Address that receives certificate confirmation requests. Must belong to the official domain; the system never uses an address printed on the certificate file.",
+    "Address that receives certificate confirmation requests. Must belong to the official domain; the system never uses an address printed on the certificate file."
+  ],
+  "Có = đơn vị công nhận là thành viên thỏa thuận thừa nhận lẫn nhau của IAF.": [
+    "Yes = the accreditation body is a signatory of the IAF Multilateral Recognition Arrangement.",
+    "Yes = the accreditation body is a signatory of the IAF Multilateral Recognition Arrangement.",
+    "Yes = the accreditation body is a signatory of the IAF Multilateral Recognition Arrangement."
+  ],
+  "Tổ chức cấp chưa duyệt không dùng được để kiểm chéo hoặc soạn email xác nhận.": [
+    "Unreviewed issuers cannot be used for cross-checks or confirmation emails.",
+    "Unreviewed issuers cannot be used for cross-checks or confirmation emails.",
+    "Unreviewed issuers cannot be used for cross-checks or confirmation emails."
   ]
 }

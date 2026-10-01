@@ -5909,6 +5909,733 @@
         }
       }
     },
+    "/api/admin/certification-bodies": {
+      "get": {
+        "tags": [
+          "verification"
+        ],
+        "summary": "List Certification Bodies",
+        "operationId": "list_certification_bodies_api_admin_certification_bodies_get",
+        "parameters": [
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CertificationBodyOut"
+                  },
+                  "title": "Response List Certification Bodies Api Admin Certification Bodies Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "verification"
+        ],
+        "summary": "Create Certification Body",
+        "operationId": "create_certification_body_api_admin_certification_bodies_post",
+        "parameters": [
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CertificationBodyIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CertificationBodyOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/certification-bodies/template.xlsx": {
+      "get": {
+        "tags": [
+          "verification"
+        ],
+        "summary": "Certification Bodies Template",
+        "operationId": "certification_bodies_template_api_admin_certification_bodies_template_xlsx_get",
+        "parameters": [
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/certification-bodies/export.xlsx": {
+      "get": {
+        "tags": [
+          "verification"
+        ],
+        "summary": "Certification Bodies Export",
+        "operationId": "certification_bodies_export_api_admin_certification_bodies_export_xlsx_get",
+        "parameters": [
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/certification-bodies/import": {
+      "post": {
+        "tags": [
+          "verification"
+        ],
+        "summary": "Certification Bodies Import",
+        "operationId": "certification_bodies_import_api_admin_certification_bodies_import_post",
+        "parameters": [
+          {
+            "name": "dry_run",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": true,
+              "title": "Dry Run"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_certification_bodies_import_api_admin_certification_bodies_import_post"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/certification-bodies/{body_id}": {
+      "patch": {
+        "tags": [
+          "verification"
+        ],
+        "summary": "Update Certification Body",
+        "operationId": "update_certification_body_api_admin_certification_bodies__body_id__patch",
+        "parameters": [
+          {
+            "name": "body_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Body Id"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CertificationBodyPatch"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CertificationBodyOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "verification"
+        ],
+        "summary": "Delete Certification Body",
+        "operationId": "delete_certification_body_api_admin_certification_bodies__body_id__delete",
+        "parameters": [
+          {
+            "name": "body_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Body Id"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/certification-bodies/{body_id}/review": {
+      "post": {
+        "tags": [
+          "verification"
+        ],
+        "summary": "Review Certification Body",
+        "operationId": "review_certification_body_api_admin_certification_bodies__body_id__review_post",
+        "parameters": [
+          {
+            "name": "body_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Body Id"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CertificationBodyOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/companies/{company_id}/check-snapshots": {
+      "post": {
+        "tags": [
+          "verification"
+        ],
+        "summary": "Presign Check Snapshot",
+        "operationId": "presign_check_snapshot_api_admin_companies__company_id__check_snapshots_post",
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Company Id"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SnapshotPresignIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SnapshotPresignOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/evidences/{evidence_id}/checks": {
+      "post": {
+        "tags": [
+          "verification"
+        ],
+        "summary": "Record Evidence Check",
+        "operationId": "record_evidence_check_api_admin_evidences__evidence_id__checks_post",
+        "parameters": [
+          {
+            "name": "evidence_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Evidence Id"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EvidenceCheckIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvidenceCheckOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/evidences/{evidence_id}/consistency": {
+      "post": {
+        "tags": [
+          "verification"
+        ],
+        "summary": "Record Evidence Consistency",
+        "operationId": "record_evidence_consistency_api_admin_evidences__evidence_id__consistency_post",
+        "parameters": [
+          {
+            "name": "evidence_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Evidence Id"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConsistencyIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvidenceCheckOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/evidences/{evidence_id}/issuer-email": {
+      "get": {
+        "tags": [
+          "verification"
+        ],
+        "summary": "Issuer Email Draft",
+        "operationId": "issuer_email_draft_api_admin_evidences__evidence_id__issuer_email_get",
+        "parameters": [
+          {
+            "name": "evidence_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Evidence Id"
+            }
+          },
+          {
+            "name": "body_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Body Id"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmailDraftOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/admin/companies/{company_id}/identity": {
       "get": {
         "tags": [
@@ -7086,6 +7813,20 @@
         ],
         "title": "BlocklistOut"
       },
+      "Body_certification_bodies_import_api_admin_certification_bodies_import_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "contentMediaType": "application/octet-stream",
+            "title": "File"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "title": "Body_certification_bodies_import_api_admin_certification_bodies_import_post"
+      },
       "Body_evidence_rules_import_api_admin_evidence_rules_import_post": {
         "properties": {
           "file": {
@@ -7165,6 +7906,228 @@
           "new_verified"
         ],
         "title": "BuyerDashboard"
+      },
+      "CertificationBodyIn": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Name"
+          },
+          "official_domain": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 3,
+            "title": "Official Domain"
+          },
+          "contact_email": {
+            "type": "string",
+            "format": "email",
+            "title": "Contact Email"
+          },
+          "lookup_url": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 512,
+                "pattern": "^https?://"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lookup Url"
+          },
+          "accreditation_body": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Accreditation Body"
+          },
+          "iaf_mla": {
+            "type": "boolean",
+            "title": "Iaf Mla",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "official_domain",
+          "contact_email"
+        ],
+        "title": "CertificationBodyIn"
+      },
+      "CertificationBodyOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "official_domain": {
+            "type": "string",
+            "title": "Official Domain"
+          },
+          "contact_email": {
+            "type": "string",
+            "title": "Contact Email"
+          },
+          "lookup_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lookup Url"
+          },
+          "accreditation_body": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Accreditation Body"
+          },
+          "iaf_mla": {
+            "type": "boolean",
+            "title": "Iaf Mla"
+          },
+          "reviewed_by": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reviewed By"
+          },
+          "reviewed_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reviewed At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "official_domain",
+          "contact_email",
+          "lookup_url",
+          "accreditation_body",
+          "iaf_mla",
+          "reviewed_by",
+          "reviewed_at"
+        ],
+        "title": "CertificationBodyOut"
+      },
+      "CertificationBodyPatch": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "official_domain": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255,
+                "minLength": 3
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Official Domain"
+          },
+          "contact_email": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "email"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contact Email"
+          },
+          "lookup_url": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 512,
+                "pattern": "^https?://"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lookup Url"
+          },
+          "accreditation_body": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Accreditation Body"
+          },
+          "iaf_mla": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Iaf Mla"
+          }
+        },
+        "type": "object",
+        "title": "CertificationBodyPatch"
       },
       "ChecklistItem": {
         "properties": {
@@ -8253,6 +9216,64 @@
         ],
         "title": "CompletenessTile"
       },
+      "ConsistencyIn": {
+        "properties": {
+          "holder_name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Holder Name"
+          },
+          "holder_address": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Holder Address"
+          },
+          "scope_categories": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array",
+                "maxItems": 50
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Scope Categories"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "type": "object",
+        "title": "ConsistencyIn",
+        "description": "Trường admin trích từ chứng nhận để so khớp nội bộ."
+      },
       "ConversationOut": {
         "properties": {
           "id": {
@@ -8571,6 +9592,29 @@
         ],
         "title": "DutyType"
       },
+      "EmailDraftOut": {
+        "properties": {
+          "to": {
+            "type": "string",
+            "title": "To"
+          },
+          "subject": {
+            "type": "string",
+            "title": "Subject"
+          },
+          "body": {
+            "type": "string",
+            "title": "Body"
+          }
+        },
+        "type": "object",
+        "required": [
+          "to",
+          "subject",
+          "body"
+        ],
+        "title": "EmailDraftOut"
+      },
       "EscalateIn": {
         "properties": {
           "contact_email": {
@@ -8706,6 +9750,191 @@
         ],
         "title": "Eur1In",
         "description": "Dữ liệu hóa đơn để phủ lên bản nháp EUR.1. Khối lượng là CHUỖI JSON."
+      },
+      "EvidenceCheckIn": {
+        "properties": {
+          "check_type": {
+            "type": "string",
+            "enum": [
+              "registry_lookup",
+              "issuer_email"
+            ],
+            "title": "Check Type"
+          },
+          "result": {
+            "type": "string",
+            "enum": [
+              "match",
+              "mismatch",
+              "not_found",
+              "unchecked"
+            ],
+            "title": "Result"
+          },
+          "source": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Source"
+          },
+          "snapshot_key": {
+            "type": "string",
+            "maxLength": 512,
+            "minLength": 1,
+            "title": "Snapshot Key"
+          },
+          "certification_body_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Certification Body Id"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "type": "object",
+        "required": [
+          "check_type",
+          "result",
+          "source",
+          "snapshot_key"
+        ],
+        "title": "EvidenceCheckIn",
+        "description": "Kiểm chéo với nguồn NGOÀI: bắt buộc có nguồn và ảnh chụp kết quả."
+      },
+      "EvidenceCheckOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "evidence_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Evidence Id"
+          },
+          "check_type": {
+            "type": "string",
+            "title": "Check Type"
+          },
+          "result": {
+            "type": "string",
+            "title": "Result"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          },
+          "certification_body_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Certification Body Id"
+          },
+          "facts": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Facts"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "checked_by": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Checked By"
+          },
+          "checked_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Checked At"
+          },
+          "snapshot_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Snapshot Url"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "evidence_id",
+          "check_type",
+          "result",
+          "source",
+          "certification_body_id",
+          "facts",
+          "note",
+          "checked_by",
+          "checked_at",
+          "snapshot_url"
+        ],
+        "title": "EvidenceCheckOut"
       },
       "EvidenceIn": {
         "properties": {
@@ -9424,6 +10653,30 @@
                 "type": "null"
               }
             ]
+          },
+          "source": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          },
+          "snapshot_key": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 512
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Snapshot Key"
           }
         },
         "type": "object",
@@ -9464,6 +10717,17 @@
             ],
             "title": "Facts"
           },
+          "source": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          },
           "note": {
             "anyOf": [
               {
@@ -9500,6 +10764,7 @@
           "check_type",
           "result",
           "facts",
+          "source",
           "note",
           "checked_by",
           "checked_at"
@@ -10848,6 +12113,14 @@
             "type": "array",
             "title": "Evidences"
           },
+          "checks": {
+            "items": {
+              "$ref": "#/components/schemas/EvidenceCheckOut"
+            },
+            "type": "array",
+            "title": "Checks",
+            "default": []
+          },
           "signals": {
             "items": {
               "$ref": "#/components/schemas/SignalOut"
@@ -10944,6 +12217,30 @@
               }
             ],
             "title": "Legal Representative"
+          },
+          "registered_name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Registered Name"
+          },
+          "registered_address": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Registered Address"
           },
           "founded_year": {
             "anyOf": [
@@ -12116,6 +13413,42 @@
         ],
         "title": "SignalOut",
         "description": "Tín hiệu rủi ro danh tính (I11) — chỉ để xếp ưu tiên, không phải quyết định."
+      },
+      "SnapshotPresignIn": {
+        "properties": {
+          "content_type": {
+            "type": "string",
+            "enum": [
+              "image/png",
+              "image/jpeg",
+              "application/pdf"
+            ],
+            "title": "Content Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "content_type"
+        ],
+        "title": "SnapshotPresignIn"
+      },
+      "SnapshotPresignOut": {
+        "properties": {
+          "upload_url": {
+            "type": "string",
+            "title": "Upload Url"
+          },
+          "key": {
+            "type": "string",
+            "title": "Key"
+          }
+        },
+        "type": "object",
+        "required": [
+          "upload_url",
+          "key"
+        ],
+        "title": "SnapshotPresignOut"
       },
       "StatsOut": {
         "properties": {

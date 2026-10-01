@@ -29,6 +29,7 @@ from app.modules.verification.logic import (
     is_evfta_verified,
 )
 from app.modules.verification.models import (
+    EXTERNAL_CHECKS,
     ApprovalStatus,
     CheckType,
     Decision,
@@ -85,6 +86,31 @@ async def _usable_type(session: AsyncSession, code: str) -> EvidenceType:
 def _check_file_key(company_id: uuid.UUID, key: str) -> None:
     if not key.startswith(f"evidence/{company_id}/"):
         raise AppError("invalid_file_key", "File was not uploaded for this company", 422)
+
+
+async def _ensure_not_checked(session: AsyncSession, evidence_id: uuid.UUID) -> None:
+    """I8: bằng chứng đã có lần kiểm (append-only) thì không sửa/xóa được — kết quả kiểm gắn với
+    đúng file đó. Doanh nghiệp nộp bằng chứng mới thay thế."""
+    checked = await session.scalar(
+        select(EvidenceCheck.id).where(EvidenceCheck.evidence_id == evidence_id).limit(1)
+    )
+    if checked is not None:
+        raise AppError(
+            "evidence_locked", "Checked evidence cannot be changed; submit a new one", 409
+        )
+
+
+def snapshot_folder(company_id: uuid.UUID) -> str:
+    """Thư mục ảnh chụp kết quả tra cứu do admin tải lên (I8) — tách khỏi file của exporter."""
+    return f"checks/{company_id}/"
+
+
+async def ensure_snapshot(storage: Storage, company_id: uuid.UUID, key: str) -> None:
+    """Ảnh chụp phải nằm đúng thư mục kiểm của công ty và đã được tải lên thật."""
+    if not key.startswith(snapshot_folder(company_id)):
+        raise AppError("invalid_snapshot", "Snapshot does not belong to this company", 422)
+    if await storage.get(key) is None:
+        raise AppError("invalid_snapshot", "Snapshot has not been uploaded", 422)
 
 
 async def _file_hash(session: AsyncSession, storage: Storage, key: str) -> str:
@@ -201,6 +227,7 @@ async def update_evidence(
 ) -> EvidenceOut:
     company_id = await _exporter_company_id(session, user)
     row = await _get_owned(session, company_id, evidence_id)
+    await _ensure_not_checked(session, row.id)
     before = snapshot(row)
     fields = patch.model_fields_set
     for required in ("type_code", "file_key", "issued_at"):
@@ -250,6 +277,7 @@ async def update_evidence(
 async def delete_evidence(session: AsyncSession, user: CurrentUser, evidence_id: uuid.UUID) -> None:
     company_id = await _exporter_company_id(session, user)
     row = await _get_owned(session, company_id, evidence_id)
+    await _ensure_not_checked(session, row.id)
     before = snapshot(row)
     await session.delete(row)
     await record(
@@ -265,9 +293,40 @@ async def delete_evidence(session: AsyncSession, user: CurrentUser, evidence_id:
 
 
 # ── Danh sách kiểm và mức EVFTA-verified ────────────────────────────────────
+async def latest_external_results(
+    session: AsyncSession, evidence_ids: list[uuid.UUID]
+) -> dict[uuid.UUID, str]:
+    """Kết quả kiểm chéo NGUỒN NGOÀI mới nhất của từng bằng chứng (I8); lần sau đè lần trước."""
+    if not evidence_ids:
+        return {}
+    rows = await session.execute(
+        select(EvidenceCheck.evidence_id, EvidenceCheck.result)
+        .where(
+            EvidenceCheck.evidence_id.in_(evidence_ids),
+            EvidenceCheck.check_type.in_(EXTERNAL_CHECKS),
+        )
+        .order_by(EvidenceCheck.checked_at)
+    )
+    return {evidence_id: result.value for evidence_id, result in rows if evidence_id is not None}
+
+
 async def _facts(session: AsyncSession, company_id: uuid.UUID) -> list[EvidenceFact]:
-    rows = await session.scalars(select(Evidence).where(Evidence.company_id == company_id))
-    return [EvidenceFact(r.type_code, r.approval_status.value, r.expires_at) for r in rows]
+    rows = list(await session.scalars(select(Evidence).where(Evidence.company_id == company_id)))
+    checked = await latest_external_results(session, [r.id for r in rows])
+    return [
+        EvidenceFact(
+            r.type_code,
+            r.approval_status.value,
+            r.expires_at,
+            cross_checked=checked.get(r.id) == "match",
+        )
+        for r in rows
+    ]
+
+
+async def categories_of(session: AsyncSession, company_id: uuid.UUID) -> set[str]:
+    """Nhóm hàng công ty đang bán (I8: so với phạm vi chứng nhận)."""
+    return await _categories(session, company_id)
 
 
 async def _categories(session: AsyncSession, company_id: uuid.UUID) -> set[str]:

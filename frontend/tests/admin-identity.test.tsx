@@ -52,7 +52,13 @@ function serve(world: { clusters?: unknown[]; blocklist?: unknown[]; queue?: unk
       const url = new URL(req.url);
       const body = req.method === 'POST' ? await req.clone().json().catch(() => undefined) : undefined;
       calls.push({ method: req.method, path: url.pathname, body });
+      if (req.method === 'POST' && url.pathname.endsWith('/check-snapshots')) {
+        return json(201, { upload_url: 'https://storage.test/put', key: 'checks/c-1/snap.png' });
+      }
+      if (req.method === 'PUT') return new Response(null, { status: 200 });
       if (req.method === 'POST') return world.post ?? json(201, {});
+      if (url.pathname === '/api/admin/certification-bodies') return json(200, []);
+      if (url.pathname === '/api/public/suppliers/filters') return json(200, { categories: [], certificates: [] });
       if (req.method === 'DELETE') return new Response(null, { status: 204 });
       if (world.fail) return json(500, {});
       if (url.pathname === '/api/admin/identity-clusters/export.xlsx') return new Response('xlsx', { status: 200 });
@@ -215,14 +221,22 @@ describe('Kiểm danh tính trong hàng đợi (I11)', () => {
     fireEvent.change(within(group).getByLabelText('Năm thành lập theo sổ đăng ký'), { target: { value: '2025' } });
     fireEvent.change(within(group).getByLabelText('Trạng thái thuế'), { target: { value: 'inactive' } });
     fireEvent.click(within(group).getByLabelText('Vừa đổi tên'));
+    fireEvent.change(within(group).getByLabelText('Tên pháp nhân theo sổ đăng ký'), { target: { value: 'CÔNG TY TNHH A' } });
+    fireEvent.change(within(group).getByLabelText('Ảnh chụp kết quả'), {
+      target: { files: [new File(['png'], 'mst.png', { type: 'image/png' })] },
+    });
     fireEvent.click(within(group).getByRole('button', { name: 'Ghi kết quả kiểm' }));
     await waitFor(() =>
-      expect(calls.find((c) => c.method === 'POST')?.body).toEqual({
+      expect(calls.find((c) => c.method === 'POST' && c.path.endsWith('/identity-checks'))?.body).toEqual({
         check_type: 'registry_lookup',
         result: 'mismatch',
         note: null,
+        source: 'https://tracuunnt.gdt.gov.vn/tcnnt/mstdn.jsp',
+        snapshot_key: 'checks/c-1/snap.png',
         registry: {
           legal_representative: 'Nguyễn Văn An',
+          registered_name: 'CÔNG TY TNHH A',
+          registered_address: null,
           founded_year: 2025,
           tax_status: 'inactive',
           name_changed_recently: true,
@@ -230,5 +244,17 @@ describe('Kiểm danh tính trong hàng đợi (I11)', () => {
         },
       }),
     );
+    // I8: ảnh chụp tải lên thư mục kiểm của công ty trước khi ghi kết quả.
+    expect(calls.some((c) => c.method === 'PUT')).toBe(true);
+  });
+
+  it('tra sổ đăng ký thiếu ảnh chụp thì không gửi', async () => {
+    serve({ queue: [queueItem] });
+    wrap(<AdminVerificationQueue />);
+    const group = await screen.findByRole('group', { name: 'Kiểm danh tính' });
+    fireEvent.change(within(group).getByLabelText('Loại kiểm'), { target: { value: 'registry_lookup' } });
+    fireEvent.click(within(group).getByRole('button', { name: 'Ghi kết quả kiểm' }));
+    expect(await screen.findByRole('alert')).toHaveTextContent('Vui lòng chọn ảnh chụp kết quả tra cứu.');
+    expect(calls.some((c) => c.path.endsWith('/identity-checks'))).toBe(false);
   });
 });

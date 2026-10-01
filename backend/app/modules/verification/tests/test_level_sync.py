@@ -25,6 +25,7 @@ from app.modules.verification.tests.helpers import (
     add_rule,
     add_type,
     body,
+    cross_check,
     prove_ownership,
 )
 
@@ -50,7 +51,9 @@ async def add_approved_evidence(
     type_code: str = "iso_9001",
     expires: dt.date | None = None,
     status: ApprovalStatus = ApprovalStatus.approved,
+    checked: str | None = "match",
 ) -> Evidence:
+    """Bằng chứng đã duyệt; mặc định đã kiểm chéo nguồn ngoài khớp (I8)."""
     row = Evidence(
         company_id=company_id,
         type_code=type_code,
@@ -62,6 +65,8 @@ async def add_approved_evidence(
     )
     session.add(row)
     await session.flush()
+    if checked is not None:
+        await cross_check(session, row, checked)
     return row
 
 
@@ -202,9 +207,10 @@ async def test_missing_evidence_never_changes_verification_status_by_itself(
     assert (await state(db_session, setup))[0] == "verified"
 
 
-async def test_deleting_evidence_via_api_downgrades_level(
+async def test_checked_evidence_is_locked_so_level_cannot_be_gamed(
     api_client: AsyncClient, db_session: AsyncSession, setup: uuid.UUID, reviewer_id: uuid.UUID
 ) -> None:
+    """I8: bằng chứng đã kiểm chéo không sửa/xóa được qua API (kết quả kiểm gắn với đúng file)."""
     await make_verified(db_session, setup)
     created = await api_client.post(
         "/api/exporter/evidences", json=body(str(setup), type_code="iso_9001")
@@ -213,10 +219,23 @@ async def test_deleting_evidence_via_api_downgrades_level(
     row = await db_session.get(Evidence, evidence_id)
     assert row is not None
     row.approval_status = ApprovalStatus.approved
-    await db_session.flush()
+    await cross_check(db_session, row)
     assert await sync_level(db_session, setup) == "level_up"
-    assert (await api_client.delete(f"/api/exporter/evidences/{evidence_id}")).status_code == 204
-    assert await state(db_session, setup) == ("verified", "basic")
+    url = f"/api/exporter/evidences/{evidence_id}"
+    assert (await api_client.delete(url)).status_code == 409
+    patch = await api_client.patch(url, json={"file_key": f"evidence/{setup}/other.pdf"})
+    assert patch.status_code == 409 and patch.json()["error"]["code"] == "evidence_locked"
+    assert await state(db_session, setup) == ("verified", "evfta_verified")
+
+
+async def test_deleting_unchecked_evidence_still_works(
+    api_client: AsyncClient, db_session: AsyncSession, setup: uuid.UUID
+) -> None:
+    created = await api_client.post(
+        "/api/exporter/evidences", json=body(str(setup), type_code="iso_9001")
+    )
+    url = f"/api/exporter/evidences/{created.json()['id']}"
+    assert (await api_client.delete(url)).status_code == 204
 
 
 # ── decide() với quyết định của hệ thống ────────────────────────────────────

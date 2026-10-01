@@ -30,7 +30,14 @@ from app.modules.verification.models import (
     EvidenceCheck,
     IdentifierType,
 )
-from app.modules.verification.tests.helpers import TODAY, add_rule, add_type, body
+from app.modules.verification.tests.helpers import (
+    TODAY,
+    add_rule,
+    add_type,
+    body,
+    cross_check,
+    snapshot_key,
+)
 from app.modules.verification.tests.test_verification_requests import (
     QUEUE,
     SUBMIT,
@@ -198,15 +205,16 @@ async def test_ownership_check_gates_evfta_verified(
     await add_type(db_session, reviewer_id)
     await add_rule(db_session, reviewer_id, "iso_9001")
     await api_client.post("/api/exporter/products", json=product_body(hs_code="090121"))
-    db_session.add(
-        Evidence(
-            company_id=company_id,
-            type_code="iso_9001",
-            file_key=f"evidence/{company_id}/a.pdf",
-            issued_at=TODAY - dt.timedelta(days=3),
-            approval_status=ApprovalStatus.approved,
-        )
+    evidence = Evidence(
+        company_id=company_id,
+        type_code="iso_9001",
+        file_key=f"evidence/{company_id}/a.pdf",
+        issued_at=TODAY - dt.timedelta(days=3),
+        approval_status=ApprovalStatus.approved,
     )
+    db_session.add(evidence)
+    await db_session.flush()
+    await cross_check(db_session, evidence)
     now = dt.datetime.now(dt.UTC)
     await companies.set_verification_state(
         db_session, company_id, status="verified", level="basic", verified_at=now, expires_at=None
@@ -243,6 +251,8 @@ async def test_registry_facts_are_hashed_and_only_flag(
         json={
             "check_type": "registry_lookup",
             "result": "mismatch",
+            "source": "https://tracuunnt.gdt.gov.vn/tcnnt/mstdn.jsp",
+            "snapshot_key": snapshot_key(company_id),
             "registry": {
                 "legal_representative": "Nguyễn Văn An",
                 "founded_year": 2025,

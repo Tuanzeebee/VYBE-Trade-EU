@@ -13,6 +13,7 @@ from app.modules.auth.service import require_role
 from app.modules.verification import (
     admin_service,
     admin_spreadsheet,
+    crosscheck_service,
     evidence_service,
     identity_service,
     request_service,
@@ -25,6 +26,17 @@ from app.modules.verification.admin_schemas import (
     RuleIn,
     RuleOut,
     RulePatch,
+)
+from app.modules.verification.crosscheck_schemas import (
+    CertificationBodyIn,
+    CertificationBodyOut,
+    CertificationBodyPatch,
+    ConsistencyIn,
+    EmailDraftOut,
+    EvidenceCheckIn,
+    EvidenceCheckOut,
+    SnapshotPresignIn,
+    SnapshotPresignOut,
 )
 from app.modules.verification.identity_schemas import (
     BlocklistIn,
@@ -220,6 +232,99 @@ async def decide_verification_request(
     return await request_service.decide_request(session, admin, request_id, data)
 
 
+# ── Kiểm chéo bằng chứng với nguồn cấp (I8) ─────────────────────────────────────────────────
+@router.get("/api/admin/certification-bodies")
+async def list_certification_bodies(_: Admin, session: DB) -> list[CertificationBodyOut]:
+    return [
+        CertificationBodyOut.model_validate(r)
+        for r in await crosscheck_service.list_bodies(session)
+    ]
+
+
+@router.get("/api/admin/certification-bodies/template.xlsx")
+async def certification_bodies_template(_: Admin) -> Response:
+    return xlsx_response(crosscheck_service.body_template(), "certification-bodies-template.xlsx")
+
+
+@router.get("/api/admin/certification-bodies/export.xlsx")
+async def certification_bodies_export(_: Admin, session: DB) -> Response:
+    return xlsx_response(
+        await crosscheck_service.export_bodies(session), "certification-bodies.xlsx"
+    )
+
+
+@router.post("/api/admin/certification-bodies/import")
+async def certification_bodies_import(
+    file: UploadFile, admin: Admin, session: DB, dry_run: bool = True
+) -> ImportResult:
+    return await crosscheck_service.import_bodies(session, admin, await read_upload(file), dry_run)
+
+
+@router.post("/api/admin/certification-bodies", status_code=201)
+async def create_certification_body(
+    data: CertificationBodyIn, admin: Admin, session: DB
+) -> CertificationBodyOut:
+    return CertificationBodyOut.model_validate(
+        await crosscheck_service.create_body(session, admin, data)
+    )
+
+
+@router.patch("/api/admin/certification-bodies/{body_id}")
+async def update_certification_body(
+    body_id: uuid.UUID, data: CertificationBodyPatch, admin: Admin, session: DB
+) -> CertificationBodyOut:
+    return CertificationBodyOut.model_validate(
+        await crosscheck_service.update_body(session, admin, body_id, data)
+    )
+
+
+@router.post("/api/admin/certification-bodies/{body_id}/review")
+async def review_certification_body(
+    body_id: uuid.UUID, admin: Admin, session: DB
+) -> CertificationBodyOut:
+    return CertificationBodyOut.model_validate(
+        await crosscheck_service.review_body(session, admin, body_id)
+    )
+
+
+@router.delete("/api/admin/certification-bodies/{body_id}", status_code=204)
+async def delete_certification_body(body_id: uuid.UUID, admin: Admin, session: DB) -> Response:
+    await crosscheck_service.delete_body(session, admin, body_id)
+    return Response(status_code=204)
+
+
+@router.post("/api/admin/companies/{company_id}/check-snapshots", status_code=201)
+async def presign_check_snapshot(
+    company_id: uuid.UUID, data: SnapshotPresignIn, admin: Admin, session: DB, storage: Store
+) -> SnapshotPresignOut:
+    return await crosscheck_service.presign_snapshot(
+        session, admin, storage, company_id, data.content_type
+    )
+
+
+@router.post("/api/admin/evidences/{evidence_id}/checks", status_code=201)
+async def record_evidence_check(
+    evidence_id: uuid.UUID, data: EvidenceCheckIn, admin: Admin, session: DB, storage: Store
+) -> EvidenceCheckOut:
+    return await crosscheck_service.record_evidence_check(
+        session, admin, storage, evidence_id, data
+    )
+
+
+@router.post("/api/admin/evidences/{evidence_id}/consistency", status_code=201)
+async def record_evidence_consistency(
+    evidence_id: uuid.UUID, data: ConsistencyIn, admin: Admin, session: DB, storage: Store
+) -> EvidenceCheckOut:
+    return await crosscheck_service.record_consistency(session, admin, storage, evidence_id, data)
+
+
+@router.get("/api/admin/evidences/{evidence_id}/issuer-email")
+async def issuer_email_draft(
+    evidence_id: uuid.UUID, body_id: uuid.UUID, admin: Admin, session: DB
+) -> EmailDraftOut:
+    return await crosscheck_service.issuer_email(session, admin, evidence_id, body_id)
+
+
 # ── Chống mạo danh (I11): tín hiệu chỉ xếp ưu tiên, không đổi trạng thái xác minh ──────────
 @router.get("/api/admin/companies/{company_id}/identity")
 async def company_identity(company_id: uuid.UUID, _: Admin, session: DB) -> CompanyIdentityOut:
@@ -228,9 +333,9 @@ async def company_identity(company_id: uuid.UUID, _: Admin, session: DB) -> Comp
 
 @router.post("/api/admin/companies/{company_id}/identity-checks", status_code=201)
 async def record_identity_check(
-    company_id: uuid.UUID, data: IdentityCheckIn, admin: Admin, session: DB
+    company_id: uuid.UUID, data: IdentityCheckIn, admin: Admin, session: DB, storage: Store
 ) -> IdentityCheckOut:
-    return await identity_service.record_check(session, admin, company_id, data)
+    return await identity_service.record_check(session, admin, storage, company_id, data)
 
 
 @router.get("/api/admin/identity-clusters")

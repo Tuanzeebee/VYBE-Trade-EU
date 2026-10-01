@@ -14,7 +14,13 @@ from app.modules.auth.service import create_admin
 from app.modules.companies import service as companies
 from app.modules.companies.tests.helpers import PASSWORD, login_as, product_body
 from app.modules.verification.models import ApprovalStatus, Evidence
-from app.modules.verification.tests.helpers import TODAY, add_rule, add_type, prove_ownership
+from app.modules.verification.tests.helpers import (
+    TODAY,
+    add_rule,
+    add_type,
+    cross_check,
+    prove_ownership,
+)
 
 pytestmark = pytest.mark.usefixtures("hs_seeded")
 
@@ -207,6 +213,7 @@ async def submitted_evidence(
     )
     db_session.add(row)
     await db_session.flush()
+    await cross_check(db_session, row)  # I8: duyệt cần ≥ 1 lần kiểm chéo nguồn ngoài
     return row
 
 

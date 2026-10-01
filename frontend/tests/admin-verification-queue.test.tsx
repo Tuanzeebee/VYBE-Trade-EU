@@ -51,6 +51,8 @@ function serve(queue: unknown[], post: (path: string) => Response = () => json(2
       const body = req.method === 'POST' ? await req.clone().json().catch(() => undefined) : undefined;
       calls.push({ method: req.method, path: url.pathname, body });
       if (url.pathname === '/api/admin/verification-queue') return json(200, current);
+      if (url.pathname === '/api/admin/certification-bodies') return json(200, []);
+      if (url.pathname === '/api/public/suppliers/filters') return json(200, { categories: [], certificates: [] });
       if (req.method === 'POST') {
         const res = post(url.pathname);
         if (res.ok && url.pathname.includes('/decision')) current = [];

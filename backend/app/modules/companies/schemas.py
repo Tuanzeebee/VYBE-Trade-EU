@@ -304,6 +304,8 @@ class CompanySummary(BaseModel):
     tax_id: str | None
     country: str
     address: str | None = None
+    website: str | None = None  # I8: so khớp nội bộ domain email ↔ website
+    contact_email: str | None = None
 
 
 class CompanyIdentityFacts(BaseModel):

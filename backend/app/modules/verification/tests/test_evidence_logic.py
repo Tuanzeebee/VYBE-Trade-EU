@@ -18,9 +18,14 @@ TODAY = D(2026, 10, 15)
 
 
 def ev(
-    type_code: str = "a", status: str = "approved", expires: dt.date | None = None
+    type_code: str = "a",
+    status: str = "approved",
+    expires: dt.date | None = None,
+    cross_checked: bool = True,
 ) -> EvidenceFact:
-    return EvidenceFact(type_code=type_code, approval_status=status, expires_at=expires)
+    return EvidenceFact(
+        type_code=type_code, approval_status=status, expires_at=expires, cross_checked=cross_checked
+    )
 
 
 # ── add_months / hạn 12 tháng của bằng chứng xuất xứ ────────────────────────
@@ -71,6 +76,14 @@ def test_is_valid(status: str, expires: dt.date | None, expected: bool) -> None:
 
 
 # ── is_evfta_verified ───────────────────────────────────────────────────────
+def test_evfta_verified_requires_cross_checked_evidence() -> None:
+    """I8: bằng chứng bắt buộc đã duyệt nhưng chưa kiểm chéo khớp với nguồn cấp → không đạt."""
+    have = [ev("a", cross_checked=False)]
+    assert is_evfta_verified("verified", have, {"a"}, TODAY, ownership_proven=True) is False
+    have.append(ev("a"))
+    assert is_evfta_verified("verified", have, {"a"}, TODAY, ownership_proven=True) is True
+
+
 def test_evfta_verified_requires_proven_ownership() -> None:
     have = [ev("a")]
     assert is_evfta_verified("verified", have, {"a"}, TODAY, ownership_proven=False) is False

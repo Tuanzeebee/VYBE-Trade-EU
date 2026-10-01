@@ -81,6 +81,8 @@ class RegistryFacts:
     name_changed_recently: bool
     representative_changed_recently: bool
     legal_representative_hash: str | None
+    registered_name: str | None = None  # I8: tên pháp nhân theo sổ, để so với chứng nhận
+    registered_address: str | None = None
 
 
 @dataclass(frozen=True)

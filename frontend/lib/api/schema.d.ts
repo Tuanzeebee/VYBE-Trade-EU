@@ -1361,6 +1361,178 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/certification-bodies": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Certification Bodies */
+        get: operations["list_certification_bodies_api_admin_certification_bodies_get"];
+        put?: never;
+        /** Create Certification Body */
+        post: operations["create_certification_body_api_admin_certification_bodies_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/certification-bodies/template.xlsx": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Certification Bodies Template */
+        get: operations["certification_bodies_template_api_admin_certification_bodies_template_xlsx_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/certification-bodies/export.xlsx": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Certification Bodies Export */
+        get: operations["certification_bodies_export_api_admin_certification_bodies_export_xlsx_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/certification-bodies/import": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Certification Bodies Import */
+        post: operations["certification_bodies_import_api_admin_certification_bodies_import_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/certification-bodies/{body_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete Certification Body */
+        delete: operations["delete_certification_body_api_admin_certification_bodies__body_id__delete"];
+        options?: never;
+        head?: never;
+        /** Update Certification Body */
+        patch: operations["update_certification_body_api_admin_certification_bodies__body_id__patch"];
+        trace?: never;
+    };
+    "/api/admin/certification-bodies/{body_id}/review": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Review Certification Body */
+        post: operations["review_certification_body_api_admin_certification_bodies__body_id__review_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/companies/{company_id}/check-snapshots": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Presign Check Snapshot */
+        post: operations["presign_check_snapshot_api_admin_companies__company_id__check_snapshots_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/evidences/{evidence_id}/checks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Record Evidence Check */
+        post: operations["record_evidence_check_api_admin_evidences__evidence_id__checks_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/evidences/{evidence_id}/consistency": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Record Evidence Consistency */
+        post: operations["record_evidence_consistency_api_admin_evidences__evidence_id__consistency_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/evidences/{evidence_id}/issuer-email": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Issuer Email Draft */
+        get: operations["issuer_email_draft_api_admin_evidences__evidence_id__issuer_email_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/companies/{company_id}/identity": {
         parameters: {
             query?: never;
@@ -1745,6 +1917,11 @@ export interface components {
              */
             created_at: string;
         };
+        /** Body_certification_bodies_import_api_admin_certification_bodies_import_post */
+        Body_certification_bodies_import_api_admin_certification_bodies_import_post: {
+            /** File */
+            file: string;
+        };
         /** Body_evidence_rules_import_api_admin_evidence_rules_import_post */
         Body_evidence_rules_import_api_admin_evidence_rules_import_post: {
             /** File */
@@ -1771,6 +1948,66 @@ export interface components {
             rfqs_sent: components["schemas"]["RfqTile"];
             recently_viewed: components["schemas"]["SupplierListTile"];
             new_verified: components["schemas"]["SupplierListTile"];
+        };
+        /** CertificationBodyIn */
+        CertificationBodyIn: {
+            /** Name */
+            name: string;
+            /** Official Domain */
+            official_domain: string;
+            /**
+             * Contact Email
+             * Format: email
+             */
+            contact_email: string;
+            /** Lookup Url */
+            lookup_url?: string | null;
+            /** Accreditation Body */
+            accreditation_body?: string | null;
+            /**
+             * Iaf Mla
+             * @default false
+             */
+            iaf_mla?: boolean;
+        };
+        /** CertificationBodyOut */
+        CertificationBodyOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Name */
+            name: string;
+            /** Official Domain */
+            official_domain: string;
+            /** Contact Email */
+            contact_email: string;
+            /** Lookup Url */
+            lookup_url: string | null;
+            /** Accreditation Body */
+            accreditation_body: string | null;
+            /** Iaf Mla */
+            iaf_mla: boolean;
+            /** Reviewed By */
+            reviewed_by: string | null;
+            /** Reviewed At */
+            reviewed_at: string | null;
+        };
+        /** CertificationBodyPatch */
+        CertificationBodyPatch: {
+            /** Name */
+            name?: string | null;
+            /** Official Domain */
+            official_domain?: string | null;
+            /** Contact Email */
+            contact_email?: string | null;
+            /** Lookup Url */
+            lookup_url?: string | null;
+            /** Accreditation Body */
+            accreditation_body?: string | null;
+            /** Iaf Mla */
+            iaf_mla?: boolean | null;
         };
         /** ChecklistItem */
         ChecklistItem: {
@@ -2035,6 +2272,20 @@ export interface components {
             /** Empty Hint Key */
             empty_hint_key?: string | null;
         };
+        /**
+         * ConsistencyIn
+         * @description Trường admin trích từ chứng nhận để so khớp nội bộ.
+         */
+        ConsistencyIn: {
+            /** Holder Name */
+            holder_name?: string | null;
+            /** Holder Address */
+            holder_address?: string | null;
+            /** Scope Categories */
+            scope_categories?: string[] | null;
+            /** Note */
+            note?: string | null;
+        };
         /** ConversationOut */
         ConversationOut: {
             /**
@@ -2175,6 +2426,15 @@ export interface components {
          * @enum {string}
          */
         DutyType: "ad_valorem" | "specific" | "mixed";
+        /** EmailDraftOut */
+        EmailDraftOut: {
+            /** To */
+            to: string;
+            /** Subject */
+            subject: string;
+            /** Body */
+            body: string;
+        };
         /**
          * EscalateIn
          * @description Khách phải để lại email; người đã đăng nhập dùng email tài khoản.
@@ -2226,6 +2486,63 @@ export interface components {
             transport_details?: string | null;
             /** Remarks */
             remarks?: string | null;
+        };
+        /**
+         * EvidenceCheckIn
+         * @description Kiểm chéo với nguồn NGOÀI: bắt buộc có nguồn và ảnh chụp kết quả.
+         */
+        EvidenceCheckIn: {
+            /**
+             * Check Type
+             * @enum {string}
+             */
+            check_type: "registry_lookup" | "issuer_email";
+            /**
+             * Result
+             * @enum {string}
+             */
+            result: "match" | "mismatch" | "not_found" | "unchecked";
+            /** Source */
+            source: string;
+            /** Snapshot Key */
+            snapshot_key: string;
+            /** Certification Body Id */
+            certification_body_id?: string | null;
+            /** Note */
+            note?: string | null;
+        };
+        /** EvidenceCheckOut */
+        EvidenceCheckOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Evidence Id */
+            evidence_id: string | null;
+            /** Check Type */
+            check_type: string;
+            /** Result */
+            result: string;
+            /** Source */
+            source: string | null;
+            /** Certification Body Id */
+            certification_body_id: string | null;
+            /** Facts */
+            facts: {
+                [key: string]: unknown;
+            } | null;
+            /** Note */
+            note: string | null;
+            /** Checked By */
+            checked_by: string | null;
+            /**
+             * Checked At
+             * Format: date-time
+             */
+            checked_at: string;
+            /** Snapshot Url */
+            snapshot_url: string | null;
         };
         /** EvidenceIn */
         EvidenceIn: {
@@ -2437,6 +2754,10 @@ export interface components {
             /** Note */
             note?: string | null;
             registry?: components["schemas"]["RegistryFactsIn"] | null;
+            /** Source */
+            source?: string | null;
+            /** Snapshot Key */
+            snapshot_key?: string | null;
         };
         /** IdentityCheckOut */
         IdentityCheckOut: {
@@ -2455,6 +2776,8 @@ export interface components {
             facts: {
                 [key: string]: unknown;
             } | null;
+            /** Source */
+            source: string | null;
             /** Note */
             note: string | null;
             /** Checked By */
@@ -2883,6 +3206,11 @@ export interface components {
             /** Evidences */
             evidences: components["schemas"]["EvidenceOut"][];
             /**
+             * Checks
+             * @default []
+             */
+            checks?: components["schemas"]["EvidenceCheckOut"][];
+            /**
              * Signals
              * @default []
              */
@@ -2928,6 +3256,10 @@ export interface components {
         RegistryFactsIn: {
             /** Legal Representative */
             legal_representative?: string | null;
+            /** Registered Name */
+            registered_name?: string | null;
+            /** Registered Address */
+            registered_address?: string | null;
             /** Founded Year */
             founded_year?: number | null;
             /**
@@ -3302,6 +3634,21 @@ export interface components {
              * @enum {string}
              */
             severity: "high" | "medium" | "low";
+        };
+        /** SnapshotPresignIn */
+        SnapshotPresignIn: {
+            /**
+             * Content Type
+             * @enum {string}
+             */
+            content_type: "image/png" | "image/jpeg" | "application/pdf";
+        };
+        /** SnapshotPresignOut */
+        SnapshotPresignOut: {
+            /** Upload Url */
+            upload_url: string;
+            /** Key */
+            key: string;
         };
         /**
          * StatsOut
@@ -6851,6 +7198,418 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["VerificationRequestOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_certification_bodies_api_admin_certification_bodies_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CertificationBodyOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_certification_body_api_admin_certification_bodies_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CertificationBodyIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CertificationBodyOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    certification_bodies_template_api_admin_certification_bodies_template_xlsx_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    certification_bodies_export_api_admin_certification_bodies_export_xlsx_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    certification_bodies_import_api_admin_certification_bodies_import_post: {
+        parameters: {
+            query?: {
+                dry_run?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_certification_bodies_import_api_admin_certification_bodies_import_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImportResult"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_certification_body_api_admin_certification_bodies__body_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                body_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_certification_body_api_admin_certification_bodies__body_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                body_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CertificationBodyPatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CertificationBodyOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    review_certification_body_api_admin_certification_bodies__body_id__review_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                body_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CertificationBodyOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    presign_check_snapshot_api_admin_companies__company_id__check_snapshots_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                company_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SnapshotPresignIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SnapshotPresignOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    record_evidence_check_api_admin_evidences__evidence_id__checks_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                evidence_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EvidenceCheckIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EvidenceCheckOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    record_evidence_consistency_api_admin_evidences__evidence_id__consistency_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                evidence_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ConsistencyIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EvidenceCheckOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    issuer_email_draft_api_admin_evidences__evidence_id__issuer_email_get: {
+        parameters: {
+            query: {
+                body_id: string;
+            };
+            header?: never;
+            path: {
+                evidence_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EmailDraftOut"];
                 };
             };
             /** @description Validation Error */

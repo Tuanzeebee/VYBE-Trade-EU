@@ -80,6 +80,7 @@ interface World {
   rules?: unknown[];
   types?: unknown[];
   evRules?: unknown[];
+  bodies?: unknown[];
   fail?: boolean;
   action?: (method: string, path: string) => Response;
   importResult?: (search: string) => Response;
@@ -105,6 +106,7 @@ function serve(world: World = {}) {
       if (pathname === '/api/admin/roo-rules') return json(200, world.rules ?? []);
       if (pathname === '/api/admin/evidence-types') return json(200, world.types ?? []);
       if (pathname === '/api/admin/evidence-rules') return json(200, world.evRules ?? []);
+      if (pathname === '/api/admin/certification-bodies') return json(200, world.bodies ?? []);
       throw new Error(`unexpected ${pathname}`);
     }),
   );
@@ -126,7 +128,7 @@ const actions = () => calls.filter((c) => c.method !== 'GET').map(({ method, pat
 describe('Dữ liệu tuân thủ (admin)', () => {
   afterEach(() => vi.unstubAllGlobals());
 
-  it('có bốn nhóm dữ liệu và chú thích: chưa duyệt không ra công khai', async () => {
+  it('có năm nhóm dữ liệu và chú thích: chưa duyệt không ra công khai', async () => {
     serve();
     renderData();
     expect(await screen.findByText(/không bao giờ hiện ra công khai/)).toBeInTheDocument();
@@ -135,6 +137,7 @@ describe('Dữ liệu tuân thủ (admin)', () => {
       'Quy tắc xuất xứ',
       'Loại bằng chứng',
       'Luật bằng chứng theo nhóm hàng',
+      'Tổ chức cấp chứng nhận',
     ]);
   });
 
