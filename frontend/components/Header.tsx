@@ -1,4 +1,5 @@
 'use client';
+import { BrandMark } from './BrandMark';
 import React, { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext.tsx';
@@ -44,16 +45,13 @@ export default function Header({
       <header className="w-full bg-white/95 backdrop-blur-md border-b border-slate-100 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-10 min-h-16 py-3 flex flex-wrap gap-3 items-center justify-between">
           
-          {/* Brand Logo: Double Sprout Wing in Dark Teal + VYBE TRADE */}
+          {/* Brand Logo: chữ V hai màu + VYBE TRADE */}
           <div 
             onClick={() => onNavigate('home')}
             className="flex items-center gap-2.5 cursor-pointer group select-none"
           >
             <div className="w-8 h-8 flex items-center justify-center text-[#0b5e52]">
-              <svg viewBox="0 0 32 32" className="w-7 h-7" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M 16 26 C 14 18 8 13 4 10 C 3 9 4 7 5 7 C 11 8 15 13 16 26 Z" fill="#0b5e52" />
-                <path d="M 16 26 C 18 18 24 13 28 10 C 29 9 28 7 27 7 C 21 8 17 13 16 26 Z" fill="#0b5e52" />
-              </svg>
+              <BrandMark className="w-7 h-7" />
             </div>
             <span className="text-[#0f172a] font-bold text-lg sm:text-[19px] tracking-wide uppercase">
               {tr("VYBE TRADE")}

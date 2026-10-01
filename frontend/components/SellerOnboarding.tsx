@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { BrandMark } from './BrandMark';
 import React, { useEffect, useState } from 'react';
 import type { DemoUser } from '../lib/demoAuth';
 import {
@@ -246,10 +247,7 @@ export default function SellerOnboarding({ account, initialStep = 2, initialComp
             title={tr("Quay lại trang chủ")}
           >
             <div className="w-8 h-8 flex items-center justify-center text-[#0b5e52]">
-              <svg viewBox="0 0 32 32" className="w-7 h-7" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M 16 26 C 14 18 8 13 4 10 C 3 9 4 7 5 7 C 11 8 15 13 16 26 Z" fill="#0b5e52" />
-                <path d="M 16 26 C 18 18 24 13 28 10 C 29 9 28 7 27 7 C 21 8 17 13 16 26 Z" fill="#0b5e52" />
-              </svg>
+              <BrandMark className="w-7 h-7" />
             </div>
             <span className="text-[#0f172a] font-bold text-lg sm:text-[19px] tracking-wide uppercase">
               {tr("VYBE TRADE")}</span>

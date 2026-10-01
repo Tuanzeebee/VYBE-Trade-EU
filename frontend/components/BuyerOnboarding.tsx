@@ -3,8 +3,9 @@
 // Onboarding buyer (U5): bước 1 chỉ thông tin liên hệ cơ bản; bước 2 nhu cầu mua hàng — có thể bỏ qua
 // và bổ sung sau ở "Hồ sơ công ty". Không hỏi VAT/EORI, không hỏi "cấp xác minh" buyer ở đây (demo 30/9:
 // càng ít ô càng tốt; điều buyer cần nhất là nguồn cung ỔN ĐỊNH, không chỉ giá).
+import { BrandMark } from './BrandMark';
 import React, { useState } from 'react';
-import { ArrowLeft, ArrowRight, BadgeCheck, Check, Factory, Handshake, LogOut, Sprout } from 'lucide-react';
+import { ArrowLeft, ArrowRight, BadgeCheck, Check, Factory, Handshake, LogOut } from 'lucide-react';
 import type { DemoUser } from '../lib/demoAuth';
 import { COMPANY_SIZES, COUNTRIES } from '../lib/companyApi';
 import { BUYER_BUSINESS_TYPES, emptyNeeds, type NeedsDraft } from '../lib/buyerNeedsApi';
@@ -79,7 +80,7 @@ export default function BuyerOnboarding({
     <div className="min-h-screen bg-[#f3f7f8] text-slate-900">
       <header className="border-b border-slate-200 bg-white">
         <div className="mx-auto flex min-h-20 max-w-7xl flex-wrap items-center justify-between gap-3 px-5 py-3 sm:px-8 lg:px-10">
-          <span className="flex items-center gap-2 font-bold tracking-wide"><Sprout className="h-7 w-7 text-[#0b5e52]" />{tr('VYBE TRADE')}</span>
+          <span className="flex items-center gap-2 font-bold tracking-wide"><BrandMark className="h-7 w-7" />{tr('VYBE TRADE')}</span>
           <LanguageSelect />
           <div className="flex items-center gap-3">
             <span className="hidden max-w-52 truncate text-xs text-slate-500 sm:inline">{user.email}</span>

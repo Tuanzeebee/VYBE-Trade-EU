@@ -2,6 +2,7 @@
 
 // Khung riêng cho buyer đã đăng nhập: sidebar (desktop), thanh menu dưới (điện thoại 390px), header gọn.
 // Guest hoặc role khác giữ khung công khai cũ; buyer chưa có hồ sơ công ty bị đưa tới onboarding.
+import { BrandMark } from '../BrandMark';
 import React, { useEffect, useState } from 'react';
 import {
   Bell,
@@ -48,10 +49,7 @@ function Brand() {
   const { tr } = useLanguage();
   return (
     <Link href="/buyer" className="flex items-center gap-2.5 select-none">
-      <svg viewBox="0 0 32 32" className="h-7 w-7" fill="none" aria-hidden="true">
-        <path d="M 16 26 C 14 18 8 13 4 10 C 3 9 4 7 5 7 C 11 8 15 13 16 26 Z" fill="#0b5e52" />
-        <path d="M 16 26 C 18 18 24 13 28 10 C 29 9 28 7 27 7 C 21 8 17 13 16 26 Z" fill="#0b5e52" />
-      </svg>
+      <BrandMark className="h-7 w-7" />
       <span className="leading-none">
         <span className="block text-lg font-bold uppercase tracking-wide text-[#0f172a]">{tr('VYBE TRADE')}</span>
         <span className="mt-1 block text-[10px] font-semibold uppercase tracking-wider text-teal-800">{tr('BUYER WORKSPACE')}</span>

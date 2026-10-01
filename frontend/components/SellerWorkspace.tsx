@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { BrandMark } from './BrandMark';
 import React, { useEffect, useState } from 'react';
 import { getMyCompany, type CompanyOut } from '../lib/companyApi';
 import NotificationBell from './NotificationBell';
@@ -143,17 +144,14 @@ export default function SellerWorkspace({
         {/* Top: Brand Logo + Menu Items */}
         <div className="p-5 sm:p-6">
           
-          {/* Brand Logo: Double Sprout Wing in Dark Teal + VYBE TRADE */}
+          {/* Brand Logo: chữ V hai màu + VYBE TRADE */}
           <div 
             onClick={onNavigateHome}
             className="flex items-center gap-2.5 cursor-pointer group mb-8"
             title={tr("Về trang chủ Sàn giao thương")}
           >
             <div className="w-8 h-8 flex items-center justify-center text-[#0b5e52]">
-              <svg viewBox="0 0 32 32" className="w-7 h-7" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M 16 26 C 14 18 8 13 4 10 C 3 9 4 7 5 7 C 11 8 15 13 16 26 Z" fill="#0b5e52" />
-                <path d="M 16 26 C 18 18 24 13 28 10 C 29 9 28 7 27 7 C 21 8 17 13 16 26 Z" fill="#0b5e52" />
-              </svg>
+              <BrandMark className="w-7 h-7" />
             </div>
             <div>
               <span className="text-[#0f172a] font-bold text-lg sm:text-[19px] tracking-wide uppercase block leading-none">
@@ -250,10 +248,7 @@ export default function SellerWorkspace({
               className="flex md:hidden items-center gap-2 cursor-pointer"
             >
               <div className="w-7 h-7 flex items-center justify-center text-[#0b5e52]">
-                <svg viewBox="0 0 32 32" className="w-6 h-6" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M 16 26 C 14 18 8 13 4 10 C 3 9 4 7 5 7 C 11 8 15 13 16 26 Z" fill="#0b5e52" />
-                  <path d="M 16 26 C 18 18 24 13 28 10 C 29 9 28 7 27 7 C 21 8 17 13 16 26 Z" fill="#0b5e52" />
-                </svg>
+                <BrandMark className="w-6 h-6" />
               </div>
               <span className="font-bold text-base uppercase text-slate-900">{tr("VYBE WORKSPACE")}</span>
             </div>

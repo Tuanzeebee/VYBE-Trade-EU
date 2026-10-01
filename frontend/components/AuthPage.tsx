@@ -1,6 +1,7 @@
 'use client';
+import { BrandMark } from './BrandMark';
 import React, { useState } from 'react';
-import { ArrowLeft, ArrowRight, Building2, Check, Eye, EyeOff, ShieldCheck, ShoppingBag, Sprout } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Building2, Check, Eye, EyeOff, ShieldCheck, ShoppingBag } from 'lucide-react';
 import { MIN_PASSWORD_LENGTH, ROLE_LABELS, login, register, type DemoUser } from '../lib/demoAuth';
 import LanguageSelect from './LanguageSelect';
 import { useLanguage } from "../context/LanguageContext";
@@ -42,7 +43,7 @@ export default function AuthPage({ mode, initialRole = 'buyer', onModeChange, on
     <div className="min-h-screen bg-[#f8fafc]">
       <header className="border-b border-slate-200 bg-white">
         <div className="mx-auto flex min-h-20 flex-wrap gap-3 py-3 max-w-7xl items-center justify-between px-5 sm:px-8">
-          <button onClick={onNavigateHome} className="flex items-center gap-2 font-bold tracking-wide text-slate-900"><Sprout className="h-7 w-7 text-[#0b5e52]" />{tr("VYBE TRADE")}</button>
+          <button onClick={onNavigateHome} className="flex items-center gap-2 font-bold tracking-wide text-slate-900"><BrandMark className="h-7 w-7" />{tr("VYBE TRADE")}</button>
           <LanguageSelect />
           <button onClick={onNavigateHome} className="flex items-center gap-2 text-sm text-slate-600 hover:text-teal-800"><ArrowLeft className="h-4 w-4" />{tr("Về trang chủ")}</button>
         </div>
