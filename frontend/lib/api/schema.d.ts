@@ -2491,6 +2491,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/exporter/evidences/extract-preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Extract Preview
+         * @description Đọc thử file vừa tải lên để điền sẵn form nộp bằng chứng; không tạo bản ghi.
+         */
+        post: operations["extract_preview_api_exporter_evidences_extract_preview_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/exporter/evidences/{evidence_id}/extraction": {
         parameters: {
             query?: never;
@@ -4045,6 +4065,30 @@ export interface components {
             applied_at: string | null;
             /** Comparison */
             comparison?: components["schemas"]["ExtractionFieldCompare"][];
+        };
+        /** ExtractionPreviewIn */
+        ExtractionPreviewIn: {
+            /** File Key */
+            file_key: string;
+        };
+        /**
+         * ExtractionPreviewOut
+         * @description Đọc thử file đã tải lên TRƯỚC khi nộp: chỉ gợi ý để seller kiểm tra, không tạo bản ghi.
+         */
+        ExtractionPreviewOut: {
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "ready" | "failed" | "skipped";
+            /** Method */
+            method: ("text" | "vision" | "rules" | "text+rules") | null;
+            /** Fields */
+            fields: {
+                [key: string]: string | null;
+            };
+            /** Error */
+            error?: string | null;
         };
         /** FacilityCodeIn */
         FacilityCodeIn: {
@@ -12878,6 +12922,41 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["TrustCriterionOut"][];
+                };
+            };
+        };
+    };
+    extract_preview_api_exporter_evidences_extract_preview_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ExtractionPreviewIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExtractionPreviewOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

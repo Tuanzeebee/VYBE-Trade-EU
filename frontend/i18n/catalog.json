@@ -15393,5 +15393,145 @@
     "GLEIF registration number matches the declared one",
     "Le numéro d'immatriculation GLEIF correspond à celui déclaré",
     "GLEIFの登録番号が申告番号と一致"
+  ],
+  "Chưa có danh sách bằng chứng bắt buộc cho nhóm hàng của bạn. Bạn vẫn có thể nộp bằng chứng ở bên dưới; quản trị viên sẽ xem khi duyệt.": [
+    "There is no required-evidence list for your product group yet. You can still submit evidence below; an administrator will review it.",
+    "Il n'y a pas encore de liste de preuves obligatoires pour votre groupe de produits. Vous pouvez quand même soumettre des preuves ci-dessous ; un administrateur les examinera.",
+    "お客様の商品グループには必須の証拠リストがまだありません。以下から証拠を提出でき、管理者が確認します。"
+  ],
+  "PDF, PNG hoặc JPEG, tối đa 10MB. Chọn file thì hệ thống đọc loại giấy tờ, số và ngày để điền sẵn; bạn kiểm tra và sửa trước khi nộp.": [
+    "PDF, PNG or JPEG, up to 10MB. When you pick a file the system reads the document type, number and dates to pre-fill them; check and edit before submitting.",
+    "PDF, PNG ou JPEG, 10 Mo maximum. Dès que vous choisissez un fichier, le système lit le type de document, le numéro et les dates pour les pré-remplir ; vérifiez et modifiez avant de soumettre.",
+    "PDF、PNG、JPEG、最大10MB。ファイルを選ぶと書類の種類・番号・日付を読み取って入力済みにします。提出前に確認・修正してください。"
+  ],
+  "Đang đọc giấy tờ…": [
+    "Reading the document…",
+    "Lecture du document…",
+    "書類を読み取り中…"
+  ],
+  "File là ảnh hoặc bản scan nên chưa đọc tự động được. Hãy chọn loại giấy tờ; quản trị viên sẽ đọc thông tin khi duyệt.": [
+    "The file is an image or a scan, so it cannot be read automatically yet. Choose the document type; an administrator will read the details when reviewing.",
+    "Le fichier est une image ou un scan, il ne peut pas encore être lu automatiquement. Choisissez le type de document ; un administrateur lira les informations lors de l'examen.",
+    "ファイルが画像またはスキャンのため、まだ自動で読み取れません。書類の種類を選択してください。内容は管理者が審査時に確認します。"
+  ],
+  "Chưa đọc được thông tin từ file. Hãy chọn loại giấy tờ; quản trị viên sẽ đọc thông tin khi duyệt.": [
+    "Could not read details from the file. Choose the document type; an administrator will read the details when reviewing.",
+    "Impossible de lire les informations du fichier. Choisissez le type de document ; un administrateur lira les informations lors de l'examen.",
+    "ファイルから情報を読み取れませんでした。書類の種類を選択してください。内容は管理者が審査時に確認します。"
+  ],
+  "Thông tin đọc từ giấy tờ": [
+    "Details read from the document",
+    "Informations lues sur le document",
+    "書類から読み取った情報"
+  ],
+  "Gợi ý từ giấy tờ, hãy kiểm tra trước khi nộp. Bạn có thể sửa hoặc xóa trống.": [
+    "Suggested from the document; please check before submitting. You can edit or clear them.",
+    "Suggestions issues du document ; vérifiez avant de soumettre. Vous pouvez les modifier ou les effacer.",
+    "書類からの提案です。提出前にご確認ください。修正や削除もできます。"
+  ],
+  "Biểu đồ nhập khẩu": [
+    "Import chart",
+    "Graphique des importations",
+    "輸入チャート"
+  ],
+  "Quy mô nhập khẩu theo nước": [
+    "Import size by country",
+    "Taille des importations par pays",
+    "国別の輸入規模"
+  ],
+  "Biểu đồ cột: trị giá nhập khẩu theo nước": [
+    "Bar chart: import value by country",
+    "Graphique en barres : valeur des importations par pays",
+    "棒グラフ：国別の輸入額"
+  ],
+  "Nước khác": [
+    "Other countries",
+    "Autres pays",
+    "その他の国"
+  ],
+  "Thị phần nguồn cung ngoài EU": [
+    "Share of non-EU supply",
+    "Part de l'offre hors UE",
+    "EU域外供給のシェア"
+  ],
+  "Biểu đồ cột: thị phần theo nước cung cấp": [
+    "Bar chart: share by supplying country",
+    "Graphique en barres : part par pays fournisseur",
+    "棒グラフ：供給国別シェア"
+  ],
+  "Đơn giá nhập khẩu (EUR/kg)": [
+    "Import unit price (EUR/kg)",
+    "Prix unitaire à l'importation (EUR/kg)",
+    "輸入単価（EUR/kg）"
+  ],
+  "Biểu đồ cột: đơn giá theo nước cung cấp": [
+    "Bar chart: unit price by supplying country",
+    "Graphique en barres : prix unitaire par pays fournisseur",
+    "棒グラフ：供給国別単価"
+  ],
+  "Chưa có đơn giá": [
+    "No unit price yet",
+    "Pas encore de prix unitaire",
+    "単価なし"
+  ],
+  "Chưa có đơn giá của các nước cung cấp để vẽ biểu đồ.": [
+    "There is no unit price for the supplying countries to draw a chart.",
+    "Aucun prix unitaire des pays fournisseurs pour tracer un graphique.",
+    "グラフを描くための供給国の単価がありません。"
+  ],
+  "Chưa đủ số liệu để vẽ biểu đồ so sánh.": [
+    "Not enough data to draw the comparison chart.",
+    "Pas assez de données pour tracer le graphique de comparaison.",
+    "比較グラフを描くデータが足りません。"
+  ],
+  "Xếp theo": [
+    "Sort by",
+    "Trier par",
+    "並べ替え"
+  ],
+  "Biểu đồ cột": [
+    "Bar chart",
+    "Graphique en barres",
+    "棒グラフ"
+  ],
+  "Chưa có số liệu": [
+    "No data yet",
+    "Pas encore de données",
+    "データなし"
+  ],
+  "Quy mô và tăng trưởng nhập khẩu": [
+    "Import size and growth",
+    "Taille et croissance des importations",
+    "輸入規模と成長"
+  ],
+  "Biểu đồ bong bóng: trị giá nhập khẩu và tăng trưởng/năm, cỡ bong bóng là thị phần Việt Nam": [
+    "Bubble chart: import value and yearly growth, bubble size is Vietnam's share",
+    "Graphique à bulles : valeur des importations et croissance annuelle, la taille de la bulle est la part du Viet Nam",
+    "バブルチャート：輸入額と年間成長率、バブルの大きさはベトナムのシェア"
+  ],
+  "Cỡ bong bóng = thị phần Việt Nam. Nước chưa có số liệu tăng trưởng không hiện.": [
+    "Bubble size = Vietnam's share. Countries without growth data are not shown.",
+    "Taille de la bulle = part du Viet Nam. Les pays sans données de croissance ne sont pas affichés.",
+    "バブルの大きさ＝ベトナムのシェア。成長率データのない国は表示されません。"
+  ],
+  "Trị giá nhập khẩu": [
+    "Import value",
+    "Valeur des importations",
+    "輸入額"
+  ],
+  "Mức tập trung nguồn cung (HHI)": [
+    "Supply concentration (HHI)",
+    "Concentration de l'offre (HHI)",
+    "供給集中度（HHI）"
+  ],
+  "HHI càng cao thì thị trường càng tập trung vào ít nước cung cấp. Thang từ 0 đến 10.000.": [
+    "The higher the HHI, the more the market is concentrated in a few supplying countries. Scale from 0 to 10,000.",
+    "Plus le HHI est élevé, plus le marché est concentré sur peu de pays fournisseurs. Échelle de 0 à 10 000.",
+    "HHIが高いほど、少数の供給国に市場が集中しています。目盛りは0〜10,000です。"
+  ],
+  "Xem bảng số liệu": [
+    "View data table",
+    "Voir le tableau de données",
+    "データ表を見る"
   ]
 }
