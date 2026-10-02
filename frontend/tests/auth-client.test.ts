@@ -139,6 +139,14 @@ describe('phiên đăng nhập thật qua API', () => {
     expect(getSession()).toBeNull();
   });
 
+  it('refreshSession: khung + trang mount cùng lúc chỉ gọi GET /api/me một lần', async () => {
+    serve({ 'GET /api/me': () => json(401, { error: { code: 'unauthenticated', message: 'x' } }) });
+    await Promise.all([refreshSession(), refreshSession(), refreshSession()]);
+    expect(calls).toHaveLength(1);
+    await refreshSession();
+    expect(calls).toHaveLength(2);
+  });
+
   it('refreshSession: không kết nối được máy chủ → coi như chưa đăng nhập', async () => {
     vi.stubGlobal('fetch', vi.fn(async () => Promise.reject(new TypeError('network'))));
     expect(await refreshSession()).toBeNull();

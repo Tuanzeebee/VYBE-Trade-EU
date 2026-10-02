@@ -15,6 +15,7 @@ import {
   type Conversation,
   type Message,
 } from '../lib/conversationsApi';
+import { PageLoader } from './PageLoader';
 
 function Bubble({ message }: { message: Message }) {
   const { tr } = useLanguage();
@@ -196,7 +197,7 @@ export default function Conversations() {
     if (wanted) setSelected(wanted.id);
   }, [list, selected, params]);
 
-  if (!ready) return null;
+  if (!ready) return <PageLoader />;
   if (!user) {
     return (
       <main className="mx-auto max-w-4xl px-5 py-10 sm:px-8">

@@ -2,7 +2,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { NextIntlClientProvider } from 'next-intl';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import SellerOnboarding from '@/components/SellerOnboarding';
-import { WorkspaceRoute } from '@/components/routes/AccountRoutes';
+import { WorkspaceRoute } from '@/components/routes/WorkspaceRoute';
 import { LanguageProvider } from '@/context/LanguageContext';
 import type { DemoUser } from '@/lib/demoAuth';
 import { emptyDraft, type ProductDraft } from '@/lib/productsApi';

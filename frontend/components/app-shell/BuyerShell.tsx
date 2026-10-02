@@ -25,6 +25,7 @@ import { useLanguage } from '../../context/LanguageContext';
 import { Link, usePathname, useRouter } from '../../i18n/navigation';
 import { logout } from '../../lib/demoAuth';
 import { getMyCompany } from '../../lib/companyApi';
+import { PageLoader } from '../PageLoader';
 
 export const BUYER_NAV = [
   { href: '/buyer', label: 'Tổng quan', icon: LayoutDashboard },
@@ -79,9 +80,9 @@ export function BuyerShell({ children }: { children: React.ReactNode }) {
     };
   }, [buyer]);
 
-  if (!ready) return null;
+  if (!ready) return <PageLoader />;
   if (!buyer) return <PublicShell>{children}</PublicShell>;
-  if (!buyer.onboardingCompleted) return null;
+  if (!buyer.onboardingCompleted) return <PageLoader />;
 
   const handleLogout = () => {
     void logout();

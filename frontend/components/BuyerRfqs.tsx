@@ -6,11 +6,12 @@ import RfqInbox from './RfqInbox';
 import { useDemoSession } from './app-shell/useDemoSession';
 import { useLanguage } from '../context/LanguageContext';
 import { Link } from '../i18n/navigation';
+import { PageLoader } from './PageLoader';
 
 export default function BuyerRfqs() {
   const { tr } = useLanguage();
   const { user, ready } = useDemoSession();
-  if (!ready) return null;
+  if (!ready) return <PageLoader />;
   return (
     <main className="mx-auto max-w-4xl px-5 py-10 sm:px-8">
       <h1 className="text-2xl font-extrabold text-slate-900 sm:text-3xl">{tr('Yêu cầu báo giá đã gửi')}</h1>

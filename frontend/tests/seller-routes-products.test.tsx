@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { NextIntlClientProvider } from 'next-intl';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { SellerProfileRoute } from '@/components/routes/AccountRoutes';
+import { SellerProfileRoute } from '@/components/routes/SellerProfileRoute';
 import { LanguageProvider } from '@/context/LanguageContext';
 
 vi.mock('next/navigation', async (importOriginal) => ({

@@ -72,7 +72,12 @@ export default function SellerWorkspace({
 }: SellerWorkspaceProps) {
   const { tr, language } = useLanguage();
   const [activeTab, setActiveTab] = useState<WorkspaceTabId>(initialTab);
-  const goTab = (tab: WorkspaceTabId) => (onNavigateTab ? onNavigateTab(tab) : setActiveTab(tab));
+  // Đổi mục ngay khi bấm, URL theo sau; Back/Forward đổi initialTab thì đồng bộ lại.
+  useEffect(() => setActiveTab(initialTab), [initialTab]);
+  const goTab = (tab: WorkspaceTabId) => {
+    setActiveTab(tab);
+    onNavigateTab?.(tab);
+  };
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   // Trạng thái thật của công ty trên server (thay cho nhãn L2 cố định trước đây).
   const [company, setCompany] = useState<CompanyOut | null>(null);

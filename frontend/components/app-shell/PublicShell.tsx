@@ -1,15 +1,14 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { X } from 'lucide-react';
 import Header from '../Header';
 import Footer from '../Footer';
 import { useLanguage } from '../../context/LanguageContext';
 import { usePathname, useRouter } from '../../i18n/navigation';
 import { logout } from '../../lib/demoAuth';
-import { pageForPath, type DirectoryNav, type LegacyPage } from '../../lib/legacyNav';
+import { pageForPath, type DirectoryNav } from '../../lib/legacyNav';
 import { useDemoSession } from './useDemoSession';
-import { useLegacyNavigate } from './useLegacyNavigate';
 
 const NavModalContext = createContext<(label: string) => void>(() => {});
 
@@ -24,28 +23,12 @@ export function PublicShell({ children }: { children: React.ReactNode }) {
   const { user, setUser } = useDemoSession();
   const router = useRouter();
   const pathname = usePathname();
-  const navigate = useLegacyNavigate(user);
   const [directoryNav, setDirectoryNav] = useState<DirectoryNav>('suppliers');
-  const pendingDirectoryNav = useRef<DirectoryNav | null>(null);
   const [activeNavModal, setActiveNavModal] = useState<string | null>(null);
 
   useEffect(() => {
     setDirectoryNav(new URLSearchParams(window.location.search).get('nav') === 'buyer' ? 'buyer' : 'suppliers');
   }, [pathname]);
-
-  function handleNavigate(page: LegacyPage) {
-    if (page === 'buyer-directory') {
-      navigate(page, { directory: { nav: pendingDirectoryNav.current ?? 'suppliers' } });
-    } else {
-      navigate(page);
-    }
-    pendingDirectoryNav.current = null;
-  }
-
-  function handleSetDirectoryNav(nav: DirectoryNav) {
-    pendingDirectoryNav.current = nav;
-    setDirectoryNav(nav);
-  }
 
   function handleLogout() {
     try {
@@ -65,10 +48,8 @@ export function PublicShell({ children }: { children: React.ReactNode }) {
             currentPage={pageForPath(pathname)}
             directoryNav={directoryNav}
             user={user}
-            onNavigate={handleNavigate}
-            onSetDirectoryNav={handleSetDirectoryNav}
+            onSetDirectoryNav={setDirectoryNav}
             onLogout={handleLogout}
-            onOpenNavModal={setActiveNavModal}
           />
           {children}
         </div>

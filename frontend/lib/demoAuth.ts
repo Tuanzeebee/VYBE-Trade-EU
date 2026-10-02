@@ -119,7 +119,20 @@ async function syncOnboardingFromServer(apiUser: ApiUser): Promise<void> {
 }
 
 /** Hỏi server phiên hiện tại. Hết hạn hoặc không kết nối được → coi như chưa đăng nhập. */
-export async function refreshSession(): Promise<DemoUser | null> {
+let pendingSession: Promise<DemoUser | null> | null = null;
+
+/**
+ * Khung (Header) và trang cùng mount — cộng StrictMode chạy effect hai lần — dùng chung một lượt
+ * GET /api/me thay vì mỗi nơi một lượt. Gọi sau khi lượt trước xong thì hỏi lại server.
+ */
+export function refreshSession(): Promise<DemoUser | null> {
+  pendingSession ??= fetchSession().finally(() => {
+    pendingSession = null;
+  });
+  return pendingSession;
+}
+
+async function fetchSession(): Promise<DemoUser | null> {
   try {
     const { data, response } = await api().GET('/api/me');
     if (!response.ok || !data) {
@@ -151,7 +164,8 @@ export function getUsers(): DemoUser[] {
 }
 
 async function loadMe(): Promise<DemoUser> {
-  const user = await refreshSession();
+  // Ngay sau login/register: không dùng lượt hỏi phiên đã bắt đầu từ trước khi có cookie.
+  const user = await fetchSession();
   if (!user) throw new Error(MESSAGES.network);
   return user;
 }
