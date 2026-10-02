@@ -15253,5 +15253,145 @@
     "VIES address matches the declared address",
     "L'adresse VIES correspond à l'adresse déclarée",
     "VIESの住所が申告住所と一致"
+  ],
+  "Xác nhận & hoàn tất": [
+    "Confirm & finish",
+    "Confirmer et terminer",
+    "確認して完了"
+  ],
+  "Không bắt buộc. Buyer không cần nộp chứng nhận sản phẩm; chỉ cần mã định danh doanh nghiệp để nhà cung cấp tin tưởng hơn.": [
+    "Optional. Buyers do not need to submit product certificates; only a company identifier so suppliers can trust you more.",
+    "Facultatif. Les acheteurs n'ont pas à fournir de certificats de produit ; seul un identifiant d'entreprise est utile pour inspirer confiance aux fournisseurs.",
+    "任意です。バイヤーは製品の認証を提出する必要はなく、サプライヤーの信頼を得るための企業識別番号のみで構いません。"
+  ],
+  "Cho biết bạn cần mua gì để hệ thống ghép nhà cung cấp phù hợp.": [
+    "Tell us what you need to buy so the system can match suitable suppliers.",
+    "Indiquez ce que vous souhaitez acheter pour que le système trouve des fournisseurs adaptés.",
+    "必要な商品をお知らせください。適切なサプライヤーをご紹介します。"
+  ],
+  "Kiểm tra lại thông tin trước khi hoàn tất. Bạn có thể sửa bất cứ lúc nào ở Hồ sơ công ty.": [
+    "Review your details before finishing. You can edit them any time in Company profile.",
+    "Vérifiez vos informations avant de terminer. Vous pouvez les modifier à tout moment dans le profil de l'entreprise.",
+    "完了する前に内容をご確認ください。会社プロフィールからいつでも修正できます。"
+  ],
+  "Vui lòng chọn ít nhất một nhóm hàng bạn cần để hệ thống ghép nhà cung cấp phù hợp.": [
+    "Please choose at least one product group you need so the system can match suitable suppliers.",
+    "Veuillez choisir au moins un groupe de produits afin que le système trouve des fournisseurs adaptés.",
+    "適切なサプライヤーをご紹介するため、必要な商品グループを1つ以上選択してください。"
+  ],
+  "Ví dụ: HRB 12345": [
+    "e.g. HRB 12345",
+    "Ex. : HRB 12345",
+    "例：HRB 12345"
+  ],
+  "Gửi yêu cầu xác minh doanh nghiệp khi hoàn tất": [
+    "Send a business verification request when finished",
+    "Envoyer une demande de vérification à la fin",
+    "完了時に企業認証のリクエストを送る"
+  ],
+  "Quản trị viên đối chiếu mã VAT hoặc số đăng ký của bạn. Chưa xác minh bạn vẫn xem hồ sơ, nhắn tin và gửi yêu cầu báo giá trong hạn mức.": [
+    "An administrator cross-checks your VAT or registration number. Until verified, you can still view profiles, message and send quote requests within the limit.",
+    "Un administrateur recoupe votre numéro de TVA ou d'immatriculation. Sans vérification, vous pouvez consulter les profils, écrire et envoyer des demandes de devis dans la limite.",
+    "管理者がVAT番号または登録番号を照合します。未認証でも、上限内でプロフィール閲覧、メッセージ、見積依頼が可能です。"
+  ],
+  "Số đăng ký doanh nghiệp": [
+    "Company registration number",
+    "Numéro d'immatriculation",
+    "会社登録番号"
+  ],
+  "Chưa khai": [
+    "Not provided",
+    "Non renseigné",
+    "未入力"
+  ],
+  "Yêu cầu xác minh": [
+    "Verification request",
+    "Demande de vérification",
+    "認証リクエスト"
+  ],
+  "Sẽ gửi khi hoàn tất": [
+    "Will be sent when finished",
+    "Sera envoyée à la fin",
+    "完了時に送信されます"
+  ],
+  "Không gửi bây giờ": [
+    "Not sending now",
+    "Pas d'envoi maintenant",
+    "今は送信しません"
+  ],
+  "Sản phẩm cần mua": [
+    "Products to buy",
+    "Produits à acheter",
+    "購入したい商品"
+  ],
+  "Mã LEI (không bắt buộc)": [
+    "LEI code (optional)",
+    "Code LEI (facultatif)",
+    "LEIコード（任意）"
+  ],
+  "20 ký tự, ví dụ: 5493001KJTIIGC8Y1R12": [
+    "20 characters, e.g. 5493001KJTIIGC8Y1R12",
+    "20 caractères, ex. : 5493001KJTIIGC8Y1R12",
+    "20文字（例：5493001KJTIIGC8Y1R12）"
+  ],
+  "Cơ quan đăng ký (không bắt buộc)": [
+    "Registering authority (optional)",
+    "Autorité d'enregistrement (facultatif)",
+    "登録機関（任意）"
+  ],
+  "Ví dụ: Handelsregister Hamburg": [
+    "e.g. Handelsregister Hamburg",
+    "Ex. : Handelsregister Hamburg",
+    "例：Handelsregister Hamburg"
+  ],
+  "Địa chỉ đăng ký (không bắt buộc)": [
+    "Registered address (optional)",
+    "Adresse d'immatriculation (facultatif)",
+    "登録住所（任意）"
+  ],
+  "Đúng như trên giấy đăng ký doanh nghiệp": [
+    "Exactly as on the company registration",
+    "Exactement comme sur l'immatriculation",
+    "会社登録書類のとおりに"
+  ],
+  "Hệ thống đối chiếu mã VAT với VIES và mã LEI với GLEIF; quản trị viên xem kết quả khi duyệt. Có mã định danh thì yêu cầu xác minh tự gửi khi hoàn tất. Không cần tải file; chưa xác minh bạn vẫn xem hồ sơ, nhắn tin và gửi yêu cầu báo giá trong hạn mức.": [
+    "The system cross-checks the VAT number with VIES and the LEI code with GLEIF; an administrator sees the results when reviewing. With an identifier, the verification request is sent automatically when you finish. No file upload is needed; until verified you can still view profiles, message and send quote requests within the limit.",
+    "Le système recoupe le numéro de TVA avec VIES et le code LEI avec GLEIF ; un administrateur voit les résultats lors de l'examen. Avec un identifiant, la demande de vérification est envoyée automatiquement à la fin. Aucun fichier à téléverser ; sans vérification, vous pouvez consulter les profils, écrire et envoyer des demandes de devis dans la limite.",
+    "VAT番号はVIESと、LEIコードはGLEIFと照合され、管理者が審査時に結果を確認します。識別番号があれば、完了時に認証リクエストが自動送信されます。ファイルのアップロードは不要で、未認証でも上限内でプロフィール閲覧、メッセージ、見積依頼が可能です。"
+  ],
+  "Sẽ gửi tự động khi hoàn tất": [
+    "Will be sent automatically when finished",
+    "Sera envoyée automatiquement à la fin",
+    "完了時に自動送信されます"
+  ],
+  "Mã LEI": [
+    "LEI code",
+    "Code LEI",
+    "LEIコード"
+  ],
+  "Cơ quan đăng ký": [
+    "Registering authority",
+    "Autorité d'enregistrement",
+    "登録機関"
+  ],
+  "Địa chỉ đăng ký": [
+    "Registered address",
+    "Adresse d'immatriculation",
+    "登録住所"
+  ],
+  "Mã LEI gồm 20 ký tự (chữ và số), hai ký tự cuối là số.": [
+    "An LEI code has 20 characters (letters and digits); the last two are digits.",
+    "Un code LEI compte 20 caractères (lettres et chiffres) ; les deux derniers sont des chiffres.",
+    "LEIコードは20文字（英数字）で、末尾2文字は数字です。"
+  ],
+  "Địa chỉ trên GLEIF khớp địa chỉ khai báo": [
+    "GLEIF address matches the declared address",
+    "L'adresse GLEIF correspond à l'adresse déclarée",
+    "GLEIFの住所が申告住所と一致"
+  ],
+  "Số đăng ký trên GLEIF khớp số đã khai": [
+    "GLEIF registration number matches the declared one",
+    "Le numéro d'immatriculation GLEIF correspond à celui déclaré",
+    "GLEIFの登録番号が申告番号と一致"
   ]
 }

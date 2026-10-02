@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { NextIntlClientProvider } from 'next-intl';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { OnboardingRoute } from '@/components/routes/AccountRoutes';
@@ -42,13 +42,15 @@ function serve(company: Record<string, unknown> | null) {
     'fetch',
     vi.fn(async (req: Request) => {
       const path = new URL(req.url).pathname;
-      const body = req.method === 'GET' ? null : await req.clone().json();
+      const body = req.method === 'GET' ? null : await req.clone().json().catch(() => null);
       calls.push({ method: req.method, path, body });
       if (path === '/api/me') return json(200, ME);
       if (path === '/api/me/company') {
         if (req.method === 'GET') return company ? json(200, company) : json(404, {});
         return json(req.method === 'POST' ? 201 : 200, { ...BUYER, ...(body as object) });
       }
+      if (path === '/api/buyer/sourcing-needs') return json(200, { ...(body as object), budget_currency: 'EUR', certifications_wanted: [] });
+      if (path === '/api/buyer/verification-requests') return json(201, { id: 'r-1', status: 'pending', created_at: '2026-10-05T00:00:00Z' });
       throw new Error(`unexpected ${path}`);
     }),
   );
@@ -82,5 +84,59 @@ describe('route onboarding của buyer dùng dữ liệu server (B2)', () => {
     await screen.findByDisplayValue('alex@globalfoods.de');
     expect(screen.queryByDisplayValue('Global Foods Trading GmbH')).not.toBeInTheDocument();
     expect(calls.filter((c) => c.method !== 'GET')).toEqual([]);
+  });
+
+  const submitStep = () => fireEvent.submit(screen.getByRole('button', { name: /Tiếp tục|Hoàn tất/ }).closest('form') as HTMLFormElement);
+
+  async function fillAndFinish(opts: { identifier: Record<string, string> }) {
+    renderBuyerOnboarding();
+    fireEvent.change(await screen.findByLabelText(/Tên công ty/), { target: { value: 'Global Foods GmbH' } });
+    fireEvent.change(screen.getByRole('combobox', { name: /Quốc gia/ }), { target: { value: 'Germany' } });
+    fireEvent.change(screen.getByLabelText(/Thành phố/), { target: { value: 'Hamburg' } });
+    submitStep();
+    await screen.findByText('Bước 2 / 4');
+    for (const [label, value] of Object.entries(opts.identifier)) {
+      fireEvent.change(screen.getByLabelText(new RegExp(label)), { target: { value } });
+    }
+    submitStep();
+    fireEvent.click(await screen.findByRole('checkbox', { name: 'Thủy sản' }));
+    submitStep();
+    await screen.findByTestId('buyer-review');
+    submitStep();
+  }
+
+  it('hoàn tất 4 bước có mã định danh: lưu công ty (kèm VAT, LEI, địa chỉ), nhu cầu, rồi tự gửi yêu cầu xác minh', async () => {
+    serve(null);
+    await fillAndFinish({ identifier: { 'Mã số VAT': 'DE123456789', 'Mã LEI': '5493001kjtiigc8y1r12', 'Địa chỉ đăng ký': 'Hafenstraße 12, Hamburg' } });
+    await waitFor(() => expect(calls.some((c) => c.path === '/api/buyer/verification-requests')).toBe(true));
+    const company = calls.find((c) => c.method === 'POST' && c.path === '/api/me/company');
+    expect(company?.body).toMatchObject({
+      legal_name: 'Global Foods GmbH',
+      vat_number: 'DE123456789',
+      lei_code: '5493001KJTIIGC8Y1R12',
+      address: 'Hafenstraße 12, Hamburg',
+      sourcing_categories: ['seafood'],
+    });
+    expect(calls.some((c) => c.method === 'PUT' && c.path === '/api/buyer/sourcing-needs')).toBe(true);
+  });
+
+  it('chỉ khai LEI cũng đủ để tự gửi yêu cầu xác minh', async () => {
+    serve(null);
+    await fillAndFinish({ identifier: { 'Mã LEI': '5493001KJTIIGC8Y1R12' } });
+    await waitFor(() => expect(calls.some((c) => c.path === '/api/buyer/verification-requests')).toBe(true));
+  });
+
+  it('không khai mã định danh thì không gọi API xác minh (xác minh buyer là tuỳ chọn)', async () => {
+    serve(null);
+    await fillAndFinish({ identifier: {} });
+    await waitFor(() => expect(calls.some((c) => c.path === '/api/buyer/sourcing-needs')).toBe(true));
+    expect(calls.some((c) => c.path === '/api/buyer/verification-requests')).toBe(false);
+  });
+
+  it('chỉ khai cơ quan và địa chỉ đăng ký (không có mã) thì không tự gửi xác minh', async () => {
+    serve(null);
+    await fillAndFinish({ identifier: { 'Cơ quan đăng ký': 'Handelsregister Hamburg' } });
+    await waitFor(() => expect(calls.some((c) => c.path === '/api/buyer/sourcing-needs')).toBe(true));
+    expect(calls.some((c) => c.path === '/api/buyer/verification-requests')).toBe(false);
   });
 });

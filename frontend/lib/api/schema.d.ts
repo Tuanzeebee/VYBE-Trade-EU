@@ -3202,6 +3202,8 @@ export interface components {
             vat_number?: string | null;
             /** Eori Number */
             eori_number?: string | null;
+            /** Lei Code */
+            lei_code?: string | null;
             /** Hide Profile Views */
             hide_profile_views?: boolean | null;
             /** Legal Name */
@@ -3314,6 +3316,8 @@ export interface components {
             vat_number: string | null;
             /** Eori Number */
             eori_number: string | null;
+            /** Lei Code */
+            lei_code?: string | null;
             /** Hide Profile Views */
             hide_profile_views: boolean;
             /** Sourcing Categories */
@@ -3415,6 +3419,8 @@ export interface components {
             vat_number?: string | null;
             /** Eori Number */
             eori_number?: string | null;
+            /** Lei Code */
+            lei_code?: string | null;
             /** Hide Profile Views */
             hide_profile_views?: boolean | null;
             /** Legal Name */

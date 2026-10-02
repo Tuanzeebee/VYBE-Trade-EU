@@ -14,10 +14,10 @@ import { PublicShell } from '../app-shell/PublicShell';
 import { useLegacyNavigate } from '../app-shell/useLegacyNavigate';
 import { useRouter } from '../../i18n/navigation';
 import { completeOnboarding, getUserPage, logout, type DemoUser } from '../../lib/demoAuth';
-import { buyerProfileToCompany, companyToForm, getMyCompany, profileToCompany, saveMyCompany } from '../../lib/companyApi';
+import { buyerHasIdentifier, buyerProfileToCompany, companyToForm, getMyCompany, profileToCompany, saveMyCompany } from '../../lib/companyApi';
 import { draftFromProduct, getMyProducts, syncProducts, type ProductDraft } from '../../lib/productsApi';
 import { draftFromService, getMyServices, syncServices, type ServiceDraft } from '../../lib/servicesApi';
-import { submitRequestIfNeeded } from '../../lib/verificationApi';
+import { AlreadySubmittedError, submitRequest, submitRequestIfNeeded } from '../../lib/verificationApi';
 import { saveSourcingNeeds, type NeedsDraft } from '../../lib/buyerNeedsApi';
 import { hrefFor, roleFromType } from '../../lib/legacyNav';
 
@@ -105,6 +105,15 @@ function OnboardingContent({ user }: { user: DemoUser }) {
     const onBuyerComplete = async (profile: Record<string, string>, needs: NeedsDraft | null) => {
       await saveMyCompany(buyerProfileToCompany(profile));
       if (needs) await saveSourcingNeeds(needs);
+      // Bước 2 (giấy phép & chứng nhận): có mã định danh thì tự gửi yêu cầu xác minh, như seller. Thử lại
+      // an toàn: hồ sơ và nhu cầu ghi đè, yêu cầu đã gửi rồi thì bỏ qua.
+      if (buyerHasIdentifier(profile)) {
+        try {
+          await submitRequest('buyer');
+        } catch (cause) {
+          if (!(cause instanceof AlreadySubmittedError)) throw cause;
+        }
+      }
       goHome(completeOnboarding(user.id, profile));
     };
     return (

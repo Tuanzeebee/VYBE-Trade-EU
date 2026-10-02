@@ -242,6 +242,14 @@ const codeOf = (table: { code: string; label: string }[], label: string | undefi
 const labelOf = (table: { code: string; label: string }[], code: string | null | undefined) =>
   table.find((row) => row.code === code)?.label ?? '';
 
+// Mã LEI (ISO 17442): 18 ký tự chữ-số + 2 chữ số kiểm tra. Khớp quy tắc kiểm ở backend.
+export const normaliseLei = (value: string | undefined) => (value ?? '').replace(/\s+/g, '').toUpperCase();
+export const isValidLei = (value: string | undefined) => /^[A-Z0-9]{18}[0-9]{2}$/.test(normaliseLei(value));
+
+/** Buyer đã khai ít nhất một mã định danh (VAT, số đăng ký hoặc LEI) để admin và VIES/GLEIF đối chiếu. */
+export const buyerHasIdentifier = (profile: Record<string, string | undefined>) =>
+  Boolean(profile.vatNumber?.trim() || profile.registrationNumber?.trim() || normaliseLei(profile.leiCode));
+
 /** Form buyer cũ (chuỗi hiển thị) → CompanyIn. Chỉ gửi trường của buyer. */
 export function buyerProfileToCompany(profile: Record<string, string>): CompanyIn {
   const country = countryCode(profile.country ?? '');
@@ -262,6 +270,10 @@ export function buyerProfileToCompany(profile: Record<string, string>): CompanyI
     city: blank(profile.city) ?? blank(profile.region),
     phone: blank(profile.phone),
     registration_number: blank(profile.registrationNumber),
+    // Giấy phép & chứng nhận của buyer (bước 2): mã LEI, cơ quan và địa chỉ đăng ký để đối chiếu GLEIF / VIES.
+    lei_code: blank(normaliseLei(profile.leiCode)),
+    issuing_authority: blank(profile.issuingAuthority),
+    address: blank(profile.address),
     hide_profile_views: profile.hideProfileViews === 'true',
     vat_number: blank(profile.vatNumber),
     eori_number: blank(profile.eoriNumber),
@@ -282,6 +294,9 @@ function buyerToForm(company: CompanyOut): Record<string, string> {
     city: company.city ?? '',
     phone: company.phone ?? '',
     registrationNumber: company.registration_number ?? '',
+    leiCode: company.lei_code ?? '',
+    issuingAuthority: company.issuing_authority ?? '',
+    address: company.address ?? '',
     hideProfileViews: String(company.hide_profile_views ?? false),
     vatNumber: company.vat_number ?? '',
     eoriNumber: company.eori_number ?? '',

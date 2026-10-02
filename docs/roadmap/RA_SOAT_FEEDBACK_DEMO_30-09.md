@@ -48,7 +48,7 @@ Cập nhật 05/10/2026 sau đợt bổ sung D5, B9, B10, J4 và các mục 🟡
 | # | Task | TT | Hiện trạng |
 |---|---|---|---|
 | C1 | Sửa lỗi: "Sở Kế hoạch và Đầu tư" không còn, tự chuyển "Sở Tài chính". Doanh nghiệp nước ngoài dùng nhãn chung "Cơ quan có thẩm quyền cấp". | ✅ | Lưu đúng như in trên ĐKKD, hiển thị "Sở Tài chính" kèm giải thích. Nhãn chung cho doanh nghiệp nước ngoài: chưa kiểm. |
-| C2 | Tự lấy thông tin từ tên công ty / MST thay vì bắt upload. EU: tra registry quốc gia (ĐKKD, BCTC). VN: cần đánh giá khả thi. | 🟡 | Có `CompanyLookup` (VIES, GLEIF) làm tín hiệu cho admin. Đánh giá khả thi cho VN chưa thấy. |
+| C2 | Tự lấy thông tin từ tên công ty / MST thay vì bắt upload. EU: tra registry quốc gia (ĐKKD, BCTC). VN: cần đánh giá khả thi. | 🟡 | EU: tra VIES (VAT, tên, địa chỉ) và GLEIF (LEI, số đăng ký quốc gia, địa chỉ pháp lý) từ job nền, kết quả là tín hiệu cho admin; buyer khai mã ở bước 2 onboarding. **Chưa có:** registry quốc gia (ĐKKD) và BCTC tự động. Repo chưa có API chung cho EU, ADR-0003 chưa nêu, BCTC cần bảng mới; admin dùng mã kiểm tay `national_registry` / `company_registry`. Việt Nam: chưa đánh giá khả thi (Cổng ĐKDN có captcha). |
 | C3 | Đối chiếu địa chỉ trên ĐKKD với địa chỉ khai báo. | 🟡 | Thêm kiểm `vies_address_match`: so địa chỉ khai báo với địa chỉ VIES, ra `pass` / `warning` cho admin (không đổi trạng thái). Chỉ áp dụng khi VIES công bố địa chỉ (nhiều nước trả "---"); **Việt Nam chưa có nguồn tự động**, vẫn do admin đối chiếu tay. |
 
 ## D. Xác minh (Verification)
@@ -126,6 +126,7 @@ Cập nhật 05/10/2026 sau đợt bổ sung D5, B9, B10, J4 và các mục 🟡
 2. **Cần quyết định hoặc nguồn ngoài:**
    - J4 qua email: cần chính sách opt-out / hủy đăng ký trước khi gửi.
    - C3 cho Việt Nam: chưa có nguồn tự động, cần đánh giá khả thi.
+   - Registry quốc gia EU (ĐKKD) và BCTC (C2): cần interface nhà cung cấp mới, ADR bổ sung, chọn nước đầu tiên; BCTC cần bảng mới.
    - Giá báo cáo GTM (lệch $5–10), LLM thật cho lời văn, giá tier xác minh (D7).
 3. **Hoãn có chủ đích:** D3, G4, A7 (GĐ2), dữ liệu 17 FTA (A2/F8).
 4. **Dọn mã chết (tuỳ chọn):** `BuyerSellerDetail.tsx`, `lib/constants.ts` còn nhãn L3 giả nhưng không có nơi hiển thị.
@@ -144,6 +145,7 @@ Cập nhật 05/10/2026 sau đợt bổ sung D5, B9, B10, J4 và các mục 🟡
 | Chính ngạch / tiểu ngạch | B10 | Migration 0047 (`company_export_markets.trade_channel`), schema `export_market_channels`, chọn kênh ở onboarding seller |
 | Kéo quay lại | J4 | Migration 0048 (`notification_type` thêm `reengagement`), `notifications/reengagement.py`, job `jobs/reengagement.py`, hàm tra cứu ở `auth` và `dashboard` |
 | Mục nhỏ | E1, B11, C3, H4, J2 | Dấu `(*)` ở điểm tín nhiệm; ô "Chứng chỉ khác" cho buyer; kiểm `vies_address_match`; H4 và J2 đã đúng từ trước, chỉ cập nhật trạng thái |
+| Onboarding buyer 4 bước | H2, H3, D8, C2 | Bước 1 thông tin doanh nghiệp; bước 2 giấy phép & chứng nhận (chỉ khai mã: VAT, số đăng ký, LEI, cơ quan và địa chỉ đăng ký; không tải file; bỏ qua được; có mã thì tự gửi yêu cầu xác minh khi hoàn tất, không còn checkbox); bước 3 nhu cầu mua hàng (bắt buộc chọn nhóm hàng để ghép nhà cung cấp); bước 4 xem lại và hoàn tất. Seller và buyer dùng chung bộ component `components/onboarding/*` (khung trang, thanh bước, cột giới thiệu, tiêu đề bước, nút điều hướng, khối xem lại). Backend: cột `companies.lei_code` (migration 0049), GLEIF trả thêm số đăng ký quốc gia / cơ quan đăng ký / địa chỉ pháp lý, hai kiểm tự động mới `gleif_registration_match` và `gleif_address_match` (tín hiệu cho admin) |
 
 Ngoài kế hoạch: thêm bản dịch còn thiếu cho chuỗi "Sản phẩm và năng lực" (lỗi có sẵn từ commit U2 làm `i18n-coverage` đỏ).
 
