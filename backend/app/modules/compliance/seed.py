@@ -32,6 +32,7 @@ from app.modules.catalog.schemas import HsCodeIn
 from app.modules.compliance.models import (
     ComplianceEvidenceRequirement,
     ComplianceEvidenceType,
+    CustomsValuationRule,
     DutyType,
     EvidenceBlocks,
     EvidenceCondition,
@@ -65,6 +66,9 @@ _CATEGORY_BY_CHAPTER: dict[str, Any] = {
     "08": "fruits_vegetables",
 }
 _HUNDRED = Decimal(100)
+DEFAULT_VALUATION = (
+    Path(__file__).resolve().parents[3] / "data" / "customs_valuation_rules_draft.json"
+)
 DEFAULT_MAPPINGS = (
     Path(__file__).resolve().parents[3] / "data" / "compliance_evidence_mappings_draft.json"
 )
@@ -412,11 +416,48 @@ async def _load_mappings(
         )
 
 
+def _read_valuation_rules(path: Path) -> list[dict[str, Any]]:
+    try:
+        items = json.loads(path.read_text(encoding="utf-8"))["rules"]
+        for r in items:
+            r["valid_from"] = dt.date.fromisoformat(r["valid_from"])
+            if r["basis"] not in ("CIF", "FOB") or len(r["country"]) != 2:
+                raise ValueError(f"quy tắc trị giá sai: {r['country']} / {r['basis']}")
+    except (OSError, ValueError, KeyError) as exc:
+        raise SeedError([f"{path.name}: không đọc được ({exc})"]) from exc
+    return items  # type: ignore[no-any-return]
+
+
+async def _load_valuation_rules(
+    session: AsyncSession, path: Path, data_version: str, report: SeedReport, today: dt.date
+) -> None:
+    """Cơ sở trị giá hải quan theo nước đến (đề xuất, chưa duyệt)."""
+    for r in _read_valuation_rules(path):
+        await _upsert_versioned(
+            session,
+            report.table("customs_valuation_rules"),
+            CustomsValuationRule,
+            [CustomsValuationRule.country == r["country"]],
+            {
+                "country": r["country"],
+                "basis": r["basis"],
+                "note_vi": r.get("note_vi"),
+                "note_en": r.get("note_en"),
+                "source": r.get("source"),
+                "valid_from": r["valid_from"],
+                "data_version": data_version,
+            },
+            "customs_valuation_rule",
+            today,
+        )
+
+
 async def load_seed(
     session: AsyncSession,
     seed_dir: Path,
     data_version: str,
     mappings_path: Path | None = DEFAULT_MAPPINGS,
+    valuation_path: Path | None = DEFAULT_VALUATION,
 ) -> SeedReport:
     """Nạp seed vào `session` (không commit — người gọi quyết định commit/rollback)."""
     data = read_seed(seed_dir)
@@ -613,6 +654,10 @@ async def load_seed(
         await _load_mappings(
             session, mappings_path, {t.code for t in data.evidence_types}, data_version, report
         )
+        await session.flush()
+
+    if valuation_path is not None:
+        await _load_valuation_rules(session, valuation_path, data_version, report, today)
         await session.flush()
 
     # §6.2: có dòng thuế và quy tắc còn hiệu lực thì mã được hỗ trợ, không xét trạng thái duyệt

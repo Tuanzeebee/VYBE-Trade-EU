@@ -28,7 +28,10 @@ from app.modules.compliance.calculators import (
     RooResult,
     RuleData,
     TariffLineData,
+    TariffResult,
+    customs_value,
     evfta_rate,
+    evfta_stage,
     quota_scenarios,
     rank_markets,
     roo_verdict,
@@ -46,6 +49,7 @@ from app.modules.compliance.models import (
     ComplianceCheck,
     ComplianceEvidenceRequirement,
     ComplianceEvidenceType,
+    CustomsValuationRule,
     HsCodeCompliance,
     ImportCountryTerm,
     ProductSpecificRule,
@@ -84,11 +88,14 @@ from app.modules.compliance.schemas import (
     RooOut,
     ScenarioOut,
     SectorAlertOut,
+    StagingOut,
     SubtypeOut,
     TariffIn,
     TariffOptionsOut,
     TariffOut,
     TariffPreviewOut,
+    ValuationOut,
+    ValueStepOut,
 )
 
 # EU là liên minh thuế quan: biểu thuế chung lưu ở destination 'EU' (một dòng/HS cho 27 nước).
@@ -567,8 +574,45 @@ async def _evfta_rate_now(
     return evfta_rate(line.base_rate, stage.stages, on_date)
 
 
+async def _valuation_rule(
+    session: AsyncSession, country: str, on_date: dt.date
+) -> CustomsValuationRule | None:
+    """Quy tắc trị giá của nước đến tại `on_date` (bản đã duyệt thắng bản chưa duyệt)."""
+    rows = list(
+        await session.scalars(
+            select(CustomsValuationRule).where(
+                CustomsValuationRule.country == country,
+                CustomsValuationRule.valid_from <= on_date,
+                or_(
+                    CustomsValuationRule.valid_until.is_(None),
+                    CustomsValuationRule.valid_until > on_date,
+                ),
+            )
+        )
+    )
+    candidates = [r for r in rows if r.reviewed_by is not None] or rows
+    return candidates[0] if candidates else None
+
+
+async def _staging_out(
+    session: AsyncSession, line: TariffLine, on_date: dt.date
+) -> StagingOut | None:
+    """Bậc cắt giảm EVFTA đang áp dụng tại ngày tính (None khi dòng không theo lộ trình)."""
+    if line.base_rate is None or line.staging_category is None:
+        return None
+    stage = await session.get(StagingCategory, line.staging_category)
+    if stage is None:
+        return None
+    return StagingOut(
+        category=line.staging_category,
+        stage=evfta_stage(stage.stages, on_date),
+        stages=stage.stages,
+        zero_from=stage.zero_from,
+    )
+
+
 async def _review_state(
-    session: AsyncSession, line: TariffLine | None
+    session: AsyncSession, line: TariffLine | None, extra: list[str] | None = None
 ) -> tuple[str, list[str], str | None]:
     """(review_state, thành phần chưa duyệt, data_version) của kết quả thuế."""
     if line is None:
@@ -579,7 +623,7 @@ async def _review_state(
         mfn_source=line.mfn_source,
         mfn_verified_taric=line.mfn_verified_taric,
         cn_mapping_verified=None if mapping is None else mapping.cn_mapping_verified,
-    )
+    ) + (extra or [])
     state = disclaimer.UNREVIEWED if components else disclaimer.REVIEWED
     return state, components, line.data_version
 
@@ -597,7 +641,7 @@ async def calculate_tariff(
     code = catalog.normalize_code(data.hs_code)
     if code is None:
         raise AppError("invalid_hs_code", "HS code must be 6 to 8 digits", 422)
-    today = on_date or dt.datetime.now(dt.UTC).date()
+    today = on_date or data.import_date or dt.datetime.now(dt.UTC).date()
     agreement = data.agreement
     if agreement is None:
         if data.destination in EU_MEMBERS:
@@ -618,18 +662,41 @@ async def calculate_tariff(
     )
     line = lines[0] if lines else None
     rate_now = None if line is None else await _evfta_rate_now(session, line, today)
-    result = tariff_savings(
-        None if line is None else _line_data(line, rate_now),
-        len(lines),
-        data.product_value,
-        data.shipments_per_year,
+    # C2-A: thuế tính trên TRỊ GIÁ TÍNH THUẾ (CIF hoặc FOB theo nước đến), không phải giá hóa đơn.
+    rule = None if line is None else await _valuation_rule(session, data.destination, today)
+    valuation = (
+        None
+        if line is None
+        else customs_value(
+            data.product_value,
+            data.incoterm,
+            freight=data.freight,
+            insurance=data.insurance,
+            post_border=data.post_border_costs,
+            basis=None if rule is None else ("FOB" if rule.basis == "FOB" else "CIF"),
+        )
     )
+    value_ok = valuation is None or valuation.status == "ok"
+    duty_value = (
+        valuation.customs_value
+        if valuation is not None and valuation.customs_value is not None
+        else data.product_value
+    )
+    if value_ok:
+        result = tariff_savings(
+            None if line is None else _line_data(line, rate_now),
+            len(lines),
+            duty_value,
+            data.shipments_per_year,
+        )
+    else:
+        result = TariffResult("needs_review")  # không có trị giá thì không có con số nào
     # U13 (AGENTS.md §6.4 sửa đổi): dòng có hạn ngạch → kịch bản chỉ khi có hạn ngạch và phân nhóm
     # đủ điều kiện ĐÃ DUYỆT; còn lại giữ needs_review của tariff_savings (không số).
     quota: TariffQuota | None = None
     quota_result: QuotaResult | None = None
     subtypes: list[ProductSubtype] = []
-    if line is not None and len(lines) == 1 and line.quota_required and agreement:
+    if line is not None and len(lines) == 1 and line.quota_required and agreement and value_ok:
         quotas, demo_quota = await visible_quotas(
             session, code, destination_key(data.destination), agreement, today
         )
@@ -657,7 +724,7 @@ async def calculate_tariff(
             None if quota is None else _quota_data(quota),
             subtype_chosen=data.subtype_code is not None,
             subtype_eligible=chosen_eligible is not None,
-            product_value=data.product_value,
+            product_value=duty_value,
             quantity=data.quantity,
         )
         subtypes = await visible_subtypes(session, code)
@@ -671,9 +738,46 @@ async def calculate_tariff(
         conditions = ["origin", "allocation", "subtype"]
         if quota.licence_note_vi or quota.licence_note_en:
             conditions.append("licence")
-    review_state, unreviewed, data_version = await _review_state(
-        session, line if len(lines) == 1 else None
+    review_reason = (
+        quota_result.review_reason
+        if quota_result is not None
+        else (valuation.reason.lower() if valuation is not None and valuation.reason else None)
     )
+    extra_components = (
+        ["customs_valuation"]
+        if rule is not None and rule.reviewed_by is None and data.incoterm
+        else []
+    )
+    review_state, unreviewed, data_version = await _review_state(
+        session, line if len(lines) == 1 else None, extra_components
+    )
+    scenario: dict[str, Any] = {}
+    if quota_result is not None:
+        scenario.update(
+            {
+                "subtype_code": data.subtype_code,
+                "quantity": None if data.quantity is None else str(data.quantity),
+                "quota_allocated": data.quota_allocated,
+                "quota_id": None if quota is None else str(quota.id),
+                "review_reason": quota_result.review_reason,
+            }
+        )
+    valuation_out = (
+        None
+        if valuation is None
+        else ValuationOut(
+            incoterm=data.incoterm,
+            currency=data.currency,
+            basis=None if rule is None else ("FOB" if rule.basis == "FOB" else "CIF"),
+            invoice_value=data.product_value,
+            customs_value=valuation.customs_value,
+            steps=[ValueStepOut(code=s.code, amount=s.amount) for s in valuation.steps],
+            warnings=list(valuation.warnings),
+        )
+    )
+    if valuation_out is not None:
+        scenario["valuation"] = valuation_out.model_dump(mode="json")
+        scenario["import_date"] = today.isoformat()
     reasons = {"unsupported": ["NOT_SUPPORTED"], "needs_review": ["NEEDS_MANUAL_CHECK"]}.get(
         status, []
     )
@@ -695,26 +799,20 @@ async def calculate_tariff(
         review_state=review_state if line is not None else None,
         unreviewed_components=unreviewed if line is not None else None,
         data_version=data_version,
-        scenario=(
-            {
-                "subtype_code": data.subtype_code,
-                "quantity": None if data.quantity is None else str(data.quantity),
-                "quota_allocated": data.quota_allocated,
-                "quota_id": None if quota is None else str(quota.id),
-                "review_reason": quota_result.review_reason,
-            }
-            if quota_result is not None
-            else None
-        ),
+        scenario=scenario or None,
     )
     await session.commit()
     return TariffOut(
+        customs_value=valuation.customs_value if valuation is not None else None,
+        valuation=valuation_out,
+        rate_date=today,
+        staging=None if line is None else await _staging_out(session, line, today),
         data_status=data_status,
         review_state=review_state,
         unreviewed_components=unreviewed,
         disclaimer=disclaimer.disclaimer_for(review_state, accept_language) if line else None,
         reasons=reasons,
-        review_reason=None if quota_result is None else quota_result.review_reason,
+        review_reason=review_reason,
         scenarios=[
             ScenarioOut(
                 kind=s.kind,

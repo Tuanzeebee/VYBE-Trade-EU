@@ -7,8 +7,9 @@
 - Sheet `Ma tran bang chung`: cột Mã CN, Mã bằng chứng, Điều kiện áp dụng, Kết luận, Ghi chú.
   `DONG_Y` → đặt reviewed_by/reviewed_at; `SUA` → KHÔNG duyệt, ghi ghi chú vào hàng đợi admin
   (compliance_review_issues); `BO` → valid_until = hôm nay. Kết luận trống = chưa xem, bỏ qua.
-- Sheet tuỳ chọn `Loai bang chung` (cột Mã, Kết luận, Ghi chú) và `Anh xa bang chung`
-  (cột Mã compliance, Kết luận, Ghi chú; không có BO) dùng cùng quy ước.
+- Sheet tuỳ chọn `Loai bang chung` (cột Mã, Kết luận, Ghi chú), `Anh xa bang chung`
+  (cột Mã compliance, Kết luận, Ghi chú; không có BO) và `Tri gia hai quan` (cột Nước, Kết luận,
+  Ghi chú; cơ sở trị giá CIF/FOB theo nước đến) dùng cùng quy ước.
 - Kiểm TOÀN BỘ file trước, có lỗi thì báo hết và không ghi gì. Chạy lại không ghi đôi; dòng đã duyệt
   không bị duyệt lại. Mỗi dòng đổi trạng thái ghi audit_logs before/after.
 - Cột Người duyệt / Ngày duyệt trong file bị BỎ QUA: người duyệt là tài khoản truyền vào lệnh.
@@ -33,6 +34,7 @@ from app.modules.compliance.models import (
     ComplianceEvidenceRequirement,
     ComplianceEvidenceType,
     ComplianceReviewIssue,
+    CustomsValuationRule,
     EvidenceCondition,
     EvidenceTypeMapping,
 )
@@ -40,11 +42,13 @@ from app.modules.compliance.models import (
 REQ_SHEET = "Ma tran bang chung"
 TYPE_SHEET = "Loai bang chung"
 MAP_SHEET = "Anh xa bang chung"
+VAL_SHEET = "Tri gia hai quan"
 CONCLUSIONS = ("DONG_Y", "SUA", "BO")
 
 REQ_ENTITY = "compliance_evidence_requirement"
 TYPE_ENTITY = "compliance_evidence_type"
 MAP_ENTITY = "evidence_type_mapping"
+VAL_ENTITY = "customs_valuation_rule"
 
 
 class ReviewImportError(Exception):
@@ -230,6 +234,40 @@ async def _collect(session: AsyncSession, wb: Any, today: dt.date) -> list[_Item
                 )
             )
 
+    if VAL_SHEET in sheets:
+        for number, row in _sheet_rows(wb, VAL_SHEET):
+            where = f"{VAL_SHEET} hàng {number}"
+            conclusion = _conclusion(row, where, errors)
+            if conclusion is None:
+                continue
+            country = (row.get("Nước") or "").upper()
+            rules = list(
+                await session.scalars(
+                    select(CustomsValuationRule).where(CustomsValuationRule.country == country)
+                )
+            )
+            # DONG_Y / SUA chỉ áp cho dòng còn hiệu lực; BO khớp cả dòng đã kết thúc.
+            active = [
+                r
+                for r in rules
+                if conclusion == "BO" or r.valid_until is None or r.valid_until > today
+            ]
+            if not active:
+                errors.append(f"{where}: không có quy tắc trị giá cho nước '{row.get('Nước')}'")
+                continue
+            for rule in active:
+                items.append(
+                    _Item(
+                        VAL_SHEET,
+                        number,
+                        VAL_ENTITY,
+                        rule,
+                        conclusion,
+                        row.get("Ghi chú"),
+                        f"trị giá {country} ({rule.basis})",
+                    )
+                )
+
     for item in items:
         if item.conclusion == "SUA" and not item.note:
             errors.append(f"{item.sheet} hàng {item.excel_row}: kết luận SUA phải có Ghi chú")
@@ -244,6 +282,8 @@ def _entity_id(item: _Item) -> str:
         return str(row.id)
     if isinstance(row, ComplianceEvidenceType):
         return row.code
+    if isinstance(row, CustomsValuationRule):
+        return str(row.id)
     return str(row.compliance_code)
 
 

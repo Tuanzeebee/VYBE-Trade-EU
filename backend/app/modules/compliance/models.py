@@ -704,3 +704,37 @@ class ComplianceReviewIssue(Base):
     )
     resolved_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id"))
     resolved_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class CustomsValuationRule(Base):
+    """Cơ sở tính trị giá hải quan theo nước đến (CIF hoặc FOB). Là dữ liệu do luật TM duyệt, không
+    viết cứng trong code (AGENTS.md §5.6): không phải nước nào cũng tính thuế trên giá CIF.
+    Nước chưa có dòng nào thì máy tính dùng nguyên giá hóa đơn kèm cảnh báo."""
+
+    __tablename__ = "customs_valuation_rules"
+    __table_args__ = (
+        UniqueConstraint("country", "valid_from", name="country_from"),
+        CheckConstraint("basis IN ('CIF', 'FOB')", name="basis_values"),
+        CheckConstraint("country ~ '^[A-Z]{2}$'", name="country_iso2"),
+        CheckConstraint("valid_until IS NULL OR valid_until > valid_from", name="valid_window"),
+        CheckConstraint(
+            "(reviewed_by IS NULL) = (reviewed_at IS NULL)", name="reviewed_by_and_at_together"
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, primary_key=True, default=uuid.uuid4, server_default=text("gen_random_uuid()")
+    )
+    country: Mapped[str] = mapped_column(String(2))
+    basis: Mapped[str] = mapped_column(String(3))
+    note_vi: Mapped[str | None] = mapped_column(Text)
+    note_en: Mapped[str | None] = mapped_column(Text)
+    source: Mapped[str | None] = mapped_column(String(1024))
+    reviewed_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id"))
+    reviewed_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
+    valid_from: Mapped[dt.date] = mapped_column(Date)
+    valid_until: Mapped[dt.date | None] = mapped_column(Date)
+    data_version: Mapped[str | None] = mapped_column(String(32))
+    created_at: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=text("clock_timestamp()")
+    )

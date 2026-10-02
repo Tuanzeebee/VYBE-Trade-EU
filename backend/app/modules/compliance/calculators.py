@@ -153,6 +153,104 @@ def unreviewed_components(
     return out
 
 
+# ── Trị giá tính thuế (C2-A, DE_XUAT_MAY_TINH_THUE.md tầng 1) ─────────────────────────────
+
+INCOTERMS = ("EXW", "FCA", "FAS", "FOB", "CFR", "CPT", "CIF", "CIP", "DAP", "DPU", "DDP")
+# Điều kiện giao hàng mà giá hóa đơn CHƯA gồm cước quốc tế / bảo hiểm quốc tế.
+_FREIGHT_NOT_IN_PRICE = frozenset({"EXW", "FCA", "FAS", "FOB"})
+_INSURANCE_NOT_IN_PRICE = frozenset({"EXW", "FCA", "FAS", "FOB", "CFR", "CPT"})
+# Giá hóa đơn đã gồm chi phí sau cửa khẩu nhập (vận chuyển nội địa, dỡ hàng...).
+_POST_BORDER_IN_PRICE = frozenset({"DAP", "DPU"})
+
+ValuationBasis = Literal["CIF", "FOB"]
+
+
+@dataclass(frozen=True)
+class ValueStep:
+    """Một bước đưa giá hóa đơn về trị giá tính thuế; amount có dấu (trừ là số âm)."""
+
+    code: Literal["invoice", "freight", "insurance", "post_border"]
+    amount: Decimal
+
+
+@dataclass(frozen=True)
+class CustomsValueResult:
+    """`needs_review` KHÔNG có trị giá (customs_value None). Cảnh báo là mã để giao diện dịch."""
+
+    status: Literal["ok", "needs_review"]
+    customs_value: Decimal | None
+    steps: tuple[ValueStep, ...]
+    warnings: tuple[str, ...] = ()
+    reason: str | None = None
+
+
+def _review(steps: list[ValueStep], warnings: list[str], reason: str) -> CustomsValueResult:
+    return CustomsValueResult("needs_review", None, tuple(steps), tuple(warnings), reason)
+
+
+def customs_value(
+    invoice: Decimal,
+    incoterm: str | None,
+    *,
+    freight: Decimal | None,
+    insurance: Decimal | None,
+    post_border: Decimal | None,
+    basis: ValuationBasis | None,
+) -> CustomsValueResult:
+    """Đưa giá hóa đơn về trị giá tính thuế theo cơ sở của nước đến (`basis`: CIF hay FOB).
+
+    Không đoán: thiếu cước/bảo hiểm thì tính với 0 và cảnh báo (không tự điền số); chưa khai
+    Incoterm hoặc nước chưa có quy tắc trị giá thì dùng nguyên giá hóa đơn kèm cảnh báo; DDP và các
+    tổ hợp chưa hỗ trợ → needs_review. Số tiền cùng một đơn vị tiền tệ, không quy đổi.
+    """
+    invoice = _money(invoice)
+    steps = [ValueStep("invoice", invoice)]
+    warnings: list[str] = []
+    if basis is None:
+        warnings.append("NO_VALUATION_RULE")
+    if incoterm is None:
+        warnings.append("INCOTERM_NOT_GIVEN")
+    if incoterm is None or basis is None:
+        return CustomsValueResult("ok", invoice, tuple(steps), tuple(warnings))
+    if incoterm == "DDP":
+        return _review(steps, warnings, "DDP_NOT_SUPPORTED")  # phải trừ ngược thuế đã gồm trong giá
+
+    if basis == "CIF":
+        if incoterm in _FREIGHT_NOT_IN_PRICE:
+            _add(steps, warnings, "freight", freight, "MISSING_FREIGHT", sign=1)
+        if incoterm in _INSURANCE_NOT_IN_PRICE:
+            _add(steps, warnings, "insurance", insurance, "MISSING_INSURANCE", sign=1)
+        if incoterm in _POST_BORDER_IN_PRICE:
+            _add(steps, warnings, "post_border", post_border, "MISSING_POST_BORDER", sign=-1)
+    else:  # FOB: bỏ cước và bảo hiểm quốc tế nếu giá hóa đơn đã gồm
+        if incoterm == "EXW" or incoterm in _POST_BORDER_IN_PRICE:
+            return _review(steps, warnings, "INCOTERM_NOT_SUPPORTED_FOR_BASIS")
+        if incoterm in ("CFR", "CPT", "CIF", "CIP"):
+            _add(steps, warnings, "freight", freight, "MISSING_FREIGHT", sign=-1)
+        if incoterm in ("CIF", "CIP"):
+            _add(steps, warnings, "insurance", insurance, "MISSING_INSURANCE", sign=-1)
+
+    total = sum((s.amount for s in steps), Decimal(0))
+    if total <= 0:
+        return _review(steps, warnings, "INVALID_VALUE")
+    return CustomsValueResult("ok", total, tuple(steps), tuple(warnings))
+
+
+def _add(
+    steps: list[ValueStep],
+    warnings: list[str],
+    code: Literal["freight", "insurance", "post_border"],
+    amount: Decimal | None,
+    missing_warning: str,
+    *,
+    sign: int,
+) -> None:
+    if amount is None:
+        warnings.append(missing_warning)  # tính với 0, không tự điền số
+    else:
+        steps.append(ValueStep(code, _money(amount) * sign))
+
+
 # ── Xếp hạng thị trường EU ──────────────────────────────────────────────────
 
 MarketStatus = Literal["ranked", "no_data"]

@@ -20,6 +20,7 @@ from app.modules.compliance.models import (
     ComplianceEvidenceRequirement,
     ComplianceEvidenceType,
     ComplianceReviewIssue,
+    CustomsValuationRule,
     EvidenceTypeMapping,
     HsCodeCompliance,
     ProductSpecificRule,
@@ -28,6 +29,7 @@ from app.modules.compliance.review_import import (
     MAP_SHEET,
     REQ_SHEET,
     TYPE_SHEET,
+    VAL_SHEET,
     ReviewImportError,
     import_review,
 )
@@ -43,6 +45,7 @@ def workbook(
     rows: list[list[Any]],
     types: list[list[Any]] | None = None,
     mappings: list[list[Any]] | None = None,
+    valuation: list[list[Any]] | None = None,
 ) -> bytes:
     wb = Workbook()
     ws = wb.active
@@ -59,6 +62,11 @@ def workbook(
         sheet = wb.create_sheet(MAP_SHEET)
         sheet.append(["Mã compliance", "Kết luận", "Ghi chú"])
         for r in mappings:
+            sheet.append(r)
+    if valuation is not None:
+        sheet = wb.create_sheet(VAL_SHEET)
+        sheet.append(["Nước", "Kết luận", "Ghi chú"])
+        for r in valuation:
             sheet.append(r)
     buffer = io.BytesIO()
     wb.save(buffer)
@@ -307,3 +315,35 @@ async def test_admin_queue_api_lists_and_resolves(
     assert done.status_code == 200 and done.json()["resolved_at"] is not None
     assert (await api_client.get(url)).json() == []
     assert len((await api_client.get(url, params={"only_open": "false"})).json()) == 1
+
+
+async def test_valuation_sheet_reviews_ends_and_queues_rules(
+    seeded: AsyncSession, reviewer: str
+) -> None:
+    data = workbook(
+        [],
+        valuation=[
+            ["DE", "DONG_Y", None],
+            ["FR", "SUA", "Cần dẫn chiếu điều khoản"],
+            ["GB", "BO", None],
+        ],
+    )
+    report = await import_review(seeded, data, reviewer)
+    assert (report.approved, report.ended, report.issues_created) == (1, 1, 1)
+
+    async def rule(country: str) -> CustomsValuationRule:
+        row = await seeded.scalar(
+            select(CustomsValuationRule).where(CustomsValuationRule.country == country)
+        )
+        assert row is not None
+        await seeded.refresh(row)
+        return row
+
+    assert (await rule("DE")).reviewed_by is not None
+    assert (await rule("FR")).reviewed_by is None
+    assert (await rule("GB")).valid_until == dt.datetime.now(dt.UTC).date()
+    again = await import_review(seeded, data, reviewer)
+    assert (again.approved, again.ended, again.issues_created) == (0, 0, 0)
+    bad = workbook([], valuation=[["XX", "DONG_Y", None]])
+    with pytest.raises(ReviewImportError):
+        await import_review(seeded, bad, reviewer)

@@ -25,6 +25,38 @@ def parse_amount(value: Any) -> Decimal:
     return amount
 
 
+IMPORT_DATE_MIN = dt.date(2020, 8, 1)  # ngày EVFTA có hiệu lực
+IMPORT_DATE_MAX_YEARS = 3
+Incoterm = Literal["EXW", "FCA", "FAS", "FOB", "CFR", "CPT", "CIF", "CIP", "DAP", "DPU", "DDP"]
+
+
+def parse_cost(value: Any) -> Decimal | None:
+    """Chi phí (cước, bảo hiểm, chi phí sau cửa khẩu): chuỗi số >= 0, tối đa 2 chữ số thập phân,
+    dưới 10^12. None = chưa khai (khác với "0" = đã khai là không có chi phí)."""
+    if value is None:
+        return None
+    if not isinstance(value, str) or not _AMOUNT.fullmatch(value):
+        raise ValueError("cost must be a decimal string with at most 2 decimals")
+    amount = Decimal(value)
+    if amount > MAX_VALUE:
+        raise ValueError("cost must be below 10^12")
+    return amount
+
+
+def parse_import_date(value: Any) -> dt.date | None:
+    if value is None:
+        return None
+    try:
+        day = value if isinstance(value, dt.date) else dt.date.fromisoformat(str(value))
+    except ValueError as error:
+        raise ValueError("import_date must be an ISO date (YYYY-MM-DD)") from error
+    today = dt.datetime.now(dt.UTC).date()
+    latest = today.replace(year=today.year + IMPORT_DATE_MAX_YEARS)
+    if not IMPORT_DATE_MIN <= day <= latest:
+        raise ValueError("import_date must be between 2020-08-01 and 3 years from today")
+    return day
+
+
 class TariffIn(BaseModel):
     """Số tiền nhận dạng CHUỖI JSON (không nhận số) để không bao giờ đi qua float.
 
@@ -44,6 +76,24 @@ class TariffIn(BaseModel):
     subtype_code: Annotated[str | None, Field(pattern=r"^[a-z0-9_]{2,40}$")] = None
     quantity: Decimal | None = None
     quota_allocated: Literal["yes", "no", "unknown"] | None = None
+    # C2-A: trị giá tính thuế. Không khai Incoterm = lấy giá hóa đơn làm trị giá (có cảnh báo).
+    # Mọi số tiền cùng một đơn vị tiền tệ (`currency` chỉ để hiển thị), không quy đổi.
+    incoterm: Incoterm | None = None
+    currency: Annotated[str | None, Field(pattern=r"^[A-Z]{3}$")] = None
+    freight: Decimal | None = None
+    insurance: Decimal | None = None
+    post_border_costs: Decimal | None = None
+    import_date: dt.date | None = None
+
+    @field_validator("freight", "insurance", "post_border_costs", mode="before")
+    @classmethod
+    def _cost(cls, value: Any) -> Decimal | None:
+        return parse_cost(value)
+
+    @field_validator("import_date", mode="before")
+    @classmethod
+    def _import_date(cls, value: Any) -> dt.date | None:
+        return parse_import_date(value)
 
     @field_validator("quantity", mode="before")
     @classmethod
@@ -125,6 +175,32 @@ class TariffOptionsOut(BaseModel):
     quota_agreements: list[str] = Field(default_factory=list)
 
 
+class ValueStepOut(BaseModel):
+    """Một bước từ giá hóa đơn đến trị giá tính thuế; amount có dấu (trừ là số âm)."""
+
+    code: Literal["invoice", "freight", "insurance", "post_border"]
+    amount: Decimal
+
+
+class ValuationOut(BaseModel):
+    incoterm: str | None
+    currency: str | None
+    basis: Literal["CIF", "FOB"] | None  # None = nước chưa có quy tắc trị giá
+    invoice_value: Decimal
+    customs_value: Decimal | None
+    steps: list[ValueStepOut]
+    warnings: list[str]  # mã cảnh báo, giao diện dịch thành chữ
+
+
+class StagingOut(BaseModel):
+    """Bậc cắt giảm thuế EVFTA đang áp dụng tại ngày tính."""
+
+    category: str
+    stage: int
+    stages: int
+    zero_from: dt.date | None
+
+
 class TariffOut(BaseModel):
     check_id: str
     status: Literal["ok", "unsupported", "needs_review", "quota_scenarios"]
@@ -154,6 +230,11 @@ class TariffOut(BaseModel):
     unreviewed_components: list[str] = Field(default_factory=list)
     disclaimer: str | None = None
     reasons: list[str] = Field(default_factory=list)
+    # C2-A: trị giá tính thuế, bảng phân rã và ngày/bậc thuế áp dụng
+    customs_value: Decimal | None = None
+    valuation: ValuationOut | None = None
+    rate_date: dt.date | None = None
+    staging: StagingOut | None = None
     review_reason: str | None = None
     scenarios: list[ScenarioOut] = Field(default_factory=list)
     quota: QuotaInfoOut | None = None
