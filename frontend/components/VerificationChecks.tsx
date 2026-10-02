@@ -15,6 +15,7 @@ export const CHECK_LABELS: Record<string, string> = {
   website_email_domain: 'Website cùng tên miền với email',
   vies_vat: 'Mã VAT hợp lệ trên VIES',
   vies_name_match: 'Tên trên VIES khớp tên công ty',
+  vies_address_match: 'Địa chỉ trên VIES khớp địa chỉ khai báo',
   gleif_lei: 'Mã LEI trên GLEIF',
   geocode: 'Địa chỉ định vị được trên bản đồ',
   traces_facility: 'Mã cơ sở có trong danh sách EU TRACES-NT',

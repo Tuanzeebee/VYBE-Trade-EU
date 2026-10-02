@@ -35,8 +35,10 @@ from app.modules.auth import service as auth
 from app.modules.auth.schemas import CurrentUser
 from app.modules.companies import service as companies
 from app.modules.verification.checks import (
+    address_matches,
     domain_age_status,
     name_matches,
+    registry_address,
     same_organisation_domain,
 )
 from app.modules.verification.models import ApprovedEstablishment, VerificationCheck
@@ -154,7 +156,12 @@ async def _email_and_website(
 
 
 async def _registries(
-    sources: CheckSources, name: str, country: str, vat: str | None, reg: str | None
+    sources: CheckSources,
+    name: str,
+    country: str,
+    vat: str | None,
+    reg: str | None,
+    address: str | None = None,
 ) -> list[Result]:
     out: list[Result] = []
     parts = split_vat(country, vat) if vat else None
@@ -169,6 +176,18 @@ async def _registries(
                     "vies_name_match",
                     "pass" if matched else "warning",
                     {"registered_name": registered_name},
+                    "vies",
+                )
+            )
+        # C3: địa chỉ khai báo có khớp địa chỉ trong sổ đăng ký không. Chỉ khi nguồn có công bố địa
+        # chỉ (VIES nhiều nước trả "---"); Việt Nam chưa có nguồn tự động nên admin kiểm tay.
+        registered_address = registry_address(v.detail.get("address"))
+        if v.status == "pass" and registered_address and address:
+            out.append(
+                (
+                    "vies_address_match",
+                    "pass" if address_matches(address, registered_address) else "warning",
+                    {"registered_address": registered_address, "declared_address": address},
                     "vies",
                 )
             )
@@ -229,6 +248,7 @@ async def run_checks(
         company.country,
         company.vat_number,
         company.registration_number,
+        company.address,
     )
     address = company.factory_address or company.address
     if company.location_public and company.latitude is None and address:
