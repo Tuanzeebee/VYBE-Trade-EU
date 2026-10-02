@@ -17,6 +17,8 @@ export const CHECK_LABELS: Record<string, string> = {
   vies_name_match: 'Tên trên VIES khớp tên công ty',
   vies_address_match: 'Địa chỉ trên VIES khớp địa chỉ khai báo',
   gleif_lei: 'Mã LEI trên GLEIF',
+  gleif_registration_match: 'Số đăng ký trên GLEIF khớp số đã khai',
+  gleif_address_match: 'Địa chỉ trên GLEIF khớp địa chỉ khai báo',
   geocode: 'Địa chỉ định vị được trên bản đồ',
   traces_facility: 'Mã cơ sở có trong danh sách EU TRACES-NT',
   national_registry: 'Đối chiếu Cổng thông tin quốc gia về đăng ký doanh nghiệp',

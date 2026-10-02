@@ -163,6 +163,8 @@ class Company(Base):
     procurement_estimate: Mapped[str | None] = mapped_column(String(16))
     vat_number: Mapped[str | None] = mapped_column(String(32))
     eori_number: Mapped[str | None] = mapped_column(String(20))
+    # Mã LEI (ISO 17442) để đối chiếu GLEIF; tuỳ chọn, cho cả buyer và exporter.
+    lei_code: Mapped[str | None] = mapped_column(String(20))
     verification_status: Mapped[VerificationStatus] = mapped_column(
         Enum(VerificationStatus, name="verification_status"),
         default=VerificationStatus.unverified,

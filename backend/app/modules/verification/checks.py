@@ -28,6 +28,8 @@ AUTO_CHECKS = (
     "vies_name_match",
     "vies_address_match",
     "gleif_lei",
+    "gleif_registration_match",
+    "gleif_address_match",
     "geocode",
     "traces_facility",
 )
@@ -65,6 +67,16 @@ def registry_address(raw: object) -> str | None:
         return None
     text = " ".join(raw.split())
     return None if not text or set(text) <= {"-"} else text
+
+
+def registration_numbers_match(declared: str, registered: str) -> bool:
+    """Số đăng ký khai báo trùng số đăng ký quốc gia trong GLEIF (bỏ khoảng trắng, dấu; không phân
+    biệt hoa thường). Chấp nhận khi một bên là phần đuôi của bên kia: "HRB 12345" với "12345"."""
+    left = re.sub(r"[^A-Z0-9]", "", declared.upper())
+    right = re.sub(r"[^A-Z0-9]", "", registered.upper())
+    if not left or not right:
+        return False
+    return left == right or left.endswith(right) or right.endswith(left)
 
 
 def address_matches(declared: str, registered: str) -> bool:

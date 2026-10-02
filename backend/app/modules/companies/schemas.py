@@ -120,7 +120,17 @@ class _CompanyFields(BaseModel):
     procurement_estimate: ProcurementEstimate | None = None
     vat_number: Annotated[str, StringConstraints(max_length=32)] | None = None
     eori_number: Annotated[str, StringConstraints(max_length=20)] | None = None
+    lei_code: Annotated[str, StringConstraints(pattern=r"^[A-Z0-9]{18}[0-9]{2}$")] | None = None
     hide_profile_views: bool | None = None  # buyer (U9)
+
+    @field_validator("lei_code", mode="before")
+    @classmethod
+    def _normalise_lei(cls, v: object) -> object:
+        """Chữ hoa, bỏ khoảng trắng; chuỗi rỗng coi như không khai."""
+        if isinstance(v, str):
+            v = "".join(v.split()).upper()
+            return v or None
+        return v
 
 
 class CompanyIn(_CompanyFields):
@@ -204,6 +214,7 @@ class CompanyOut(BaseModel):
     procurement_estimate: str | None
     vat_number: str | None
     eori_number: str | None
+    lei_code: str | None = None
     hide_profile_views: bool
     sourcing_categories: list[str]
     verification_status: Literal["unverified", "pending", "verified", "rejected"]
