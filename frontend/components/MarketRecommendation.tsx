@@ -16,6 +16,25 @@ import {
   type MarketItem,
   type MarketRecommendation as Recommendation,
 } from '../lib/marketInsightsApi';
+import dynamic from 'next/dynamic';
+import { HhiMeter } from './market/HhiMeter';
+
+// Thư viện biểu đồ nặng (~100 kB): chỉ tải khi đã có kết quả tìm kiếm, trang đầu vẫn nhẹ (mục tiêu <3s trên 4G).
+const ChartSkeleton = () => <div aria-busy="true" className="h-48 animate-pulse rounded-2xl border border-slate-200 bg-slate-50" />;
+const ImportBarChart = dynamic(() => import('./market/ImportBarChart').then((m) => m.ImportBarChart), { ssr: false, loading: ChartSkeleton });
+const CompetitorCharts = dynamic(() => import('./market/CompetitorCharts').then((m) => m.CompetitorCharts), { ssr: false, loading: ChartSkeleton });
+const CountryCompareChart = dynamic(() => import('./market/CountryCompareChart').then((m) => m.CountryCompareChart), { ssr: false, loading: ChartSkeleton });
+
+/** Bảng số liệu gốc của biểu đồ: thu gọn mặc định, dùng cho đối chiếu số và trình đọc màn hình. */
+function DataTable({ children }: { children: React.ReactNode }) {
+  const { tr } = useLanguage();
+  return (
+    <details className="mt-4 rounded-xl border border-slate-200 bg-white p-3">
+      <summary className="cursor-pointer text-sm font-semibold text-teal-800">{tr('Xem bảng số liệu')}</summary>
+      <div className="mt-2">{children}</div>
+    </details>
+  );
+}
 
 function MarketCard({ market, rank, tone }: { market: MarketItem; rank: number; tone: 'main' | 'potential' }) {
   const { tr, language } = useLanguage();
@@ -136,6 +155,9 @@ export default function MarketRecommendation({ initialQuery = '' }: { initialQue
               </ol>
             </section>
           )}
+          <section aria-label={tr('Biểu đồ nhập khẩu')}>
+            <ImportBarChart top={data.top_markets} potential={data.potential_markets} />
+          </section>
           {data.competitors.length > 0 && (
             <section aria-label={tr('Đối thủ cạnh tranh')}>
               <h2 className="text-lg font-bold text-slate-900">{tr('Nguồn cung ngoài EU vào EU')}</h2>
@@ -144,8 +166,13 @@ export default function MarketRecommendation({ initialQuery = '' }: { initialQue
                 {data.vn_extra_eu_share ? ` · ${percentOf(data.vn_extra_eu_share, language)}` : ''}
                 {data.hhi ? ` · HHI ${Number(data.hhi).toFixed(0)}` : ''}
               </p>
-              <table className="mt-3 w-full text-left text-sm">
-                <thead className="text-xs text-slate-500">
+              <div className="mt-3 space-y-4">
+                <HhiMeter hhi={data.hhi} />
+                <CompetitorCharts competitors={data.competitors} />
+              </div>
+              <DataTable>
+              <table className="w-full text-left text-sm">
+                <thead className="text-xs text-slate-600">
                   <tr>
                     <th className="py-2">{tr('Nước cung cấp')}</th>
                     <th className="py-2 text-right">{tr('Trị giá')}</th>
@@ -164,13 +191,18 @@ export default function MarketRecommendation({ initialQuery = '' }: { initialQue
                   ))}
                 </tbody>
               </table>
+              </DataTable>
             </section>
           )}
           <section aria-label={tr('So sánh các nước')}>
             <h2 className="text-lg font-bold text-slate-900">{tr('So sánh các nước')}</h2>
-            <div className="mt-3 overflow-x-auto">
+            <div className="mt-3">
+              <CountryCompareChart countries={data.countries.slice(0, 10)} />
+            </div>
+            <DataTable>
+            <div className="overflow-x-auto">
               <table className="w-full min-w-[36rem] text-left text-sm">
-                <thead className="text-xs text-slate-500">
+                <thead className="text-xs text-slate-600">
                   <tr>
                     <th className="py-2">{tr('Nước')}</th>
                     <th className="py-2 text-right">{tr('Nhập khẩu')}</th>
@@ -194,6 +226,7 @@ export default function MarketRecommendation({ initialQuery = '' }: { initialQue
                 </tbody>
               </table>
             </div>
+            </DataTable>
           </section>
           <p className="rounded-xl bg-slate-50 p-3 text-xs text-slate-600" data-testid="market-method">
             {tr('Nguồn')}: {data.source}
