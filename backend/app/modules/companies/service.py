@@ -516,9 +516,15 @@ def _set_lists(company: Company, values: dict[str, Any]) -> None:
     if (cats := values.pop("sourcing_categories", None)) is not None:
         company.sourcing_categories = [CompanySourcingCategory(category=c) for c in cats]
     if (codes := values.pop("facility_codes", None)) is not None:
-        company.facility_codes = [
-            CompanyFacilityCode(code_type=c["code_type"], code=c["code"]) for c in codes
-        ]
+        # Chỉ xóa dòng không còn / thêm dòng mới: gán lại cả list làm SQLAlchemy INSERT
+        # trước DELETE nên vi phạm unique (company_id, code_type, code) khi giữ nguyên mã.
+        wanted = {(c["code_type"], c["code"]) for c in codes}
+        existing = {(f.code_type, f.code) for f in company.facility_codes}
+        for f in list(company.facility_codes):
+            if (f.code_type, f.code) not in wanted:
+                company.facility_codes.remove(f)
+        for code_type, code in sorted(wanted - existing):
+            company.facility_codes.append(CompanyFacilityCode(code_type=code_type, code=code))
 
 
 def _normalize(company: Company) -> None:
