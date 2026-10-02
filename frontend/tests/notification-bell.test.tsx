@@ -144,6 +144,7 @@ describe('describe()', () => {
     ['rfq', { event: 'status' }, 'đã cập nhật yêu cầu báo giá'],
     ['message', {}, 'tin nhắn'],
     ['new_match', {}, 'phù hợp'],
+    ['reengagement', { kind: 'digest', counts: { message: 2 }, total: 2 }, 'chưa đọc đang chờ bạn'],
   ] as const)('%s %j', (type, payload, expected) => {
     expect(describeNotification({ type, payload })).toContain(expected);
   });

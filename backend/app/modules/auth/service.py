@@ -29,6 +29,7 @@ from app.modules.auth.schemas import (
     Contact,
     CurrentUser,
     DeleteAccountIn,
+    LoginActivity,
     LoginIn,
     MePatch,
     RegisterIn,
@@ -186,6 +187,25 @@ async def get_contact(session: AsyncSession, user_id: uuid.UUID) -> Contact | No
     return Contact(
         email=user.email, preferred_language=user.preferred_language, role=user.role.value
     )
+
+
+async def list_logins_before(session: AsyncSession, before: datetime) -> list[LoginActivity]:
+    """Exporter / buyer còn hoạt động có lần đăng nhập cuối không muộn hơn `before`.
+
+    Phiên đăng nhập kéo dài nên đây chỉ là điều kiện cần của "đã vắng"; hoạt động thật còn tính
+    thêm lần mở dashboard."""
+    rows = await session.execute(
+        select(User.id, User.role, User.last_login_at).where(
+            User.deleted_at.is_(None),
+            User.role.in_((UserRole.exporter, UserRole.buyer)),
+            User.last_login_at.is_not(None),
+            User.last_login_at <= before,
+        )
+    )
+    return [
+        LoginActivity(user_id=uid, role=role.value, last_login_at=login)
+        for uid, role, login in rows.all()
+    ]
 
 
 async def get_admin_by_email(session: AsyncSession, email: str) -> CurrentUser | None:
