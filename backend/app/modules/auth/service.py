@@ -218,6 +218,42 @@ async def get_admin_by_email(session: AsyncSession, email: str) -> CurrentUser |
     return _to_current(user) if user else None
 
 
+async def is_legal_reviewer(session: AsyncSession, user_id: uuid.UUID) -> bool:
+    """Tài khoản admin còn hoạt động được cấp năng lực duyệt dữ liệu luật thương mại."""
+    return bool(
+        await session.scalar(
+            select(User.is_legal_reviewer).where(
+                User.id == user_id, User.role == UserRole.admin, User.deleted_at.is_(None)
+            )
+        )
+    )
+
+
+async def set_legal_reviewer(
+    session: AsyncSession, email: str, value: bool, actor_id: uuid.UUID | None = None
+) -> None:
+    """Cấp/thu hồi năng lực người duyệt luật TM cho một admin (chỉ qua script, ghi audit)."""
+    user = await session.scalar(
+        select(User).where(
+            User.email == email.lower(), User.role == UserRole.admin, User.deleted_at.is_(None)
+        )
+    )
+    if user is None:
+        raise AppError("admin_not_found", "No admin account with this email", 404)
+    before = {"is_legal_reviewer": user.is_legal_reviewer}
+    user.is_legal_reviewer = value
+    await record(
+        session,
+        actor_id=actor_id,
+        action_type="user.set_legal_reviewer",
+        entity_type="user",
+        entity_id=str(user.id),
+        before=before,
+        after={"is_legal_reviewer": value},
+    )
+    await session.commit()
+
+
 async def create_admin(session: AsyncSession, email: str, password: str) -> uuid.UUID:
     """Chỉ gọi từ scripts/create_admin.py — không có API tạo admin."""
     validate_password(password)

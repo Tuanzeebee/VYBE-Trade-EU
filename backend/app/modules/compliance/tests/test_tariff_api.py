@@ -109,10 +109,17 @@ async def test_unsupported_hs_has_no_numbers_and_is_logged(
     assert await checks(db_session) == 1
 
 
-async def test_supported_hs_without_reviewed_line_is_unsupported(
+async def test_unreviewed_line_is_used_with_disclaimer(
     api_client: AsyncClient, db_session: AsyncSession
 ) -> None:
-    await add_line(db_session, None)  # chưa duyệt → không bao giờ ra ngoài
+    await add_line(db_session, None)  # chưa duyệt → vẫn tính, kèm lưu ý (SPEC §2.2)
+    out = (await api_client.post(URL, json=body())).json()
+    assert out["status"] == "ok"
+    assert out["review_state"] == "UNREVIEWED" and out["unreviewed_components"] == ["tariff_line"]
+    assert out["disclaimer"] is not None
+
+
+async def test_supported_hs_without_any_line_is_unsupported(api_client: AsyncClient) -> None:
     r = await api_client.post(URL, json=body())
     assert r.json()["status"] == "unsupported"
     assert_no_numbers(r.json())

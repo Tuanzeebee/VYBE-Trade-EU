@@ -1,5 +1,6 @@
 """Hàm thuần của máy tính tuân thủ: không đụng DB/HTTP (AGENTS.md §5.3)."""
 
+import datetime as dt
 from collections.abc import Sequence
 from dataclasses import dataclass
 from decimal import ROUND_CEILING, ROUND_HALF_UP, Decimal
@@ -107,6 +108,49 @@ def tariff_savings(
         quota_note_en=line.quota_note_en,
         condition_note_en=line.condition_note_en,
     )
+
+
+# ── Lộ trình cắt giảm thuế EVFTA ────────────────────────────────────────────
+
+EVFTA_ENTRY_INTO_FORCE = dt.date(2020, 8, 1)
+RATE_PLACES = Decimal("0.0001")
+
+
+def evfta_stage(stages: int, on_date: dt.date) -> int:
+    """Số bậc cắt giảm đã qua vào `on_date`: bậc 1 từ 01/08/2020, mỗi 01/01 sau đó thêm một bậc,
+    tối đa `stages`. Trước ngày hiệu lực = 0 (chưa cắt)."""
+    if on_date < EVFTA_ENTRY_INTO_FORCE:
+        return 0
+    return min(stages, 1 + on_date.year - EVFTA_ENTRY_INTO_FORCE.year)
+
+
+def evfta_rate(base_rate: Decimal, stages: int, on_date: dt.date) -> Decimal:
+    """Thuế EVFTA tại một ngày: base × (stages − k) / stages, k = số bậc đã qua; làm tròn 4 chữ số
+    thập phân, ROUND_HALF_UP. Cùng đơn vị với `base_rate` (DB lưu %)."""
+    k = evfta_stage(stages, on_date)
+    return (base_rate * (stages - k) / stages).quantize(RATE_PLACES, rounding=ROUND_HALF_UP)
+
+
+def unreviewed_components(
+    *,
+    line_reviewed: bool,
+    mfn_source: str | None,
+    mfn_verified_taric: bool,
+    cn_mapping_verified: bool | None,
+) -> list[str]:
+    """Thành phần của kết quả thuế chưa được duyệt (SPEC §6.2); rỗng = REVIEWED.
+
+    mfn_source None = dòng nhập tay (không qua seed) → không xét cờ TARIC; cn_mapping_verified
+    None = mã chưa có hồ sơ đối chiếu CN → không xét.
+    """
+    out: list[str] = []
+    if not line_reviewed:
+        out.append("tariff_line")
+    if mfn_source is not None and not mfn_verified_taric:
+        out.append("mfn_taric")
+    if cn_mapping_verified is False:
+        out.append("cn_mapping")
+    return out
 
 
 # ── Xếp hạng thị trường EU ──────────────────────────────────────────────────
@@ -241,6 +285,9 @@ class RooResult:
     reason: str | None = None
 
 
+_LEGACY_RULE_TYPES = frozenset((RuleType.WO, RuleType.CTH, RuleType.MaxNOM, RuleType.CTH_OR_MaxNOM))
+
+
 def _originating(material: Material, eu_cumulation: bool) -> bool:
     if material.origin_country == ORIGIN_COUNTRY:
         return True
@@ -285,6 +332,10 @@ def roo_verdict(
         return RooResult("unsupported", reason="no_rule")
     if rule.requires_expert:
         return RooResult("inconclusive", reason="requires_expert")
+    if rule.rule_type not in _LEGACY_RULE_TYPES:
+        # Quy tắc Chương 3/7/8 (WO_*) đánh giá bằng compliance.origin, không phải máy tính nguyên
+        # liệu này: không bao giờ rơi vào nhánh CTH_OR_MaxNOM bên dưới.
+        return RooResult("inconclusive", reason="use_origin_calculator")
     if not materials_declared:
         return RooResult("inconclusive", reason="materials_not_declared")
     non_originating = [m for m in materials if not _originating(m, eu_cumulation)]

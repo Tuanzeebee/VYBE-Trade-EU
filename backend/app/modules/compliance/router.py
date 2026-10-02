@@ -1,7 +1,7 @@
 import uuid
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Query, UploadFile
+from fastapi import APIRouter, Depends, Header, Query, UploadFile
 from fastapi.responses import Response, StreamingResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -10,7 +10,14 @@ from app.core.spreadsheet import ImportResult, read_upload, xlsx_response
 from app.core.storage import Storage, get_storage
 from app.modules.auth.schemas import CurrentUser
 from app.modules.auth.service import get_optional_user, require_role
-from app.modules.compliance import admin_service, admin_spreadsheet, documents, service
+from app.modules.compliance import (
+    admin_service,
+    admin_spreadsheet,
+    badge,
+    documents,
+    review_import,
+    service,
+)
 from app.modules.compliance.admin_schemas import (
     AdminSectorAlertOut,
     CountryTermIn,
@@ -35,10 +42,15 @@ from app.modules.compliance.admin_schemas import (
     TradeAgreementPatch,
 )
 from app.modules.compliance.schemas import (
+    CompanyChecklistOut,
     DocumentOut,
     Eur1In,
     MarketsIn,
     MarketsOut,
+    OriginIn,
+    OriginOut,
+    OriginQuestionsOut,
+    ReviewIssueOut,
     RooIn,
     RooOut,
     SectorAlertOut,
@@ -69,8 +81,9 @@ async def calculate_tariff(
     data: TariffIn,
     user: Annotated[CurrentUser | None, Depends(get_optional_user)],
     session: Annotated[AsyncSession, Depends(get_session)],
+    accept_language: Annotated[str | None, Header()] = None,
 ) -> TariffOut:
-    return await service.calculate_tariff(session, data, user)
+    return await service.calculate_tariff(session, data, user, accept_language)
 
 
 @router.get("/api/public/tariff/options")
@@ -95,8 +108,9 @@ async def tariff_preview(
     hs_code: Annotated[str, Query(max_length=32)],
     _: Annotated[CurrentUser, Depends(require_role("exporter"))],
     session: Annotated[AsyncSession, Depends(get_session)],
+    accept_language: Annotated[str | None, Header()] = None,
 ) -> TariffPreviewOut:
-    return await service.preview_tariff(session, hs_code)
+    return await service.preview_tariff(session, hs_code, accept_language)
 
 
 @router.post("/api/public/roo")
@@ -106,6 +120,36 @@ async def calculate_roo(
     session: Annotated[AsyncSession, Depends(get_session)],
 ) -> RooOut:
     return await service.calculate_roo(session, data, user)
+
+
+@router.get("/api/public/hs-codes/{cn}/origin-questions")
+async def origin_questions(
+    cn: str,
+    session: Annotated[AsyncSession, Depends(get_session)],
+    accept_language: Annotated[str | None, Header()] = None,
+) -> OriginQuestionsOut:
+    return await service.origin_questions(session, cn, accept_language)
+
+
+@router.post("/api/public/origin")
+async def calculate_origin(
+    data: OriginIn,
+    user: Annotated[CurrentUser | None, Depends(get_optional_user)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+    accept_language: Annotated[str | None, Header()] = None,
+) -> OriginOut:
+    return await service.calculate_origin(session, data, user, accept_language)
+
+
+@router.get("/api/companies/{company_id}/evidence-checklist")
+async def evidence_checklist(
+    company_id: uuid.UUID,
+    hs: Annotated[str, Query(max_length=32)],
+    user: Annotated[CurrentUser, Depends(require_role("exporter", "admin"))],
+    session: Annotated[AsyncSession, Depends(get_session)],
+    accept_language: Annotated[str | None, Header()] = None,
+) -> CompanyChecklistOut:
+    return await badge.company_checklist(session, user, company_id, hs, accept_language)
 
 
 @router.post("/api/public/markets")
@@ -452,3 +496,17 @@ async def review_country_term(term_id: uuid.UUID, admin: Admin, session: DB) -> 
 async def delete_country_term(term_id: uuid.UUID, admin: Admin, session: DB) -> Response:
     await admin_service.delete_country_term(session, admin, term_id)
     return Response(status_code=204)
+
+
+# ── Admin: hàng đợi dòng luật sư trả "SUA" (import-review) ───────────────────
+@router.get("/api/admin/compliance-review-issues")
+async def list_review_issues(_: Admin, session: DB, only_open: bool = True) -> list[ReviewIssueOut]:
+    rows = await review_import.list_issues(session, only_open)
+    return [ReviewIssueOut.model_validate(r, from_attributes=True) for r in rows]
+
+
+@router.post("/api/admin/compliance-review-issues/{issue_id}/resolve")
+async def resolve_review_issue(issue_id: uuid.UUID, admin: Admin, session: DB) -> ReviewIssueOut:
+    return ReviewIssueOut.model_validate(
+        await review_import.resolve_issue(session, admin, issue_id), from_attributes=True
+    )

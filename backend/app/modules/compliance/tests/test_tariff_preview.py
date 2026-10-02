@@ -89,14 +89,14 @@ async def test_unsupported_hs_has_no_numbers(api_client: AsyncClient) -> None:
     assert d["source_url"] is None
 
 
-async def test_unreviewed_line_is_never_exposed(
+async def test_unreviewed_line_is_shown_with_disclaimer(
     api_client: AsyncClient, db_session: AsyncSession
 ) -> None:
     await add_line(db_session, None, source_url="https://example.test/draft")
     await as_exporter(api_client)
     d = await preview(api_client, COFFEE)
-    assert d["status"] == "unsupported"
-    assert d["mfn_rate"] is None and d["source_url"] is None
+    assert d["status"] == "ok" and d["mfn_rate"] is not None
+    assert d["review_state"] == "UNREVIEWED" and d["disclaimer"] is not None
 
 
 async def test_expired_line_is_not_used(

@@ -6,7 +6,7 @@ B5 (sản phẩm) và C2 (máy tính) dùng lại các hàm ở đây.
 import re
 from collections.abc import Sequence
 
-from sqlalchemy import Select, and_, func, or_, select
+from sqlalchemy import Select, and_, func, or_, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.modules.catalog.models import HsCode
@@ -120,6 +120,38 @@ async def upsert_hs_codes(session: AsyncSession, rows: Sequence[HsCodeIn]) -> in
         )
     await session.commit()
     return len(rows)
+
+
+async def ensure_hs_codes(session: AsyncSession, rows: Sequence[HsCodeIn]) -> int:
+    """Thêm mã còn thiếu, KHÔNG sửa mã đã có và KHÔNG commit (người gọi giữ transaction).
+    Trả số mã mới thêm."""
+    existing = set(
+        await session.scalars(select(HsCode.code).where(HsCode.code.in_([r.code for r in rows])))
+    )
+    added = 0
+    for row in rows:
+        if row.code in existing:
+            continue
+        session.add(
+            HsCode(
+                code=row.code,
+                name_vi=row.name_vi,
+                name_en=row.name_en,
+                chapter=row.code[:2],
+                category=row.category,
+                is_calculator_supported=row.is_calculator_supported,
+            )
+        )
+        added += 1
+    await session.flush()
+    return added
+
+
+async def set_calculator_supported(session: AsyncSession, codes: Sequence[str]) -> None:
+    """Đặt is_calculator_supported theo danh sách mã (true cho mã trong danh sách). Không commit."""
+    await session.execute(
+        update(HsCode).where(HsCode.code.in_(list(codes))).values(is_calculator_supported=True)
+    )
 
 
 async def merge_nomenclature(

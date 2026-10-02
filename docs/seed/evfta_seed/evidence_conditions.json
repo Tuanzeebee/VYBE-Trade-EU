@@ -1,0 +1,38 @@
+[
+  {
+    "code": "ALWAYS",
+    "description_vi": "Luôn áp dụng"
+  },
+  {
+    "code": "CONSIGNMENT_GT_6000",
+    "description_vi": "Tổng trị giá lô > 6.000 EUR (NĐT1 Điều 15.2)"
+  },
+  {
+    "code": "CONSIGNMENT_LE_6000",
+    "description_vi": "Tổng trị giá lô ≤ 6.000 EUR — thay thế cho EUR.1"
+  },
+  {
+    "code": "IF_TRANSIT_THIRD_COUNTRY",
+    "description_vi": "Hàng quá cảnh/lưu kho/chia lô ở nước thứ ba"
+  },
+  {
+    "code": "IF_WILD_CAUGHT",
+    "description_vi": "Nguyên liệu đánh bắt tự nhiên"
+  },
+  {
+    "code": "IF_AQUACULTURE",
+    "description_vi": "Nguyên liệu nuôi trồng"
+  },
+  {
+    "code": "IF_LISTED_2019_1793",
+    "description_vi": "Mã + xuất xứ VN có trong phụ lục hiện hành của QĐ 2019/1793"
+  },
+  {
+    "code": "IF_NOT_PHYTO_EXEMPT",
+    "description_vi": "Loại quả không thuộc danh mục miễn chứng nhận KDTV"
+  },
+  {
+    "code": "IF_FRESH_AND_NOT_PHYTO_EXEMPT",
+    "description_vi": "Hàng tươi và không thuộc danh mục miễn"
+  }
+]

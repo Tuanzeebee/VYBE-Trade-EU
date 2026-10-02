@@ -17,6 +17,7 @@ from app.core.errors import AppError
 from app.modules.auth.schemas import CurrentUser
 from app.modules.catalog import service as catalog
 from app.modules.companies import service as companies
+from app.modules.compliance import disclaimer
 from app.modules.compliance.calculators import (
     EU_MEMBERS,
     CountryTerms,
@@ -27,28 +28,58 @@ from app.modules.compliance.calculators import (
     RooResult,
     RuleData,
     TariffLineData,
+    evfta_rate,
     quota_scenarios,
     rank_markets,
     roo_verdict,
     tariff_savings,
+    unreviewed_components,
+)
+from app.modules.compliance.evidence import (
+    RequirementData,
+    ShipmentData,
+    list_review_state,
+    required_evidence,
 )
 from app.modules.compliance.models import (
     CheckType,
     ComplianceCheck,
+    ComplianceEvidenceRequirement,
+    ComplianceEvidenceType,
+    HsCodeCompliance,
     ImportCountryTerm,
     ProductSpecificRule,
     ProductSubtype,
+    RooQuestion,
     SectorAlert,
+    StagingCategory,
     TariffLine,
     TariffQuota,
     TradeAgreement,
 )
+from app.modules.compliance.origin import (
+    REASONS,
+    SUPPORTED_RULE_TYPES,
+    OriginAnswers,
+    OriginRule,
+    Reason,
+    answer_schema,
+    evaluate_origin,
+)
 from app.modules.compliance.schemas import (
     AgreementOut,
+    EvidenceItemOut,
     MarketRowOut,
     MarketsIn,
     MarketsOut,
+    OriginIn,
+    OriginInputOut,
+    OriginOut,
+    OriginQuestionOut,
+    OriginQuestionsOut,
+    OriginReasonOut,
     QuotaInfoOut,
+    RequiredEvidenceOut,
     RooIn,
     RooOut,
     ScenarioOut,
@@ -101,8 +132,11 @@ def _reviewed_lines(
 ) -> Select[TariffLine]:
     """Dòng thuế ĐÃ DUYỆT (demo=True: dòng minh hoạ) đang hiệu lực vào `on_date` (valid_until là
     ngày đã hết hiệu lực)."""
+    # demo=True nghĩa là "dòng chưa duyệt": SPEC_compliance_data_20_codes §2.2 cho dùng và hiển thị
+    # kèm lưu ý ở mọi môi trường (thay cho điều kiện is_demo + cờ của AGENTS.md §6.2).
+    visible = TariffLine.reviewed_by.is_(None) if demo else TariffLine.reviewed_by.is_not(None)
     return select(TariffLine).where(
-        _visibility(TariffLine, demo),
+        visible,
         TariffLine.hs_code == hs_code,
         TariffLine.destination == destination,
         TariffLine.agreement_code == agreement,
@@ -195,13 +229,18 @@ async def lookup_lines_visible(
     destination: str = UNION_DESTINATION,
     agreement: str = DEFAULT_AGREEMENT,
 ) -> tuple[list[TariffLine], bool]:
-    """Dòng đã duyệt; không có và DEMO bật thì dòng minh hoạ. Trả (dòng, có dùng dữ liệu minh hoạ).
+    """Dòng đã duyệt; không có thì dòng chưa duyệt. Trả (dòng, có dùng dữ liệu chưa duyệt).
     Dòng đã duyệt luôn thắng — không bao giờ trộn hai loại."""
-    lines = await lookup_lines(session, code, on_date, destination, agreement)
-    if lines or not demo_enabled():
-        return lines, False
-    demo = await lookup_lines(session, code, on_date, destination, agreement, demo=True)
-    return demo, bool(demo)
+    # Mã cụ thể nhất thắng: với mỗi khoá (mã nhập, rồi nhóm 6 số) thử dòng đã duyệt, rồi dòng chưa
+    # duyệt, trước khi lùi sang khoá chung hơn — để dòng 8 số mới không bị dòng 6 số cũ che mất.
+    for key in await _supported_keys(session, code):
+        lines = await find_lines(session, key, destination, on_date, agreement)
+        if lines:
+            return lines, False
+        unreviewed = await find_lines(session, key, destination, on_date, agreement, demo=True)
+        if unreviewed:
+            return unreviewed, True
+    return [], False
 
 
 async def _agreement_out(session: AsyncSession, code: str) -> AgreementOut:
@@ -411,6 +450,9 @@ async def log_check(
     agreement_code: str | None = None,
     data_status: str | None = None,
     scenario: dict[str, Any] | None = None,
+    review_state: str | None = None,
+    unreviewed_components: list[str] | None = None,
+    data_version: str | None = None,
 ) -> ComplianceCheck:
     """Nơi DUY NHẤT ghi compliance_checks: đúng một bản ghi cho mỗi lần chạy máy tính, kể cả khách.
 
@@ -434,6 +476,9 @@ async def log_check(
         agreement_code=agreement_code,
         data_status=data_status,
         scenario=scenario,
+        review_state=review_state,
+        unreviewed_components=unreviewed_components,
+        data_version=data_version,
     )
     session.add(row)
     await session.flush()
@@ -494,11 +539,13 @@ async def export_checks_csv(session: AsyncSession, *, actor_id: uuid.UUID) -> As
         yield buf.getvalue()
 
 
-def _line_data(line: TariffLine) -> TariffLineData:
+def _line_data(line: TariffLine, evfta_rate_now: Decimal | None = None) -> TariffLineData:
     return TariffLineData(
         duty_type=line.duty_type,
         mfn_rate=line.mfn_rate,
-        evfta_rate_current=line.evfta_rate_current,
+        evfta_rate_current=evfta_rate_now
+        if evfta_rate_now is not None
+        else line.evfta_rate_current,
         quota_required=line.quota_required,
         quota_note=line.quota_note,
         condition_note=line.condition_note,
@@ -507,14 +554,50 @@ def _line_data(line: TariffLine) -> TariffLineData:
     )
 
 
+async def _evfta_rate_now(
+    session: AsyncSession, line: TariffLine, on_date: dt.date
+) -> Decimal | None:
+    """Thuế EVFTA tại `on_date` tính từ thuế cơ sở và nhóm lộ trình (SPEC §5.1). None khi dòng
+    không có base_rate/nhóm lộ trình (dòng nhập tay dùng evfta_rate_current như trước)."""
+    if line.base_rate is None or line.staging_category is None:
+        return None
+    stage = await session.get(StagingCategory, line.staging_category)
+    if stage is None:
+        return None
+    return evfta_rate(line.base_rate, stage.stages, on_date)
+
+
+async def _review_state(
+    session: AsyncSession, line: TariffLine | None
+) -> tuple[str, list[str], str | None]:
+    """(review_state, thành phần chưa duyệt, data_version) của kết quả thuế."""
+    if line is None:
+        return disclaimer.REVIEWED, [], None
+    mapping = await session.get(HsCodeCompliance, line.hs_code)
+    components = unreviewed_components(
+        line_reviewed=line.reviewed_by is not None,
+        mfn_source=line.mfn_source,
+        mfn_verified_taric=line.mfn_verified_taric,
+        cn_mapping_verified=None if mapping is None else mapping.cn_mapping_verified,
+    )
+    state = disclaimer.UNREVIEWED if components else disclaimer.REVIEWED
+    return state, components, line.data_version
+
+
 async def calculate_tariff(
-    session: AsyncSession, data: TariffIn, user: CurrentUser | None
+    session: AsyncSession,
+    data: TariffIn,
+    user: CurrentUser | None,
+    accept_language: str | None = None,
+    on_date: dt.date | None = None,
 ) -> TariffOut:
-    """Công cụ tính thuế (C2, U12). Mỗi lần chạy hợp lệ ghi ĐÚNG MỘT compliance_checks."""
+    """Công cụ tính thuế (C2, U12). Mỗi lần chạy hợp lệ ghi ĐÚNG MỘT compliance_checks.
+
+    `on_date` chỉ cho test/nội bộ (mặc định hôm nay UTC)."""
     code = catalog.normalize_code(data.hs_code)
     if code is None:
         raise AppError("invalid_hs_code", "HS code must be 6 to 8 digits", 422)
-    today = dt.datetime.now(dt.UTC).date()
+    today = on_date or dt.datetime.now(dt.UTC).date()
     agreement = data.agreement
     if agreement is None:
         if data.destination in EU_MEMBERS:
@@ -534,8 +617,9 @@ async def calculate_tariff(
         else ([], False)
     )
     line = lines[0] if lines else None
+    rate_now = None if line is None else await _evfta_rate_now(session, line, today)
     result = tariff_savings(
-        None if line is None else _line_data(line),
+        None if line is None else _line_data(line, rate_now),
         len(lines),
         data.product_value,
         data.shipments_per_year,
@@ -587,6 +671,12 @@ async def calculate_tariff(
         conditions = ["origin", "allocation", "subtype"]
         if quota.licence_note_vi or quota.licence_note_en:
             conditions.append("licence")
+    review_state, unreviewed, data_version = await _review_state(
+        session, line if len(lines) == 1 else None
+    )
+    reasons = {"unsupported": ["NOT_SUPPORTED"], "needs_review": ["NEEDS_MANUAL_CHECK"]}.get(
+        status, []
+    )
     company_id = await companies.get_company_id(session, user.id) if user else None
     check = await log_check(
         session,
@@ -602,6 +692,9 @@ async def calculate_tariff(
         tariff_line_id=line.id if line is not None and len(lines) == 1 else None,
         agreement_code=agreement if line is not None else None,
         data_status=data_status,
+        review_state=review_state if line is not None else None,
+        unreviewed_components=unreviewed if line is not None else None,
+        data_version=data_version,
         scenario=(
             {
                 "subtype_code": data.subtype_code,
@@ -617,6 +710,10 @@ async def calculate_tariff(
     await session.commit()
     return TariffOut(
         data_status=data_status,
+        review_state=review_state,
+        unreviewed_components=unreviewed,
+        disclaimer=disclaimer.disclaimer_for(review_state, accept_language) if line else None,
+        reasons=reasons,
         review_reason=None if quota_result is None else quota_result.review_reason,
         scenarios=[
             ScenarioOut(
@@ -657,7 +754,9 @@ async def calculate_tariff(
     )
 
 
-async def preview_tariff(session: AsyncSession, hs_code: str) -> TariffPreviewOut:
+async def preview_tariff(
+    session: AsyncSession, hs_code: str, accept_language: str | None = None
+) -> TariffPreviewOut:
     """Xem thuế MFN so với EVFTA của một mã HS. Chỉ đọc: KHÔNG ghi compliance_checks
     (không phải lần chạy máy tính chủ động). Dùng cùng dòng đã duyệt và cùng hàm thuần với C2."""
     code = catalog.normalize_code(hs_code)
@@ -666,11 +765,16 @@ async def preview_tariff(session: AsyncSession, hs_code: str) -> TariffPreviewOu
     today = dt.datetime.now(dt.UTC).date()
     lines, demo_used = await lookup_lines_visible(session, code, today)
     line = lines[0] if lines else None
+    rate_now = None if line is None else await _evfta_rate_now(session, line, today)
     result = tariff_savings(
-        None if line is None else _line_data(line), len(lines), _RATE_BASIS, None
+        None if line is None else _line_data(line, rate_now), len(lines), _RATE_BASIS, None
     )
     ok = result.status == "ok" and line is not None
+    review_state, unreviewed, _ = await _review_state(session, line if len(lines) == 1 else None)
     return TariffPreviewOut(
+        review_state=review_state,
+        unreviewed_components=unreviewed,
+        disclaimer=disclaimer.disclaimer_for(review_state, accept_language) if line else None,
         data_status=(DEMO_UNREVIEWED if demo_used else REVIEWED) if line is not None else None,
         alerts=await alerts_for(session, code, today),
         status=result.status,
@@ -798,6 +902,270 @@ async def calculate_roo(session: AsyncSession, data: RooIn, user: CurrentUser | 
         threshold_pct=rule.threshold_pct if rule is not None else None,
         rule_text=rule.rule_text if rule is not None else None,
         source=rule.source if rule is not None else None,
+    )
+
+
+def _unreviewed_rules(hs_code: str, on_date: dt.date) -> Select[Any]:
+    return select(ProductSpecificRule).where(
+        ProductSpecificRule.reviewed_by.is_(None),
+        ProductSpecificRule.hs_code == hs_code,
+        ProductSpecificRule.valid_from <= on_date,
+        or_(ProductSpecificRule.valid_until.is_(None), ProductSpecificRule.valid_until > on_date),
+    )
+
+
+async def lookup_rules_visible(
+    session: AsyncSession, code: str, on_date: dt.date
+) -> list[ProductSpecificRule]:
+    """Quy tắc đã duyệt; không có thì quy tắc chưa duyệt (SPEC §2.2). Đã duyệt luôn thắng."""
+    for key in await _supported_keys(
+        session, code
+    ):  # mã cụ thể nhất thắng (xem lookup_lines_visible)
+        reviewed = await find_rules(session, key, on_date)
+        if reviewed:
+            return reviewed
+        rows = list(await session.scalars(_unreviewed_rules(key, on_date)))
+        if rows:
+            return rows
+    return []
+
+
+async def _origin_review_state(
+    session: AsyncSession, rule: ProductSpecificRule | None
+) -> tuple[str, list[str]]:
+    if rule is None:
+        return disclaimer.REVIEWED, []
+    mapping = await session.get(HsCodeCompliance, rule.hs_code)
+    components: list[str] = []
+    if rule.reviewed_by is None:
+        components.append("origin_rule")
+    if mapping is not None and not mapping.cn_mapping_verified:
+        components.append("cn_mapping")
+    return (disclaimer.UNREVIEWED if components else disclaimer.REVIEWED), components
+
+
+async def required_evidence_for(
+    session: AsyncSession,
+    code: str,
+    shipment: ShipmentData,
+    on_date: dt.date,
+    accept_language: str | None = None,
+) -> RequiredEvidenceOut:
+    """Danh sách bằng chứng cho lô (SPEC §5.3). Dòng chưa duyệt vẫn trả kèm review_state."""
+    rows: list[Any] = []
+    for key in await _supported_keys(session, code):
+        result = await session.execute(
+            select(ComplianceEvidenceRequirement, ComplianceEvidenceType)
+            .join(
+                ComplianceEvidenceType,
+                ComplianceEvidenceType.code == ComplianceEvidenceRequirement.evidence_type,
+            )
+            .where(
+                ComplianceEvidenceRequirement.hs_code == key,
+                ComplianceEvidenceRequirement.valid_from <= on_date,
+                or_(
+                    ComplianceEvidenceRequirement.valid_until.is_(None),
+                    ComplianceEvidenceRequirement.valid_until > on_date,
+                ),
+            )
+        )
+        rows = list(result.all())
+        if rows:
+            break
+    items = required_evidence(
+        [
+            RequirementData(
+                evidence_type=t.code,
+                condition=r.condition.value,
+                name_vi=t.name_vi,
+                name_en=t.name_en,
+                layer=t.layer.value,
+                scope=t.scope.value,
+                blocks=t.blocks.value,
+                legal_status=t.legal_status.value,
+                reviewed=r.reviewed_by is not None,
+            )
+            for r, t in rows
+        ],
+        shipment,
+        get_settings().eur1_consignment_threshold_eur,
+    )
+    state = list_review_state(items)
+    return RequiredEvidenceOut(
+        items=[
+            EvidenceItemOut(
+                code=i.code,
+                name_vi=i.name_vi,
+                name_en=i.name_en,
+                layer=i.layer,
+                scope=i.scope,
+                blocks=i.blocks,
+                legal_status=i.legal_status,
+                status=i.status,
+                conditions=list(i.conditions),
+                review_state=i.review_state,
+            )
+            for i in items
+        ],
+        review_state=state,
+        disclaimer=disclaimer.disclaimer_for(state, accept_language),
+    )
+
+
+def _origin_rule(rule: ProductSpecificRule | None) -> OriginRule | None:
+    if rule is None:
+        return None
+    return OriginRule(
+        rule.rule_type.value,
+        rule.params or {},
+        rule.requires_expert,
+        rule.requires_expert_reason,
+    )
+
+
+async def origin_questions(
+    session: AsyncSession, hs_code: str, accept_language: str | None = None
+) -> OriginQuestionsOut:
+    """Câu hỏi hiển thị và các trường trả lời cho một mã (không ghi compliance_checks)."""
+    code = catalog.normalize_code(hs_code)
+    if code is None:
+        raise AppError("invalid_hs_code", "HS code must be 6 to 8 digits", 422)
+    rules = await lookup_rules_visible(session, code, dt.datetime.now(dt.UTC).date())
+    rule = rules[0] if len(rules) == 1 else None
+    inputs = () if rule is None else answer_schema(rule.rule_type.value)
+    state, components = await _origin_review_state(session, rule if inputs else None)
+    questions = (
+        []
+        if not inputs or rule is None
+        else list(
+            await session.scalars(
+                select(RooQuestion)
+                .where(RooQuestion.hs_code == rule.hs_code)
+                .order_by(RooQuestion.position)
+            )
+        )
+    )
+    return OriginQuestionsOut(
+        status="ok" if inputs else "unsupported",
+        hs_code=code,
+        hs_formatted=catalog.format_code(code),
+        rule_type=rule.rule_type.value if rule is not None and inputs else None,
+        requires_expert=bool(rule and inputs and rule.requires_expert),
+        questions=[
+            OriginQuestionOut(order=q.position, text_vi=q.text_vi, text_en=q.text_en)
+            for q in questions
+        ],
+        inputs=[
+            OriginInputOut(
+                name=i.name, kind=i.kind, options=list(i.options), required_if=i.required_if
+            )
+            for i in inputs
+        ],
+        review_state=state,
+        unreviewed_components=components,
+        disclaimer=disclaimer.disclaimer_for(state, accept_language) if inputs else None,
+    )
+
+
+async def _preference_savings(
+    session: AsyncSession, code: str, value: Decimal, on_date: dt.date
+) -> Decimal | None:
+    """Tiết kiệm thuế của lô khi được hưởng ưu đãi; không ghi compliance_checks (chỉ đọc)."""
+    lines, _ = await lookup_lines_visible(session, code, on_date)
+    if len(lines) != 1:
+        return None
+    rate = await _evfta_rate_now(session, lines[0], on_date)
+    result = tariff_savings(_line_data(lines[0], rate), 1, value, None)
+    return result.savings if result.status == "ok" else None
+
+
+async def calculate_origin(
+    session: AsyncSession,
+    data: OriginIn,
+    user: CurrentUser | None,
+    accept_language: str | None = None,
+) -> OriginOut:
+    """Máy tính xuất xứ Chương 3/7/8. Mỗi lần chạy hợp lệ ghi ĐÚNG MỘT compliance_checks."""
+    code = catalog.normalize_code(data.hs_code)
+    if code is None:
+        raise AppError("invalid_hs_code", "HS code must be 6 to 8 digits", 422)
+    today = dt.datetime.now(dt.UTC).date()
+    rules = await lookup_rules_visible(session, code, today)
+    rule = rules[0] if len(rules) == 1 else None
+    origin_rule = _origin_rule(rule)
+    supported = origin_rule is not None and origin_rule.rule_type in SUPPORTED_RULE_TYPES
+    answers = OriginAnswers(**{f: getattr(data, f) for f in OriginAnswers.__dataclass_fields__})
+    if supported:
+        result = evaluate_origin(origin_rule, answers)
+        status: str = result.status
+        reasons: tuple[Reason, ...] = result.reasons
+        missing, extra = result.inputs_missing, result.additional_evidence
+    else:
+        status, reasons, missing, extra = "unsupported", (REASONS["NOT_SUPPORTED"],), (), ()
+    state, components = await _origin_review_state(session, rule if supported else None)
+    evidence_list = (
+        await required_evidence_for(
+            session,
+            code,
+            ShipmentData(
+                consignment_value_eur=data.consignment_value_eur,
+                raw_material_source=data.raw_material_source,
+                transit_third_country=data.transit_third_country,
+                is_fresh=data.is_fresh,
+            ),
+            today,
+            accept_language,
+        )
+        if supported
+        else None
+    )
+    if evidence_list is not None and evidence_list.review_state == disclaimer.UNREVIEWED:
+        components = [*components, "evidence_requirements"]
+        state = disclaimer.UNREVIEWED
+    savings: Decimal | None = None
+    if status == "fail" and data.consignment_value_eur is not None:
+        savings = Decimal("0.00")
+    elif status == "pass" and data.consignment_value_eur is not None:
+        savings = await _preference_savings(session, code, data.consignment_value_eur, today)
+    company_id = await companies.get_company_id(session, user.id) if user else None
+    check = await log_check(
+        session,
+        check_type=CheckType.roo,
+        hs_code=code,
+        destination_country=ORIGIN_DESTINATION,
+        origin_country="VN",
+        status=status,
+        company_id=company_id,
+        product_value=data.consignment_value_eur,
+        originating_status=status,
+        rule_id=rule.id if rule is not None and supported else None,
+        review_state=state if supported else None,
+        unreviewed_components=components if supported else None,
+        data_version=rule.data_version if rule is not None and supported else None,
+    )
+    await session.commit()
+    shown = rule if supported else None
+    return OriginOut(
+        check_id=str(check.id),
+        status=status,
+        reasons=[OriginReasonOut(code=r.code, vi=r.vi, en=r.en) for r in reasons],
+        inputs_missing=list(missing),
+        additional_evidence=list(extra),
+        required_evidence=evidence_list,
+        hs_code=code,
+        hs_formatted=catalog.format_code(code),
+        rule_type=shown.rule_type.value if shown else None,
+        rule_text_vi=shown.rule_text if shown else None,
+        rule_text_en=shown.rule_text_en if shown else None,
+        insufficient_operations_vi=shown.insufficient_operations_vi if shown else None,
+        tolerance_note_vi=shown.tolerance_note_vi if shown else None,
+        risk_note_vi=shown.risk_note_vi if shown else None,
+        requires_expert=bool(shown and shown.requires_expert),
+        preference_applicable=status == "pass",
+        savings=savings,
+        review_state=state,
+        unreviewed_components=components,
+        disclaimer=disclaimer.disclaimer_for(state, accept_language) if supported else None,
     )
 
 

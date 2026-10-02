@@ -66,9 +66,10 @@ async def test_market_with_several_agreements_must_choose(
     assert r.status_code == 422 and r.json()["error"]["code"] == "agreement_required"
     chosen = (await api_client.post(URL, json=body(destination="JP", agreement="VJEPA"))).json()
     assert (chosen["status"], chosen["preferential_rate"]) == ("ok", "1.0000")
-    # Hiệp định chỉ có dòng chưa duyệt: không bao giờ dùng.
+    # Hiệp định chỉ có dòng chưa duyệt: không được gợi ý để chọn, nhưng nếu chọn thì dùng được
+    # kèm lưu ý chưa duyệt (SPEC_compliance_data_20_codes §2.2).
     rcep = (await api_client.post(URL, json=body(destination="JP", agreement="RCEP"))).json()
-    assert rcep["status"] == "unsupported" and rcep["preferential_rate"] is None
+    assert rcep["review_state"] == "UNREVIEWED" and rcep["disclaimer"] is not None
 
 
 async def test_options_need_valid_inputs(api_client: AsyncClient) -> None:

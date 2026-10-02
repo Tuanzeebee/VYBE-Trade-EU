@@ -59,10 +59,15 @@ async def test_seed_refuses_production(
 
 
 @pytest.mark.usefixtures("seeded")
-async def test_flag_off_demo_rows_never_leak(api_client: AsyncClient) -> None:
+async def test_flag_off_unreviewed_tariff_shown_with_disclaimer_other_demo_rows_hidden(
+    api_client: AsyncClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """SPEC_compliance_data_20_codes §2.2: dòng thuế chưa duyệt luôn dùng được, kèm lưu ý, kể cả
+    khi cờ tắt. Phân nhóm, hạn ngạch, cảnh báo ngành vẫn chỉ lộ khi cờ demo bật."""
+    monkeypatch.setattr(get_settings(), "demo_compliance_data", False)
     out = (await api_client.post(URL, json=body(hs_code=ROASTED_COFFEE))).json()
-    assert (out["status"], out["data_status"]) == ("unsupported", None)
-    assert_no_numbers(out)
+    assert (out["status"], out["data_status"]) == ("ok", "demo_unreviewed")
+    assert out["review_state"] == "UNREVIEWED" and out["disclaimer"] is not None
     options = (
         await api_client.get(
             "/api/public/tariff/options", params={"hs_code": RICE, "destination": "DE"}
@@ -87,23 +92,23 @@ async def test_flag_on_demo_rows_are_labelled(
 
 
 @pytest.mark.usefixtures("seeded", "demo_on")
-async def test_production_never_shows_demo_rows_even_with_the_flag(
+async def test_production_shows_unreviewed_tariff_with_disclaimer(
     api_client: AsyncClient, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     monkeypatch.setattr(get_settings(), "env", "prod")
     out = (await api_client.post(URL, json=body(hs_code=ROASTED_COFFEE))).json()
-    assert out["status"] == "unsupported" and out["data_status"] is None
-    assert_no_numbers(out)
+    assert out["status"] == "ok" and out["review_state"] == "UNREVIEWED"
+    assert out["disclaimer"] is not None
 
 
 @pytest.mark.usefixtures("demo_on")
-async def test_non_demo_draft_rows_never_leak_even_with_the_flag(
+async def test_non_demo_draft_tariff_rows_are_shown_with_disclaimer(
     api_client: AsyncClient, db_session: AsyncSession
 ) -> None:
     await add_line(db_session, None, hs=ROASTED_COFFEE)  # nháp chưa duyệt, is_demo = false
     out = (await api_client.post(URL, json=body(hs_code=ROASTED_COFFEE))).json()
-    assert out["status"] == "unsupported"
-    assert_no_numbers(out)
+    assert out["status"] == "ok" and out["review_state"] == "UNREVIEWED"
+    assert out["disclaimer"] is not None
 
 
 @pytest.mark.usefixtures("seeded", "demo_on")

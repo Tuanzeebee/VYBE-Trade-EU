@@ -39,6 +39,13 @@ class RuleType(StrEnum):
     CTH = "CTH"  # chuyển đổi nhóm HS (4 số)
     MaxNOM = "MaxNOM"  # nguyên liệu không xuất xứ tối đa % giá xuất xưởng
     CTH_OR_MaxNOM = "CTH_OR_MaxNOM"  # CTH hoặc MaxNOM — đạt một trong hai
+    # SPEC_compliance_data_20_codes: quy tắc Chương 3/7/8, tham số nằm ở cột params (jsonb)
+    WO_PRODUCT = "WO_PRODUCT"
+    WO_PRODUCT_VESSEL = "WO_PRODUCT_VESSEL"
+    WO_MATERIALS = "WO_MATERIALS"
+    WO_MATERIALS_VESSEL = "WO_MATERIALS_VESSEL"
+    WO_MATERIALS_TOLERANCE = "WO_MATERIALS_TOLERANCE"
+    WO_MATERIALS_SUGAR_CAP = "WO_MATERIALS_SUGAR_CAP"
 
 
 class CheckType(StrEnum):
@@ -87,6 +94,10 @@ class ComplianceCheck(Base):
     # U13/U14: data_status = reviewed | demo_unreviewed; scenario = đầu vào kịch bản hạn ngạch
     data_status: Mapped[str | None] = mapped_column(String(24))
     scenario: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
+    # SPEC_compliance_data_20_codes §6.2: REVIEWED | UNREVIEWED + thành phần chưa duyệt
+    review_state: Mapped[str | None] = mapped_column(String(16))
+    unreviewed_components: Mapped[list[str] | None] = mapped_column(JSONB)
+    data_version: Mapped[str | None] = mapped_column(String(32))
     status: Mapped[str] = mapped_column(String(16))
     created_at: Mapped[dt.datetime] = mapped_column(
         DateTime(timezone=True), server_default=text("clock_timestamp()")
@@ -212,6 +223,13 @@ class TariffLine(Base):
     quota_note_en: Mapped[str | None] = mapped_column(Text)
     condition_note_en: Mapped[str | None] = mapped_column(Text)
     source_url: Mapped[str | None] = mapped_column(String(1024))
+    # SPEC_compliance_data_20_codes: thuế cơ sở lộ trình (%), nguồn MFN, cờ đã đối chiếu TARIC
+    base_rate: Mapped[Decimal | None] = mapped_column(Numeric(7, 4))
+    mfn_source: Mapped[str | None] = mapped_column(String(24))
+    mfn_verified_taric: Mapped[bool] = mapped_column(
+        Boolean, default=False, server_default=text("false")
+    )
+    data_version: Mapped[str | None] = mapped_column(String(32))
     # U14: dữ liệu minh hoạ (AGENTS.md §6.2 sửa đổi) — chỉ dùng khi cờ bật và không phải prod.
     is_demo: Mapped[bool] = mapped_column(Boolean, default=False, server_default=text("false"))
     reviewed_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id"))
@@ -240,7 +258,7 @@ class ProductSpecificRule(Base):
         CheckConstraint(
             "(rule_type IN ('MaxNOM', 'CTH_OR_MaxNOM')"
             " AND threshold_pct IS NOT NULL AND threshold_pct > 0 AND threshold_pct <= 100)"
-            " OR (rule_type IN ('WO', 'CTH') AND threshold_pct IS NULL)",
+            " OR (rule_type NOT IN ('MaxNOM', 'CTH_OR_MaxNOM') AND threshold_pct IS NULL)",
             name="threshold_matches_rule_type",
         ),
     )
@@ -256,6 +274,14 @@ class ProductSpecificRule(Base):
         Boolean, default=False, server_default=text("false")
     )
     source: Mapped[str | None] = mapped_column(String(1024))
+    # SPEC_compliance_data_20_codes: tham số theo rule_type (kiểm bằng rule_params), văn bản vi/en
+    params: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
+    rule_text_en: Mapped[str | None] = mapped_column(Text)
+    insufficient_operations_vi: Mapped[str | None] = mapped_column(Text)
+    tolerance_note_vi: Mapped[str | None] = mapped_column(Text)
+    risk_note_vi: Mapped[str | None] = mapped_column(Text)
+    requires_expert_reason: Mapped[str | None] = mapped_column(Text)
+    data_version: Mapped[str | None] = mapped_column(String(32))
     reviewed_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id"))
     reviewed_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
     valid_from: Mapped[dt.date] = mapped_column(Date)
@@ -446,3 +472,235 @@ class SectorAlert(Base):
     updated_at: Mapped[dt.datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
     )
+
+
+# --- SPEC_compliance_data_20_codes: lớp dữ liệu cho 20 mã Chương 3/7/8 ---
+# Tên bảng bằng chứng có tiền tố compliance_ vì evidence_types đã thuộc module verification.
+
+
+class EvidenceLayer(StrEnum):
+    TARIFF = "TARIFF"
+    ORIGIN_RECORD = "ORIGIN_RECORD"
+    MARKET_ACCESS = "MARKET_ACCESS"
+    PLATFORM_BADGE = "PLATFORM_BADGE"
+
+
+class EvidenceScope(StrEnum):
+    SHIPMENT = "SHIPMENT"
+    COMPANY = "COMPANY"
+
+
+class EvidenceBlocks(StrEnum):
+    TARIFF_PREFERENCE = "TARIFF_PREFERENCE"
+    IMPORT = "IMPORT"
+    NONE = "NONE"
+
+
+class EvidenceLegalStatus(StrEnum):
+    VERIFIED = "VERIFIED"
+    TO_VERIFY = "TO_VERIFY"
+    PLATFORM_RULE = "PLATFORM_RULE"
+
+
+class EvidenceCondition(StrEnum):
+    """Enum đóng (evidence_conditions.json): không cho thêm điều kiện tự do."""
+
+    ALWAYS = "ALWAYS"
+    CONSIGNMENT_GT_6000 = "CONSIGNMENT_GT_6000"
+    CONSIGNMENT_LE_6000 = "CONSIGNMENT_LE_6000"
+    IF_TRANSIT_THIRD_COUNTRY = "IF_TRANSIT_THIRD_COUNTRY"
+    IF_WILD_CAUGHT = "IF_WILD_CAUGHT"
+    IF_AQUACULTURE = "IF_AQUACULTURE"
+    IF_LISTED_2019_1793 = "IF_LISTED_2019_1793"
+    IF_NOT_PHYTO_EXEMPT = "IF_NOT_PHYTO_EXEMPT"
+    IF_FRESH_AND_NOT_PHYTO_EXEMPT = "IF_FRESH_AND_NOT_PHYTO_EXEMPT"
+
+
+class HsCodeCompliance(Base):
+    """Phần tuân thủ của một mã HS/CN (catalog giữ danh mục, module này giữ phần tuân thủ).
+    cn_mapping_verified=false: mã CN 2012 chưa đối chiếu CN 2026 → kết quả kèm lưu ý chưa duyệt."""
+
+    __tablename__ = "hs_code_compliance"
+
+    hs_code: Mapped[str] = mapped_column(ForeignKey("hs_codes.code"), primary_key=True)
+    cn_code_current: Mapped[str | None] = mapped_column(String(8))
+    cn_mapping_verified: Mapped[bool] = mapped_column(
+        Boolean, default=False, server_default=text("false")
+    )
+    product_group_vi: Mapped[str | None] = mapped_column(String(255))
+    evidence_group: Mapped[str | None] = mapped_column(String(32))
+    data_version: Mapped[str | None] = mapped_column(String(32))
+    created_at: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=text("clock_timestamp()")
+    )
+
+
+class StagingCategory(Base):
+    """Nhóm lộ trình cắt giảm thuế (A, B3, B5, B7): số bậc và ngày về 0."""
+
+    __tablename__ = "staging_categories"
+    __table_args__ = (CheckConstraint("stages >= 1", name="stages_positive"),)
+
+    code: Mapped[str] = mapped_column(String(16), primary_key=True)
+    stages: Mapped[int] = mapped_column(SmallInteger)
+    zero_from: Mapped[dt.date] = mapped_column(Date)
+    data_version: Mapped[str | None] = mapped_column(String(32))
+    created_at: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=text("clock_timestamp()")
+    )
+
+
+class RooQuestion(Base):
+    """Câu hỏi hiển thị theo mã (văn bản hiển thị, không dùng làm logic)."""
+
+    __tablename__ = "roo_questions"
+    __table_args__ = (UniqueConstraint("hs_code", "position", name="hs_code_position"),)
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, primary_key=True, default=uuid.uuid4, server_default=text("gen_random_uuid()")
+    )
+    hs_code: Mapped[str] = mapped_column(ForeignKey("hs_codes.code"), index=True)
+    position: Mapped[int] = mapped_column(SmallInteger)
+    text_vi: Mapped[str] = mapped_column(Text)
+    text_en: Mapped[str | None] = mapped_column(Text)
+    data_version: Mapped[str | None] = mapped_column(String(32))
+
+
+class ComplianceEvidenceType(Base):
+    __tablename__ = "compliance_evidence_types"
+    __table_args__ = (
+        CheckConstraint(
+            "(reviewed_by IS NULL) = (reviewed_at IS NULL)", name="reviewed_by_and_at_together"
+        ),
+    )
+
+    code: Mapped[str] = mapped_column(String(40), primary_key=True)
+    layer: Mapped[EvidenceLayer] = mapped_column(Enum(EvidenceLayer, name="evidence_layer"))
+    scope: Mapped[EvidenceScope] = mapped_column(Enum(EvidenceScope, name="evidence_scope"))
+    name_vi: Mapped[str] = mapped_column(String(255))
+    name_en: Mapped[str | None] = mapped_column(String(255))
+    issuer_vi: Mapped[str | None] = mapped_column(String(255))
+    validity_months: Mapped[int | None] = mapped_column(SmallInteger)
+    retention_years: Mapped[int | None] = mapped_column(SmallInteger)
+    blocks: Mapped[EvidenceBlocks] = mapped_column(Enum(EvidenceBlocks, name="evidence_blocks"))
+    legal_basis: Mapped[str | None] = mapped_column(Text)
+    legal_status: Mapped[EvidenceLegalStatus] = mapped_column(
+        Enum(EvidenceLegalStatus, name="evidence_legal_status")
+    )
+    source: Mapped[str | None] = mapped_column(String(1024))
+    reviewed_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id"))
+    reviewed_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
+    valid_from: Mapped[dt.date] = mapped_column(Date)
+    valid_until: Mapped[dt.date | None] = mapped_column(Date)
+    data_version: Mapped[str | None] = mapped_column(String(32))
+    created_at: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=text("clock_timestamp()")
+    )
+
+
+class ComplianceEvidenceRequirement(Base):
+    """Một dòng mã HS × loại bằng chứng × điều kiện; mỗi dòng được duyệt riêng."""
+
+    __tablename__ = "compliance_evidence_requirements"
+    __table_args__ = (
+        UniqueConstraint(
+            "hs_code", "evidence_type", "condition", "valid_from", name="hs_type_condition_from"
+        ),
+        CheckConstraint(
+            "(reviewed_by IS NULL) = (reviewed_at IS NULL)", name="reviewed_by_and_at_together"
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, primary_key=True, default=uuid.uuid4, server_default=text("gen_random_uuid()")
+    )
+    hs_code: Mapped[str] = mapped_column(ForeignKey("hs_codes.code"), index=True)
+    evidence_type: Mapped[str] = mapped_column(ForeignKey("compliance_evidence_types.code"))
+    condition: Mapped[EvidenceCondition] = mapped_column(
+        Enum(EvidenceCondition, name="evidence_condition")
+    )
+    source: Mapped[str | None] = mapped_column(String(1024))
+    reviewed_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id"))
+    reviewed_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
+    valid_from: Mapped[dt.date] = mapped_column(Date)
+    valid_until: Mapped[dt.date | None] = mapped_column(Date)
+    data_version: Mapped[str | None] = mapped_column(String(32))
+    created_at: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=text("clock_timestamp()")
+    )
+
+
+class EvidenceTypeMapping(Base):
+    """Ánh xạ loại bằng chứng cấp công ty của compliance → loại bằng chứng công ty nộp ở
+    verification (hai danh mục có mã khác nhau). Dữ liệu luật TM duyệt; chưa duyệt vẫn dùng được
+    nhưng kết quả kèm lưu ý (unreviewed_components có evidence_mapping)."""
+
+    __tablename__ = "evidence_type_mappings"
+    __table_args__ = (
+        CheckConstraint(
+            "(reviewed_by IS NULL) = (reviewed_at IS NULL)", name="reviewed_by_and_at_together"
+        ),
+    )
+
+    compliance_code: Mapped[str] = mapped_column(
+        ForeignKey("compliance_evidence_types.code"), primary_key=True
+    )
+    verification_code: Mapped[str] = mapped_column(String(64))
+    note: Mapped[str | None] = mapped_column(Text)
+    reviewed_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id"))
+    reviewed_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
+    data_version: Mapped[str | None] = mapped_column(String(32))
+    created_at: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=text("clock_timestamp()")
+    )
+
+
+class CompanyBadge(Base):
+    """Huy hiệu EVFTA-verified theo nhóm hàng (hs_codes.category) của một công ty (SPEC §5.4).
+
+    Văn bản hiển thị: "Đã được cấp C/O EUR.1 cho nhóm hàng này trong 12 tháng gần nhất" — KHÔNG
+    được diễn đạt thành "hàng đạt xuất xứ EVFTA". Chỉ job/badge service ghi; đổi trạng thái ghi
+    audit_logs. Song song với mức xác minh `evfta_verified` của verification, không thay thế."""
+
+    __tablename__ = "company_badges"
+    __table_args__ = (UniqueConstraint("company_id", "category", name="company_category"),)
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, primary_key=True, default=uuid.uuid4, server_default=text("gen_random_uuid()")
+    )
+    company_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("companies.id"), index=True)
+    category: Mapped[str] = mapped_column(String(32))
+    is_active: Mapped[bool] = mapped_column(Boolean)
+    granted_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
+    revoked_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
+    review_state: Mapped[str] = mapped_column(String(16))
+    unreviewed_components: Mapped[list[str]] = mapped_column(
+        JSONB, default=list, server_default=text("'[]'::jsonb")
+    )
+    missing: Mapped[list[str]] = mapped_column(
+        JSONB, default=list, server_default=text("'[]'::jsonb")
+    )
+    updated_at: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+
+class ComplianceReviewIssue(Base):
+    """Hàng đợi admin: luật sư trả "SUA" (cần sửa) cho một dòng dữ liệu tuân thủ. Dòng đó KHÔNG được
+    duyệt; admin sửa dữ liệu rồi đánh dấu đã xử lý."""
+
+    __tablename__ = "compliance_review_issues"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, primary_key=True, default=uuid.uuid4, server_default=text("gen_random_uuid()")
+    )
+    entity_type: Mapped[str] = mapped_column(String(48))
+    entity_id: Mapped[str] = mapped_column(String(96))
+    label: Mapped[str] = mapped_column(String(255))  # mô tả dòng để admin tìm (mã HS · loại · ĐK)
+    note: Mapped[str] = mapped_column(Text)
+    created_by: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"))
+    created_at: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=text("clock_timestamp()")
+    )
+    resolved_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id"))
+    resolved_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
