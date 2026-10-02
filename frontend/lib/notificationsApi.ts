@@ -81,6 +81,9 @@ export function describe(notification: Pick<AppNotification, 'type' | 'payload'>
         ? `Đã xác nhận thanh toán đơn ${reference}. Dịch vụ đã được mở.`
         : 'Đơn hàng của bạn đã được cập nhật.';
     }
+    case 'reengagement':
+      // J4: thông báo tổng hợp cho người đã vắng một thời gian; số đếm theo loại nằm trong payload.
+      return 'Có thông báo chưa đọc đang chờ bạn từ lần truy cập trước.';
     case 'new_match': {
       const name = notification.payload.company_name;
       return typeof name === 'string' && name

@@ -69,10 +69,10 @@ async def _owner_company_id(session: AsyncSession, user: CurrentUser) -> uuid.UU
 async def _check_buyer_identifiers(session: AsyncSession, company_id: uuid.UUID) -> None:
     """KYB nhẹ của buyer cần ít nhất một định danh để admin đối chiếu (VIES với VAT, sổ đăng ký)."""
     company = await companies.get_company_for_review(session, company_id)
-    if not (company.vat_number or company.registration_number):
+    if not (company.vat_number or company.registration_number or company.lei_code):
         raise AppError(
             "identifier_required",
-            "Add your VAT number or company registration number before requesting verification",
+            "Add a VAT number, registration number or LEI code before requesting verification",
             422,
         )
 

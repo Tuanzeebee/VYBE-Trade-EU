@@ -14,8 +14,6 @@ export interface HomePageProps {
   setSelectedCategory: (cat: string | null) => void;
   selectedMarket: string;
   setSelectedMarket: (m: string) => void;
-  selectedTrust: string;
-  setSelectedTrust: (t: string) => void;
   onNavigate: (page: any) => void;
 }
 
@@ -26,8 +24,6 @@ export default function HomePage({
   setSelectedCategory,
   selectedMarket,
   setSelectedMarket,
-  selectedTrust,
-  setSelectedTrust,
   onNavigate,
 }: HomePageProps) {
   const { tr, t } = useLanguage();
@@ -37,7 +33,7 @@ export default function HomePage({
     setIsLiveSearchOpen(false);
     router.push(q.trim() ? `/suppliers?q=${encodeURIComponent(q.trim())}` : '/suppliers');
   };
-  const [activeDropdown, setActiveDropdown] = useState<'category' | 'market' | 'trust' | null>(null);
+  const [activeDropdown, setActiveDropdown] = useState<'category' | 'market' | null>(null);
 
   return (
     <>
@@ -169,38 +165,6 @@ export default function HomePage({
                         className="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 cursor-pointer"
                       >
                         {tr(m)}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Dropdown 3: Trust Level */}
-              <div className="relative border-t sm:border-t-0 sm:border-l border-slate-200 w-full sm:w-auto">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setActiveDropdown(activeDropdown === 'trust' ? null : 'trust');
-                    setIsLiveSearchOpen(false);
-                  }}
-                  className="w-full sm:w-auto px-4 py-1.5 text-xs sm:text-[13px] font-medium text-slate-700 hover:text-slate-900 flex items-center justify-between sm:justify-start gap-1.5 cursor-pointer whitespace-nowrap"
-                >
-                  <span>{tr(selectedTrust === 'Tất cả cấp độ' ? t.hero.trustLevel : selectedTrust)}</span>
-                  <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
-                </button>
-
-                {activeDropdown === 'trust' && (
-                  <div className="absolute left-0 sm:left-auto top-full mt-2 w-48 bg-white border border-slate-200 rounded-xl shadow-xl py-1 z-30">
-                    {['Tất cả cấp độ', 'L1 - Basic Verified', 'L2 - Enhanced Verified', 'L3 - VYBE Certified'].map((lv) => (
-                      <button
-                        key={lv}
-                        onClick={() => {
-                          setSelectedTrust(lv);
-                          setActiveDropdown(null);
-                        }}
-                        className="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 cursor-pointer"
-                      >
-                        {tr(lv)}
                       </button>
                     ))}
                   </div>

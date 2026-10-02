@@ -40,6 +40,16 @@ def split_vat(country: str, raw: str) -> tuple[str, str] | None:
     return (code, text) if code in EU_VAT_COUNTRIES and text else None
 
 
+def _gleif_address(address: object) -> str | None:
+    """Ghép địa chỉ pháp lý của GLEIF thành một chuỗi; thiếu thì None."""
+    if not isinstance(address, dict):
+        return None
+    lines = [str(x) for x in address.get("addressLines") or []]
+    parts = [*lines, address.get("postalCode"), address.get("city"), address.get("country")]
+    text = " ".join(str(p) for p in parts if p)
+    return text or None
+
+
 class HttpCompanyLookup:
     def __init__(self, client: httpx.AsyncClient | None = None) -> None:
         s = get_settings()
@@ -73,7 +83,14 @@ class HttpCompanyLookup:
             return LookupResult("unknown", {"error": "gleif_unavailable"})
         entity = attributes.get("entity", {})
         status = attributes.get("registration", {}).get("status")
-        detail = {"name": entity.get("legalName", {}).get("name"), "registration_status": status}
+        detail: dict[str, Any] = {
+            "name": entity.get("legalName", {}).get("name"),
+            "registration_status": status,
+            # Số đăng ký quốc gia, cơ quan đăng ký và địa chỉ pháp lý: để đối chiếu với hồ sơ khai.
+            "registered_as": entity.get("registeredAs"),
+            "registered_at": (entity.get("registeredAt") or {}).get("id"),
+            "legal_address": _gleif_address(entity.get("legalAddress")),
+        }
         return LookupResult("pass" if status == "ISSUED" else "fail", detail)
 
 

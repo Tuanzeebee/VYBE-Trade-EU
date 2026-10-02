@@ -5,6 +5,7 @@ import type { components } from './api/schema';
 export type EvidenceType = components['schemas']['EvidenceTypePublic'];
 export type Evidence = components['schemas']['EvidenceOut'];
 export type ChecklistItem = components['schemas']['ChecklistItem'];
+export type ExtractionPreview = components['schemas']['ExtractionPreviewOut'];
 
 export const EVIDENCE_FILE_TYPES = ['application/pdf', 'image/png', 'image/jpeg'] as const;
 export const MAX_EVIDENCE_BYTES = 10 * 1024 * 1024;
@@ -25,6 +26,13 @@ async function read<T>(call: () => Promise<{ data?: T; response: Response }>): P
 export const listEvidenceTypes = () => read(() => createApiClient().GET('/api/exporter/evidence-types'));
 export const listEvidence = () => read(() => createApiClient().GET('/api/exporter/evidences'));
 export const getChecklist = () => read(() => createApiClient().GET('/api/exporter/evidences/checklist'));
+
+/**
+ * Đọc thử file đã tải lên TRƯỚC khi nộp (loại giấy tờ, số, tổ chức cấp, ngày) để điền sẵn form. Chỉ là gợi ý
+ * để người nộp kiểm tra; lỗi mạng hoặc server → null (form vẫn nhập tay được).
+ */
+export const previewExtraction = (fileKey: string) =>
+  read(() => createApiClient().POST('/api/exporter/evidences/extract-preview', { body: { file_key: fileKey } }));
 
 /** Tải file lên kho qua URL ký sẵn; trả khóa lưu vào bằng chứng. */
 export async function uploadEvidenceFile(file: File): Promise<string> {
@@ -48,11 +56,11 @@ export async function uploadEvidenceFile(file: File): Promise<string> {
 export interface EvidenceInput {
   typeCode: string;
   fileKey: string;
-  certificateNumber: string;
-  issuer: string;
-  /** U4: không bắt buộc — admin nhập khi duyệt nếu cần. */
-  issuedAt: string;
-  expiresAt: string;
+  /** Điền sẵn từ việc đọc file (người nộp đã kiểm tra); bỏ trống thì admin đọc trên giấy tờ khi duyệt. */
+  certificateNumber?: string;
+  issuer?: string;
+  issuedAt?: string;
+  expiresAt?: string;
   /** Loại "Khác": tên giấy tờ do người nộp ghi. */
   customTypeName?: string;
 }
@@ -69,10 +77,10 @@ export async function createEvidence(input: EvidenceInput): Promise<Evidence> {
       body: {
         type_code: input.typeCode,
         file_key: input.fileKey,
-        certificate_number: blank(input.certificateNumber),
-        issuer: blank(input.issuer),
-        issued_at: blank(input.issuedAt),
-        expires_at: blank(input.expiresAt),
+        certificate_number: blank(input.certificateNumber ?? ''),
+        issuer: blank(input.issuer ?? ''),
+        issued_at: blank(input.issuedAt ?? ''),
+        expires_at: blank(input.expiresAt ?? ''),
         custom_type_name: blank(input.customTypeName ?? ''),
       },
     });

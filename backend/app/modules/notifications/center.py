@@ -25,6 +25,7 @@ _EXPORTER_LINKS: dict[NotificationType, str] = {
     NotificationType.profile_viewed: "/exporter/profile-views",
     NotificationType.sector_alert: "/exporter",
     NotificationType.order: "/exporter/billing",
+    NotificationType.reengagement: "/exporter",
 }
 _BUYER_LINKS: dict[NotificationType, str] = {
     NotificationType.verification_status: "/buyer",
@@ -35,6 +36,7 @@ _BUYER_LINKS: dict[NotificationType, str] = {
     NotificationType.profile_viewed: "/buyer",
     NotificationType.sector_alert: "/buyer",
     NotificationType.order: "/buyer",
+    NotificationType.reengagement: "/buyer",
 }
 
 MAX_LIMIT = 100

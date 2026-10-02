@@ -22,6 +22,7 @@ class NotificationType(StrEnum):
     profile_viewed = "profile_viewed"
     sector_alert = "sector_alert"
     order = "order"
+    reengagement = "reengagement"
 
 
 class Notification(Base):

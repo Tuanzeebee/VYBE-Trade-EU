@@ -1,4 +1,5 @@
 import uuid
+from datetime import datetime
 from typing import Literal
 
 from pydantic import BaseModel, EmailStr, Field, field_validator
@@ -51,6 +52,14 @@ class Contact(BaseModel):
     email: str
     preferred_language: str
     role: str = "exporter"
+
+
+class LoginActivity(BaseModel):
+    """Người dùng còn hoạt động và lần đăng nhập cuối (J4: tìm người vắng mặt)."""
+
+    user_id: uuid.UUID
+    role: str
+    last_login_at: datetime
 
 
 class DeleteAccountIn(BaseModel):

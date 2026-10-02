@@ -165,6 +165,21 @@ async def list_profile_viewers(
 
 
 # ── Dấu vân tay và ghi sự kiện (G3) ────────────────────────────────────────────
+async def last_opened_at(
+    session: AsyncSession, user_ids: list[uuid.UUID]
+) -> dict[uuid.UUID, dt.datetime]:
+    """Lần mở dashboard gần nhất của từng người (J4): tín hiệu "còn dùng" tốt hơn last_login_at vì
+    phiên đăng nhập kéo dài. Người chưa từng mở thì vắng trong kết quả."""
+    if not user_ids:
+        return {}
+    rows = await session.execute(
+        select(DashboardEvent.user_id, func.max(DashboardEvent.opened_at))
+        .where(DashboardEvent.user_id.in_(user_ids))
+        .group_by(DashboardEvent.user_id)
+    )
+    return {uid: opened for uid, opened in rows.all()}
+
+
 def _fingerprint(data: Any) -> str:
     raw = json.dumps(data, sort_keys=True, default=str, ensure_ascii=False)
     return hashlib.sha256(raw.encode()).hexdigest()[:16]

@@ -35,8 +35,11 @@ from app.modules.auth import service as auth
 from app.modules.auth.schemas import CurrentUser
 from app.modules.companies import service as companies
 from app.modules.verification.checks import (
+    address_matches,
     domain_age_status,
     name_matches,
+    registration_numbers_match,
+    registry_address,
     same_organisation_domain,
 )
 from app.modules.verification.models import ApprovedEstablishment, VerificationCheck
@@ -154,7 +157,13 @@ async def _email_and_website(
 
 
 async def _registries(
-    sources: CheckSources, name: str, country: str, vat: str | None, reg: str | None
+    sources: CheckSources,
+    name: str,
+    country: str,
+    vat: str | None,
+    reg: str | None,
+    address: str | None = None,
+    lei: str | None = None,
 ) -> list[Result]:
     out: list[Result] = []
     parts = split_vat(country, vat) if vat else None
@@ -172,10 +181,51 @@ async def _registries(
                     "vies",
                 )
             )
-    code = (reg or "").strip().upper()
+        # C3: địa chỉ khai báo có khớp địa chỉ trong sổ đăng ký không. Chỉ khi nguồn có công bố địa
+        # chỉ (VIES nhiều nước trả "---"); Việt Nam chưa có nguồn tự động nên admin kiểm tay.
+        registered_address = registry_address(v.detail.get("address"))
+        if v.status == "pass" and registered_address and address:
+            out.append(
+                (
+                    "vies_address_match",
+                    "pass" if address_matches(address, registered_address) else "warning",
+                    {"registered_address": registered_address, "declared_address": address},
+                    "vies",
+                )
+            )
+    # Mã LEI khai riêng; hồ sơ cũ có thể để LEI trong ô số đăng ký nên vẫn nhận.
+    reg_code = (reg or "").strip().upper()
+    code = (lei or "").strip().upper() or (reg_code if LEI_PATTERN.match(reg_code) else "")
     if LEI_PATTERN.match(code):
-        lei = await sources.lookup.lei(code)
-        out.append(("gleif_lei", lei.status, lei.detail, "gleif"))
+        found = await sources.lookup.lei(code)
+        out.append(("gleif_lei", found.status, found.detail, "gleif"))
+        if found.status == "pass":
+            registered_as = found.detail.get("registered_as")
+            declared_reg = reg if reg and not LEI_PATTERN.match(reg_code) else None
+            if declared_reg and isinstance(registered_as, str) and registered_as.strip():
+                ok = registration_numbers_match(declared_reg, registered_as)
+                out.append(
+                    (
+                        "gleif_registration_match",
+                        "pass" if ok else "warning",
+                        {
+                            "declared_registration_number": declared_reg,
+                            "registered_as": registered_as,
+                            "registered_at": found.detail.get("registered_at"),
+                        },
+                        "gleif",
+                    )
+                )
+            legal_address = registry_address(found.detail.get("legal_address"))
+            if legal_address and address:
+                out.append(
+                    (
+                        "gleif_address_match",
+                        "pass" if address_matches(address, legal_address) else "warning",
+                        {"legal_address": legal_address, "declared_address": address},
+                        "gleif",
+                    )
+                )
     return out
 
 
@@ -229,6 +279,8 @@ async def run_checks(
         company.country,
         company.vat_number,
         company.registration_number,
+        company.address,
+        company.lei_code,
     )
     address = company.factory_address or company.address
     if company.location_public and company.latitude is None and address:

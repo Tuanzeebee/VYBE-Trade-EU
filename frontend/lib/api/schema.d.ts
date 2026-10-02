@@ -2491,6 +2491,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/exporter/evidences/extract-preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Extract Preview
+         * @description Đọc thử file vừa tải lên để điền sẵn form nộp bằng chứng; không tạo bản ghi.
+         */
+        post: operations["extract_preview_api_exporter_evidences_extract_preview_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/exporter/evidences/{evidence_id}/extraction": {
         parameters: {
             query?: never;
@@ -3376,6 +3396,8 @@ export interface components {
             vat_number?: string | null;
             /** Eori Number */
             eori_number?: string | null;
+            /** Lei Code */
+            lei_code?: string | null;
             /** Hide Profile Views */
             hide_profile_views?: boolean | null;
             /** Legal Name */
@@ -3387,6 +3409,10 @@ export interface components {
             country?: string;
             /** Export Markets */
             export_markets?: string[];
+            /** Export Market Channels */
+            export_market_channels?: {
+                [key: string]: "official" | "unofficial";
+            };
             /** Languages Spoken */
             languages_spoken?: string[];
             /** Sourcing Categories */
@@ -3470,6 +3496,10 @@ export interface components {
             facility_codes: components["schemas"]["FacilityCodeOut"][];
             /** Export Markets */
             export_markets: string[];
+            /** Export Market Channels */
+            export_market_channels?: {
+                [key: string]: string;
+            };
             /** Languages Spoken */
             languages_spoken: string[];
             /** Company Size */
@@ -3480,6 +3510,8 @@ export interface components {
             vat_number: string | null;
             /** Eori Number */
             eori_number: string | null;
+            /** Lei Code */
+            lei_code?: string | null;
             /** Hide Profile Views */
             hide_profile_views: boolean;
             /** Sourcing Categories */
@@ -3581,6 +3613,8 @@ export interface components {
             vat_number?: string | null;
             /** Eori Number */
             eori_number?: string | null;
+            /** Lei Code */
+            lei_code?: string | null;
             /** Hide Profile Views */
             hide_profile_views?: boolean | null;
             /** Legal Name */
@@ -3589,6 +3623,10 @@ export interface components {
             country?: string | null;
             /** Export Markets */
             export_markets?: string[] | null;
+            /** Export Market Channels */
+            export_market_channels?: {
+                [key: string]: "official" | "unofficial";
+            } | null;
             /** Languages Spoken */
             languages_spoken?: string[] | null;
             /** Sourcing Categories */
@@ -4202,6 +4240,30 @@ export interface components {
             /** Comparison */
             comparison?: components["schemas"]["ExtractionFieldCompare"][];
         };
+        /** ExtractionPreviewIn */
+        ExtractionPreviewIn: {
+            /** File Key */
+            file_key: string;
+        };
+        /**
+         * ExtractionPreviewOut
+         * @description Đọc thử file đã tải lên TRƯỚC khi nộp: chỉ gợi ý để seller kiểm tra, không tạo bản ghi.
+         */
+        ExtractionPreviewOut: {
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "ready" | "failed" | "skipped";
+            /** Method */
+            method: ("text" | "vision" | "rules" | "text+rules") | null;
+            /** Fields */
+            fields: {
+                [key: string]: string | null;
+            };
+            /** Error */
+            error?: string | null;
+        };
         /** FacilityCodeIn */
         FacilityCodeIn: {
             /**
@@ -4612,7 +4674,7 @@ export interface components {
          *     của bản nâng cấp: ai đã xem hồ sơ (U9), cảnh báo ngành (U14), đơn hàng (U19).
          * @enum {string}
          */
-        NotificationType: "message" | "rfq" | "verification_status" | "new_match" | "expiry_alert" | "profile_viewed" | "sector_alert" | "order";
+        NotificationType: "message" | "rfq" | "verification_status" | "new_match" | "expiry_alert" | "profile_viewed" | "sector_alert" | "order" | "reengagement";
         /** OrderDecisionIn */
         OrderDecisionIn: {
             /** Note */
@@ -13126,6 +13188,41 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["TrustCriterionOut"][];
+                };
+            };
+        };
+    };
+    extract_preview_api_exporter_evidences_extract_preview_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ExtractionPreviewIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExtractionPreviewOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

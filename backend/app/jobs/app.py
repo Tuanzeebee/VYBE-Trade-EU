@@ -18,6 +18,7 @@ app = App(
     connector=PsycopgConnector(conninfo=conninfo_from_url(get_settings().database_url)),
     import_paths=[
         "app.jobs.verification_expiry",
+        "app.jobs.reengagement",
         "app.jobs.send_email",
         "app.jobs.generate_eur1",
         "app.jobs.translate_product",

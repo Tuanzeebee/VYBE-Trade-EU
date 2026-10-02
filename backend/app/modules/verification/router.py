@@ -50,6 +50,8 @@ from app.modules.verification.schemas import (
     EvidenceTypePublic,
     ExtractionApplyIn,
     ExtractionOut,
+    ExtractionPreviewIn,
+    ExtractionPreviewOut,
     FindingOut,
     ManualCheckIn,
     QueueItem,
@@ -337,6 +339,14 @@ async def trust_criteria(session: DB) -> list[TrustCriterionOut]:
 
 
 # ── AI đọc chứng nhận (U24): chỉ gợi ý; seller chọn áp, admin xem so sánh ─────────────────────
+@router.post("/api/exporter/evidences/extract-preview")
+async def extract_preview(
+    data: ExtractionPreviewIn, user: Exporter, session: DB, storage: Store
+) -> ExtractionPreviewOut:
+    """Đọc thử file vừa tải lên để điền sẵn form nộp bằng chứng; không tạo bản ghi."""
+    return await extraction_service.preview_for_owner(session, user, storage, data)
+
+
 @router.get("/api/exporter/evidences/{evidence_id}/extraction")
 async def evidence_extraction(evidence_id: uuid.UUID, user: Exporter, session: DB) -> ExtractionOut:
     return await extraction_service.get_for_owner(session, user, evidence_id)

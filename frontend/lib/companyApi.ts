@@ -150,6 +150,10 @@ export function profileToCompany(profile: Record<string, string>): CompanyIn {
     facility_codes: facilityCodes(profile),
     languages_spoken: [...new Set(languages)],
     export_markets: [...new Set(markets)],
+    // Chỉ giữ kênh của thị trường đang chọn; thị trường không khai kênh thì không có khóa.
+    export_market_channels: Object.fromEntries(
+      Object.entries(parseMarketChannels(profile.marketChannels)).filter(([market]) => markets.includes(market)),
+    ),
     // Chỉ gửi khi đã có khóa để PATCH không xóa logo cũ.
     ...(blank(profile.logoKey) ? { logo_key: blank(profile.logoKey) } : {}),
   };
@@ -186,6 +190,23 @@ export const EXPORT_MARKETS: { code: string; label: string }[] = [
   { code: 'ASEAN', label: 'ASEAN' },
   ...COUNTRIES.filter((c) => c.code !== 'VN').map((c) => ({ code: c.code, label: c.name })),
 ];
+// B10: kênh xuất khẩu tự khai theo từng thị trường (tuỳ chọn); lưu trong form dạng "EU:official,CN:unofficial".
+export const TRADE_CHANNELS = ['official', 'unofficial'] as const;
+export type TradeChannel = (typeof TRADE_CHANNELS)[number];
+export const TRADE_CHANNEL_LABELS: Record<TradeChannel, string> = { official: 'Chính ngạch', unofficial: 'Tiểu ngạch' };
+
+export function parseMarketChannels(value: string | undefined): Record<string, TradeChannel> {
+  const result: Record<string, TradeChannel> = {};
+  for (const pair of (value ?? '').split(',')) {
+    const [market, channel] = pair.split(':').map((part) => part.trim());
+    if (market && (TRADE_CHANNELS as readonly string[]).includes(channel)) result[market] = channel as TradeChannel;
+  }
+  return result;
+}
+
+export const serializeMarketChannels = (channels: Record<string, TradeChannel>) =>
+  Object.entries(channels).map(([market, channel]) => `${market}:${channel}`).join(',');
+
 export const isEuCountry = (code: string) => EU_CODES.includes(code);
 
 /** Tên nước (hoặc mã) → mã ISO-2. Không có trong danh sách → null. */
@@ -221,6 +242,14 @@ const codeOf = (table: { code: string; label: string }[], label: string | undefi
 const labelOf = (table: { code: string; label: string }[], code: string | null | undefined) =>
   table.find((row) => row.code === code)?.label ?? '';
 
+// Mã LEI (ISO 17442): 18 ký tự chữ-số + 2 chữ số kiểm tra. Khớp quy tắc kiểm ở backend.
+export const normaliseLei = (value: string | undefined) => (value ?? '').replace(/\s+/g, '').toUpperCase();
+export const isValidLei = (value: string | undefined) => /^[A-Z0-9]{18}[0-9]{2}$/.test(normaliseLei(value));
+
+/** Buyer đã khai ít nhất một mã định danh (VAT, số đăng ký hoặc LEI) để admin và VIES/GLEIF đối chiếu. */
+export const buyerHasIdentifier = (profile: Record<string, string | undefined>) =>
+  Boolean(profile.vatNumber?.trim() || profile.registrationNumber?.trim() || normaliseLei(profile.leiCode));
+
 /** Form buyer cũ (chuỗi hiển thị) → CompanyIn. Chỉ gửi trường của buyer. */
 export function buyerProfileToCompany(profile: Record<string, string>): CompanyIn {
   const country = countryCode(profile.country ?? '');
@@ -241,6 +270,10 @@ export function buyerProfileToCompany(profile: Record<string, string>): CompanyI
     city: blank(profile.city) ?? blank(profile.region),
     phone: blank(profile.phone),
     registration_number: blank(profile.registrationNumber),
+    // Giấy phép & chứng nhận của buyer (bước 2): mã LEI, cơ quan và địa chỉ đăng ký để đối chiếu GLEIF / VIES.
+    lei_code: blank(normaliseLei(profile.leiCode)),
+    issuing_authority: blank(profile.issuingAuthority),
+    address: blank(profile.address),
     hide_profile_views: profile.hideProfileViews === 'true',
     vat_number: blank(profile.vatNumber),
     eori_number: blank(profile.eoriNumber),
@@ -261,6 +294,9 @@ function buyerToForm(company: CompanyOut): Record<string, string> {
     city: company.city ?? '',
     phone: company.phone ?? '',
     registrationNumber: company.registration_number ?? '',
+    leiCode: company.lei_code ?? '',
+    issuingAuthority: company.issuing_authority ?? '',
+    address: company.address ?? '',
     hideProfileViews: String(company.hide_profile_views ?? false),
     vatNumber: company.vat_number ?? '',
     eoriNumber: company.eori_number ?? '',
@@ -308,6 +344,7 @@ export function companyToForm(company: CompanyOut): Record<string, string> {
     ),
     languages: company.languages_spoken.join(','),
     markets: company.export_markets.join(','),
+    marketChannels: serializeMarketChannels((company.export_market_channels ?? {}) as Record<string, TradeChannel>),
     logoKey: company.logo_key ?? '',
   };
 }

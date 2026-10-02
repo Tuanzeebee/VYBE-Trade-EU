@@ -129,6 +129,13 @@ async def _file_hash(session: AsyncSession, storage: Storage, key: str) -> str:
     return digest
 
 
+async def owned_upload_key(session: AsyncSession, user: CurrentUser, key: str) -> uuid.UUID:
+    """Key file phải do chính công ty của exporter này tải lên (xem trước file). Trả company_id."""
+    company_id = await _exporter_company_id(session, user)
+    _check_file_key(company_id, key)
+    return company_id
+
+
 def check_dates(issued_at: dt.date | None, expires_at: dt.date | None) -> None:
     if issued_at is not None and issued_at > _today():
         raise AppError("invalid_dates", "issued_at cannot be in the future", 422)

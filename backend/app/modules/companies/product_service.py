@@ -9,6 +9,7 @@ from datetime import UTC, datetime, timedelta
 from typing import Any
 
 from sqlalchemy import Select, and_, exists, func, literal, or_, select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.audit import record
@@ -379,8 +380,16 @@ async def update_product(
 
 async def delete_product(session: AsyncSession, user: CurrentUser, product_id: uuid.UUID) -> None:
     company = await _owned_exporter(session, user)
-    await session.delete(await _get_owned(session, company, product_id))
-    await session.flush()
+    product = await _get_owned(session, company, product_id)
+    try:
+        async with session.begin_nested():
+            await session.delete(product)
+            await session.flush()
+    except IntegrityError:
+        # Sản phẩm đã được module khác tham chiếu (vd. RFQ) — không xóa cứng, chỉ ẩn khỏi
+        # danh mục để giữ lịch sử giao dịch; không import models của module khác (§5.1).
+        product.is_active = False
+        await session.flush()
     await completeness_service.refresh_score(session, company)
     await session.commit()
 

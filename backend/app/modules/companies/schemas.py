@@ -31,6 +31,8 @@ CountryCode = Annotated[str, StringConstraints(pattern=r"^[A-Z]{2}$")]
 # giới hạn ở EU — exporter Việt Nam bán đi Mỹ, Nhật, Hàn… cũng là năng lực buyer cần thấy.
 MarketCode = Annotated[str, StringConstraints(pattern=r"^(EU|ASEAN|[A-Z]{2})$")]
 ExportMarketCode = MarketCode
+# B10: kênh xuất khẩu tự khai theo từng thị trường; không diễn giải pháp lý trong nhãn.
+TradeChannel = Literal["official", "unofficial"]
 LangCode = Annotated[str, StringConstraints(pattern=r"^[a-z]{2}$")]
 # Quy mô nhân sự: buyer (B2) và seller (U2). Giá trị cố định để lọc/ghép được.
 CompanySize = Literal["1_10", "11_50", "51_200", "201_500", "gt_500"]
@@ -118,7 +120,17 @@ class _CompanyFields(BaseModel):
     procurement_estimate: ProcurementEstimate | None = None
     vat_number: Annotated[str, StringConstraints(max_length=32)] | None = None
     eori_number: Annotated[str, StringConstraints(max_length=20)] | None = None
+    lei_code: Annotated[str, StringConstraints(pattern=r"^[A-Z0-9]{18}[0-9]{2}$")] | None = None
     hide_profile_views: bool | None = None  # buyer (U9)
+
+    @field_validator("lei_code", mode="before")
+    @classmethod
+    def _normalise_lei(cls, v: object) -> object:
+        """Chữ hoa, bỏ khoảng trắng; chuỗi rỗng coi như không khai."""
+        if isinstance(v, str):
+            v = "".join(v.split()).upper()
+            return v or None
+        return v
 
 
 class CompanyIn(_CompanyFields):
@@ -127,6 +139,9 @@ class CompanyIn(_CompanyFields):
     ]
     country: CountryCode = "VN"
     export_markets: list[ExportMarketCode] = Field(default_factory=list, max_length=50)
+    export_market_channels: dict[ExportMarketCode, TradeChannel] = Field(
+        default_factory=dict, max_length=50
+    )
     languages_spoken: list[LangCode] = Field(default_factory=list, max_length=20)
     sourcing_categories: list[Industry] = Field(default_factory=list, max_length=20)
     facility_codes: list[FacilityCodeIn] = Field(default_factory=list, max_length=30)
@@ -144,6 +159,10 @@ class CompanyPatch(_CompanyFields):
     ) = None
     country: CountryCode | None = None
     export_markets: list[ExportMarketCode] | None = Field(default=None, max_length=50)
+    # Gửi lên = thay toàn bộ kênh; không gửi = giữ kênh cũ của các thị trường còn lại.
+    export_market_channels: dict[ExportMarketCode, TradeChannel] | None = Field(
+        default=None, max_length=50
+    )
     languages_spoken: list[LangCode] | None = Field(default=None, max_length=20)
     sourcing_categories: list[Industry] | None = Field(default=None, max_length=20)
     facility_codes: list[FacilityCodeIn] | None = Field(default=None, max_length=30)
@@ -189,11 +208,13 @@ class CompanyOut(BaseModel):
     longitude: Decimal | None = None
     facility_codes: list[FacilityCodeOut]
     export_markets: list[str]
+    export_market_channels: dict[str, str] = Field(default_factory=dict)
     languages_spoken: list[str]
     company_size: str | None
     procurement_estimate: str | None
     vat_number: str | None
     eori_number: str | None
+    lei_code: str | None = None
     hide_profile_views: bool
     sourcing_categories: list[str]
     verification_status: Literal["unverified", "pending", "verified", "rejected"]

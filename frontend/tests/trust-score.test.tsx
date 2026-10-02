@@ -60,6 +60,9 @@ describe('Điểm tín nhiệm (U23)', () => {
     const { container } = intl(<TrustScoreBadge trust={TRUST} locale="vi" />);
     const badge = screen.getByTestId('trust-score');
     expect(badge).toHaveTextContent('Điểm tín nhiệm: 62/100');
+    // E1: dấu (*) ngay sau điểm; rê chuột ra giải thích điểm do hệ thống VYBE Trade tính.
+    expect(badge).toHaveTextContent('62/100(*)');
+    expect(within(badge).getByText('(*)').getAttribute('title')).toContain('do hệ thống VYBE Trade tính');
     const info = within(badge).getByRole('link');
     expect(info.getAttribute('title')).toContain('do hệ thống VYBE Trade tính');
     expect(info).toHaveAttribute('href', '/vi/trust-score');

@@ -250,6 +250,19 @@ class ExtractionOut(BaseModel):
     comparison: list[ExtractionFieldCompare] = Field(default_factory=list)
 
 
+class ExtractionPreviewIn(BaseModel):
+    file_key: Annotated[str, Field(min_length=1, max_length=512)]
+
+
+class ExtractionPreviewOut(BaseModel):
+    """Đọc thử file đã tải lên TRƯỚC khi nộp: chỉ gợi ý để seller kiểm tra, không tạo bản ghi."""
+
+    status: Literal["ready", "failed", "skipped"]
+    method: Literal["text", "vision", "rules", "text+rules"] | None
+    fields: dict[str, str | None]
+    error: str | None = None
+
+
 class ExtractionApplyIn(BaseModel):
     fields: Annotated[
         list[Literal["certificate_number", "issuer", "issued_at", "expires_at"]],

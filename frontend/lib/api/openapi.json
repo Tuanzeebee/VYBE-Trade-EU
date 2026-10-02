@@ -10782,6 +10782,66 @@
         }
       }
     },
+    "/api/exporter/evidences/extract-preview": {
+      "post": {
+        "tags": [
+          "verification"
+        ],
+        "summary": "Extract Preview",
+        "description": "Đọc thử file vừa tải lên để điền sẵn form nộp bằng chứng; không tạo bản ghi.",
+        "operationId": "extract_preview_api_exporter_evidences_extract_preview_post",
+        "parameters": [
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExtractionPreviewIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExtractionPreviewOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/exporter/evidences/{evidence_id}/extraction": {
       "get": {
         "tags": [
@@ -13651,6 +13711,18 @@
             ],
             "title": "Eori Number"
           },
+          "lei_code": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Z0-9]{18}[0-9]{2}$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lei Code"
+          },
           "hide_profile_views": {
             "anyOf": [
               {
@@ -13682,6 +13754,20 @@
             "type": "array",
             "maxItems": 50,
             "title": "Export Markets"
+          },
+          "export_market_channels": {
+            "patternProperties": {
+              "^(EU|ASEAN|[A-Z]{2})$": {
+                "type": "string",
+                "enum": [
+                  "official",
+                  "unofficial"
+                ]
+              }
+            },
+            "type": "object",
+            "maxProperties": 50,
+            "title": "Export Market Channels"
           },
           "languages_spoken": {
             "items": {
@@ -14065,6 +14151,13 @@
             "type": "array",
             "title": "Export Markets"
           },
+          "export_market_channels": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Export Market Channels"
+          },
           "languages_spoken": {
             "items": {
               "type": "string"
@@ -14115,6 +14208,17 @@
               }
             ],
             "title": "Eori Number"
+          },
+          "lei_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lei Code"
           },
           "hide_profile_views": {
             "type": "boolean",
@@ -14640,6 +14744,18 @@
             ],
             "title": "Eori Number"
           },
+          "lei_code": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Z0-9]{18}[0-9]{2}$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lei Code"
+          },
           "hide_profile_views": {
             "anyOf": [
               {
@@ -14691,6 +14807,27 @@
               }
             ],
             "title": "Export Markets"
+          },
+          "export_market_channels": {
+            "anyOf": [
+              {
+                "patternProperties": {
+                  "^(EU|ASEAN|[A-Z]{2})$": {
+                    "type": "string",
+                    "enum": [
+                      "official",
+                      "unofficial"
+                    ]
+                  }
+                },
+                "type": "object",
+                "maxProperties": 50
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Export Market Channels"
           },
           "languages_spoken": {
             "anyOf": [
@@ -16752,6 +16889,84 @@
         ],
         "title": "ExtractionOut"
       },
+      "ExtractionPreviewIn": {
+        "properties": {
+          "file_key": {
+            "type": "string",
+            "maxLength": 512,
+            "minLength": 1,
+            "title": "File Key"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file_key"
+        ],
+        "title": "ExtractionPreviewIn"
+      },
+      "ExtractionPreviewOut": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "ready",
+              "failed",
+              "skipped"
+            ],
+            "title": "Status"
+          },
+          "method": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "text",
+                  "vision",
+                  "rules",
+                  "text+rules"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Method"
+          },
+          "fields": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "type": "object",
+            "title": "Fields"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "method",
+          "fields"
+        ],
+        "title": "ExtractionPreviewOut",
+        "description": "Đọc thử file đã tải lên TRƯỚC khi nộp: chỉ gợi ý để seller kiểm tra, không tạo bản ghi."
+      },
       "FacilityCodeIn": {
         "properties": {
           "code_type": {
@@ -18027,7 +18242,8 @@
           "expiry_alert",
           "profile_viewed",
           "sector_alert",
-          "order"
+          "order",
+          "reengagement"
         ],
         "title": "NotificationType",
         "description": "Năm loại của spec §4.9 (RFQ và tin nhắn do F1/F2 tạo; báo giá U8 dùng loại rfq) cùng ba loại\ncủa bản nâng cấp: ai đã xem hồ sơ (U9), cảnh báo ngành (U14), đơn hàng (U19)."
