@@ -6440,6 +6440,20 @@ export interface components {
             updated_at?: string | null;
         };
         /**
+         * StagingOut
+         * @description Bậc cắt giảm thuế EVFTA đang áp dụng tại ngày tính.
+         */
+        StagingOut: {
+            /** Category */
+            category: string;
+            /** Stage */
+            stage: number;
+            /** Stages */
+            stages: number;
+            /** Zero From */
+            zero_from: string | null;
+        };
+        /**
          * StatsOut
          * @description Số liệu dashboard nội bộ.
          */
@@ -6597,6 +6611,18 @@ export interface components {
             quantity?: number | string | null;
             /** Quota Allocated */
             quota_allocated?: ("yes" | "no" | "unknown") | null;
+            /** Incoterm */
+            incoterm?: ("EXW" | "FCA" | "FAS" | "FOB" | "CFR" | "CPT" | "CIF" | "CIP" | "DAP" | "DPU" | "DDP") | null;
+            /** Currency */
+            currency?: string | null;
+            /** Freight */
+            freight?: number | string | null;
+            /** Insurance */
+            insurance?: number | string | null;
+            /** Post Border Costs */
+            post_border_costs?: number | string | null;
+            /** Import Date */
+            import_date?: string | null;
         };
         /** TariffLineIn */
         TariffLineIn: {
@@ -6808,6 +6834,12 @@ export interface components {
             disclaimer?: string | null;
             /** Reasons */
             reasons?: string[];
+            /** Customs Value */
+            customs_value?: string | null;
+            valuation?: components["schemas"]["ValuationOut"] | null;
+            /** Rate Date */
+            rate_date?: string | null;
+            staging?: components["schemas"]["StagingOut"] | null;
             /** Review Reason */
             review_reason?: string | null;
             /** Scenarios */
@@ -7280,6 +7312,36 @@ export interface components {
             input?: unknown;
             /** Context */
             ctx?: Record<string, never>;
+        };
+        /** ValuationOut */
+        ValuationOut: {
+            /** Incoterm */
+            incoterm: string | null;
+            /** Currency */
+            currency: string | null;
+            /** Basis */
+            basis: ("CIF" | "FOB") | null;
+            /** Invoice Value */
+            invoice_value: string;
+            /** Customs Value */
+            customs_value: string | null;
+            /** Steps */
+            steps: components["schemas"]["ValueStepOut"][];
+            /** Warnings */
+            warnings: string[];
+        };
+        /**
+         * ValueStepOut
+         * @description Một bước từ giá hóa đơn đến trị giá tính thuế; amount có dấu (trừ là số âm).
+         */
+        ValueStepOut: {
+            /**
+             * Code
+             * @enum {string}
+             */
+            code: "invoice" | "freight" | "insurance" | "post_border";
+            /** Amount */
+            amount: string;
         };
         /** VerificationData */
         VerificationData: {

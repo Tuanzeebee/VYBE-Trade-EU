@@ -24344,6 +24344,43 @@
         "type": "object",
         "title": "SourcingNeedsOut"
       },
+      "StagingOut": {
+        "properties": {
+          "category": {
+            "type": "string",
+            "title": "Category"
+          },
+          "stage": {
+            "type": "integer",
+            "title": "Stage"
+          },
+          "stages": {
+            "type": "integer",
+            "title": "Stages"
+          },
+          "zero_from": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Zero From"
+          }
+        },
+        "type": "object",
+        "required": [
+          "category",
+          "stage",
+          "stages",
+          "zero_from"
+        ],
+        "title": "StagingOut",
+        "description": "Bậc cắt giảm thuế EVFTA đang áp dụng tại ngày tính."
+      },
       "StatsOut": {
         "properties": {
           "verified_count": {
@@ -24842,6 +24879,99 @@
               }
             ],
             "title": "Quota Allocated"
+          },
+          "incoterm": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "EXW",
+                  "FCA",
+                  "FAS",
+                  "FOB",
+                  "CFR",
+                  "CPT",
+                  "CIF",
+                  "CIP",
+                  "DAP",
+                  "DPU",
+                  "DDP"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Incoterm"
+          },
+          "currency": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Z]{3}$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Currency"
+          },
+          "freight": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Freight"
+          },
+          "insurance": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Insurance"
+          },
+          "post_border_costs": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Post Border Costs"
+          },
+          "import_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Import Date"
           }
         },
         "type": "object",
@@ -25723,6 +25853,50 @@
             },
             "type": "array",
             "title": "Reasons"
+          },
+          "customs_value": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Customs Value"
+          },
+          "valuation": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ValuationOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "rate_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rate Date"
+          },
+          "staging": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/StagingOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "review_reason": {
             "anyOf": [
@@ -27629,6 +27803,115 @@
           "type"
         ],
         "title": "ValidationError"
+      },
+      "ValuationOut": {
+        "properties": {
+          "incoterm": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Incoterm"
+          },
+          "currency": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Currency"
+          },
+          "basis": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "CIF",
+                  "FOB"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Basis"
+          },
+          "invoice_value": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Invoice Value"
+          },
+          "customs_value": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Customs Value"
+          },
+          "steps": {
+            "items": {
+              "$ref": "#/components/schemas/ValueStepOut"
+            },
+            "type": "array",
+            "title": "Steps"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Warnings"
+          }
+        },
+        "type": "object",
+        "required": [
+          "incoterm",
+          "currency",
+          "basis",
+          "invoice_value",
+          "customs_value",
+          "steps",
+          "warnings"
+        ],
+        "title": "ValuationOut"
+      },
+      "ValueStepOut": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "enum": [
+              "invoice",
+              "freight",
+              "insurance",
+              "post_border"
+            ],
+            "title": "Code"
+          },
+          "amount": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Amount"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "amount"
+        ],
+        "title": "ValueStepOut",
+        "description": "Một bước từ giá hóa đơn đến trị giá tính thuế; amount có dấu (trừ là số âm)."
       },
       "VerificationData": {
         "properties": {
