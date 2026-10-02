@@ -13131,6 +13131,20 @@
             "maxItems": 50,
             "title": "Export Markets"
           },
+          "export_market_channels": {
+            "patternProperties": {
+              "^(EU|ASEAN|[A-Z]{2})$": {
+                "type": "string",
+                "enum": [
+                  "official",
+                  "unofficial"
+                ]
+              }
+            },
+            "type": "object",
+            "maxProperties": 50,
+            "title": "Export Market Channels"
+          },
           "languages_spoken": {
             "items": {
               "type": "string",
@@ -13512,6 +13526,13 @@
             },
             "type": "array",
             "title": "Export Markets"
+          },
+          "export_market_channels": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Export Market Channels"
           },
           "languages_spoken": {
             "items": {
@@ -14139,6 +14160,27 @@
               }
             ],
             "title": "Export Markets"
+          },
+          "export_market_channels": {
+            "anyOf": [
+              {
+                "patternProperties": {
+                  "^(EU|ASEAN|[A-Z]{2})$": {
+                    "type": "string",
+                    "enum": [
+                      "official",
+                      "unofficial"
+                    ]
+                  }
+                },
+                "type": "object",
+                "maxProperties": 50
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Export Market Channels"
           },
           "languages_spoken": {
             "anyOf": [
@@ -17351,7 +17393,8 @@
           "expiry_alert",
           "profile_viewed",
           "sector_alert",
-          "order"
+          "order",
+          "reengagement"
         ],
         "title": "NotificationType",
         "description": "Năm loại của spec §4.9 (RFQ và tin nhắn do F1/F2 tạo; báo giá U8 dùng loại rfq) cùng ba loại\ncủa bản nâng cấp: ai đã xem hồ sơ (U9), cảnh báo ngành (U14), đơn hàng (U19)."

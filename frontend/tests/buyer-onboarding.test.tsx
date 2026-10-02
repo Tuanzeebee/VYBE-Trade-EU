@@ -93,6 +93,18 @@ describe('BuyerOnboarding tối giản (U5)', () => {
     expect(needs).toMatchObject({ quantity: '40', certifications: ['BRCGS'], budgetCurrency: 'EUR' });
   });
 
+  it('B11: chứng chỉ ngoài danh sách gợi ý nhập ở ô "Chứng chỉ khác", cùng tồn tại với mục đã tick', async () => {
+    const { onComplete } = renderBuyer();
+    fillStepOne();
+    submitStep();
+    fireEvent.click(await screen.findByRole('checkbox', { name: 'BRCGS' }));
+    fireEvent.change(screen.getByLabelText(/Chứng chỉ khác/), { target: { value: 'SMETA, Kosher,  , SMETA' } });
+    submitStep();
+    await waitFor(() => expect(onComplete).toHaveBeenCalled());
+    const [, needs] = onComplete.mock.calls[0];
+    expect(needs.certifications).toEqual(['BRCGS', 'SMETA', 'Kosher']);
+  });
+
   it('lỗi khi lưu hiện ngay trên form', async () => {
     renderBuyer(undefined, vi.fn().mockRejectedValue(new Error('Không thể lưu hồ sơ. Vui lòng thử lại.')));
     fillStepOne();

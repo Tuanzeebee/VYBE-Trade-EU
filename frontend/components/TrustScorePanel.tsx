@@ -33,10 +33,11 @@ export default function TrustScorePanel() {
         <span data-testid="trust-total" className="rounded-full bg-emerald-100 px-3 py-1 text-sm font-extrabold text-emerald-900">
           {trust.score === null || trust.score === undefined ? tr('Chưa tính được') : `${Number(trust.score).toFixed(0)}/100`}
         </span>
+        <abbr title={tr(TRUST_INFO)} className="text-sm font-semibold text-slate-600 no-underline">(*)</abbr>
         {trust.new_on_platform && <span className="rounded-full bg-sky-100 px-2 py-0.5 text-xs font-semibold text-sky-800">{tr('Mới trên nền tảng')}</span>}
       </div>
       <p className="mt-2 text-xs text-slate-600">
-        {tr(TRUST_INFO)}{' '}
+        (*) {tr(TRUST_INFO)}{' '}
         <Link href="/trust-score" className="font-semibold underline">
           {tr('Xem phương pháp')}
         </Link>

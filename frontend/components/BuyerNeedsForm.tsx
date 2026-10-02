@@ -3,7 +3,7 @@
 // Nhu cầu mua hàng của buyer (U5) — hỏi SAU bước thông tin cơ bản, mọi ô đều tùy chọn. Dùng chung cho
 // onboarding và trang "Hồ sơ công ty" của buyer. Chứng chỉ mong muốn là yêu cầu với NHÀ CUNG CẤP, không
 // phải chứng chỉ buyer phải có (demo 30/9: buyer bị hiểu nhầm là phải nộp chứng chỉ).
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { COUNTRIES, INDUSTRIES } from '../lib/companyApi';
 import { UNITS } from '../lib/productsApi';
@@ -29,6 +29,20 @@ export default function BuyerNeedsForm({ needs, onChange, interest, onInterestCh
     onInterestChange((interests.includes(label) ? interests.filter((i) => i !== label) : [...interests, label]).join(', '));
   const toggleCert = (cert: string) =>
     set('certifications', needs.certifications.includes(cert) ? needs.certifications.filter((c) => c !== cert) : [...needs.certifications, cert]);
+
+  // B11: chứng chỉ ngoài danh sách gợi ý ("Khác") — backend nhận chuỗi tự do, mỗi mục tối đa 64 ký tự.
+  const parseOther = (text: string) => [...new Set(text.split(',').map((c) => c.trim().slice(0, 64)).filter(Boolean))];
+  const otherCerts = needs.certifications.filter((c) => !WANTED_CERTIFICATES.includes(c));
+  const [otherText, setOtherText] = useState(otherCerts.join(', '));
+  // Hồ sơ tải về sau khi form đã dựng: đồng bộ ô nhập khi danh sách đổi từ bên ngoài.
+  useEffect(() => {
+    if (parseOther(otherText).join(', ') !== otherCerts.join(', ')) setOtherText(otherCerts.join(', '));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [otherCerts.join(', ')]);
+  const changeOther = (text: string) => {
+    setOtherText(text);
+    set('certifications', [...needs.certifications.filter((c) => WANTED_CERTIFICATES.includes(c)), ...parseOther(text)]);
+  };
 
   return (
     <div className="space-y-5">
@@ -79,6 +93,10 @@ export default function BuyerNeedsForm({ needs, onChange, interest, onInterestCh
             </label>
           ))}
         </div>
+        <label className={`${LABEL} mt-3`}>
+          {tr('Chứng chỉ khác (cách nhau bằng dấu phẩy)')}
+          <input className={INPUT} value={otherText} onChange={(e) => changeOther(e.target.value)} placeholder={tr('Ví dụ: SMETA, Kosher')} />
+        </label>
       </fieldset>
 
       <label className={LABEL}>

@@ -255,8 +255,8 @@ export default function ProductVerification({
                       <path d="M 8.5 15 L 10.5 17 L 14 13.5" stroke="#ffffff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
 
                       {/* Text L1 / Basic Verified */}
-                      <text x="30" y="16" fill="#1e3a8a" fontSize="13" fontWeight="700">{tr("L1")}</text>
-                      <text x="30" y="27" fill="#2563eb" fontSize="9.5" fontWeight="600">{tr("Basic Verified")}</text>
+                      <text x="30" y="16" fill="#1e3a8a" fontSize="13" fontWeight="700">{tr("Cấp 1")}</text>
+                      <text x="30" y="27" fill="#2563eb" fontSize="9.5" fontWeight="600">{tr("Cơ bản")}</text>
                     </g>
                   </g>
 
@@ -293,13 +293,13 @@ export default function ProductVerification({
                       <path d="M 8.5 15 L 10.5 17 L 14 13.5" stroke="#ffffff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
 
                       {/* Text L2 / Enhanced Verified */}
-                      <text x="30" y="16" fill="#134e4a" fontSize="13" fontWeight="700">{tr("L2")}</text>
-                      <text x="30" y="27" fill="#0f766e" fontSize="9.5" fontWeight="600">{tr("Enhanced Verified")}</text>
+                      <text x="30" y="16" fill="#134e4a" fontSize="13" fontWeight="700">{tr("Cấp 2")}</text>
+                      <text x="30" y="27" fill="#0f766e" fontSize="9.5" fontWeight="600">{tr("Nâng cao")}</text>
                     </g>
                   </g>
 
                   {/* =========================================================
-                      TIER L3: TOP CROWN PODIUM (VYBE Certified)
+                      TIER L3: TOP CROWN PODIUM (Chuyên sâu)
                      ========================================================= */}
                   <g transform="translate(30, 20)" filter="url(#glassReflect)">
                     {/* Top Face */}
@@ -350,8 +350,8 @@ export default function ProductVerification({
 
                     {/* L3 Label on Top Podium Left */}
                     <g transform="translate(18, 30)">
-                      <text x="0" y="16" fill="#0f172a" fontSize="18" fontWeight="800">{tr("L3")}</text>
-                      <text x="0" y="32" fill="#0f172a" fontSize="12" fontWeight="700">{tr("VYBE Certified")}</text>
+                      <text x="0" y="16" fill="#0f172a" fontSize="18" fontWeight="800">{tr("Cấp 3")}</text>
+                      <text x="0" y="32" fill="#0f172a" fontSize="12" fontWeight="700">{tr("Chuyên sâu")}</text>
                     </g>
                   </g>
 
@@ -514,8 +514,8 @@ export default function ProductVerification({
               {/* Text Content */}
               <div>
                 <div className="flex flex-wrap items-baseline gap-1.5">
-                  <h4 className="text-base font-bold text-blue-600">{tr("L1")}</h4>
-                  <span className="text-sm font-semibold text-blue-600">{tr("Basic Verified")}</span>
+                  <h4 className="text-base font-bold text-blue-600">{tr("Cấp 1")}</h4>
+                  <span className="text-sm font-semibold text-blue-600">{tr("Cơ bản")}</span>
                 </div>
                 <p className="text-xs text-slate-500 mt-1 leading-snug font-normal">
                   {tr("Đã đối chiếu MST")}<br />
@@ -546,12 +546,12 @@ export default function ProductVerification({
               {/* Text Content */}
               <div>
                 <div className="flex flex-wrap items-baseline gap-1.5">
-                  <h4 className="text-base font-bold text-slate-900">{tr("L2")}</h4>
-                  <span className="text-sm font-semibold text-slate-900">{tr("Enhanced Verified")}</span>
+                  <h4 className="text-base font-bold text-slate-900">{tr("Cấp 2")}</h4>
+                  <span className="text-sm font-semibold text-slate-900">{tr("Nâng cao")}</span>
                 </div>
                 <p className="text-xs text-slate-500 mt-1 leading-snug font-normal">
-                  {tr("Đã kiểm tra chứng chỉ")}<br />
-                  {tr("và năng lực sản xuất")}</p>
+                  {tr("Đã đối chiếu chứng nhận")}<br />
+                  {tr("và bằng chứng xuất khẩu")}</p>
               </div>
             </div>
 
@@ -561,7 +561,7 @@ export default function ProductVerification({
             </div>
           </div>
 
-          {/* Card 4: L3 VYBE Certified */}
+          {/* Card 4: L3 Chuyên sâu */}
           <div className="relative group">
             <div 
               onClick={() => {
@@ -578,12 +578,12 @@ export default function ProductVerification({
               {/* Text Content */}
               <div>
                 <div className="flex flex-wrap items-baseline gap-1.5">
-                  <h4 className="text-base font-bold text-amber-950">{tr("L3")}</h4>
-                  <span className="text-sm font-semibold text-amber-950">{tr("VYBE Certified")}</span>
+                  <h4 className="text-base font-bold text-amber-950">{tr("Cấp 3")}</h4>
+                  <span className="text-sm font-semibold text-amber-950">{tr("Chuyên sâu")}</span>
                 </div>
                 <p className="text-xs text-slate-600 mt-1 leading-snug font-normal">
-                  {tr("Đối tác ưu tiên")}<br />
-                  {tr("được VYBE chứng nhận")}</p>
+                  {tr("Đã có đánh giá nhà máy")}<br />
+                  {tr("của bên thứ ba")}</p>
               </div>
             </div>
           </div>
@@ -880,33 +880,33 @@ export default function ProductVerification({
             {selectedLevelDetail === 'l1' && (
               <div>
                 <span className="text-xs font-bold text-blue-600 uppercase">{tr("Cấp độ cơ bản")}</span>
-                <h3 className="text-lg font-bold text-slate-900 mt-0.5 mb-2">{tr("L1 - Basic Verified (Xác minh cơ bản)")}</h3>
+                <h3 className="text-lg font-bold text-slate-900 mt-0.5 mb-2">{tr("Cấp 1 - Cơ bản")}</h3>
                 <p className="text-xs text-slate-600 leading-relaxed mb-4">
-                  {tr("Đã đối chiếu thành công qua Cổng Đăng ký Doanh nghiệp Quốc gia (VN Business Registry) và mã số thuế hoạt động. Đảm bảo pháp nhân có thực và hợp pháp.")}</p>
+                  {tr("Đã đối chiếu pháp lý doanh nghiệp: đăng ký kinh doanh và người đại diện.")}</p>
                 <div className="p-3 rounded-xl bg-blue-50/70 border border-blue-100 text-xs text-blue-800 mb-4">
-                  {tr("Thời gian xác minh: 15 phút tự động. Miễn phí cho mọi doanh nghiệp Việt Nam.")}</div>
+                  {tr("Cấp Cơ bản miễn phí.")}</div>
               </div>
             )}
 
             {selectedLevelDetail === 'l2' && (
               <div>
                 <span className="text-xs font-bold text-emerald-700 uppercase">{tr("Cấp độ nâng cao")}</span>
-                <h3 className="text-lg font-bold text-slate-900 mt-0.5 mb-2">{tr("L2 - Enhanced Verified (Xác minh nâng cao)")}</h3>
+                <h3 className="text-lg font-bold text-slate-900 mt-0.5 mb-2">{tr("Cấp 2 - Nâng cao")}</h3>
                 <p className="text-xs text-slate-600 leading-relaxed mb-4">
-                  {tr("Đã kiểm tra chứng chỉ chất lượng quốc tế (ISO, HACCP, GlobalGAP, FDA...) và xác thực năng lực sản xuất thực tế tại nhà máy.")}</p>
+                  {tr("Đã đối chiếu chứng nhận với tổ chức cấp và bằng chứng xuất khẩu.")}</p>
                 <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-100 text-xs text-emerald-800 mb-4">
-                  {tr("Tăng 3.5x tỷ lệ phản hồi báo giá RFQ từ các nhà mua hàng EU và Bắc Mỹ.")}</div>
+                  {tr("Cấp Nâng cao là cấp trả phí; hồ sơ do đội ngũ VYBE Trade kiểm.")}</div>
               </div>
             )}
 
             {selectedLevelDetail === 'l3' && (
               <div>
-                <span className="text-xs font-bold text-amber-700 uppercase">{tr("Chứng nhận cao nhất")}</span>
-                <h3 className="text-lg font-bold text-slate-900 mt-0.5 mb-2">{tr("L3 - VYBE Certified (Đối tác chiến lược)")}</h3>
+                <span className="text-xs font-bold text-amber-700 uppercase">{tr("Cấp độ chuyên sâu")}</span>
+                <h3 className="text-lg font-bold text-slate-900 mt-0.5 mb-2">{tr("Cấp 3 - Chuyên sâu")}</h3>
                 <p className="text-xs text-slate-600 leading-relaxed mb-4">
-                  {tr("Cấp độ danh giá nhất của VYBE Trade: Thẩm tra thực địa, bảo lãnh chất lượng xuất khẩu, xếp hạng tín nhiệm tài chính và ưu tiên hàng đầu trên sàn B2B.")}</p>
+                  {tr("Đánh giá nhà máy do bên thứ ba thực hiện.")}</p>
                 <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-900 mb-4">
-                  {tr("Tích hợp bảo hiểm thương mại quốc tế & tài trợ vốn lưu động chuỗi cung ứng.")}</div>
+                  {tr("Chỉ áp dụng khi có đánh giá thực tế của bên thứ ba.")}</div>
               </div>
             )}
 

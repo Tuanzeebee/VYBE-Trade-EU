@@ -99,24 +99,13 @@ const pdf = (name = 'chung-chi.pdf', size = 1000) => {
   return file;
 };
 
-async function fillForm(opts: { type?: string; file?: File | null; issued?: string; expires?: string } = {}) {
+async function fillForm(opts: { type?: string; file?: File | null } = {}) {
   const select = await screen.findByLabelText(/Loại bằng chứng/);
   fireEvent.change(select, { target: { value: opts.type ?? 'iso_9001' } });
-  // U4: số, tổ chức cấp, ngày nằm trong phần "Thông tin thêm (không bắt buộc)".
-  openDetails();
-  fireEvent.change(screen.getByLabelText(/Số chứng chỉ/), { target: { value: 'VN-123' } });
-  fireEvent.change(screen.getByLabelText(/Tổ chức cấp/), { target: { value: 'SGS Vietnam' } });
-  fireEvent.change(screen.getByLabelText(/Ngày cấp/), { target: { value: opts.issued ?? '2026-01-01' } });
-  const expires = screen.queryByLabelText(/Ngày hết hạn/);
-  if (expires && opts.expires !== undefined) fireEvent.change(expires, { target: { value: opts.expires } });
   if (opts.file !== null) fireEvent.change(screen.getByLabelText(/File bằng chứng/), { target: { files: [opts.file ?? pdf()] } });
 }
 
 const submit = () => fireEvent.click(screen.getByRole('button', { name: 'Nộp bằng chứng' }));
-function openDetails() {
-  const toggle = screen.queryByRole('button', { name: /Thông tin thêm/ });
-  if (toggle && toggle.getAttribute('aria-expanded') === 'false') fireEvent.click(toggle);
-}
 
 describe('EvidenceManager (C6)', () => {
   afterEach(() => vi.unstubAllGlobals());
@@ -189,39 +178,43 @@ describe('EvidenceManager (C6)', () => {
     expect(options).toEqual(['', 'iso_9001', 'eur1_issued']);
   });
 
-  it('loại có hạn tự tính: ẩn ô ngày hết hạn và nói rõ', async () => {
+  it('B9: form chỉ có loại và file — không hỏi số, tổ chức cấp, ngày cấp, ngày hết hạn', async () => {
     serve();
     renderManager();
-    fireEvent.change(await screen.findByLabelText(/Loại bằng chứng/), { target: { value: 'eur1_issued' } });
-    openDetails();
+    await screen.findByLabelText(/Loại bằng chứng/);
+    fireEvent.change(screen.getByLabelText(/Loại bằng chứng/), { target: { value: 'eur1_issued' } });
+    expect(screen.getByLabelText(/File bằng chứng/)).toBeInTheDocument();
+    expect(screen.queryByLabelText(/Số chứng chỉ/)).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(/Tổ chức cấp/)).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(/Ngày cấp/)).not.toBeInTheDocument();
     expect(screen.queryByLabelText(/Ngày hết hạn/)).not.toBeInTheDocument();
-    expect(screen.getByText(/tự tính 12 tháng/)).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Thông tin thêm/ })).not.toBeInTheDocument();
   });
 
   it('nộp thành công: tải file lên, gửi khóa file, làm mới danh sách và xóa form', async () => {
     serve();
     const onCount = vi.fn();
     renderManager({ onCount });
-    await fillForm({ expires: '2027-01-01' });
+    await fillForm();
     submit();
     expect(await screen.findByRole('listitem', { name: /ISO 9001/ })).toBeInTheDocument();
     const post = calls.find((c) => c.method === 'POST' && c.path === '/api/exporter/evidences');
     expect(post?.body).toEqual({
       type_code: 'iso_9001',
       file_key: 'evidence/c-1/abc.pdf',
-      certificate_number: 'VN-123',
-      issuer: 'SGS Vietnam',
-      issued_at: '2026-01-01',
-      expires_at: '2027-01-01',
+      certificate_number: null,
+      issuer: null,
+      issued_at: null,
+      expires_at: null,
       custom_type_name: null,
     });
     expect(calls.some((c) => c.method === 'PUT' && c.path === '/upload')).toBe(true);
-    // Nộp xong form được xóa và thu gọn phần thông tin thêm.
-    expect(screen.queryByLabelText(/Số chứng chỉ/)).not.toBeInTheDocument();
+    // Nộp xong form được xóa.
+    expect((screen.getByLabelText(/Loại bằng chứng/) as HTMLSelectElement).value).toBe('');
     expect(onCount).toHaveBeenLastCalledWith(1);
   });
 
-  it('U4: chỉ loại + file là đủ — không mở phần thông tin thêm vẫn nộp được, ngày gửi null', async () => {
+  it('U4: chỉ loại + file là đủ, số/tổ chức/ngày gửi null', async () => {
     serve();
     renderManager();
     fireEvent.change(await screen.findByLabelText(/Loại bằng chứng/), { target: { value: 'iso_9001' } });
@@ -235,20 +228,9 @@ describe('EvidenceManager (C6)', () => {
     });
   });
 
-  it('bỏ trống hạn thì gửi expires_at = null', async () => {
-    serve();
-    renderManager();
-    await fillForm({ expires: '' });
-    submit();
-    await screen.findByRole('listitem', { name: /ISO 9001/ });
-    expect(calls.find((c) => c.method === 'POST' && c.path === '/api/exporter/evidences')?.body).toMatchObject({ expires_at: null });
-  });
-
   it.each([
     ['chưa chọn loại', { type: '' }, 'Vui lòng chọn loại bằng chứng'],
     ['chưa chọn file', { file: null }, 'Vui lòng chọn file'],
-    ['ngày cấp ở tương lai', { issued: '2999-01-01' }, 'Ngày cấp không được ở tương lai'],
-    ['hết hạn trước ngày cấp', { issued: '2026-05-01', expires: '2026-01-01' }, 'Ngày hết hạn phải sau ngày cấp'],
   ])('%s: báo lỗi và không gọi server', async (_name, opts, message) => {
     serve();
     renderManager();
@@ -285,7 +267,7 @@ describe('EvidenceManager (C6)', () => {
     await fillForm();
     submit();
     expect(await screen.findByRole('alert')).toHaveTextContent('Bằng chứng chưa hợp lệ');
-    expect((screen.getByLabelText(/Số chứng chỉ/) as HTMLInputElement).value).toBe('VN-123');
+    expect((screen.getByLabelText(/Loại bằng chứng/) as HTMLSelectElement).value).toBe('iso_9001');
   });
 
   it('xóa bằng chứng: gọi DELETE và bỏ dòng khỏi danh sách', async () => {

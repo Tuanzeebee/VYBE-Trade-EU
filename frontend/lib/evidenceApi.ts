@@ -48,11 +48,11 @@ export async function uploadEvidenceFile(file: File): Promise<string> {
 export interface EvidenceInput {
   typeCode: string;
   fileKey: string;
-  certificateNumber: string;
-  issuer: string;
-  /** U4: không bắt buộc — admin nhập khi duyệt nếu cần. */
-  issuedAt: string;
-  expiresAt: string;
+  /** B9: người nộp chỉ chọn loại và tải file; số, tổ chức cấp, ngày do admin đọc trên giấy tờ khi duyệt. */
+  certificateNumber?: string;
+  issuer?: string;
+  issuedAt?: string;
+  expiresAt?: string;
   /** Loại "Khác": tên giấy tờ do người nộp ghi. */
   customTypeName?: string;
 }
@@ -69,10 +69,10 @@ export async function createEvidence(input: EvidenceInput): Promise<Evidence> {
       body: {
         type_code: input.typeCode,
         file_key: input.fileKey,
-        certificate_number: blank(input.certificateNumber),
-        issuer: blank(input.issuer),
-        issued_at: blank(input.issuedAt),
-        expires_at: blank(input.expiresAt),
+        certificate_number: blank(input.certificateNumber ?? ''),
+        issuer: blank(input.issuer ?? ''),
+        issued_at: blank(input.issuedAt ?? ''),
+        expires_at: blank(input.expiresAt ?? ''),
         custom_type_name: blank(input.customTypeName ?? ''),
       },
     });

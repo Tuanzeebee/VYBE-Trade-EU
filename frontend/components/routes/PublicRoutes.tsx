@@ -24,7 +24,6 @@ function HomeContent({ user }: { user: DemoUser | null }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedMarket, setSelectedMarket] = useState(DEFAULT_MARKET);
-  const [selectedTrust, setSelectedTrust] = useState('Tất cả cấp độ');
 
   function handleNavigate(page: LegacyPage) {
     if (page === 'buyer-directory') {
@@ -33,7 +32,7 @@ function HomeContent({ user }: { user: DemoUser | null }) {
           q: searchTerm,
           category: selectedCategory,
           market: selectedMarket,
-          level: selectedTrust.startsWith('L') ? selectedTrust.slice(0, 2) : DEFAULT_LEVEL,
+          level: DEFAULT_LEVEL,
         },
       });
     } else {
@@ -49,8 +48,6 @@ function HomeContent({ user }: { user: DemoUser | null }) {
       setSelectedCategory={setSelectedCategory}
       selectedMarket={selectedMarket}
       setSelectedMarket={setSelectedMarket}
-      selectedTrust={selectedTrust}
-      setSelectedTrust={setSelectedTrust}
       onNavigate={handleNavigate}
     />
   );

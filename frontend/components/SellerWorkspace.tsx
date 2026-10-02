@@ -120,7 +120,7 @@ export default function SellerWorkspace({
               { id: 'overview', label: 'Tổng quan & Chỉ số', icon: Home },
               { id: 'viewers', label: 'Ai đã xem hồ sơ', icon: Eye },
               { id: 'products', label: 'Sản phẩm cung cấp', icon: Package, badge: `${productsList.length}` },
-              { id: 'rfq', label: 'Cơ hội kết nối B2B', icon: Handshake },
+              { id: 'rfq', label: 'RFQ & Báo giá', icon: Handshake },
               { id: 'report', label: 'Báo cáo go-to-market', icon: FileText },
               { id: 'billing', label: 'Gói dịch vụ & thanh toán', icon: CreditCard },
               { id: 'messages', label: 'Tin nhắn', icon: MessageSquare },

@@ -49,6 +49,21 @@ async def test_buyer_sends_all_fields(api_client: AsyncClient, db_session: Async
     assert body["status"] == "new"
 
 
+async def test_exporter_delete_of_product_with_rfq_deactivates_it(
+    api_client: AsyncClient, db_session: AsyncSession
+) -> None:
+    """Sản phẩm đã có RFQ không xóa cứng được (FK) — chỉ ẩn, RFQ vẫn còn, không lỗi 500."""
+    _, product_id = await make_exporter(api_client, db_session)
+    await make_buyer(api_client)
+    rfq_id = (await send(api_client, product_id)).json()["id"]
+    await as_user(api_client, "exporter", "exp@x.vn")
+    assert (await api_client.delete(f"/api/exporter/products/{product_id}")).status_code == 204
+    assert (await api_client.get(f"/api/exporter/products/{product_id}")).json()[
+        "is_active"
+    ] is False
+    assert (await api_client.get(f"/api/me/rfqs/{rfq_id}")).status_code == 200
+
+
 async def test_optional_fields_can_be_omitted(
     api_client: AsyncClient, db_session: AsyncSession
 ) -> None:

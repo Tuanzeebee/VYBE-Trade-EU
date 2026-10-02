@@ -59,12 +59,7 @@ export default function EvidenceManager({ onCountChange }: Props) {
   const [loaded, setLoaded] = useState(false);
 
   const [typeCode, setTypeCode] = useState('');
-  const [number, setNumber] = useState('');
-  const [issuer, setIssuer] = useState('');
-  const [issuedAt, setIssuedAt] = useState('');
-  const [expiresAt, setExpiresAt] = useState('');
   const [customName, setCustomName] = useState('');
-  const [showDetails, setShowDetails] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [fileKey, setFileKey] = useState(0); // đổi key để xóa ô chọn file
   const [error, setError] = useState('');
@@ -85,37 +80,22 @@ export default function EvidenceManager({ onCountChange }: Props) {
     void refresh();
   }, [refresh]);
 
-  const selected = types.find((t) => t.code === typeCode);
-  const autoExpiry = selected?.validity_months ?? null;
-
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();
     setError('');
     if (!typeCode) return setError('Vui lòng chọn loại bằng chứng.');
     if (typeCode === OTHER_EVIDENCE_TYPE && !customName.trim()) return setError('Vui lòng ghi tên giấy tờ.');
     if (!file) return setError('Vui lòng chọn file bằng chứng.');
-    // U4: ngày cấp, số, tổ chức cấp không bắt buộc — chỉ kiểm khi người dùng tự điền.
-    if (issuedAt && issuedAt > today()) return setError('Ngày cấp không được ở tương lai.');
-    if (autoExpiry === null && issuedAt && expiresAt && expiresAt <= issuedAt) return setError('Ngày hết hạn phải sau ngày cấp.');
     setBusy(true);
     try {
       const key = await uploadEvidenceFile(file);
       await createEvidence({
         typeCode,
         fileKey: key,
-        certificateNumber: number,
-        issuer,
-        issuedAt,
-        expiresAt: autoExpiry === null ? expiresAt : '',
         customTypeName: typeCode === OTHER_EVIDENCE_TYPE ? customName : '',
       });
       setTypeCode('');
       setCustomName('');
-      setShowDetails(false);
-      setNumber('');
-      setIssuer('');
-      setIssuedAt('');
-      setExpiresAt('');
       setFile(null);
       setFileKey((k) => k + 1);
       await refresh();
@@ -235,35 +215,6 @@ export default function EvidenceManager({ onCountChange }: Props) {
           />
           <p className="mt-1 text-[11px] text-slate-500">{tr('PDF, PNG hoặc JPEG, tối đa 10MB. Chỉ cần loại giấy tờ và file — quản trị viên đọc thông tin trên giấy tờ khi duyệt.')}</p>
         </div>
-        <button type="button" aria-expanded={showDetails} onClick={() => setShowDetails((v) => !v)} className="text-xs font-semibold text-teal-800 hover:underline">
-          {tr(showDetails ? 'Ẩn thông tin thêm' : 'Thông tin thêm (không bắt buộc): số, tổ chức cấp, ngày')}
-        </button>
-        {showDetails && (
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div>
-            <label htmlFor="ev-number" className={label}>{tr('Số chứng chỉ')}</label>
-            <input id="ev-number" value={number} maxLength={128} onChange={(e) => setNumber(e.target.value)} className={field} />
-          </div>
-          <div>
-            <label htmlFor="ev-issuer" className={label}>{tr('Tổ chức cấp')}</label>
-            <input id="ev-issuer" value={issuer} maxLength={255} onChange={(e) => setIssuer(e.target.value)} className={field} />
-          </div>
-          <div>
-            <label htmlFor="ev-issued" className={label}>{tr('Ngày cấp')}</label>
-            <input id="ev-issued" type="date" value={issuedAt} onChange={(e) => setIssuedAt(e.target.value)} className={field} />
-          </div>
-          {autoExpiry === null ? (
-            <div>
-              <label htmlFor="ev-expires" className={label}>{tr('Ngày hết hạn')}</label>
-              <input id="ev-expires" type="date" value={expiresAt} onChange={(e) => setExpiresAt(e.target.value)} className={field} />
-            </div>
-          ) : (
-            <p className="self-end text-xs text-slate-600">
-              {tr('Hạn dùng do hệ thống tự tính')} {autoExpiry} {tr('tháng kể từ ngày cấp.')}
-            </p>
-          )}
-        </div>
-        )}
         {error && (
           <p role="alert" className="rounded-xl bg-rose-50 p-3 text-sm text-rose-700">
             {tr(error)}

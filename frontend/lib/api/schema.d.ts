@@ -3213,6 +3213,10 @@ export interface components {
             country?: string;
             /** Export Markets */
             export_markets?: string[];
+            /** Export Market Channels */
+            export_market_channels?: {
+                [key: string]: "official" | "unofficial";
+            };
             /** Languages Spoken */
             languages_spoken?: string[];
             /** Sourcing Categories */
@@ -3296,6 +3300,10 @@ export interface components {
             facility_codes: components["schemas"]["FacilityCodeOut"][];
             /** Export Markets */
             export_markets: string[];
+            /** Export Market Channels */
+            export_market_channels?: {
+                [key: string]: string;
+            };
             /** Languages Spoken */
             languages_spoken: string[];
             /** Company Size */
@@ -3415,6 +3423,10 @@ export interface components {
             country?: string | null;
             /** Export Markets */
             export_markets?: string[] | null;
+            /** Export Market Channels */
+            export_market_channels?: {
+                [key: string]: "official" | "unofficial";
+            } | null;
             /** Languages Spoken */
             languages_spoken?: string[] | null;
             /** Sourcing Categories */
@@ -4395,7 +4407,7 @@ export interface components {
          *     của bản nâng cấp: ai đã xem hồ sơ (U9), cảnh báo ngành (U14), đơn hàng (U19).
          * @enum {string}
          */
-        NotificationType: "message" | "rfq" | "verification_status" | "new_match" | "expiry_alert" | "profile_viewed" | "sector_alert" | "order";
+        NotificationType: "message" | "rfq" | "verification_status" | "new_match" | "expiry_alert" | "profile_viewed" | "sector_alert" | "order" | "reengagement";
         /** OrderDecisionIn */
         OrderDecisionIn: {
             /** Note */
