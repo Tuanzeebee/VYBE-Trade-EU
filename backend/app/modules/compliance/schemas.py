@@ -429,6 +429,24 @@ class ReviewIssueOut(BaseModel):
     resolved_at: dt.datetime | None
 
 
+class ProductRequirementsOut(BaseModel):
+    hs_code: str
+    hs_formatted: str
+    name_vi: str
+    name_en: str
+    items: list[EvidenceItemOut]
+
+
+class ExporterRequirementsOut(BaseModel):
+    """Bằng chứng cần chuẩn bị theo từng mã HS sản phẩm công ty đang bán (chưa biết trị giá lô,
+    nguồn nguyên liệu: dòng có điều kiện kèm danh sách điều kiện để người dùng tự đối chiếu)."""
+
+    eur1_threshold_eur: Decimal
+    products: list[ProductRequirementsOut]
+    review_state: Literal["REVIEWED", "UNREVIEWED"]
+    disclaimer: str | None
+
+
 class OriginOut(BaseModel):
     check_id: str
     status: Literal["pass", "fail", "inconclusive", "unsupported"]

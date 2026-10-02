@@ -45,6 +45,7 @@ from app.modules.compliance.schemas import (
     CompanyChecklistOut,
     DocumentOut,
     Eur1In,
+    ExporterRequirementsOut,
     MarketsIn,
     MarketsOut,
     OriginIn,
@@ -139,6 +140,15 @@ async def calculate_origin(
     accept_language: Annotated[str | None, Header()] = None,
 ) -> OriginOut:
     return await service.calculate_origin(session, data, user, accept_language)
+
+
+@router.get("/api/exporter/evidence-requirements")
+async def exporter_evidence_requirements(
+    user: Annotated[CurrentUser, Depends(require_role("exporter"))],
+    session: Annotated[AsyncSession, Depends(get_session)],
+    accept_language: Annotated[str | None, Header()] = None,
+) -> ExporterRequirementsOut:
+    return await badge.exporter_requirements(session, user, accept_language)
 
 
 @router.get("/api/companies/{company_id}/evidence-checklist")

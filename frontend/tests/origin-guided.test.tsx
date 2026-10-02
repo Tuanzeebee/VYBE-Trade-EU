@@ -138,13 +138,15 @@ describe('Máy tính xuất xứ có hướng dẫn (20 mã Chương 3/7/8)', ()
     vi.unstubAllGlobals();
   });
 
-  it('mã được hỗ trợ: hiện câu hỏi và các trường trả lời theo loại quy tắc, kèm lưu ý chưa duyệt', async () => {
+  it('mã được hỗ trợ: hiện câu hỏi và các trường trả lời theo loại quy tắc', async () => {
     serve(QUESTIONS());
     renderCalc();
     await pickShrimp();
     expect(screen.getByText('Nguyên liệu nuôi tại VN hay đánh bắt tại VN?')).toBeInTheDocument();
     expect(screen.getByLabelText('Nguồn sản phẩm / nguyên liệu')).toBeInTheDocument();
-    expect(screen.getByText(NOTICE)).toBeInTheDocument();
+    // chưa có kết quả thì chưa có lưu ý; cột kết quả hiện hướng dẫn thay vì để trống
+    expect(screen.queryByText(NOTICE)).not.toBeInTheDocument();
+    expect(screen.getByTestId('result-placeholder')).toBeInTheDocument();
     // trường chỉ hiện khi câu điều kiện được trả lời Có
     expect(screen.queryByLabelText('Ở nước thứ ba, hàng được xử lý thế nào?')).not.toBeInTheDocument();
     const transit = screen.getByRole('group', { name: /quá cảnh, lưu kho/ });
@@ -152,11 +154,34 @@ describe('Máy tính xuất xứ có hướng dẫn (20 mã Chương 3/7/8)', ()
     expect(screen.getByLabelText('Ở nước thứ ba, hàng được xử lý thế nào?')).toBeInTheDocument();
   });
 
-  it('REVIEWED thì không có dòng lưu ý', async () => {
-    serve(QUESTIONS({ review_state: 'REVIEWED', unreviewed_components: [] }));
+  it('REVIEWED thì kết quả không có dòng lưu ý', async () => {
+    serve(QUESTIONS({ review_state: 'REVIEWED', unreviewed_components: [] }), () =>
+      json(200, RESULT({ review_state: 'REVIEWED', unreviewed_components: [], disclaimer: null })),
+    );
     renderCalc();
     await pickShrimp();
-    expect(screen.queryByText(NOTICE)).not.toBeInTheDocument();
+    submit();
+    await screen.findByLabelText('Kết quả');
+    expect(screen.queryByTestId('unreviewed-notice')).not.toBeInTheDocument();
+  });
+
+  it('chia hai cột: câu hỏi một bên, kết quả một bên', async () => {
+    serve(QUESTIONS());
+    renderCalc();
+    await pickShrimp();
+    const questions = screen.getByRole('heading', { name: 'Trả lời câu hỏi' });
+    const results = screen.getByRole('heading', { name: 'Kết quả kiểm tra' });
+    const grid = questions.closest('div.grid');
+    expect(grid).not.toBeNull();
+    expect(grid).toContainElement(results);
+    expect(grid?.className).toMatch(/lg:grid-cols-2/);
+    // mỗi tiêu đề thuộc một cột khác nhau
+    expect(questions.parentElement).not.toBe(results.parentElement);
+    expect(within(questions.parentElement as HTMLElement).getByLabelText('Nguồn sản phẩm / nguyên liệu')).toBeInTheDocument();
+    submit();
+    const section = await screen.findByLabelText('Kết quả');
+    expect(within(results.parentElement as HTMLElement).getByLabelText('Kết quả')).toBe(section);
+    expect(within(questions.parentElement as HTMLElement).queryByLabelText('Kết quả')).not.toBeInTheDocument();
   });
 
   it('gửi câu trả lời đúng kiểu; "Chưa rõ" không được gửi', async () => {
@@ -181,22 +206,73 @@ describe('Máy tính xuất xứ có hướng dẫn (20 mã Chương 3/7/8)', ()
     ]);
   });
 
-  it('kết quả Đạt: hiện lưu ý, tiết kiệm và danh sách bằng chứng kèm lưu ý ở đầu danh sách', async () => {
+  it('kết quả Đạt: kết luận, lý do, tiết kiệm, giấy tờ nhóm theo mức chặn và chỉ MỘT lưu ý', async () => {
     serve(QUESTIONS());
     renderCalc();
     await pickShrimp();
     submit();
     const section = await screen.findByLabelText('Kết quả');
     expect(within(section).getByText('Đạt')).toBeInTheDocument();
+    expect(within(section).getByText('Theo dữ liệu hiện có, lô hàng đáp ứng quy tắc xuất xứ.')).toBeInTheDocument();
     expect(within(section).getByText('Sản phẩm có xuất xứ thuần túy tại Việt Nam.')).toBeInTheDocument();
     expect(within(section).getByTestId('origin-savings')).toHaveTextContent(/12\.000/);
+    // đúng một dòng lưu ý trên cả trang, cỡ chữ nhỏ, nằm ngay dưới kết luận (trước danh sách giấy tờ)
+    const notices = screen.getAllByTestId('unreviewed-notice');
+    expect(notices).toHaveLength(1);
+    expect(notices[0].className).toMatch(/text-xs/);
     const list = within(section).getByTestId('evidence-list');
-    const notice = within(list).getByTestId('unreviewed-notice');
-    // lưu ý nằm trước danh sách bằng chứng, không thu gọn
-    expect(notice.compareDocumentPosition(within(list).getByRole('list')) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(notices[0].compareDocumentPosition(list) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(within(list).queryByTestId('unreviewed-notice')).not.toBeInTheDocument();
+    // nhóm theo mức chặn, kèm nhãn trạng thái
+    expect(within(list).getByText('Bắt buộc để nhập khẩu vào EU')).toBeInTheDocument();
+    expect(within(list).getByText('Để hưởng ưu đãi thuế')).toBeInTheDocument();
     expect(within(list).getByText('Giấy khai thác IUU')).toBeInTheDocument();
-    expect(within(list).getByText(/Cần thêm thông tin để xác định/)).toBeInTheDocument();
+    expect(within(list).getByText('Tùy thông tin lô hàng')).toBeInTheDocument();
+    expect(within(list).getByText('Bắt buộc')).toBeInTheDocument();
     expect(within(section).getByText(/Bộ Công Thương/)).toBeInTheDocument();
+  });
+
+  it('chi tiết quy tắc gom vào mục thu gọn, ghi nhãn từng ghi chú', async () => {
+    serve(QUESTIONS(), () =>
+      json(
+        200,
+        RESULT({
+          rule_text_vi: 'Sản phẩm phải có xuất xứ thuần túy.',
+          insufficient_operations_vi: 'Đông lạnh, bảo quản; đóng gói đơn giản',
+          tolerance_note_vi: 'Không áp dụng dung sai',
+          risk_note_vi: 'Thấp',
+        }),
+      ),
+    );
+    renderCalc();
+    await pickShrimp();
+    submit();
+    const details = await screen.findByTestId('rule-details');
+    expect(details.tagName).toBe('DETAILS');
+    expect(details).not.toHaveAttribute('open');
+    for (const title of ['Quy tắc áp dụng', 'Thao tác chưa đủ để tạo xuất xứ', 'Dung sai', 'Mức rủi ro']) {
+      expect(within(details).getByText(title)).toBeInTheDocument();
+    }
+    expect(within(details).getByText('Thấp')).toBeInTheDocument();
+  });
+
+  it('giấy tờ huy hiệu của nền tảng không nằm trong danh sách giấy tờ của lô', async () => {
+    const badge = {
+      ...EVIDENCE[0],
+      code: 'EUR1_ISSUED_12M',
+      name_vi: 'EUR.1 đã cấp trong 12 tháng',
+      layer: 'PLATFORM_BADGE',
+      scope: 'COMPANY',
+      blocks: 'NONE',
+      status: 'REQUIRED',
+    };
+    serve(QUESTIONS(), () => json(200, RESULT({ required_evidence: { items: [...EVIDENCE, badge], review_state: 'UNREVIEWED', disclaimer: 'x' } })));
+    renderCalc();
+    await pickShrimp();
+    submit();
+    const list = await screen.findByTestId('evidence-list');
+    expect(within(list).queryByText('EUR.1 đã cấp trong 12 tháng')).not.toBeInTheDocument();
+    expect(within(list).getByText('Giấy khai thác IUU')).toBeInTheDocument();
   });
 
   it('Chưa kết luận: liệt kê câu còn thiếu, không phải Không đạt', async () => {

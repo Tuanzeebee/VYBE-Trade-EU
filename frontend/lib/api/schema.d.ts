@@ -707,6 +707,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/exporter/evidence-requirements": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Exporter Evidence Requirements */
+        get: operations["exporter_evidence_requirements_api_exporter_evidence_requirements_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/companies/{company_id}/evidence-checklist": {
         parameters: {
             query?: never;
@@ -4206,6 +4223,24 @@ export interface components {
             tariff_savings: components["schemas"]["SavingsTile"];
             copilot: components["schemas"]["CopilotTile"];
         };
+        /**
+         * ExporterRequirementsOut
+         * @description Bằng chứng cần chuẩn bị theo từng mã HS sản phẩm công ty đang bán (chưa biết trị giá lô,
+         *     nguồn nguyên liệu: dòng có điều kiện kèm danh sách điều kiện để người dùng tự đối chiếu).
+         */
+        ExporterRequirementsOut: {
+            /** Eur1 Threshold Eur */
+            eur1_threshold_eur: string;
+            /** Products */
+            products: components["schemas"]["ProductRequirementsOut"][];
+            /**
+             * Review State
+             * @enum {string}
+             */
+            review_state: "REVIEWED" | "UNREVIEWED";
+            /** Disclaimer */
+            disclaimer: string | null;
+        };
         /** ExtractionApplyIn */
         ExtractionApplyIn: {
             /** Fields */
@@ -5108,6 +5143,19 @@ export interface components {
             packagings?: components["schemas"]["PackagingIn"][] | null;
             /** Price Tiers */
             price_tiers?: components["schemas"]["PriceTierIn"][] | null;
+        };
+        /** ProductRequirementsOut */
+        ProductRequirementsOut: {
+            /** Hs Code */
+            hs_code: string;
+            /** Hs Formatted */
+            hs_formatted: string;
+            /** Name Vi */
+            name_vi: string;
+            /** Name En */
+            name_en: string;
+            /** Items */
+            items: components["schemas"]["EvidenceItemOut"][];
         };
         /** ProductSubtypeIn */
         ProductSubtypeIn: {
@@ -8991,6 +9039,39 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["OriginOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    exporter_evidence_requirements_api_exporter_evidence_requirements_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "accept-language"?: string | null;
+            };
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExporterRequirementsOut"];
                 };
             };
             /** @description Validation Error */

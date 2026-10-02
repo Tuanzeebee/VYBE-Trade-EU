@@ -3028,6 +3028,71 @@
         }
       }
     },
+    "/api/exporter/evidence-requirements": {
+      "get": {
+        "tags": [
+          "compliance"
+        ],
+        "summary": "Exporter Evidence Requirements",
+        "operationId": "exporter_evidence_requirements_api_exporter_evidence_requirements_get",
+        "parameters": [
+          {
+            "name": "accept-language",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Accept-Language"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExporterRequirementsOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/companies/{company_id}/evidence-checklist": {
       "get": {
         "tags": [
@@ -16824,6 +16889,50 @@
         ],
         "title": "ExporterDashboard"
       },
+      "ExporterRequirementsOut": {
+        "properties": {
+          "eur1_threshold_eur": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Eur1 Threshold Eur"
+          },
+          "products": {
+            "items": {
+              "$ref": "#/components/schemas/ProductRequirementsOut"
+            },
+            "type": "array",
+            "title": "Products"
+          },
+          "review_state": {
+            "type": "string",
+            "enum": [
+              "REVIEWED",
+              "UNREVIEWED"
+            ],
+            "title": "Review State"
+          },
+          "disclaimer": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Disclaimer"
+          }
+        },
+        "type": "object",
+        "required": [
+          "eur1_threshold_eur",
+          "products",
+          "review_state",
+          "disclaimer"
+        ],
+        "title": "ExporterRequirementsOut",
+        "description": "Bằng chứng cần chuẩn bị theo từng mã HS sản phẩm công ty đang bán (chưa biết trị giá lô,\nnguồn nguyên liệu: dòng có điều kiện kèm danh sách điều kiện để người dùng tự đối chiếu)."
+      },
       "ExtractionApplyIn": {
         "properties": {
           "fields": {
@@ -19986,6 +20095,42 @@
         "type": "object",
         "title": "ProductPatch",
         "description": "Chỉ các trường gửi lên mới được sửa; image_keys gửi lên thay thế toàn bộ ảnh."
+      },
+      "ProductRequirementsOut": {
+        "properties": {
+          "hs_code": {
+            "type": "string",
+            "title": "Hs Code"
+          },
+          "hs_formatted": {
+            "type": "string",
+            "title": "Hs Formatted"
+          },
+          "name_vi": {
+            "type": "string",
+            "title": "Name Vi"
+          },
+          "name_en": {
+            "type": "string",
+            "title": "Name En"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/EvidenceItemOut"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "required": [
+          "hs_code",
+          "hs_formatted",
+          "name_vi",
+          "name_en",
+          "items"
+        ],
+        "title": "ProductRequirementsOut"
       },
       "ProductSubtypeIn": {
         "properties": {

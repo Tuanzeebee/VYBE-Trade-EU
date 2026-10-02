@@ -20,12 +20,14 @@ from sqlalchemy import or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.audit import record
+from app.core.config import get_settings
 from app.core.errors import AppError
 from app.modules.auth.schemas import CurrentUser
 from app.modules.catalog import service as catalog
 from app.modules.companies import product_service
 from app.modules.companies import service as companies
 from app.modules.compliance import disclaimer
+from app.modules.compliance.evidence import ShipmentData
 from app.modules.compliance.models import (
     CompanyBadge,
     ComplianceEvidenceRequirement,
@@ -37,7 +39,11 @@ from app.modules.compliance.schemas import (
     BadgeOut,
     CompanyChecklistItemOut,
     CompanyChecklistOut,
+    EvidenceItemOut,
+    ExporterRequirementsOut,
+    ProductRequirementsOut,
 )
+from app.modules.compliance.service import required_evidence_for
 from app.modules.verification import evidence_service
 
 BADGE_CODE = "EUR1_ISSUED_12M"
@@ -278,6 +284,64 @@ async def company_checklist(
         unreviewed_components=unreviewed,
         disclaimer=disclaimer.disclaimer_for(state, accept_language),
     )
+
+
+async def exporter_requirements(
+    session: AsyncSession, user: CurrentUser, accept_language: str | None = None
+) -> ExporterRequirementsOut:
+    """Bằng chứng theo mã HS của sản phẩm đã khai, kể cả sản phẩm đang ẩn (mọi lớp: thuế, hồ sơ xuất
+    xứ, vào thị trường EU, huy hiệu). Công ty chưa có sản phẩm thì danh sách rỗng."""
+    company_id = await companies.get_company_id(session, user.id)
+    today = _today()
+    codes = (
+        []
+        if company_id is None
+        else await product_service.list_active_hs_codes(session, company_id, include_inactive=True)
+    )
+    products: list[ProductRequirementsOut] = []
+    unreviewed = False
+    for code in codes:
+        items = await _items_for_code(session, code, today)
+        hs = await catalog.get_hs_code(session, code)
+        unreviewed = unreviewed or any(i.review_state == "UNREVIEWED" for i in items)
+        products.append(
+            ProductRequirementsOut(
+                hs_code=code,
+                hs_formatted=catalog.format_code(code),
+                name_vi=hs.name_vi if hs else code,
+                name_en=hs.name_en if hs else code,
+                items=items,
+            )
+        )
+    state = disclaimer.UNREVIEWED if unreviewed else disclaimer.REVIEWED
+    return ExporterRequirementsOut(
+        eur1_threshold_eur=get_settings().eur1_consignment_threshold_eur,
+        products=products,
+        review_state=state,
+        disclaimer=disclaimer.disclaimer_for(state, accept_language),
+    )
+
+
+async def _items_for_code(
+    session: AsyncSession, code: str, today: dt.date
+) -> list[EvidenceItemOut]:
+    """Mã 8 số: dòng của chính mã đó. Mã 6 số: gộp các mã 8 số con (một loại bằng chứng một lần)."""
+    own = await required_evidence_for(session, code, ShipmentData(), today)
+    if own.items or len(code) >= 8:
+        return own.items
+    children = list(
+        await session.scalars(
+            select(ComplianceEvidenceRequirement.hs_code)
+            .where(ComplianceEvidenceRequirement.hs_code.like(f"{code}%"))
+            .distinct()
+            .order_by(ComplianceEvidenceRequirement.hs_code)
+        )
+    )
+    merged: dict[str, EvidenceItemOut] = {}
+    for child in children:
+        for item in (await required_evidence_for(session, child, ShipmentData(), today)).items:
+            merged.setdefault(item.code, item)
+    return list(merged.values())
 
 
 # --- job hằng ngày ---

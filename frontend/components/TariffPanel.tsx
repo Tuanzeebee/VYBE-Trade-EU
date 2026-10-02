@@ -115,7 +115,7 @@ export default function TariffPanel({ hsCode, variant = 'summary' }: TariffPanel
   return (
     <div className="space-y-2">
       {content}
-      <UnreviewedNotice state={d.review_state} />
+      <UnreviewedNotice state={d.review_state} compact />
       {d.data_status === 'demo_unreviewed' && d.review_state !== 'UNREVIEWED' && <DemoDataBanner />}
       <SectorAlerts alerts={d.alerts ?? []} />
     </div>

@@ -4,6 +4,8 @@
 // Không phải kết quả xác minh: bằng chứng do quản trị viên duyệt; xác minh doanh nghiệp là quyết định riêng.
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { EvidenceSuggestion } from './EvidenceSuggestion';
+import ProductEvidenceRequirements from './ProductEvidenceRequirements';
+import { fetchExporterRequirements, type ExporterRequirements } from '../lib/complianceApi';
 import { getMyProducts } from '../lib/productsApi';
 import { useLanguage } from '../context/LanguageContext';
 import {
@@ -59,6 +61,8 @@ export default function EvidenceManager({ onCountChange }: Props) {
   const [items, setItems] = useState<Evidence[]>([]);
   const [checklist, setChecklist] = useState<ChecklistItem[]>([]);
   const [loaded, setLoaded] = useState(false);
+  // Bằng chứng cần có theo mã HS đã khai (máy tính tuân thủ); bổ sung cho danh sách kiểm theo nhóm hàng.
+  const [requirements, setRequirements] = useState<ExporterRequirements | null>(null);
   // Đã có sản phẩm kèm mã HS? Danh sách kiểm có thể trống vì chưa có luật bằng chứng đã duyệt cho nhóm hàng đó.
   const [hasHsProducts, setHasHsProducts] = useState(false);
 
@@ -80,9 +84,17 @@ export default function EvidenceManager({ onCountChange }: Props) {
   const [busy, setBusy] = useState(false);
 
   const name = (t: { name_vi: string; name_en: string }) => (language === 'en' ? t.name_en : t.name_vi);
+  const hasRequirements = (requirements?.products ?? []).some((p) => p.items.length > 0);
 
   const refresh = useCallback(async () => {
-    const [t, list, cl, products] = await Promise.all([listEvidenceTypes(), listEvidence(), getChecklist(), getMyProducts()]);
+    const [t, list, cl, products, reqs] = await Promise.all([
+      listEvidenceTypes(),
+      listEvidence(),
+      getChecklist(),
+      getMyProducts(),
+      fetchExporterRequirements(),
+    ]);
+    setRequirements(reqs);
     setHasHsProducts((products ?? []).some((p) => Boolean(p.hs_code)));
     setTypes(t ?? []);
     setItems(list ?? []);
@@ -199,9 +211,14 @@ export default function EvidenceManager({ onCountChange }: Props) {
         {tr('Bằng chứng do quản trị viên xem xét và duyệt. Nộp đủ bằng chứng không phải kết quả xác minh doanh nghiệp.')}
       </p>
 
+      <ProductEvidenceRequirements data={requirements} />
+
+      {/* Danh sách kiểm theo nhóm hàng (luật đã duyệt): khi chưa có mà đã có giấy tờ theo mã HS ở trên thì ẩn
+          để khỏi báo "chưa có danh sách" mâu thuẫn. */}
+      {(checklist.length > 0 || !hasRequirements) && (
       <section aria-label={tr('Danh sách kiểm theo nhóm hàng')} className="rounded-2xl border border-slate-200 bg-white p-4">
         <h3 className="text-sm font-bold text-slate-900">{tr('Danh sách kiểm theo nhóm hàng')}</h3>
-        {loaded && checklist.length === 0 ? (
+        {loaded && checklist.length === 0 && !hasRequirements ? (
           <p className="mt-2 text-xs text-slate-600">
             {tr(hasHsProducts
               ? 'Chưa có danh sách bằng chứng bắt buộc cho nhóm hàng của bạn. Bạn vẫn có thể nộp bằng chứng ở bên dưới; quản trị viên sẽ xem khi duyệt.'
@@ -222,6 +239,7 @@ export default function EvidenceManager({ onCountChange }: Props) {
           </ul>
         )}
       </section>
+      )}
 
       <section className="rounded-2xl border border-slate-200 bg-white p-4">
         <h3 className="text-sm font-bold text-slate-900">{tr('Bằng chứng đã nộp')}</h3>

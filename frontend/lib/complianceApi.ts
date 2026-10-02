@@ -10,6 +10,7 @@ export type OriginBody = components['schemas']['OriginIn'];
 export type EvidenceItem = components['schemas']['EvidenceItemOut'];
 export type CompanyChecklist = components['schemas']['CompanyChecklistOut'];
 export type ReviewIssue = components['schemas']['ReviewIssueOut'];
+export type ExporterRequirements = components['schemas']['ExporterRequirementsOut'];
 
 /** Giá trị người dùng nhập cho từng câu trả lời: 'yes' / 'no' (boolean), chuỗi số (%), mã enum, '' = chưa trả lời. */
 export type Answers = Record<string, string>;
@@ -113,5 +114,15 @@ export async function resolveReviewIssue(id: string): Promise<boolean> {
     return response.ok;
   } catch {
     return false;
+  }
+}
+
+/** Bằng chứng cần có theo mã HS của sản phẩm công ty đã khai (bước Giấy phép và chứng nhận). */
+export async function fetchExporterRequirements(): Promise<ExporterRequirements | null> {
+  try {
+    const { data, response } = await createApiClient().GET('/api/exporter/evidence-requirements');
+    return response.ok && data ? data : null;
+  } catch {
+    return null;
   }
 }
