@@ -8,6 +8,7 @@ import { useLanguage } from '../context/LanguageContext';
 import MarketRanking from './MarketRanking';
 import SectorAlerts, { DemoDataBanner } from './SectorAlerts';
 import { isRooStatus, rankMarkets, type MarketsResult, type RooStatus } from '../lib/marketsApi';
+import UnreviewedNotice from './UnreviewedNotice';
 import {
   calculateTariff,
   EU_COUNTRIES,
@@ -122,11 +123,12 @@ function Result({ data }: { data: TariffResult }) {
 
   return (
     <section aria-label={tr('Kết quả')} className="mt-8 space-y-4 rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
-      {data.data_status === 'demo_unreviewed' && <DemoDataBanner />}
+      {data.data_status === 'demo_unreviewed' && data.review_state !== 'UNREVIEWED' && <DemoDataBanner />}
       {data.status === 'ok' && data.savings !== null && data.mfn_duty !== null && data.evfta_duty !== null && (
         <>
           <p className="text-sm font-semibold text-slate-600">{tr('Tiết kiệm mỗi lô')}</p>
           <p className="mt-1 text-4xl font-extrabold text-[#083832]">{money(data.savings)}</p>
+          <UnreviewedNotice state={data.review_state} />
           <dl className="mt-5 grid gap-3 sm:grid-cols-2">
             <div className="rounded-xl bg-slate-50 p-4">
               <dt className="text-xs font-semibold text-slate-500">

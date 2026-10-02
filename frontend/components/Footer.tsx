@@ -30,7 +30,7 @@ export default function Footer() {
               <li><Link href="/suppliers" className={LINK}>{tr('Nhà cung cấp đã xác minh')}</Link></li>
               <li><Link href="/tools/tariff" className={LINK}>{tr('Công cụ tính thuế')}</Link></li>
               <li><Link href="/tools/market-insights" className={LINK}>{tr('Gợi ý thị trường EU')}</Link></li>
-              <li><Link href="/tools/origin" className={LINK}>{tr('Máy tính quy tắc xuất xứ')}</Link></li>
+              <li><Link href="/tools/origin" className={LINK}>{tr('Kiểm tra xuất xứ hàng hóa')}</Link></li>
               <li><Link href="/copilot" className={LINK}>{tr('Trợ lý tuân thủ EVFTA')}</Link></li>
             </ul>
           </nav>

@@ -1,10 +1,11 @@
 'use client';
 
-// Máy tính quy tắc xuất xứ EVFTA (C4). Khách dùng không cần đăng nhập.
+// Kiểm tra xuất xứ hàng hóa EVFTA (C4). Khách dùng không cần đăng nhập.
 // Ba trạng thái riêng: Đạt / Không đạt / Chưa kết luận (thêm "ngoài phạm vi dữ liệu"). Không có tính năng cấp C/O.
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import HsCodePicker, { type HsCodeOption } from './HsCodePicker';
 import Eur1DraftPanel from './Eur1DraftPanel';
+import OriginGuided from './OriginGuided';
 import { useLanguage } from '../context/LanguageContext';
 import { Link } from '../i18n/navigation';
 import {
@@ -18,6 +19,7 @@ import {
   type RooResult,
 } from '../lib/originApi';
 import { parseAmount } from '../lib/tariffApi';
+import { fetchOriginQuestions, type OriginQuestions } from '../lib/complianceApi';
 
 type Declared = 'undeclared' | 'none' | 'list';
 
@@ -89,6 +91,26 @@ export default function OriginCalculator() {
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<RooResult | null>(null);
+  // Mã đã có dữ liệu Chương 3/7/8 → máy tính có hướng dẫn; còn lại dùng form nguyên liệu (máy tính cũ).
+  const [questions, setQuestions] = useState<OriginQuestions | null>(null);
+  const [checking, setChecking] = useState(false);
+  const code = hs?.code ?? null;
+  useEffect(() => {
+    setQuestions(null);
+    setResult(null);
+    if (!code) return;
+    let active = true;
+    setChecking(true);
+    fetchOriginQuestions(code).then((q) => {
+      if (!active) return;
+      setQuestions(q);
+      setChecking(false);
+    });
+    return () => {
+      active = false;
+    };
+  }, [code]);
+  const guided = questions?.status === 'ok' ? questions : null;
 
   const choose = (next: Declared) => {
     setDeclared(next);
@@ -145,12 +167,17 @@ export default function OriginCalculator() {
 
   return (
     <div className="mx-auto max-w-2xl px-5 py-10 sm:px-8">
-      <h1 className="text-2xl font-extrabold text-slate-900 sm:text-3xl">{tr('Máy tính quy tắc xuất xứ EVFTA')}</h1>
+      <h1 className="text-2xl font-extrabold text-slate-900 sm:text-3xl">{tr('Kiểm tra xuất xứ hàng hóa')}</h1>
       <p className="mt-2 text-sm text-slate-600">
         {tr('Kiểm tra hàng Việt Nam xuất sang EU có đạt quy tắc xuất xứ hay không. Mọi số tiền dùng cùng một đơn vị tiền tệ.')}
       </p>
-      <form onSubmit={submit} noValidate className="mt-8 space-y-5">
+      <div className="mt-8">
         <HsCodePicker label={tr('Sản phẩm (mã HS)')} value={hs} onChange={setHs} />
+      </div>
+      {checking && <p className="mt-3 text-sm text-slate-500">{tr('Đang tải câu hỏi...')}</p>}
+      {guided && code && <OriginGuided key={code} hsCode={code} goodsName={hs?.name_en ?? ''} questions={guided} />}
+      {!guided && !checking && (
+      <form onSubmit={submit} noValidate className="mt-8 space-y-5">
         <div>
           <label htmlFor="roo-exworks" className={label}>
             {tr('Giá xuất xưởng (EXW)')}
@@ -243,7 +270,8 @@ export default function OriginCalculator() {
           {tr(busy ? 'Đang kiểm tra...' : 'Kiểm tra xuất xứ')}
         </button>
       </form>
-      {result && <Result data={result} goodsName={hs?.name_en ?? ''} />}
+      )}
+      {!guided && result && <Result data={result} goodsName={hs?.name_en ?? ''} />}
     </div>
   );
 }

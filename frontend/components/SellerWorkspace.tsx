@@ -38,6 +38,7 @@ import {
   CreditCard,
 } from 'lucide-react';
 import EvidenceManager from './EvidenceManager';
+import CompanyEvidenceChecklist from './CompanyEvidenceChecklist';
 import VerificationPanel from './VerificationPanel';
 import { useLanguage } from "../context/LanguageContext";
 import RfqInbox from './RfqInbox';
@@ -444,6 +445,7 @@ export default function SellerWorkspace({
                   {tr("Nộp chứng nhận chất lượng, bằng chứng xuất xứ và các giấy tờ theo danh sách kiểm của nhóm hàng. Quản trị viên sẽ xem xét từng bằng chứng.")}</p>
               </div>
               <EvidenceManager />
+              <CompanyEvidenceChecklist />
             </div>
           )}
 

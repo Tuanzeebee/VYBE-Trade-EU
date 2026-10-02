@@ -8639,11 +8639,6 @@
     "The ex-works price must be a positive number with at most 2 decimal places (for example 1000 or 1000.50).",
     "The ex-works price must be a positive number with at most 2 decimal places (for example 1000 or 1000.50)."
   ],
-  "Máy tính quy tắc xuất xứ EVFTA": [
-    "EVFTA rules of origin calculator",
-    "EVFTA rules of origin calculator",
-    "EVFTA rules of origin calculator"
-  ],
   "Kiểm tra hàng Việt Nam xuất sang EU có đạt quy tắc xuất xứ hay không. Mọi số tiền dùng cùng một đơn vị tiền tệ.": [
     "Check whether goods exported from Vietnam to the EU meet the rules of origin. All amounts use the same currency.",
     "Check whether goods exported from Vietnam to the EU meet the rules of origin. All amounts use the same currency.",
@@ -10538,11 +10533,6 @@
     "Tariff savings calculator",
     "Tariff savings calculator",
     "Tariff savings calculator"
-  ],
-  "Máy tính quy tắc xuất xứ": [
-    "Rules of origin calculator",
-    "Rules of origin calculator",
-    "Rules of origin calculator"
   ],
   "Dữ liệu mới thêm, mới nhập hoặc vừa sửa. Không hiện công khai và máy tính tuân thủ chưa dùng.": [
     "Newly added, imported or just edited data. Not shown publicly and not yet used by the compliance calculator.",
@@ -15533,5 +15523,295 @@
     "View data table",
     "Voir le tableau de données",
     "データ表を見る"
+  ],
+  "Lưu ý: Thông tin này chưa được luật sư thương mại xác nhận. Vui lòng đối chiếu với cơ quan cấp C/O hoặc chuyên gia tư vấn trước khi sử dụng.": [
+    "Note: This information has not yet been confirmed by a trade lawyer. Please check with the issuing authority or a trade compliance advisor before relying on it.",
+    "Remarque : ces informations n'ont pas encore été confirmées par un avocat spécialisé en commerce. Veuillez les vérifier auprès de l'autorité émettrice ou d'un conseiller en conformité commerciale avant de vous y fier.",
+    "注意：この情報は、まだ貿易専門の弁護士による確認を受けていません。ご利用の前に、発給機関または貿易コンプライアンスの専門家にご確認ください。"
+  ],
+  "Dòng luật sư yêu cầu sửa": [
+    "Rows the lawyer asked to fix",
+    "Lignes à corriger demandées par l'avocat",
+    "弁護士が修正を求めた行"
+  ],
+  "Các dòng này chưa được duyệt. Sửa dữ liệu theo ghi chú rồi bấm \"Đã xử lý\".": [
+    "These rows are not approved. Fix the data according to the note, then click \"Resolved\".",
+    "Ces lignes ne sont pas validées. Corrigez les données selon la note, puis cliquez sur « Traité ».",
+    "これらの行は未承認です。メモに従ってデータを修正し、「対応済み」を押してください。"
+  ],
+  "Không có dòng nào đang chờ sửa. Khi luật sư trả \"SUA\" trong file duyệt, dòng đó sẽ hiện ở đây.": [
+    "No rows are waiting for a fix. When the lawyer returns \"SUA\" in the review file, the row appears here.",
+    "Aucune ligne en attente de correction. Lorsque l'avocat renvoie « SUA » dans le fichier de validation, la ligne apparaît ici.",
+    "修正待ちの行はありません。弁護士が確認ファイルで「SUA」を返すと、その行がここに表示されます。"
+  ],
+  "Đã xử lý": [
+    "Resolved",
+    "Traité",
+    "対応済み"
+  ],
+  "Huy hiệu EVFTA-verified theo nhóm hàng": [
+    "EVFTA-verified badge by product group",
+    "Badge EVFTA-verified par groupe de produits",
+    "商品グループ別 EVFTA-verified バッジ"
+  ],
+  "Chọn mã HS để xem bằng chứng cấp công ty cần có và huy hiệu của nhóm hàng đó.": [
+    "Choose an HS code to see the company-level evidence needed and the badge for that product group.",
+    "Choisissez un code SH pour voir les preuves requises au niveau de l'entreprise et le badge de ce groupe de produits.",
+    "HSコードを選ぶと、必要な企業レベルの証拠と、その商品グループのバッジが表示されます。"
+  ],
+  "Đang tải...": [
+    "Loading...",
+    "Chargement...",
+    "読み込み中..."
+  ],
+  "Không tải được checklist. Vui lòng thử lại.": [
+    "Could not load the checklist. Please try again.",
+    "Impossible de charger la liste de contrôle. Veuillez réessayer.",
+    "チェックリストを読み込めませんでした。もう一度お試しください。"
+  ],
+  "Chưa có huy hiệu cho nhóm hàng này": [
+    "No badge for this product group yet",
+    "Pas encore de badge pour ce groupe de produits",
+    "この商品グループのバッジはまだありません"
+  ],
+  "Mã hàng này không có bằng chứng cấp công ty bắt buộc.": [
+    "This code has no mandatory company-level evidence.",
+    "Ce code n'a pas de preuve obligatoire au niveau de l'entreprise.",
+    "このコードには必須の企業レベルの証拠はありません。"
+  ],
+  "Đã duyệt, còn hạn": [
+    "Approved and valid",
+    "Validé et en cours de validité",
+    "承認済み・有効"
+  ],
+  "Đã hết hạn": [
+    "Expired",
+    "Expiré",
+    "期限切れ"
+  ],
+  "Chưa có loại bằng chứng tương ứng để nộp": [
+    "No matching evidence type to submit yet",
+    "Aucun type de preuve correspondant à soumettre pour le moment",
+    "提出できる対応する証拠タイプがまだありません"
+  ],
+  "Công ty chưa được xác minh.": [
+    "The company is not verified yet.",
+    "L'entreprise n'est pas encore vérifiée.",
+    "企業はまだ認証されていません。"
+  ],
+  "Chưa có quy định bằng chứng EUR.1 cho mã hàng này.": [
+    "There is no EUR.1 evidence rule for this code yet.",
+    "Il n'existe pas encore de règle de preuve EUR.1 pour ce code.",
+    "このコードにはEUR.1の証拠規定がまだありません。"
+  ],
+  "Còn thiếu bằng chứng bắt buộc được duyệt và còn hạn.": [
+    "Mandatory evidence that is approved and valid is still missing.",
+    "Il manque encore des preuves obligatoires validées et en cours de validité.",
+    "承認済みで有効な必須の証拠がまだ不足しています。"
+  ],
+  "Chặn nhập khẩu nếu thiếu": [
+    "Blocks import if missing",
+    "Bloque l'importation si absent",
+    "欠けている場合は輸入不可"
+  ],
+  "Cần để hưởng ưu đãi thuế": [
+    "Needed for the tariff preference",
+    "Nécessaire pour la préférence tarifaire",
+    "関税優遇の適用に必要"
+  ],
+  "Hồ sơ lưu": [
+    "Kept on file",
+    "À conserver au dossier",
+    "記録として保管"
+  ],
+  "Đã được cấp C/O EUR.1 cho nhóm hàng này trong 12 tháng gần nhất": [
+    "Issued an EUR.1 movement certificate for this product group in the last 12 months",
+    "A obtenu un certificat de circulation EUR.1 pour ce groupe de produits au cours des 12 derniers mois",
+    "過去12か月以内にこの商品グループのEUR.1が発給されています"
+  ],
+  "Đang tải câu hỏi...": [
+    "Loading questions...",
+    "Chargement des questions...",
+    "質問を読み込み中..."
+  ],
+  "Chưa rõ": [
+    "Not sure",
+    "Je ne sais pas",
+    "不明"
+  ],
+  "Bằng chứng cần chuẩn bị cho lô này": [
+    "Evidence to prepare for this shipment",
+    "Preuves à préparer pour cet envoi",
+    "この貨物のために準備する証拠"
+  ],
+  "Cấp công ty": [
+    "Company level",
+    "Niveau entreprise",
+    "企業レベル"
+  ],
+  "Còn thiếu câu trả lời cho:": [
+    "Answers still missing for:",
+    "Réponses encore manquantes pour :",
+    "未回答の項目："
+  ],
+  "Tiết kiệm thuế của lô nếu được hưởng ưu đãi": [
+    "Tariff saving for the shipment if the preference applies",
+    "Économie de droits pour l'envoi si la préférence s'applique",
+    "優遇が適用された場合の貨物の関税節約額"
+  ],
+  "Quy tắc này cần chuyên gia xác nhận nên hệ thống chỉ có thể trả \"Chưa kết luận\".": [
+    "This rule needs expert confirmation, so the system can only return \"Inconclusive\".",
+    "Cette règle nécessite la confirmation d'un expert ; le système ne peut donc répondre que « Non concluant ».",
+    "このルールは専門家の確認が必要なため、システムは「結論不能」しか返せません。"
+  ],
+  "Thông tin lô hàng (để lập danh sách bằng chứng)": [
+    "Shipment details (to build the evidence list)",
+    "Informations sur l'envoi (pour établir la liste des preuves)",
+    "貨物情報（証拠リスト作成用）"
+  ],
+  "Trị giá lô hàng (EUR)": [
+    "Shipment value (EUR)",
+    "Valeur de l'envoi (EUR)",
+    "貨物の価額 (EUR)"
+  ],
+  "Nguồn nguyên liệu của lô": [
+    "Raw material source of the shipment",
+    "Origine de la matière première de l'envoi",
+    "貨物の原材料の調達元"
+  ],
+  "Nuôi trồng": [
+    "Aquaculture",
+    "Aquaculture",
+    "養殖"
+  ],
+  "Đánh bắt tự nhiên": [
+    "Wild caught",
+    "Pêche sauvage",
+    "天然漁獲"
+  ],
+  "Trồng trọt": [
+    "Grown",
+    "Cultivé",
+    "栽培"
+  ],
+  "Hàng tươi?": [
+    "Fresh goods?",
+    "Marchandises fraîches ?",
+    "生鮮品ですか？"
+  ],
+  "Trị giá lô phải là số dương, tối đa 2 chữ số thập phân (ví dụ 5000 hoặc 5000.50).": [
+    "The shipment value must be a positive number with at most 2 decimals (for example 5000 or 5000.50).",
+    "La valeur de l'envoi doit être un nombre positif avec au plus 2 décimales (par exemple 5000 ou 5000.50).",
+    "貨物の価額は正の数で、小数は2桁までです（例：5000 または 5000.50）。"
+  ],
+  "Tỷ lệ phần trăm phải là số từ 0 đến 100, tối đa 2 chữ số thập phân.": [
+    "Percentages must be numbers from 0 to 100 with at most 2 decimals.",
+    "Les pourcentages doivent être des nombres de 0 à 100 avec au plus 2 décimales.",
+    "パーセンテージは0〜100の数値で、小数は2桁までです。"
+  ],
+  "Dữ liệu chưa hợp lệ. Vui lòng kiểm tra lại các câu trả lời.": [
+    "Invalid data. Please check your answers.",
+    "Données invalides. Veuillez vérifier vos réponses.",
+    "データが無効です。回答をご確認ください。"
+  ],
+  "Hàng có quá cảnh, lưu kho hoặc chia lô ở nước thứ ba không?": [
+    "Do the goods transit, get stored or split in a third country?",
+    "Les marchandises transitent-elles, sont-elles entreposées ou fractionnées dans un pays tiers ?",
+    "貨物は第三国で通過・保管・分割されますか？"
+  ],
+  "Ở nước thứ ba, hàng được xử lý thế nào?": [
+    "How are the goods handled in the third country?",
+    "Comment les marchandises sont-elles traitées dans le pays tiers ?",
+    "第三国で貨物はどのように扱われますか？"
+  ],
+  "Mọi công đoạn tại Việt Nam trên nguyên liệu nhập khẩu chỉ là thao tác đơn giản (đóng gói lại, đông lạnh, phân loại...)?": [
+    "Are all operations in Viet Nam on imported material only simple operations (repacking, freezing, sorting...)?",
+    "Toutes les opérations au Viet Nam sur la matière importée se limitent-elles à des opérations simples (reconditionnement, congélation, tri...) ?",
+    "輸入原材料に対するベトナムでの全工程は、単純な作業（再包装、冷凍、選別など）のみですか？"
+  ],
+  "Nguồn sản phẩm / nguyên liệu": [
+    "Source of the product / material",
+    "Origine du produit / de la matière",
+    "製品・原材料の調達元"
+  ],
+  "Tàu đăng ký tại Việt Nam hoặc EU?": [
+    "Is the vessel registered in Viet Nam or the EU?",
+    "Le navire est-il immatriculé au Viet Nam ou dans l'UE ?",
+    "船舶はベトナムまたはEUで登録されていますか？"
+  ],
+  "Tàu mang cờ Việt Nam hoặc EU?": [
+    "Does the vessel fly the flag of Viet Nam or the EU?",
+    "Le navire bat-il pavillon du Viet Nam ou de l'UE ?",
+    "船舶はベトナムまたはEUの旗を掲げていますか？"
+  ],
+  "Tỷ lệ sở hữu tàu của công dân/pháp nhân Việt Nam hoặc EU (%)": [
+    "Share of the vessel owned by Vietnamese or EU nationals/entities (%)",
+    "Part du navire détenue par des ressortissants/entités du Viet Nam ou de l'UE (%)",
+    "ベトナムまたはEUの国民・法人が所有する船舶の割合 (%)"
+  ],
+  "Nguyên liệu được đánh bắt ngoài lãnh hải Việt Nam?": [
+    "Was the material caught outside Vietnamese territorial waters?",
+    "La matière a-t-elle été pêchée hors des eaux territoriales vietnamiennes ?",
+    "原材料はベトナムの領海外で漁獲されましたか？"
+  ],
+  "Tỷ lệ nguyên liệu nhập khẩu không thuần túy theo trọng lượng (%)": [
+    "Share of imported non-wholly-obtained material by weight (%)",
+    "Part de matière importée non entièrement obtenue en poids (%)",
+    "輸入された完全生産でない原材料の重量比 (%)"
+  ],
+  "Tỷ lệ nguyên liệu nhập khẩu không thuần túy theo giá xuất xưởng (%)": [
+    "Share of imported non-wholly-obtained material by ex-works price (%)",
+    "Part de matière importée non entièrement obtenue en prix départ usine (%)",
+    "輸入された完全生産でない原材料の工場渡し価格比 (%)"
+  ],
+  "Tỷ lệ đường thêm vào (% trọng lượng)": [
+    "Added sugar (% by weight)",
+    "Sucre ajouté (% en poids)",
+    "添加糖（重量%）"
+  ],
+  "Chỉ lưu kho / chia lô dưới giám sát hải quan": [
+    "Storage / splitting under customs supervision only",
+    "Entreposage / fractionnement sous contrôle douanier uniquement",
+    "税関の監督下での保管・分割のみ"
+  ],
+  "Có gia công ngoài bảo quản và dán nhãn": [
+    "Processed beyond preservation and labelling",
+    "Transformé au-delà de la conservation et de l'étiquetage",
+    "保存とラベル貼付以外の加工あり"
+  ],
+  "Nuôi tại Việt Nam (kể cả từ giống nhập khẩu)": [
+    "Farmed in Viet Nam (including from imported seed)",
+    "Élevé au Viet Nam (y compris à partir de juvéniles importés)",
+    "ベトナムで養殖（輸入種苗を含む）"
+  ],
+  "Đánh bắt trong lãnh hải Việt Nam": [
+    "Caught in Vietnamese territorial waters",
+    "Pêché dans les eaux territoriales vietnamiennes",
+    "ベトナムの領海内で漁獲"
+  ],
+  "Đánh bắt bằng tàu ngoài lãnh hải": [
+    "Caught by a vessel outside territorial waters",
+    "Pêché par un navire hors des eaux territoriales",
+    "領海外で船舶により漁獲"
+  ],
+  "Nhập khẩu, chỉ sơ chế": [
+    "Imported, only lightly processed",
+    "Importé, simplement préparé",
+    "輸入品（簡易加工のみ）"
+  ],
+  "Cần thêm thông tin để xác định": [
+    "More information needed to decide",
+    "Informations supplémentaires nécessaires pour décider",
+    "判断には追加情報が必要"
+  ],
+  "Cần kiểm tra thêm (chưa có dữ liệu danh mục)": [
+    "Needs further checking (no catalogue data yet)",
+    "À vérifier (pas encore de données de catalogue)",
+    "要確認（カタログデータがまだありません）"
+  ],
+  "Kiểm tra xuất xứ hàng hóa": [
+    "Check goods origin",
+    "Vérifier l'origine des marchandises",
+    "商品の原産地チェック"
   ]
 }

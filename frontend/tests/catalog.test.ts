@@ -193,7 +193,7 @@ const C4_STRINGS = [
   'Kết quả chỉ mang tính tham khảo. Cơ quan cấp chứng nhận xuất xứ chính thức là Bộ Công Thương.',
   'Vui lòng chọn mã HS.',
   'Giá xuất xưởng phải là số dương, tối đa 2 chữ số thập phân (ví dụ 1000 hoặc 1000.50).',
-  'Máy tính quy tắc xuất xứ EVFTA',
+  'Kiểm tra xuất xứ hàng hóa',
   'Kiểm tra hàng Việt Nam xuất sang EU có đạt quy tắc xuất xứ hay không. Mọi số tiền dùng cùng một đơn vị tiền tệ.',
   'Giá xuất xưởng (EXW)',
   'Nguyên liệu nhập khẩu',

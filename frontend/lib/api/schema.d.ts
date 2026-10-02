@@ -673,6 +673,57 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/public/hs-codes/{cn}/origin-questions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Origin Questions */
+        get: operations["origin_questions_api_public_hs_codes__cn__origin_questions_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/public/origin": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Calculate Origin */
+        post: operations["calculate_origin_api_public_origin_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/companies/{company_id}/evidence-checklist": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Evidence Checklist */
+        get: operations["evidence_checklist_api_companies__company_id__evidence_checklist_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/public/markets": {
         parameters: {
             query?: never;
@@ -1208,6 +1259,40 @@ export interface paths {
         put?: never;
         /** Review Country Term */
         post: operations["review_country_term_api_admin_country_terms__term_id__review_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/compliance-review-issues": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Review Issues */
+        get: operations["list_review_issues_api_admin_compliance_review_issues_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/compliance-review-issues/{issue_id}/resolve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Resolve Review Issue */
+        post: operations["resolve_review_issue_api_admin_compliance_review_issues__issue_id__resolve_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2989,6 +3074,25 @@ export interface components {
             created_at: string;
         };
         /**
+         * BadgeOut
+         * @description Huy hiệu EVFTA-verified theo nhóm hàng. Văn bản chỉ nói về C/O EUR.1 đã cấp trong 12 tháng
+         *     gần nhất, không nói hàng đạt xuất xứ EVFTA.
+         */
+        BadgeOut: {
+            /** Category */
+            category: string;
+            /** Granted */
+            granted: boolean;
+            /** Text Vi */
+            text_vi: string | null;
+            /** Text En */
+            text_en: string | null;
+            /** Reason */
+            reason: string | null;
+            /** Missing */
+            missing: string[];
+        };
+        /**
          * BalanceTerms
          * @description Điều khoản cho phần còn lại sau đặt cọc.
          * @enum {string}
@@ -3163,6 +3267,55 @@ export interface components {
             source_url: string | null;
             /** Heading */
             heading: string;
+        };
+        /** CompanyChecklistItemOut */
+        CompanyChecklistItemOut: {
+            /** Code */
+            code: string;
+            /** Name Vi */
+            name_vi: string;
+            /** Name En */
+            name_en: string | null;
+            /**
+             * Blocks
+             * @enum {string}
+             */
+            blocks: "IMPORT" | "TARIFF_PREFERENCE" | "NONE";
+            /** Legal Status */
+            legal_status: string;
+            /** Verification Type Code */
+            verification_type_code: string | null;
+            /**
+             * State
+             * @enum {string}
+             */
+            state: "approved" | "pending" | "expired" | "rejected" | "missing" | "not_mapped";
+            /**
+             * Review State
+             * @enum {string}
+             */
+            review_state: "REVIEWED" | "UNREVIEWED";
+        };
+        /** CompanyChecklistOut */
+        CompanyChecklistOut: {
+            /** Hs Code */
+            hs_code: string;
+            /** Hs Formatted */
+            hs_formatted: string;
+            /** Category */
+            category: string | null;
+            /** Items */
+            items: components["schemas"]["CompanyChecklistItemOut"][];
+            badge: components["schemas"]["BadgeOut"] | null;
+            /**
+             * Review State
+             * @enum {string}
+             */
+            review_state: "REVIEWED" | "UNREVIEWED";
+            /** Unreviewed Components */
+            unreviewed_components: string[];
+            /** Disclaimer */
+            disclaimer: string | null;
         };
         /** CompanyIn */
         CompanyIn: {
@@ -3873,6 +4026,38 @@ export interface components {
             /** Custom Type Name */
             custom_type_name?: string | null;
         };
+        /** EvidenceItemOut */
+        EvidenceItemOut: {
+            /** Code */
+            code: string;
+            /** Name Vi */
+            name_vi: string;
+            /** Name En */
+            name_en: string | null;
+            /** Layer */
+            layer: string;
+            /** Scope */
+            scope: string;
+            /**
+             * Blocks
+             * @enum {string}
+             */
+            blocks: "IMPORT" | "TARIFF_PREFERENCE" | "NONE";
+            /** Legal Status */
+            legal_status: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "REQUIRED" | "NEEDS_INPUT" | "CHECK_REQUIRED";
+            /** Conditions */
+            conditions: string[];
+            /**
+             * Review State
+             * @enum {string}
+             */
+            review_state: "REVIEWED" | "UNREVIEWED";
+        };
         /** EvidenceOut */
         EvidenceOut: {
             /**
@@ -4509,6 +4694,154 @@ export interface components {
             /** Cancelled At */
             cancelled_at: string | null;
             bank_transfer: components["schemas"]["BankTransferOut"] | null;
+        };
+        /**
+         * OriginIn
+         * @description Câu trả lời cho máy tính xuất xứ. Trường bỏ trống = chưa trả lời (→ inconclusive).
+         */
+        OriginIn: {
+            /** Hs Code */
+            hs_code: string;
+            /** Consignment Value Eur */
+            consignment_value_eur?: number | string | null;
+            /** Transit Third Country */
+            transit_third_country?: boolean | null;
+            /** Transit Handling */
+            transit_handling?: ("STORAGE_UNDER_CUSTOMS" | "PROCESSED") | null;
+            /** Only Article6 Operations */
+            only_article6_operations?: boolean | null;
+            /** Sourcing */
+            sourcing?: ("FARMED_IN_VN" | "CAUGHT_IN_VN_TERRITORIAL_SEA" | "CAUGHT_BY_VESSEL" | "IMPORTED") | null;
+            /** Vessel Registered Vn Eu */
+            vessel_registered_vn_eu?: boolean | null;
+            /** Vessel Flag Vn Eu */
+            vessel_flag_vn_eu?: boolean | null;
+            /** Vessel Ownership Pct */
+            vessel_ownership_pct?: number | string | null;
+            /** Materials Outside Territorial Sea */
+            materials_outside_territorial_sea?: boolean | null;
+            /** Restricted Nonorig Pct Weight */
+            restricted_nonorig_pct_weight?: number | string | null;
+            /** Restricted Nonorig Pct Value */
+            restricted_nonorig_pct_value?: number | string | null;
+            /** Sugar Pct Weight */
+            sugar_pct_weight?: number | string | null;
+            /** Raw Material Source */
+            raw_material_source?: ("AQUACULTURE" | "WILD_CAUGHT" | "GROWN") | null;
+            /** Is Fresh */
+            is_fresh?: boolean | null;
+        };
+        /** OriginInputOut */
+        OriginInputOut: {
+            /** Name */
+            name: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "boolean" | "percent" | "enum";
+            /** Options */
+            options: string[];
+            /** Required If */
+            required_if: string | null;
+        };
+        /** OriginOut */
+        OriginOut: {
+            /** Check Id */
+            check_id: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "pass" | "fail" | "inconclusive" | "unsupported";
+            /** Reasons */
+            reasons: components["schemas"]["OriginReasonOut"][];
+            /** Inputs Missing */
+            inputs_missing: string[];
+            /** Additional Evidence */
+            additional_evidence: string[];
+            required_evidence?: components["schemas"]["RequiredEvidenceOut"] | null;
+            /** Hs Code */
+            hs_code: string;
+            /** Hs Formatted */
+            hs_formatted: string;
+            /** Rule Type */
+            rule_type: string | null;
+            /** Rule Text Vi */
+            rule_text_vi: string | null;
+            /** Rule Text En */
+            rule_text_en: string | null;
+            /** Insufficient Operations Vi */
+            insufficient_operations_vi: string | null;
+            /** Tolerance Note Vi */
+            tolerance_note_vi: string | null;
+            /** Risk Note Vi */
+            risk_note_vi: string | null;
+            /** Requires Expert */
+            requires_expert: boolean;
+            /** Preference Applicable */
+            preference_applicable: boolean;
+            /** Savings */
+            savings: string | null;
+            /**
+             * Review State
+             * @enum {string}
+             */
+            review_state: "REVIEWED" | "UNREVIEWED";
+            /** Unreviewed Components */
+            unreviewed_components: string[];
+            /** Disclaimer */
+            disclaimer: string | null;
+        };
+        /** OriginQuestionOut */
+        OriginQuestionOut: {
+            /** Order */
+            order: number;
+            /** Text Vi */
+            text_vi: string;
+            /** Text En */
+            text_en: string | null;
+        };
+        /**
+         * OriginQuestionsOut
+         * @description Câu hỏi hiển thị + các trường trả lời theo rule_type. `unsupported` thì không có gì.
+         */
+        OriginQuestionsOut: {
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "ok" | "unsupported";
+            /** Hs Code */
+            hs_code: string;
+            /** Hs Formatted */
+            hs_formatted: string;
+            /** Rule Type */
+            rule_type: string | null;
+            /** Requires Expert */
+            requires_expert: boolean;
+            /** Questions */
+            questions: components["schemas"]["OriginQuestionOut"][];
+            /** Inputs */
+            inputs: components["schemas"]["OriginInputOut"][];
+            /**
+             * Review State
+             * @enum {string}
+             */
+            review_state: "REVIEWED" | "UNREVIEWED";
+            /** Unreviewed Components */
+            unreviewed_components: string[];
+            /** Disclaimer */
+            disclaimer: string | null;
+        };
+        /** OriginReasonOut */
+        OriginReasonOut: {
+            /** Code */
+            code: string;
+            /** Vi */
+            vi: string;
+            /** En */
+            en: string;
         };
         /** PackagingIn */
         PackagingIn: {
@@ -5390,6 +5723,22 @@ export interface components {
             /** Unit Price */
             unit_price?: string | null;
         };
+        /**
+         * RequiredEvidenceOut
+         * @description Danh sách bằng chứng cho lô, sắp IMPORT → TARIFF_PREFERENCE → NONE. Có dòng chưa duyệt thì
+         *     review_state = UNREVIEWED và disclaimer hiển thị ở đầu danh sách.
+         */
+        RequiredEvidenceOut: {
+            /** Items */
+            items: components["schemas"]["EvidenceItemOut"][];
+            /**
+             * Review State
+             * @enum {string}
+             */
+            review_state: "REVIEWED" | "UNREVIEWED";
+            /** Disclaimer */
+            disclaimer: string | null;
+        };
         /** ReturnVisitStats */
         ReturnVisitStats: {
             /** Weeks */
@@ -5398,6 +5747,37 @@ export interface components {
             overall_ratio: string | null;
             /** Target Ratio */
             target_ratio: string;
+        };
+        /**
+         * ReviewIssueOut
+         * @description Hàng đợi admin: dòng luật sư trả "SUA" (cần sửa), chưa được duyệt.
+         */
+        ReviewIssueOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Entity Type */
+            entity_type: string;
+            /** Entity Id */
+            entity_id: string;
+            /** Label */
+            label: string;
+            /** Note */
+            note: string;
+            /**
+             * Created By
+             * Format: uuid
+             */
+            created_by: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Resolved At */
+            resolved_at: string | null;
         };
         /**
          * ReviewProductOut
@@ -5760,7 +6140,7 @@ export interface components {
          * RuleType
          * @enum {string}
          */
-        RuleType: "WO" | "CTH" | "MaxNOM" | "CTH_OR_MaxNOM";
+        RuleType: "WO" | "CTH" | "MaxNOM" | "CTH_OR_MaxNOM" | "WO_PRODUCT" | "WO_PRODUCT_VESSEL" | "WO_MATERIALS" | "WO_MATERIALS_VESSEL" | "WO_MATERIALS_TOLERANCE" | "WO_MATERIALS_SUGAR_CAP";
         /**
          * SavedSearchTile
          * @description Tìm kiếm đã lưu là P1 (K1); chưa có thì ô hướng dẫn thay vì để trống.
@@ -6368,6 +6748,18 @@ export interface components {
             preferential_duty?: string | null;
             /** Data Status */
             data_status?: ("reviewed" | "demo_unreviewed") | null;
+            /**
+             * Review State
+             * @default REVIEWED
+             * @enum {string}
+             */
+            review_state?: "REVIEWED" | "UNREVIEWED";
+            /** Unreviewed Components */
+            unreviewed_components?: string[];
+            /** Disclaimer */
+            disclaimer?: string | null;
+            /** Reasons */
+            reasons?: string[];
             /** Review Reason */
             review_reason?: string | null;
             /** Scenarios */
@@ -6419,6 +6811,16 @@ export interface components {
             source_url: string | null;
             /** Data Status */
             data_status?: ("reviewed" | "demo_unreviewed") | null;
+            /**
+             * Review State
+             * @default REVIEWED
+             * @enum {string}
+             */
+            review_state?: "REVIEWED" | "UNREVIEWED";
+            /** Unreviewed Components */
+            unreviewed_components?: string[];
+            /** Disclaimer */
+            disclaimer?: string | null;
             /** Alerts */
             alerts?: components["schemas"]["SectorAlertOut"][];
         };
@@ -8365,7 +8767,9 @@ export interface operations {
     calculate_tariff_api_public_tariff_post: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "accept-language"?: string | null;
+            };
             path?: never;
             cookie?: {
                 evfta_session?: string | null;
@@ -8465,7 +8869,9 @@ export interface operations {
             query: {
                 hs_code: string;
             };
-            header?: never;
+            header?: {
+                "accept-language"?: string | null;
+            };
             path?: never;
             cookie?: {
                 evfta_session?: string | null;
@@ -8515,6 +8921,113 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["RooOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    origin_questions_api_public_hs_codes__cn__origin_questions_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "accept-language"?: string | null;
+            };
+            path: {
+                cn: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OriginQuestionsOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    calculate_origin_api_public_origin_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "accept-language"?: string | null;
+            };
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OriginIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OriginOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    evidence_checklist_api_companies__company_id__evidence_checklist_get: {
+        parameters: {
+            query: {
+                hs: string;
+            };
+            header?: {
+                "accept-language"?: string | null;
+            };
+            path: {
+                company_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CompanyChecklistOut"];
                 };
             };
             /** @description Validation Error */
@@ -10033,6 +10546,72 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["CountryTermOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_review_issues_api_admin_compliance_review_issues_get: {
+        parameters: {
+            query?: {
+                only_open?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReviewIssueOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    resolve_review_issue_api_admin_compliance_review_issues__issue_id__resolve_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                issue_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReviewIssueOut"];
                 };
             };
             /** @description Validation Error */
