@@ -61,6 +61,7 @@ _ALLOWED_ROLES = {"exporter": CompanyType.exporter, "buyer": CompanyType.buyer}
 # Quy mô nhân sự (company_size) nay dùng cho cả seller (U2).
 _ONLY_EXPORTER = (
     "export_markets",
+    "export_market_channels",
     "languages_spoken",
     "offering_type",
     "factory_address",
@@ -77,7 +78,13 @@ _ONLY_BUYER = (
     "sourcing_categories",
     "hide_profile_views",
 )
-_LIST_FIELDS = ("export_markets", "languages_spoken", "sourcing_categories", "facility_codes")
+_LIST_FIELDS = (
+    "export_markets",
+    "export_market_channels",
+    "languages_spoken",
+    "sourcing_categories",
+    "facility_codes",
+)
 
 
 def slugify(name: str) -> str:
@@ -104,6 +111,9 @@ def _to_out(company: Company) -> CompanyOut:
             "verification_status": company.verification_status.value,
             "verification_level": company.verification_level.value,
             "export_markets": [m.market for m in company.export_markets],
+            "export_market_channels": {
+                m.market: m.trade_channel for m in company.export_markets if m.trade_channel
+            },
             "languages_spoken": [lang.lang for lang in company.languages],
             "sourcing_categories": [c.category for c in company.sourcing_categories],
             "facility_codes": [
@@ -482,8 +492,25 @@ def _reject_foreign_fields(company_type: CompanyType, values: dict[str, Any]) ->
 
 def _set_lists(company: Company, values: dict[str, Any]) -> None:
     """Lấy các trường danh sách ra khỏi values và gán vào bảng N-N tương ứng."""
-    if (markets := values.pop("export_markets", None)) is not None:
-        company.export_markets = [CompanyExportMarket(market=m) for m in markets]
+    markets = values.pop("export_markets", None)
+    channels = values.pop("export_market_channels", None)
+    if markets is not None or channels is not None:
+        kept = {m.market: m.trade_channel for m in company.export_markets}
+        targets = list(kept) if markets is None else markets
+        if channels is not None:
+            unknown = sorted(set(channels) - set(targets))
+            if unknown:
+                raise AppError(
+                    "invalid_export_market_channel",
+                    f"Channel given for markets not in export_markets: {unknown}",
+                    422,
+                )
+        company.export_markets = [
+            CompanyExportMarket(
+                market=m, trade_channel=kept.get(m) if channels is None else channels.get(m)
+            )
+            for m in targets
+        ]
     if (langs := values.pop("languages_spoken", None)) is not None:
         company.languages = [CompanyLanguage(lang=lang) for lang in langs]
     if (cats := values.pop("sourcing_categories", None)) is not None:

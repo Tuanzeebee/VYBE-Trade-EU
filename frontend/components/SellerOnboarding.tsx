@@ -12,6 +12,11 @@ import {
   COMPANY_SIZES,
   COUNTRIES,
   EXPORT_MARKETS,
+  TRADE_CHANNELS,
+  TRADE_CHANNEL_LABELS,
+  parseMarketChannels,
+  serializeMarketChannels,
+  type TradeChannel,
   FACILITY_CODE_TYPES,
   INDUSTRIES,
   OFFERING_TYPES,
@@ -108,6 +113,7 @@ export default function SellerOnboarding({ account, initialStep = 2, initialComp
     descriptionVi: '',
     descriptionEn: '',
     markets: '',
+    marketChannels: '',
     logoKey: '',
     // U2: sản phẩm / dịch vụ, người đại diện, cơ quan cấp, năng lực — chỉ hỏi vừa đủ.
     offeringType: 'products',
@@ -150,10 +156,23 @@ export default function SellerOnboarding({ account, initialStep = 2, initialComp
   };
   const staffLanguages = formData.languages.split(',').filter(Boolean);
   const exportMarkets = formData.markets.split(',').filter(Boolean);
-  const toggleMarket = (code: string) => setFormData({
-    ...formData,
-    markets: (exportMarkets.includes(code) ? exportMarkets.filter((m) => m !== code) : [...exportMarkets, code]).join(',')
-  });
+  const marketChannels = parseMarketChannels(formData.marketChannels);
+  const toggleMarket = (code: string) => {
+    const removing = exportMarkets.includes(code);
+    const { [code]: _dropped, ...keptChannels } = marketChannels;
+    setFormData({
+      ...formData,
+      markets: (removing ? exportMarkets.filter((m) => m !== code) : [...exportMarkets, code]).join(','),
+      marketChannels: serializeMarketChannels(removing ? keptChannels : marketChannels),
+    });
+  };
+  const setMarketChannel = (code: string, channel: string) => {
+    const { [code]: _old, ...others } = marketChannels;
+    setFormData({
+      ...formData,
+      marketChannels: serializeMarketChannels(channel ? { ...others, [code]: channel as TradeChannel } : others),
+    });
+  };
   const toggleStaffLanguage = (code: string) => setFormData({
     ...formData,
     languages: (staffLanguages.includes(code) ? staffLanguages.filter((l) => l !== code) : [...staffLanguages, code]).join(',')
@@ -1044,6 +1063,30 @@ export default function SellerOnboarding({ account, initialStep = 2, initialComp
                             ))}
                           </div>
                         </fieldset>
+                        {exportMarkets.length > 0 && (
+                          <fieldset>
+                            <legend className="block text-xs sm:text-[13px] font-semibold text-slate-800 mb-1.5">{tr("Kênh xuất khẩu theo thị trường (không bắt buộc)")}</legend>
+                            <div className="grid gap-2 sm:grid-cols-2">
+                              {exportMarkets.map((code) => (
+                                <div key={code} className="flex items-center justify-between gap-2 text-xs sm:text-sm text-slate-700">
+                                  <label htmlFor={`market-channel-${code}`}>{tr(EXPORT_MARKETS.find((m) => m.code === code)?.label ?? code)}</label>
+                                  <select
+                                    id={`market-channel-${code}`}
+                                    value={marketChannels[code] ?? ''}
+                                    onChange={(e) => setMarketChannel(code, e.target.value)}
+                                    className="px-3 py-1.5 rounded-lg border border-slate-200/90 bg-white text-xs sm:text-sm text-slate-900"
+                                  >
+                                    <option value="">{tr("Chưa chọn")}</option>
+                                    {TRADE_CHANNELS.map((channel) => (
+                                      <option key={channel} value={channel}>{tr(TRADE_CHANNEL_LABELS[channel])}</option>
+                                    ))}
+                                  </select>
+                                </div>
+                              ))}
+                            </div>
+                            <p className="mt-1 text-[11px] text-slate-500">{tr("Tự khai, chỉ dùng cho hồ sơ của bạn và đội ngũ VYBE Trade; không hiện công khai.")}</p>
+                          </fieldset>
+                        )}
                         <div>
                           <label htmlFor="main-customers" className="block text-xs sm:text-[13px] font-semibold text-slate-800 mb-1.5">{tr("Khách hàng chính (không bắt buộc)")}</label>
                           <textarea

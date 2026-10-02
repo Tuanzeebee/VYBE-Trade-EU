@@ -119,6 +119,7 @@ describe('profileToCompany — form onboarding cũ → CompanyIn', () => {
       facility_codes: [],
       languages_spoken: ['vi', 'en'],
       export_markets: ['EU', 'DE'],
+      export_market_channels: {},
     });
   });
 
@@ -168,6 +169,22 @@ describe('profileToCompany — form onboarding cũ → CompanyIn', () => {
   it('thị trường xuất khẩu lấy từ ô chọn cấp công ty (mã), bỏ mã lạ; không đọc thị trường cũ theo sản phẩm', () => {
     expect(profileToCompany({ companyName: 'A', markets: 'FR, XX1, US, ASEAN,,' }).export_markets).toEqual(['FR', 'US', 'ASEAN']);
     expect(profileToCompany({ companyName: 'A', market: 'Châu Âu (EU), Nhật Bản' }).export_markets).toEqual([]);
+  });
+
+  it('B10: kênh theo thị trường — chỉ giữ thị trường đang chọn, bỏ giá trị lạ, thị trường không khai kênh thì không có khóa', () => {
+    const body = profileToCompany({
+      companyName: 'A',
+      markets: 'EU,CN,US',
+      marketChannels: 'EU:official,CN:unofficial,JP:official,US:grey',
+    });
+    expect(body.export_market_channels).toEqual({ EU: 'official', CN: 'unofficial' });
+    expect(profileToCompany({ companyName: 'A', markets: 'EU' }).export_market_channels).toEqual({});
+  });
+
+  it('B10: form đọc lại kênh đã lưu từ hồ sơ', () => {
+    const form = companyToForm({ ...COMPANY, export_markets: ['EU', 'CN'], export_market_channels: { CN: 'unofficial' } } as never);
+    expect(form.marketChannels).toBe('CN:unofficial');
+    expect(companyToForm({ ...COMPANY, export_market_channels: undefined } as never).marketChannels).toBe('');
   });
 
   it('năm thành lập không phải số → null (server không nhận chuỗi)', () => {

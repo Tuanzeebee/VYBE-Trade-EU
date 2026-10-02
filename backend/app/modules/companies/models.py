@@ -307,11 +307,20 @@ class CompanyExportMarket(Base):
     """Thị trường đã xuất khẩu: mã ISO-2 hoặc khối EU / ASEAN."""
 
     __tablename__ = "company_export_markets"
+    __table_args__ = (
+        CheckConstraint(
+            "trade_channel IS NULL OR trade_channel IN ('official', 'unofficial')",
+            name="trade_channel_known",
+        ),
+    )
 
     company_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("companies.id", ondelete="CASCADE"), primary_key=True
     )
     market: Mapped[str] = mapped_column(String(8), primary_key=True, index=True)
+    # B10: chính ngạch / tiểu ngạch, chủ hồ sơ tự khai cho từng thị trường (tuỳ chọn). Không vào
+    # điểm tín nhiệm, cấp xác minh hay máy tính tuân thủ; không lộ ra hồ sơ công khai.
+    trade_channel: Mapped[str | None] = mapped_column(String(16))
 
 
 class CompanyLanguage(Base):
