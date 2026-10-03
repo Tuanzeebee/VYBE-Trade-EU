@@ -328,7 +328,11 @@ async def seller_response_stats(
         median = Decimal(str(round(middle.total_seconds() / 3600, 2)))
     rfq_ids = list(
         await session.scalars(
-            select(Rfq.id).where(Rfq.exporter_company_id == company_id, Rfq.created_at >= since)
+            select(Rfq.id).where(
+                Rfq.exporter_company_id == company_id,
+                Rfq.created_at >= since,
+                Rfq.kind == RfqKind.quote,  # N4: chỉ Request báo giá mới tính vào tỷ lệ báo giá
+            )
         )
     )
     quoted = 0

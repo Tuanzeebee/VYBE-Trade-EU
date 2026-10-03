@@ -7,9 +7,10 @@ from decimal import Decimal
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.modules.companies.tests.helpers import login_as
 from app.modules.messaging.models import Conversation, Message
 from app.modules.messaging.service import seller_response_stats
-from app.modules.messaging.tests.conftest import make_buyer, make_exporter
+from app.modules.messaging.tests.conftest import make_buyer, make_exporter, rfq_body
 
 T0 = dt.datetime(2026, 9, 20, 8, tzinfo=dt.UTC)
 
@@ -55,3 +56,19 @@ async def test_reply_rate_median_and_quote_rate(
     assert (stats.rfqs, stats.quoted) == (0, 0)
     later = await seller_response_stats(db_session, exporter, T0 + dt.timedelta(days=1))
     assert later.conversations == 0
+
+
+async def test_only_quote_requests_count_towards_quote_rate(
+    api_client: AsyncClient, db_session: AsyncSession
+) -> None:
+    """N4: Request hẹn meeting/hỏi đóng gói không bao giờ được báo giá nên không được kéo tụt tỷ lệ
+    báo giá của seller trong điểm tín nhiệm."""
+    exporter_id, product_id = await make_exporter(api_client, db_session)
+    await make_buyer(api_client)
+    await login_as(api_client, "buyer", "buyer@x.de")
+    assert (await api_client.post("/api/buyer/rfqs", json=rfq_body(product_id))).status_code == 201
+    meeting = {"product_id": product_id, "kind": "meeting", "message": "Hẹn họp 15 phút"}
+    assert (await api_client.post("/api/buyer/rfqs", json=meeting)).status_code == 201
+    since = dt.datetime.now(dt.UTC) - dt.timedelta(days=1)
+    stats = await seller_response_stats(db_session, uuid.UUID(exporter_id), since)
+    assert (stats.rfqs, stats.quoted) == (1, 0)
