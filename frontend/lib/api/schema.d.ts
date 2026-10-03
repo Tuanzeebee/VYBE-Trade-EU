@@ -4414,6 +4414,7 @@ export interface components {
             verification: components["schemas"]["VerificationTile"];
             tariff_savings: components["schemas"]["SavingsTile"];
             copilot: components["schemas"]["CopilotTile"];
+            journey: components["schemas"]["JourneyOut"];
         };
         /**
          * ExporterRequirementsOut
@@ -4662,6 +4663,30 @@ export interface components {
             address?: string | null;
             /** Email */
             email?: string | null;
+        };
+        /** JourneyOut */
+        JourneyOut: {
+            /** Next Step */
+            next_step: string | null;
+            /** Steps */
+            steps: components["schemas"]["JourneyStepOut"][];
+            /** Product Done */
+            product_done: number;
+            /** Product Total */
+            product_total: number;
+            /** Sales Done */
+            sales_done: number;
+            /** Sales Total */
+            sales_total: number;
+        };
+        /** JourneyStepOut */
+        JourneyStepOut: {
+            /** Key */
+            key: string;
+            /** Track */
+            track: string;
+            /** Done */
+            done: boolean;
         };
         /** LoginIn */
         LoginIn: {
@@ -7344,7 +7369,7 @@ export interface components {
             /** Period End */
             period_end?: string | null;
             /** Allocation Method */
-            allocation_method?: ("IMPORTER_FIRST_COME" | "EXPORT_LICENCE" | "ALLOCATION" | "OTHER") | null;
+            allocation_method?: ("IMPORTER_FIRST_COME" | "IMPORT_LICENCE" | "EXPORT_LICENCE" | "ALLOCATION" | "OTHER") | null;
             /**
              * Licence Required
              * @default false
@@ -7474,7 +7499,7 @@ export interface components {
             /** Period End */
             period_end?: string | null;
             /** Allocation Method */
-            allocation_method?: ("IMPORTER_FIRST_COME" | "EXPORT_LICENCE" | "ALLOCATION" | "OTHER") | null;
+            allocation_method?: ("IMPORTER_FIRST_COME" | "IMPORT_LICENCE" | "EXPORT_LICENCE" | "ALLOCATION" | "OTHER") | null;
             /** Licence Required */
             licence_required?: boolean | null;
             /** Licence Issuer Vi */

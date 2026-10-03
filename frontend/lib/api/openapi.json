@@ -17558,6 +17558,9 @@
           },
           "copilot": {
             "$ref": "#/components/schemas/CopilotTile"
+          },
+          "journey": {
+            "$ref": "#/components/schemas/JourneyOut"
           }
         },
         "type": "object",
@@ -17567,7 +17570,8 @@
           "rfqs",
           "verification",
           "tariff_savings",
-          "copilot"
+          "copilot",
+          "journey"
         ],
         "title": "ExporterDashboard"
       },
@@ -18337,6 +18341,77 @@
         "type": "object",
         "title": "InvoiceInfo",
         "description": "Thông tin xuất hoá đơn VAT (xuất ngoài hệ thống, ADR-0005). Tuỳ chọn."
+      },
+      "JourneyOut": {
+        "properties": {
+          "next_step": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Step"
+          },
+          "steps": {
+            "items": {
+              "$ref": "#/components/schemas/JourneyStepOut"
+            },
+            "type": "array",
+            "title": "Steps"
+          },
+          "product_done": {
+            "type": "integer",
+            "title": "Product Done"
+          },
+          "product_total": {
+            "type": "integer",
+            "title": "Product Total"
+          },
+          "sales_done": {
+            "type": "integer",
+            "title": "Sales Done"
+          },
+          "sales_total": {
+            "type": "integer",
+            "title": "Sales Total"
+          }
+        },
+        "type": "object",
+        "required": [
+          "next_step",
+          "steps",
+          "product_done",
+          "product_total",
+          "sales_done",
+          "sales_total"
+        ],
+        "title": "JourneyOut"
+      },
+      "JourneyStepOut": {
+        "properties": {
+          "key": {
+            "type": "string",
+            "title": "Key"
+          },
+          "track": {
+            "type": "string",
+            "title": "Track"
+          },
+          "done": {
+            "type": "boolean",
+            "title": "Done"
+          }
+        },
+        "type": "object",
+        "required": [
+          "key",
+          "track",
+          "done"
+        ],
+        "title": "JourneyStepOut"
       },
       "LoginIn": {
         "properties": {
@@ -27693,6 +27768,7 @@
                 "type": "string",
                 "enum": [
                   "IMPORTER_FIRST_COME",
+                  "IMPORT_LICENCE",
                   "EXPORT_LICENCE",
                   "ALLOCATION",
                   "OTHER"
@@ -28346,6 +28422,7 @@
                 "type": "string",
                 "enum": [
                   "IMPORTER_FIRST_COME",
+                  "IMPORT_LICENCE",
                   "EXPORT_LICENCE",
                   "ALLOCATION",
                   "OTHER"

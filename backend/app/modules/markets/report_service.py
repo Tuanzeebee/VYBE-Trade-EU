@@ -104,6 +104,18 @@ async def _count_since(session: AsyncSession, model: Any, company_id: uuid.UUID)
 
 
 # ── Tạo yêu cầu ───────────────────────────────────────────────────────────────
+async def count_reports(session: AsyncSession, company_id: uuid.UUID) -> int:
+    """Số báo cáo go-to-market đã tạo của công ty (N1: bước 'market' của hành trình)."""
+    return int(
+        await session.scalar(
+            select(func.count())
+            .select_from(MarketReport)
+            .where(MarketReport.company_id == company_id)
+        )
+        or 0
+    )
+
+
 async def create_report(
     session: AsyncSession, user: CurrentUser, data: ReportIn, storage: Storage
 ) -> ReportOut:

@@ -23,6 +23,7 @@ from app.modules.companies import service as companies
 from app.modules.compliance import service as compliance
 from app.modules.copilot import service as copilot
 from app.modules.dashboard.events import ProfileViewed
+from app.modules.dashboard.journey import JourneyState, build_steps, next_step, track_progress
 from app.modules.dashboard.models import DashboardEvent, ProfileView
 from app.modules.dashboard.schemas import (
     BuyerDashboard,
@@ -30,6 +31,8 @@ from app.modules.dashboard.schemas import (
     CompletenessTile,
     CopilotTile,
     ExporterDashboard,
+    JourneyOut,
+    JourneyStepOut,
     MissingItem,
     ProfileViewerOut,
     ProfileViewersOut,
@@ -49,6 +52,7 @@ from app.modules.dashboard.schemas import (
     VerificationTile,
     WeekStat,
 )
+from app.modules.markets import report_service as markets
 from app.modules.messaging import service as messaging
 
 WEEK = dt.timedelta(days=7)
@@ -324,18 +328,57 @@ async def _copilot_tile(session: AsyncSession, user: CurrentUser) -> CopilotTile
     return CopilotTile(data=items, empty_hint_key=None if items else "no_copilot_questions")
 
 
+async def _journey(
+    session: AsyncSession,
+    company_id: uuid.UUID | None,
+    completeness: CompletenessTile,
+    verification: VerificationTile,
+    savings: SavingsTile,
+    rfqs: RfqTile,
+) -> JourneyOut:
+    score = Decimal(completeness.data.score) if completeness.data else Decimal(0)
+    products = (
+        await product_service.count_company_products(session, company_id) if company_id else 0
+    )
+    state = JourneyState(
+        has_company=company_id is not None,
+        completeness_score=score,
+        product_count=products,
+        verification_status=verification.data.status if verification.data else "unverified",
+        gtm_report_count=await markets.count_reports(session, company_id) if company_id else 0,
+        tariff_runs=savings.data.runs if savings.data else 0,
+        rfq_total=rfqs.data.total if rfqs.data else 0,
+    )
+    steps = build_steps(state)
+    product_done, product_total = track_progress(steps, "product")
+    sales_done, sales_total = track_progress(steps, "sales")
+    return JourneyOut(
+        next_step=next_step(state),
+        steps=[JourneyStepOut(key=s.key, track=s.track, done=s.done) for s in steps],
+        product_done=product_done,
+        product_total=product_total,
+        sales_done=sales_done,
+        sales_total=sales_total,
+    )
+
+
 async def exporter_dashboard(
     session: AsyncSession, user: CurrentUser, now: dt.datetime | None = None
 ) -> ExporterDashboard:
     moment = now or dt.datetime.now(dt.UTC)
     company_id = await companies.get_company_id(session, user.id)
+    completeness = await _completeness_tile(session, user)
+    rfqs = await _rfq_tile_for(session, user, moment, "no_rfqs_received")
+    verification_tile = await _verification_tile(session, company_id, moment)
+    savings = await _savings_tile(session, company_id)
     dashboard = ExporterDashboard(
-        completeness=await _completeness_tile(session, user),
+        completeness=completeness,
         profile_views=await _profile_views_tile(session, company_id, moment),
-        rfqs=await _rfq_tile_for(session, user, moment, "no_rfqs_received"),
-        verification=await _verification_tile(session, company_id, moment),
-        tariff_savings=await _savings_tile(session, company_id),
+        rfqs=rfqs,
+        verification=verification_tile,
+        tariff_savings=savings,
         copilot=await _copilot_tile(session, user),
+        journey=await _journey(session, company_id, completeness, verification_tile, savings, rfqs),
     )
     verification = dashboard.verification.data
     await _record_open(
@@ -351,6 +394,7 @@ async def exporter_dashboard(
             else None,
             "tariff_savings": dashboard.tariff_savings.data,
             "copilot": dashboard.copilot.data,
+            "journey": dashboard.journey.model_dump(),
         },
         moment,
     )

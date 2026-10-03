@@ -318,6 +318,16 @@ async def get_product(
     return await _out(session, storage, await _get_owned(session, company, product_id), {})
 
 
+async def count_company_products(session: AsyncSession, company_id: uuid.UUID) -> int:
+    """Số sản phẩm của công ty (đếm thuần, không dựng ảnh/dịch)."""
+    return int(
+        await session.scalar(
+            select(func.count()).select_from(Product).where(Product.company_id == company_id)
+        )
+        or 0
+    )
+
+
 async def create_product(
     session: AsyncSession, user: CurrentUser, storage: Storage, data: ProductIn
 ) -> ProductOut:

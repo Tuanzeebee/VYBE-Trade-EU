@@ -244,3 +244,23 @@ async def test_exporter_without_company_is_asked_to_create_one(
     assert body[tile]["data"] is None
     assert body[tile]["empty_hint_key"] == "create_company"
     assert body["rfqs"]["data"]["total"] == 0
+
+
+# ── N1: hành trình ───────────────────────────────────────────────────────────
+async def test_journey_without_company_points_at_company(api_client: AsyncClient) -> None:
+    await login_as(api_client, "exporter", "new@x.vn")
+    journey = (await dashboard(api_client))["journey"]
+    assert journey["next_step"] == "company"
+    assert journey["steps"][0]["key"] == "company"
+    assert journey["product_total"] == 4
+    assert journey["sales_total"] == 4
+
+
+async def test_journey_with_company_but_no_product_never_skips_to_sales(
+    api_client: AsyncClient,
+) -> None:
+    await login_as(api_client, "exporter", "exp@x.vn")
+    await api_client.post("/api/me/company", json=company_body())
+    journey = (await dashboard(api_client))["journey"]
+    assert journey["next_step"] in ("company", "products")
+    assert journey["sales_done"] == 0

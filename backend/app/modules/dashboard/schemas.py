@@ -109,6 +109,21 @@ class CopilotTile(BaseModel):
     empty_hint_key: str | None = None
 
 
+class JourneyStepOut(BaseModel):
+    key: str
+    track: str  # "product" | "sales"
+    done: bool
+
+
+class JourneyOut(BaseModel):
+    next_step: str | None
+    steps: list[JourneyStepOut]
+    product_done: int
+    product_total: int
+    sales_done: int
+    sales_total: int
+
+
 class ExporterDashboard(BaseModel):
     completeness: CompletenessTile
     profile_views: ProfileViewsTile
@@ -116,6 +131,7 @@ class ExporterDashboard(BaseModel):
     verification: VerificationTile
     tariff_savings: SavingsTile
     copilot: CopilotTile
+    journey: JourneyOut
 
 
 class SupplierBrief(BaseModel):
