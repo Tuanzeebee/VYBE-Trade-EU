@@ -782,3 +782,75 @@ class TariffQuotaBalance(Base):
     created_at: Mapped[dt.datetime] = mapped_column(
         DateTime(timezone=True), server_default=text("clock_timestamp()")
     )
+
+
+class FreightBenchmark(Base):
+    """Giá cước tham khảo theo tuyến/loại container (N6a). Dữ liệu do người duyệt nhập, không viết
+    cứng trong code (AGENTS.md §5.6). Chỉ dòng có reviewed_by và còn hạn mới lộ ra giao diện."""
+
+    __tablename__ = "freight_benchmarks"
+    __table_args__ = (
+        CheckConstraint("dest_country ~ '^[A-Z]{2}$'", name="dest_country_iso2"),
+        CheckConstraint(
+            "container_type IN ('20GP', '40GP', '40HC', '20RF', '40RF')", name="container_values"
+        ),
+        CheckConstraint("cargo_class IN ('dry', 'reefer', 'hazard')", name="cargo_class_values"),
+        CheckConstraint(
+            "price_low <= price_typical AND price_typical <= price_high", name="price_order"
+        ),
+        CheckConstraint("valid_until >= valid_from", name="valid_window"),
+        CheckConstraint(
+            "(reviewed_by IS NULL) = (reviewed_at IS NULL)", name="reviewed_by_and_at_together"
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, primary_key=True, default=uuid.uuid4, server_default=text("gen_random_uuid()")
+    )
+    origin_port: Mapped[str] = mapped_column(String(64))
+    dest_country: Mapped[str] = mapped_column(String(2), index=True)
+    dest_port: Mapped[str | None] = mapped_column(String(64))
+    container_type: Mapped[str] = mapped_column(String(16))
+    cargo_class: Mapped[str] = mapped_column(String(16))
+    price_low: Mapped[Decimal] = mapped_column(Numeric(12, 2))
+    price_typical: Mapped[Decimal] = mapped_column(Numeric(12, 2))
+    price_high: Mapped[Decimal] = mapped_column(Numeric(12, 2))
+    currency: Mapped[str] = mapped_column(String(3))
+    valid_from: Mapped[dt.date] = mapped_column(Date)
+    valid_until: Mapped[dt.date] = mapped_column(Date)
+    source: Mapped[str] = mapped_column(String(255))
+    reviewed_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id"))
+    reviewed_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=text("clock_timestamp()")
+    )
+
+
+class InsuranceBenchmark(Base):
+    """Tỷ lệ phí bảo hiểm hàng hóa tham khảo theo loại hàng (N6a). Cùng quy tắc duyệt như cước."""
+
+    __tablename__ = "insurance_benchmarks"
+    __table_args__ = (
+        CheckConstraint("cargo_class IN ('dry', 'reefer', 'hazard')", name="cargo_class_values"),
+        CheckConstraint("basis IN ('cif', 'invoice')", name="basis_values"),
+        CheckConstraint("rate_percent >= 0 AND rate_percent <= 100", name="rate_range"),
+        CheckConstraint("valid_until >= valid_from", name="valid_window"),
+        CheckConstraint(
+            "(reviewed_by IS NULL) = (reviewed_at IS NULL)", name="reviewed_by_and_at_together"
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, primary_key=True, default=uuid.uuid4, server_default=text("gen_random_uuid()")
+    )
+    cargo_class: Mapped[str] = mapped_column(String(16), index=True)
+    rate_percent: Mapped[Decimal] = mapped_column(Numeric(6, 4))
+    basis: Mapped[str] = mapped_column(String(8))
+    source: Mapped[str] = mapped_column(String(255))
+    valid_from: Mapped[dt.date] = mapped_column(Date)
+    valid_until: Mapped[dt.date] = mapped_column(Date)
+    reviewed_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id"))
+    reviewed_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=text("clock_timestamp()")
+    )

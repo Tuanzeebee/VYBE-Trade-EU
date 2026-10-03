@@ -287,6 +287,29 @@ class TariffOut(BaseModel):
     alerts: list[SectorAlertOut] = Field(default_factory=list)  # U14
 
 
+class FreightHintOut(BaseModel):
+    container_type: str
+    price_low: Decimal
+    price_typical: Decimal
+    price_high: Decimal
+    currency: str
+    source: str
+    valid_until: dt.date
+
+
+class InsuranceHintOut(BaseModel):
+    rate_percent: Decimal
+    basis: str
+    source: str
+
+
+class ShippingHintsOut(BaseModel):
+    """N6a: giá tham khảo đã duyệt và còn hạn. Không có dòng nào thì rỗng/None, không đoán."""
+
+    freight: list[FreightHintOut]
+    insurance: InsuranceHintOut | None
+
+
 class TariffPreviewOut(BaseModel):
     """Xem thuế tại sản phẩm (chỉ đọc). `unsupported` và `needs_review` không có con số nào."""
 

@@ -1,5 +1,5 @@
 import uuid
-from typing import Annotated
+from typing import Annotated, Literal
 
 from fastapi import APIRouter, Depends, Header, Query, UploadFile
 from fastapi.responses import Response, StreamingResponse
@@ -57,6 +57,7 @@ from app.modules.compliance.schemas import (
     RooIn,
     RooOut,
     SectorAlertOut,
+    ShippingHintsOut,
     TariffIn,
     TariffOptionsOut,
     TariffOut,
@@ -104,6 +105,15 @@ async def sector_alerts(
     session: Annotated[AsyncSession, Depends(get_session)],
 ) -> list[SectorAlertOut]:
     return await service.sector_alerts(session, hs_code)
+
+
+@router.get("/api/public/shipping-hints")
+async def shipping_hints(
+    dest_country: Annotated[str, Query(pattern=r"^[A-Z]{2}$")],
+    session: Annotated[AsyncSession, Depends(get_session)],
+    cargo_class: Annotated[Literal["dry", "reefer", "hazard"], Query()] = "dry",
+) -> ShippingHintsOut:
+    return await service.shipping_hints(session, dest_country, cargo_class)
 
 
 @router.get("/api/exporter/tariff-preview")

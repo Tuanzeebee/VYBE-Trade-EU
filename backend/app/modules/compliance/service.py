@@ -17,7 +17,7 @@ from app.core.errors import AppError
 from app.modules.auth.schemas import CurrentUser
 from app.modules.catalog import service as catalog
 from app.modules.companies import service as companies
-from app.modules.compliance import disclaimer
+from app.modules.compliance import benchmarks, disclaimer
 from app.modules.compliance.calculators import (
     EU_MEMBERS,
     CountryTerms,
@@ -50,8 +50,10 @@ from app.modules.compliance.models import (
     ComplianceEvidenceRequirement,
     ComplianceEvidenceType,
     CustomsValuationRule,
+    FreightBenchmark,
     HsCodeCompliance,
     ImportCountryTerm,
+    InsuranceBenchmark,
     ProductSpecificRule,
     ProductSubtype,
     RooQuestion,
@@ -84,6 +86,8 @@ from app.modules.compliance.quota_store import latest_balance
 from app.modules.compliance.schemas import (
     AgreementOut,
     EvidenceItemOut,
+    FreightHintOut,
+    InsuranceHintOut,
     MarketRowOut,
     MarketsIn,
     MarketsOut,
@@ -101,6 +105,7 @@ from app.modules.compliance.schemas import (
     RooOut,
     ScenarioOut,
     SectorAlertOut,
+    ShippingHintsOut,
     StagingOut,
     SubtypeOut,
     TariffIn,
@@ -950,6 +955,58 @@ async def calculate_tariff(
         condition_note_en=result.condition_note_en,
         citation_missing=result.citation_missing,
     )
+
+
+async def shipping_hints(
+    session: AsyncSession, dest_country: str, cargo_class: str, today: dt.date | None = None
+) -> ShippingHintsOut:
+    """N6a: cước, bảo hiểm tham khảo. Chỉ dòng đã duyệt và còn hạn; thiếu thì rỗng, không đoán."""
+    day = today or dt.datetime.now(dt.UTC).date()
+    freight_rows = (
+        await session.scalars(
+            select(FreightBenchmark)
+            .where(
+                FreightBenchmark.dest_country == dest_country,
+                FreightBenchmark.cargo_class == cargo_class,
+            )
+            .order_by(FreightBenchmark.container_type, FreightBenchmark.valid_from.desc())
+        )
+    ).all()
+    insurance_rows = (
+        await session.scalars(
+            select(InsuranceBenchmark)
+            .where(InsuranceBenchmark.cargo_class == cargo_class)
+            .order_by(InsuranceBenchmark.valid_from.desc())
+        )
+    ).all()
+    freight: list[FreightHintOut] = []
+    seen: set[str] = set()
+    for row in benchmarks.usable(freight_rows, day):
+        if row.container_type in seen:  # dòng mới nhất của mỗi loại container
+            continue
+        seen.add(row.container_type)
+        freight.append(
+            FreightHintOut(
+                container_type=row.container_type,
+                price_low=row.price_low,
+                price_typical=row.price_typical,
+                price_high=row.price_high,
+                currency=row.currency,
+                source=row.source,
+                valid_until=row.valid_until,
+            )
+        )
+    usable_insurance = benchmarks.usable(insurance_rows, day)
+    insurance = (
+        InsuranceHintOut(
+            rate_percent=usable_insurance[0].rate_percent,
+            basis=usable_insurance[0].basis,
+            source=usable_insurance[0].source,
+        )
+        if usable_insurance
+        else None
+    )
+    return ShippingHintsOut(freight=freight, insurance=insurance)
 
 
 async def preview_tariff(
