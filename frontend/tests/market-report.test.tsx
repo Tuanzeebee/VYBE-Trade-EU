@@ -18,8 +18,9 @@ const json = (status: number, body: unknown) =>
 
 const ID = '11111111-1111-4111-8111-111111111111';
 const base = { id: ID, query: 'cá tra', language: 'vi', product_id: null, created_at: '2026-10-02T08:00:00Z', finished_at: null };
-const SECTIONS = ['summary', 'market', 'recommendations', 'competition', 'positioning', 'compliance', 'branding', 'risks', 'next_steps'];
-const TITLES: Record<string, string> = { summary: 'Tóm tắt', recommendations: 'Thị trường nên ưu tiên', risks: 'Rủi ro cần lưu ý' };
+const SECTIONS = ['positioning', 'summary', 'market', 'recommendations', 'segments', 'competition', 'compliance', 'branding', 'risks', 'next_steps'];
+const FREE = ['positioning', 'summary', 'recommendations'];
+const TITLES: Record<string, string> = { positioning: 'Định vị và năng lực', summary: 'Tóm tắt', recommendations: 'Thị trường nên ưu tiên', segments: 'Phân khúc thị trường', risks: 'Rủi ro cần lưu ý' };
 const row = (country: string) => ({ country, value: '42700000', share: '0.7194', growth: '0.1420', unit_price: '3.39' });
 
 function ready(full: boolean) {
@@ -34,9 +35,10 @@ function ready(full: boolean) {
     narrative_source: 'template',
     tariff_data_status: 'demo_unreviewed',
     sections: SECTIONS.map((key) => {
-      const locked = !full && !['summary', 'recommendations'].includes(key);
-      return { key, title: TITLES[key] ?? key, text: locked ? '' : `Lời văn ${key}: Đức nhập 42,7 triệu EUR.`, locked };
+      const locked = !full && !FREE.includes(key);
+      return { key, title: TITLES[key] ?? key, text: locked || key === 'segments' ? '' : `Lời văn ${key}: Đức nhập 42,7 triệu EUR.`, locked };
     }),
+    positioning: { score: '58.3', axes: { volume: '50.0', certification: '33.3', trust: '100.0', experience: '50.0' } },
     top_markets: [row('ES'), row('DE'), row('NL')],
     potential_markets: [row('AT')],
     competitors: full ? [{ country: 'VN', value: '153616600', share: '0.9976', growth: null, unit_price: '2.61' }] : [],
@@ -62,6 +64,11 @@ function serve(routes: (call: Call) => Response | undefined) {
 }
 
 const products = [{ id: 'p-1', name: 'Cá tra phi lê' }] as unknown as ProductOut[];
+
+function fillStep1(orientation: string) {
+  fireEvent.change(screen.getByLabelText('Sản phẩm của bạn'), { target: { value: 'p-1' } });
+  fireEvent.change(screen.getByLabelText('Định hướng bán hàng'), { target: { value: orientation } });
+}
 const wrap = (ui: React.ReactElement) =>
   render(
     <NextIntlClientProvider locale="vi" messages={{}}>
@@ -85,18 +92,31 @@ describe('Báo cáo go-to-market (U18)', () => {
       return undefined;
     });
     wrap(<MarketReportPanel products={products} />);
-    fireEvent.change(screen.getByLabelText('Sản phẩm của bạn'), { target: { value: 'p-1' } });
-    fireEvent.change(screen.getByLabelText('Ngân sách marketing dự kiến (EUR/năm, không bắt buộc)'), { target: { value: '20.000' } });
-    fireEvent.change(screen.getByLabelText('Mô hình kinh doanh'), { target: { value: 'oem' } });
+    fillStep1('oem');
+    fireEvent.click(screen.getByRole('button', { name: 'Tiếp' }));
+    fireEvent.change(screen.getByLabelText(/Doanh thu xuất khẩu dự kiến/), { target: { value: '1.000.000' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Tiếp' }));
     fireEvent.click(screen.getByRole('button', { name: 'Tạo báo cáo' }));
     expect(await screen.findByText('Đang dựng báo cáo, thường mất dưới một phút…')).toBeInTheDocument();
     const post = calls.find((c) => c.method === 'POST');
-    expect(post?.body).toEqual({ product_id: 'p-1', q: '', language: 'vi', marketing_budget: '20000', expected_revenue: null, brand_model: 'oem' });
+    expect(post?.body).toEqual({
+      product_id: 'p-1',
+      q: '',
+      language: 'vi',
+      target_market: null,
+      sales_orientation: 'oem',
+      other_text: null,
+      expected_revenue: '1000000',
+      annual_volume: null,
+      budget: null,
+    });
 
     detail = ready(false);
     await act(() => vi.advanceTimersByTimeAsync(3000));
     const view = await screen.findByTestId('report-view');
     expect(within(view).getByRole('region', { name: 'Tóm tắt' })).toHaveTextContent('Lời văn summary');
+    expect(within(view).getByTestId('positioning-chart')).toHaveTextContent('58.3/100');
+    expect(within(view).getAllByRole('region')[0]).toHaveAccessibleName('Định vị và năng lực'); // định vị đứng đầu
     expect(within(view).getByRole('region', { name: 'Rủi ro cần lưu ý' })).toHaveTextContent('Phần này có trong bản đầy đủ.');
     expect(within(view).getByRole('table', { name: 'Thị trường nên ưu tiên' })).toBeInTheDocument();
     expect(within(view).queryByRole('link', { name: 'Tải PDF' })).toBeNull();
@@ -111,7 +131,7 @@ describe('Báo cáo go-to-market (U18)', () => {
       if (call.path === '/api/exporter/consulting-leads') return json(201, {});
       return undefined;
     });
-    wrap(<MarketReportPanel products={[]} />);
+    wrap(<MarketReportPanel products={products} />);
     fireEvent.click(await screen.findByRole('button', { name: 'Xem' }));
     const view = await screen.findByTestId('report-view');
     expect(within(view).getByRole('link', { name: 'Tải PDF' })).toHaveAttribute('href', 'https://fake/market-reports/x.pdf');
@@ -135,20 +155,44 @@ describe('Báo cáo go-to-market (U18)', () => {
     });
   });
 
-  it('sản phẩm chưa có thống kê: báo rõ; ô trống hoặc số tiền sai thì không gọi API', async () => {
+  it('chưa có sản phẩm: hướng dẫn thêm sản phẩm, không có nút tạo báo cáo', async () => {
+    serve(() => json(200, []));
+    wrap(<MarketReportPanel products={[]} />);
+    expect(await screen.findByRole('status')).toHaveTextContent('Bạn cần thêm ít nhất một sản phẩm');
+    expect(screen.queryByRole('button', { name: 'Tạo báo cáo' })).toBeNull();
+  });
+
+  it('từng bước kiểm dữ liệu: thương hiệu riêng bắt buộc ngân sách thương hiệu, doanh thu bắt buộc', async () => {
+    serve((call) => (call.method === 'GET' ? json(200, []) : undefined));
+    wrap(<MarketReportPanel products={products} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Tiếp' }));
+    expect(await screen.findByRole('alert')).toHaveTextContent('Chọn sản phẩm.');
+    fillStep1('own_brand');
+    fireEvent.click(screen.getByRole('button', { name: 'Tiếp' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Tiếp' }));
+    expect(await screen.findByRole('alert')).toHaveTextContent('Nhập doanh thu xuất khẩu dự kiến');
+    fireEvent.change(screen.getByLabelText(/Doanh thu xuất khẩu dự kiến/), { target: { value: '1,5 tỷ' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Tiếp' }));
+    expect(await screen.findByRole('alert')).toHaveTextContent('Nhập doanh thu xuất khẩu dự kiến');
+    fireEvent.change(screen.getByLabelText(/Doanh thu xuất khẩu dự kiến/), { target: { value: '1000000' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Tiếp' }));
+    expect(await screen.findByRole('alert')).toHaveTextContent('Nhập ngân sách làm thương hiệu');
+    expect(screen.getByLabelText(/Ngân sách làm thương hiệu/)).toBeInTheDocument();
+    expect(calls.some((c) => c.method === 'POST')).toBe(false);
+  });
+
+  it('bán thô: ngân sách bán hàng không bắt buộc; sản phẩm chưa có thống kê thì báo rõ', async () => {
     serve((call) => {
       if (call.method === 'GET') return json(200, []);
       return json(422, { error: { code: 'no_trade_data', message: 'x' } });
     });
-    wrap(<MarketReportPanel products={[]} />);
-    fireEvent.click(screen.getByRole('button', { name: 'Tạo báo cáo' }));
-    expect(await screen.findByRole('alert')).toHaveTextContent('Chọn một sản phẩm hoặc nhập tên sản phẩm.');
-    fireEvent.change(screen.getByLabelText('Hoặc tên sản phẩm'), { target: { value: 'xe máy' } });
-    fireEvent.change(screen.getByLabelText('Doanh thu xuất khẩu dự kiến (EUR/năm, không bắt buộc)'), { target: { value: '1,5 tỷ' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Tạo báo cáo' }));
-    expect(await screen.findByRole('alert')).toHaveTextContent('Số tiền chỉ gồm chữ số');
-    expect(calls.some((c) => c.method === 'POST')).toBe(false);
-    fireEvent.change(screen.getByLabelText('Doanh thu xuất khẩu dự kiến (EUR/năm, không bắt buộc)'), { target: { value: '' } });
+    wrap(<MarketReportPanel products={products} />);
+    fillStep1('bulk');
+    fireEvent.click(screen.getByRole('button', { name: 'Tiếp' }));
+    expect(screen.getByLabelText(/Ngân sách bán hàng/)).toBeInTheDocument();
+    expect(screen.queryByLabelText(/Ngân sách làm thương hiệu/)).toBeNull();
+    fireEvent.change(screen.getByLabelText(/Doanh thu xuất khẩu dự kiến/), { target: { value: '500000' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Tiếp' }));
     fireEvent.click(screen.getByRole('button', { name: 'Tạo báo cáo' }));
     expect(await screen.findByText(/Chưa có thống kê thương mại cho sản phẩm này/)).toBeInTheDocument();
   });

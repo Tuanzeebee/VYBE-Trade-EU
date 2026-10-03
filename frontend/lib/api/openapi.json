@@ -20192,6 +20192,29 @@
         ],
         "title": "PackagingOut"
       },
+      "PositioningOut": {
+        "properties": {
+          "score": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Score"
+          },
+          "axes": {
+            "additionalProperties": {
+              "type": "string",
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+            },
+            "type": "object",
+            "title": "Axes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "score",
+          "axes"
+        ],
+        "title": "PositioningOut"
+      },
       "PresignIn": {
         "properties": {
           "purpose": {
@@ -23105,6 +23128,81 @@
               }
             ],
             "title": "Brand Model"
+          },
+          "target_market": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^([A-Z]{2}|EU)$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Market"
+          },
+          "sales_orientation": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "bulk",
+                  "oem",
+                  "own_brand",
+                  "other"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sales Orientation"
+          },
+          "other_text": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 200
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Other Text"
+          },
+          "annual_volume": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 1000000000000,
+                "minimum": 0
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,13}|(?=[\\d.]{1,16}0*$)\\d{0,13}\\.\\d{0,2}0*$)"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Annual Volume"
+          },
+          "budget": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 1000000000000,
+                "minimum": 0
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,13}|(?=[\\d.]{1,16}0*$)\\d{0,13}\\.\\d{0,2}0*$)"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Budget"
           }
         },
         "type": "object",
@@ -23305,6 +23403,16 @@
             },
             "type": "array",
             "title": "Sections"
+          },
+          "positioning": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PositioningOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "top_markets": {
             "items": {

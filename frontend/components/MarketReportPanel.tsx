@@ -21,6 +21,9 @@ import {
   type ReportRow,
 } from '../lib/marketReportApi';
 import type { ProductOut } from '../lib/productsApi';
+import { EU_COUNTRIES } from '../lib/tariffApi';
+import { budgetLabel, budgetRequired, ORIENTATION_LABELS, validateStep, type FormValues, type Orientation } from '../lib/orientation';
+import PositioningChart from './PositioningChart';
 
 const POLL_MS = 3000;
 const inputCls = 'w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-[#083832] focus:ring-1 focus:ring-[#083832]';
@@ -188,7 +191,13 @@ function ReportView({ report }: { report: MarketReport }) {
               {tr('Phần này có trong bản đầy đủ.')}
             </p>
           ) : (
-            <p className="text-sm leading-relaxed text-slate-700">{section.text}</p>
+            section.text && <p className="whitespace-pre-line text-sm leading-relaxed text-slate-700">{section.text}</p>
+          )}
+          {section.key === 'positioning' && !section.locked && report.positioning && (
+            <PositioningChart score={report.positioning.score} axes={report.positioning.axes} />
+          )}
+          {section.key === 'segments' && !section.locked && !section.text && (
+            <p className="text-sm text-slate-500">{tr('Chưa có dữ liệu thị trường cho nhóm hàng này.')}</p>
           )}
           {section.key === 'recommendations' && (
             <>
@@ -224,13 +233,19 @@ function ReportView({ report }: { report: MarketReport }) {
 
 export default function MarketReportPanel({ products }: { products: ProductOut[] }) {
   const { tr, language } = useLanguage();
-  const [productId, setProductId] = useState('');
-  const [query, setQuery] = useState('');
+  const [step, setStep] = useState<1 | 2 | 3>(1);
+  const [values, setValues] = useState<FormValues>({
+    productId: '',
+    targetMarket: '',
+    orientation: null,
+    otherText: '',
+    expectedRevenue: '',
+    annualVolume: '',
+    budget: '',
+  });
   const [reportLanguage, setReportLanguage] = useState<'vi' | 'en'>(language === 'en' ? 'en' : 'vi');
-  const [budget, setBudget] = useState('');
-  const [revenue, setRevenue] = useState('');
-  const [brandModel, setBrandModel] = useState<'' | 'oem' | 'own_brand' | 'both'>('');
   const [error, setError] = useState('');
+  const set = (patch: Partial<FormValues>) => setValues((current) => ({ ...current, ...patch }));
   const [busy, setBusy] = useState(false);
   const [items, setItems] = useState<MarketReportItem[] | null | undefined>(undefined);
   const [current, setCurrent] = useState<MarketReport | null>(null);
@@ -251,20 +266,38 @@ export default function MarketReportPanel({ products }: { products: ProductOut[]
     return () => clearTimeout(timer);
   }, [pending, current, refreshList]);
 
+  const next = () => {
+    const problem = validateStep(step, values);
+    if (problem) return setError(problem);
+    setError('');
+    setStep((step + 1) as 2 | 3);
+  };
+
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (step < 3) return next();
+    for (const check of [1, 2] as const) {
+      const problem = validateStep(check, values);
+      if (problem) {
+        setStep(check);
+        return setError(problem);
+      }
+    }
+    const revenue = moneyInput(values.expectedRevenue);
+    const volume = moneyInput(values.annualVolume);
+    const budget = moneyInput(values.budget);
+    if (volume === undefined || budget === undefined) return setError('Số tiền chỉ gồm chữ số (EUR, không có phần lẻ).');
     setError('');
-    const marketing = moneyInput(budget);
-    const expected = moneyInput(revenue);
-    if (!productId && !query.trim()) return setError('Chọn một sản phẩm hoặc nhập tên sản phẩm.');
-    if (marketing === undefined || expected === undefined) return setError('Số tiền chỉ gồm chữ số (EUR, không có phần lẻ).');
     const input: MarketReportInput = {
-      product_id: productId || null,
-      q: productId ? '' : query.trim(),
+      product_id: values.productId,
+      q: '',
       language: reportLanguage,
-      marketing_budget: marketing,
-      expected_revenue: expected,
-      brand_model: brandModel || null,
+      target_market: values.targetMarket || null,
+      sales_orientation: values.orientation,
+      other_text: values.orientation === 'other' ? values.otherText.trim() : null,
+      expected_revenue: revenue ?? null,
+      annual_volume: volume,
+      budget,
     };
     setBusy(true);
     const result = await createReport(input);
@@ -292,57 +325,119 @@ export default function MarketReportPanel({ products }: { products: ProductOut[]
           {tr('Thị trường EU nên ưu tiên, đối thủ, định vị giá, thuế và cảnh báo ngành, OEM hay thương hiệu riêng — tính từ thống kê hải quan EU (Eurostat) và hồ sơ công ty của bạn.')}
         </p>
       </div>
-      <form onSubmit={submit} className="grid gap-3 rounded-2xl border border-slate-200 bg-white p-4 sm:grid-cols-2" aria-label={tr('Tạo báo cáo')}>
-        <label className="text-xs font-semibold text-slate-700">
-          {tr('Sản phẩm của bạn')}
-          <select className={inputCls} value={productId} onChange={(e) => setProductId(e.target.value)}>
-            <option value="">{tr('— Nhập tên sản phẩm bên cạnh —')}</option>
-            {products.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.name}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="text-xs font-semibold text-slate-700">
-          {tr('Hoặc tên sản phẩm')}
-          <input className={inputCls} value={query} maxLength={100} disabled={Boolean(productId)} placeholder={tr('hạt điều, tiêu, cá tra…')} onChange={(e) => setQuery(e.target.value)} />
-        </label>
-        <label className="text-xs font-semibold text-slate-700">
-          {tr('Ngân sách marketing dự kiến (EUR/năm, không bắt buộc)')}
-          <input className={inputCls} inputMode="numeric" value={budget} onChange={(e) => setBudget(e.target.value)} />
-        </label>
-        <label className="text-xs font-semibold text-slate-700">
-          {tr('Doanh thu xuất khẩu dự kiến (EUR/năm, không bắt buộc)')}
-          <input className={inputCls} inputMode="numeric" value={revenue} onChange={(e) => setRevenue(e.target.value)} />
-        </label>
-        <label className="text-xs font-semibold text-slate-700">
-          {tr('Mô hình kinh doanh')}
-          <select className={inputCls} value={brandModel} onChange={(e) => setBrandModel(e.target.value as typeof brandModel)}>
-            <option value="">{tr('Theo sản phẩm / chưa rõ')}</option>
-            <option value="oem">{tr('OEM (sản xuất cho nhãn khác)')}</option>
-            <option value="own_brand">{tr('Thương hiệu riêng')}</option>
-            <option value="both">{tr('Cả hai')}</option>
-          </select>
-        </label>
-        <label className="text-xs font-semibold text-slate-700">
-          {tr('Ngôn ngữ báo cáo')}
-          <select className={inputCls} value={reportLanguage} onChange={(e) => setReportLanguage(e.target.value as 'vi' | 'en')}>
-            <option value="vi">{tr('Tiếng Việt')}</option>
-            <option value="en">English</option>
-          </select>
-        </label>
-        {error && (
-          <p role="alert" className="rounded-xl bg-rose-50 p-3 text-sm text-rose-700 sm:col-span-2">
-            {tr(error)}
+      {products.length === 0 ? (
+        <p role="status" className="rounded-2xl border border-dashed border-slate-300 bg-white p-4 text-sm text-slate-700">
+          {tr('Bạn cần thêm ít nhất một sản phẩm để tạo báo cáo. Vào mục Sản phẩm để thêm.')}
+        </p>
+      ) : (
+        <form onSubmit={submit} className="grid gap-3 rounded-2xl border border-slate-200 bg-white p-4 sm:grid-cols-2" aria-label={tr('Tạo báo cáo')}>
+          <p className="text-xs font-bold uppercase tracking-wider text-slate-500 sm:col-span-2">
+            {tr('Bước')} {step}/3
           </p>
-        )}
-        <div className="sm:col-span-2">
-          <button type="submit" disabled={busy} className="rounded-xl bg-[#083832] px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-60">
-            {tr(busy ? 'Đang gửi yêu cầu…' : 'Tạo báo cáo')}
-          </button>
-        </div>
-      </form>
+          {step === 1 && (
+            <>
+              <label className="text-xs font-semibold text-slate-700">
+                {tr('Sản phẩm của bạn')}
+                <select className={inputCls} value={values.productId} onChange={(e) => set({ productId: e.target.value })}>
+                  <option value="">{tr('— Chọn sản phẩm —')}</option>
+                  {products.map((pr) => (
+                    <option key={pr.id} value={pr.id}>
+                      {pr.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="text-xs font-semibold text-slate-700">
+                {tr('Thị trường quan tâm')}
+                <select className={inputCls} value={values.targetMarket} onChange={(e) => set({ targetMarket: e.target.value })}>
+                  <option value="">{tr('Chưa biết, gợi ý giúp tôi')}</option>
+                  <option value="EU">{tr('Toàn EU')}</option>
+                  {EU_COUNTRIES.map((c) => (
+                    <option key={c.code} value={c.code}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="text-xs font-semibold text-slate-700 sm:col-span-2">
+                {tr('Định hướng bán hàng')}
+                <select className={inputCls} value={values.orientation ?? ''} onChange={(e) => set({ orientation: (e.target.value || null) as Orientation | null })}>
+                  <option value="">{tr('— Chọn —')}</option>
+                  {(Object.keys(ORIENTATION_LABELS) as Orientation[]).map((o) => (
+                    <option key={o} value={o}>
+                      {tr(ORIENTATION_LABELS[o])}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              {values.orientation === 'other' && (
+                <label className="text-xs font-semibold text-slate-700 sm:col-span-2">
+                  {tr('Mô tả định hướng của bạn')}
+                  <input className={inputCls} value={values.otherText} maxLength={200} onChange={(e) => set({ otherText: e.target.value })} />
+                </label>
+              )}
+            </>
+          )}
+          {step === 2 && values.orientation && (
+            <>
+              <label className="text-xs font-semibold text-slate-700">
+                {tr('Doanh thu xuất khẩu dự kiến (EUR/năm)')}
+                <input className={inputCls} inputMode="numeric" value={values.expectedRevenue} onChange={(e) => set({ expectedRevenue: e.target.value })} />
+              </label>
+              <label className="text-xs font-semibold text-slate-700">
+                {tr('Sản lượng dự kiến (tấn/năm, không bắt buộc)')}
+                <input className={inputCls} inputMode="numeric" value={values.annualVolume} onChange={(e) => set({ annualVolume: e.target.value })} />
+              </label>
+              <label className="text-xs font-semibold text-slate-700 sm:col-span-2">
+                {tr(budgetLabel(values.orientation))} {tr(budgetRequired(values.orientation) ? '(EUR/năm)' : '(EUR/năm, không bắt buộc)')}
+                <input className={inputCls} inputMode="numeric" value={values.budget} onChange={(e) => set({ budget: e.target.value })} />
+              </label>
+            </>
+          )}
+          {step === 3 && (
+            <>
+              <p className="text-sm text-slate-700 sm:col-span-2">
+                {tr('Năng lực nhà máy, chứng nhận và thị trường đã xuất được lấy từ hồ sơ công ty của bạn. Cập nhật hồ sơ để báo cáo chính xác hơn.')}
+              </p>
+              <label className="text-xs font-semibold text-slate-700">
+                {tr('Ngôn ngữ báo cáo')}
+                <select className={inputCls} value={reportLanguage} onChange={(e) => setReportLanguage(e.target.value as 'vi' | 'en')}>
+                  <option value="vi">{tr('Tiếng Việt')}</option>
+                  <option value="en">English</option>
+                </select>
+              </label>
+            </>
+          )}
+          {error && (
+            <p role="alert" className="rounded-xl bg-rose-50 p-3 text-sm text-rose-700 sm:col-span-2">
+              {tr(error)}
+            </p>
+          )}
+          <div className="flex gap-3 sm:col-span-2">
+            {step > 1 && (
+              <button
+                type="button"
+                onClick={() => {
+                  setError('');
+                  setStep((step - 1) as 1 | 2);
+                }}
+                className="rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-800"
+              >
+                {tr('Quay lại')}
+              </button>
+            )}
+            {step < 3 ? (
+              <button type="button" onClick={next} className="rounded-xl bg-[#083832] px-5 py-2.5 text-sm font-semibold text-white">
+                {tr('Tiếp')}
+              </button>
+            ) : (
+              <button type="submit" disabled={busy} className="rounded-xl bg-[#083832] px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-60">
+                {tr(busy ? 'Đang gửi yêu cầu…' : 'Tạo báo cáo')}
+              </button>
+            )}
+          </div>
+        </form>
+      )}
 
       {current && <ReportView report={current} />}
 

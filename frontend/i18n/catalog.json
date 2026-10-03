@@ -17043,5 +17043,145 @@
     "Please enter the content of your request.",
     "Veuillez saisir le contenu de votre demande.",
     "リクエストの内容を入力してください。"
+  ],
+  "Bạn cần thêm ít nhất một sản phẩm để tạo báo cáo. Vào mục Sản phẩm để thêm.": [
+    "Add at least one product to create a report. Go to Products to add one.",
+    "Ajoutez au moins un produit pour créer un rapport. Rendez-vous dans Produits.",
+    "レポートを作成するには製品を1つ以上追加してください。「製品」から追加できます。"
+  ],
+  "— Chọn sản phẩm —": [
+    "— Select a product —",
+    "— Choisir un produit —",
+    "— 製品を選択 —"
+  ],
+  "Thị trường quan tâm": [
+    "Target market",
+    "Marché visé",
+    "対象市場"
+  ],
+  "Chưa biết, gợi ý giúp tôi": [
+    "Not sure, suggest for me",
+    "Je ne sais pas, conseillez-moi",
+    "未定、提案してください"
+  ],
+  "Toàn EU": [
+    "Whole EU",
+    "Toute l'UE",
+    "EU全体"
+  ],
+  "Định hướng bán hàng": [
+    "Sales approach",
+    "Approche commerciale",
+    "販売方針"
+  ],
+  "— Chọn —": [
+    "— Select —",
+    "— Choisir —",
+    "— 選択 —"
+  ],
+  "Bán thô, giao tại kho": [
+    "Bulk sale, delivered at warehouse",
+    "Vente en vrac, livraison en entrepôt",
+    "バルク販売（倉庫渡し）"
+  ],
+  "Khác (tự điền)": [
+    "Other (describe)",
+    "Autre (à préciser)",
+    "その他（記入）"
+  ],
+  "Mô tả định hướng của bạn": [
+    "Describe your approach",
+    "Décrivez votre approche",
+    "販売方針を記入"
+  ],
+  "Doanh thu xuất khẩu dự kiến (EUR/năm)": [
+    "Expected export revenue (EUR/year)",
+    "Chiffre d'affaires export prévu (EUR/an)",
+    "輸出売上見込み（EUR/年）"
+  ],
+  "Sản lượng dự kiến (tấn/năm, không bắt buộc)": [
+    "Expected volume (tonnes/year, optional)",
+    "Volume prévu (tonnes/an, facultatif)",
+    "想定生産量（トン/年、任意）"
+  ],
+  "Ngân sách làm thương hiệu": [
+    "Brand-building budget",
+    "Budget de construction de marque",
+    "ブランド構築予算"
+  ],
+  "Ngân sách bán hàng": [
+    "Sales budget",
+    "Budget commercial",
+    "販売予算"
+  ],
+  "(EUR/năm)": [
+    "(EUR/year)",
+    "(EUR/an)",
+    "（EUR/年）"
+  ],
+  "(EUR/năm, không bắt buộc)": [
+    "(EUR/year, optional)",
+    "(EUR/an, facultatif)",
+    "（EUR/年、任意）"
+  ],
+  "Năng lực nhà máy, chứng nhận và thị trường đã xuất được lấy từ hồ sơ công ty của bạn. Cập nhật hồ sơ để báo cáo chính xác hơn.": [
+    "Factory capacity, certificates and past export markets are taken from your company profile. Update your profile for a more accurate report.",
+    "La capacité de l'usine, les certificats et les marchés déjà exportés proviennent de votre profil. Mettez-le à jour pour un rapport plus précis.",
+    "工場の能力、認証、輸出実績は会社プロフィールから取得します。プロフィールを更新するとレポートがより正確になります。"
+  ],
+  "Tiếp": [
+    "Next",
+    "Suivant",
+    "次へ"
+  ],
+  "Chọn sản phẩm.": [
+    "Select a product.",
+    "Choisissez un produit.",
+    "製品を選択してください。"
+  ],
+  "Chọn định hướng bán hàng.": [
+    "Choose a sales approach.",
+    "Choisissez une approche commerciale.",
+    "販売方針を選択してください。"
+  ],
+  "Mô tả định hướng bán hàng của bạn.": [
+    "Describe your sales approach.",
+    "Décrivez votre approche commerciale.",
+    "販売方針を記入してください。"
+  ],
+  "Nhập doanh thu xuất khẩu dự kiến (EUR/năm).": [
+    "Enter your expected export revenue (EUR/year).",
+    "Saisissez votre chiffre d'affaires export prévu (EUR/an).",
+    "輸出売上見込み（EUR/年）を入力してください。"
+  ],
+  "Nhập ngân sách làm thương hiệu (EUR/năm).": [
+    "Enter your brand-building budget (EUR/year).",
+    "Saisissez votre budget de construction de marque (EUR/an).",
+    "ブランド構築予算（EUR/年）を入力してください。"
+  ],
+  "Chưa có dữ liệu thị trường cho nhóm hàng này.": [
+    "No market data for this product group yet.",
+    "Pas encore de données de marché pour ce groupe de produits.",
+    "この製品グループの市場データはまだありません。"
+  ],
+  "Điểm năng lực": [
+    "Capacity score",
+    "Score de capacité",
+    "能力スコア"
+  ],
+  "Điểm năng lực tổng hợp": [
+    "Overall capacity score",
+    "Score de capacité global",
+    "総合能力スコア"
+  ],
+  "Sản lượng": [
+    "Volume",
+    "Volume",
+    "生産量"
+  ],
+  "Kinh nghiệm xuất khẩu": [
+    "Export experience",
+    "Expérience à l'export",
+    "輸出経験"
   ]
 }

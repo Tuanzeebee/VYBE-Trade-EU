@@ -5216,6 +5216,15 @@ export interface components {
             /** Channel */
             channel: string;
         };
+        /** PositioningOut */
+        PositioningOut: {
+            /** Score */
+            score: string;
+            /** Axes */
+            axes: {
+                [key: string]: string;
+            };
+        };
         /** PresignIn */
         PresignIn: {
             /**
@@ -6112,6 +6121,16 @@ export interface components {
             expected_revenue?: number | string | null;
             /** Brand Model */
             brand_model?: ("oem" | "own_brand" | "both") | null;
+            /** Target Market */
+            target_market?: string | null;
+            /** Sales Orientation */
+            sales_orientation?: ("bulk" | "oem" | "own_brand" | "other") | null;
+            /** Other Text */
+            other_text?: string | null;
+            /** Annual Volume */
+            annual_volume?: number | string | null;
+            /** Budget */
+            budget?: number | string | null;
         };
         /** ReportListItemOut */
         ReportListItemOut: {
@@ -6182,6 +6201,7 @@ export interface components {
             tariff_data_status?: ("reviewed" | "demo_unreviewed") | null;
             /** Sections */
             sections?: components["schemas"]["ReportSectionOut"][];
+            positioning?: components["schemas"]["PositioningOut"] | null;
             /** Top Markets */
             top_markets?: components["schemas"]["ReportTableRowOut"][];
             /** Potential Markets */
