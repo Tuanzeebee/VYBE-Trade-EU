@@ -13,7 +13,7 @@ const FREE_FEATURES = [
   'Hồ sơ doanh nghiệp và xác minh Cơ bản',
   'Niêm yết sản phẩm, nhận yêu cầu báo giá và nhắn tin với buyer',
   'Công cụ tính thuế, quy tắc xuất xứ và EUR.1 nháp',
-  'Trợ lý AI tuân thủ',
+  'Trợ lý',
   'Gợi ý thị trường EU và bản tóm tắt báo cáo go-to-market',
   'Buyer: tìm nhà cung cấp, nhắn tin, gửi yêu cầu báo giá — miễn phí',
 ];

@@ -40,7 +40,7 @@ export const BUYER_NAV = [
 const TOOLS = [
   { href: '/tools/tariff', label: 'Công cụ tính thuế', icon: Calculator },
   { href: '/tools/market-insights', label: 'Gợi ý thị trường EU', icon: Globe },
-  { href: '/copilot', label: 'Trợ lý AI tuân thủ', icon: Bot },
+  { href: '/copilot', label: 'Trợ lý', icon: Bot },
 ] as const;
 
 const isActive = (pathname: string, href: string) =>
@@ -116,7 +116,7 @@ export function BuyerShell({ children }: { children: React.ReactNode }) {
             })}
           </nav>
           <div className="mt-6">
-            <p className="mb-2 px-3.5 text-[10px] font-bold uppercase tracking-wider text-slate-500">{tr('Công cụ tuân thủ')}</p>
+            <p className="mb-2 px-3.5 text-[10px] font-bold uppercase tracking-wider text-slate-500">{tr('Công cụ hỗ trợ')}</p>
             <div className="space-y-1.5">
               {TOOLS.map(({ href, label, icon: Icon }) => (
                 <Link key={href} href={href} className="flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-[13px] font-semibold text-slate-600 hover:bg-slate-50 hover:text-slate-900">

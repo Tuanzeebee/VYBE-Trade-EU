@@ -873,7 +873,7 @@ export default function ProductVerification({
                 <p className="text-xs text-slate-600 leading-relaxed mb-4">
                   {tr("Tài khoản tự khai báo thông tin ban đầu. Chưa qua đối chiếu cổng dữ liệu quốc gia. Buyer sẽ nhận cảnh báo cần thẩm tra thêm trước khi giao dịch.")}</p>
                 <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 text-xs text-slate-600 mb-4">
-                  {tr("Khuyến nghị: Nâng cấp lên tối thiểu L1 để kích hoạt chức năng nhận RFQ từ đối tác quốc tế.")}</div>
+                  {tr("Khuyến nghị: Nâng cấp lên tối thiểu L1 để kích hoạt chức năng nhận Request từ đối tác quốc tế.")}</div>
               </div>
             )}
 

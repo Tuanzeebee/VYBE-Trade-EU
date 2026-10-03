@@ -447,7 +447,7 @@ export default function BuyerSellerDetail({
               className="px-4 py-2 rounded-xl bg-[#083832] hover:bg-[#062924] text-white text-xs font-bold flex items-center gap-1.5 transition-all shadow-xs cursor-pointer"
             >
               <Mail className="w-3.5 h-3.5 text-teal-300" />
-              <span>{tr("Gửi RFQ")}</span>
+              <span>{tr("Gửi Request")}</span>
             </button>
           </div>
 
@@ -564,7 +564,7 @@ export default function BuyerSellerDetail({
                   className="flex-1 lg:flex-none px-6 py-2.5 rounded-xl bg-[#083832] hover:bg-[#062924] text-white text-xs sm:text-[13px] font-bold flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer active:scale-95"
                 >
                   <Send className="w-4 h-4 text-teal-300" />
-                  <span>{tr("Gửi RFQ / Yêu cầu báo giá")}</span>
+                  <span>{tr("Gửi Request / Yêu cầu báo giá")}</span>
                 </button>
               </div>
 
@@ -753,7 +753,7 @@ export default function BuyerSellerDetail({
                           }}
                           className="mt-2 text-[11px] font-bold text-[#083832] hover:underline text-left cursor-pointer"
                         >
-                          {tr("Gửi RFQ sản phẩm này →")}</button>
+                          {tr("Gửi Request sản phẩm này →")}</button>
                       </div>
                     </div>
                   ))}
@@ -873,7 +873,7 @@ export default function BuyerSellerDetail({
                 }}
                 className="px-5 py-2.5 rounded-xl bg-[#083832] text-white text-xs font-bold hover:bg-[#062924] transition-colors cursor-pointer shrink-0 shadow-xs"
               >
-                {tr("Gửi yêu cầu chào giá chung (Bulk RFQ)")}</button>
+                {tr("Gửi yêu cầu chào giá chung (Bulk Request)")}</button>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -1151,7 +1151,7 @@ export default function BuyerSellerDetail({
                     <Mail className="w-5 h-5 stroke-[2]" />
                   </div>
                   <div>
-                    <h3 className="text-base font-bold text-slate-900">{tr("Gửi yêu cầu báo giá B2B (RFQ)")}</h3>
+                    <h3 className="text-base font-bold text-slate-900">{tr("Gửi yêu cầu báo giá B2B (Request)")}</h3>
                     <p className="text-xs text-slate-500">{tr("Gửi trực tiếp đến bộ phận xuất khẩu của ")}{tr(supplier.name)}</p>
                   </div>
                 </div>
@@ -1389,7 +1389,7 @@ export default function BuyerSellerDetail({
                 <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
                   <Check className="w-8 h-8 stroke-[3]" />
                 </div>
-                <h3 className="text-lg font-bold text-slate-900">{tr("Gửi RFQ thành công!")}</h3>
+                <h3 className="text-lg font-bold text-slate-900">{tr("Gửi Request thành công!")}</h3>
                 <p className="text-xs text-slate-600 max-w-md mx-auto leading-relaxed">
                   {tr("Yêu cầu chào giá cho đơn hàng ")}<strong>{tr(selectedProductForRfq)}</strong> {tr(" (")}{tr(rfqForm.volume)} {tr(rfqForm.unit)}{tr(") đã được chuyển giao an toàn đến ban giám đốc ")}<strong>{tr(supplier.name)}</strong>{tr(".")}</p>
                 <div className="p-3 rounded-2xl bg-teal-50 border border-teal-200 text-xs text-teal-900 text-left space-y-1">

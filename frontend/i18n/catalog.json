@@ -16743,5 +16743,245 @@
     "The importer needs an import licence issued by the importing country's authority",
     "L'importateur doit détenir une licence d'importation délivrée par l'autorité du pays importateur",
     "輸入者は輸入国の当局が発給する輸入許可証が必要です"
+  ],
+  "Hành trình": [
+    "Journey",
+    "Parcours",
+    "ジャーニー"
+  ],
+  "Việc tiếp theo": [
+    "Next step",
+    "Prochaine étape",
+    "次のステップ"
+  ],
+  "Bắt đầu": [
+    "Start",
+    "Commencer",
+    "開始"
+  ],
+  "Hoàn thiện sản phẩm": [
+    "Complete your products",
+    "Finaliser vos produits",
+    "製品の準備"
+  ],
+  "Bán hàng": [
+    "Sales",
+    "Ventes",
+    "販売"
+  ],
+  "Nhà máy và chứng nhận": [
+    "Factory and certificates",
+    "Usine et certificats",
+    "工場と認証"
+  ],
+  "Xác minh": [
+    "Verification",
+    "Vérification",
+    "認証"
+  ],
+  "Tính thuế và xuất xứ": [
+    "Tariff and origin",
+    "Droits de douane et origine",
+    "関税と原産地"
+  ],
+  "Request và báo giá": [
+    "Requests and quotes",
+    "Demandes et devis",
+    "リクエストと見積"
+  ],
+  "Dịch vụ hỗ trợ": [
+    "Support services",
+    "Services d'appui",
+    "サポートサービス"
+  ],
+  "Request mới": [
+    "New requests",
+    "Nouvelles demandes",
+    "新しいリクエスト"
+  ],
+  "Điền thông tin cơ bản để buyer biết bạn là ai.": [
+    "Fill in the basics so buyers know who you are.",
+    "Renseignez l'essentiel pour que les acheteurs vous connaissent.",
+    "基本情報を入力して、バイヤーにあなたを知ってもらいましょう。"
+  ],
+  "Thêm sản phẩm bạn muốn bán.": [
+    "Add the products you want to sell.",
+    "Ajoutez les produits que vous souhaitez vendre.",
+    "販売したい製品を追加しましょう。"
+  ],
+  "Tải chứng nhận để tăng độ tin cậy.": [
+    "Upload certificates to build trust.",
+    "Téléversez vos certificats pour gagner en confiance.",
+    "認証書をアップロードして信頼性を高めましょう。"
+  ],
+  "Gửi hồ sơ để được xác minh và hiện trong danh bạ.": [
+    "Submit your file to be verified and listed in the directory.",
+    "Soumettez votre dossier pour être vérifié et listé dans l'annuaire.",
+    "書類を提出して認証を受け、ディレクトリに掲載されましょう。"
+  ],
+  "Xem thị trường phù hợp cho sản phẩm của bạn.": [
+    "See which markets suit your products.",
+    "Découvrez les marchés adaptés à vos produits.",
+    "製品に合う市場を確認しましょう。"
+  ],
+  "Biết trước thuế nhập khẩu và giấy tờ xuất xứ.": [
+    "Know the import duty and origin papers in advance.",
+    "Connaissez à l'avance les droits d'importation et les documents d'origine.",
+    "輸入関税と原産地書類を事前に把握しましょう。"
+  ],
+  "Trả lời yêu cầu từ buyer.": [
+    "Answer requests from buyers.",
+    "Répondez aux demandes des acheteurs.",
+    "バイヤーからのリクエストに回答しましょう。"
+  ],
+  "Hải quan, logistics, kế toán thuế.": [
+    "Customs, logistics, tax accounting.",
+    "Douane, logistique, comptabilité fiscale.",
+    "通関、物流、税務会計。"
+  ],
+  "Bạn đã hoàn thành các bước chính. Theo dõi Request mới ở mục Bán hàng.": [
+    "You have completed the main steps. Watch for new requests under Sales.",
+    "Vous avez terminé les étapes principales. Suivez les nouvelles demandes dans Ventes.",
+    "主要なステップが完了しました。新しいリクエストは「販売」で確認できます。"
+  ],
+  "Tiếp theo": [
+    "Next",
+    "Suivant",
+    "次へ"
+  ],
+  "Gửi Request": [
+    "Send Request",
+    "Envoyer une demande de prix",
+    "見積依頼を送信"
+  ],
+  "Gửi Request / Yêu cầu báo giá": [
+    "Send Request / Request for Quote",
+    "Envoyer une Request/une demande de devis",
+    "Request / 見積依頼を送信する"
+  ],
+  "Gửi Request sản phẩm này →": [
+    "Send Request for this product →",
+    "Envoyer une demande de prix pour ce produit →",
+    "この製品の見積依頼を送る →"
+  ],
+  "Gửi yêu cầu chào giá chung (Bulk Request)": [
+    "Send Bulk Request",
+    "Envoyer une demande de devis groupée",
+    "一括見積依頼を送信"
+  ],
+  "Gửi yêu cầu báo giá B2B (Request)": [
+    "Send B2B request for quote (Request)",
+    "Envoyer une demande de devis B2B (Request)",
+    "B2B 見積依頼 (Request) を送信する"
+  ],
+  "Gửi Request thành công!": [
+    "Request sent successfully!",
+    "Request envoyé avec succès !",
+    "Request は正常に送信されました。"
+  ],
+  "Tiếp cận nhiều cơ hội Request hơn": [
+    "Access more Request opportunities",
+    "Accédez à davantage d'opportunités d'appel d'offres",
+    "より多くの Request 機会にアクセスする"
+  ],
+  "cơ hội Request chất lượng": [
+    "quality Request opportunity",
+    "opportunité d'appel d'offres de qualité",
+    "高品質の Request 機会"
+  ],
+  "{0} {1} • Tăng độ tin cậy & Nhận Request quốc tế": [
+    "{0} {1} • Increase credibility & Receive international Requests",
+    "{0} {1} • Augmenter la crédibilité et recevoir des appels d'offres internationaux",
+    "{0} {1} • 信頼性を高め、国際的な Request を受け取る"
+  ],
+  "Khuyến nghị: Nâng cấp lên tối thiểu L1 để kích hoạt chức năng nhận Request từ đối tác quốc tế.": [
+    "Recommended: Upgrade to at least L1 to enable the functionality to receive Requests from international partners.",
+    "Recommandé : mise à niveau vers au moins L1 pour activer la fonctionnalité permettant de recevoir des appels d'offres de partenaires internationaux.",
+    "推奨: 国際パートナーから Request を受信できる機能を有効にするために、少なくとも L1 にアップグレードします。"
+  ],
+  "Tăng 3.5x tỷ lệ phản hồi báo giá Request từ các nhà mua hàng EU và Bắc Mỹ.": [
+    "Increase 3.5x Request quote response rate from EU and North American buyers.",
+    "Augmentez de 3,5x le taux de réponse aux devis des acheteurs de l'UE et d'Amérique du Nord.",
+    "EU および北米のバイヤーからの Request 見積応答率が 3.5 倍に増加します。"
+  ],
+  "Tham gia vào các cơ hội Request chất lượng": [
+    "Participate in quality Request opportunities",
+    "Participer à des opportunités d'appels d'offres de qualité",
+    "質の高いRequest機会に参加する"
+  ],
+  "Cung cấp các chứng nhận còn hiệu lực để tăng tỷ lệ chốt đơn Request với Buyer toàn cầu.": [
+    "Provide valid certificates to increase Request closing rates with global Buyers.",
+    "Fournissez des certificats valides pour augmenter les taux de clôture des appels d'offres avec les acheteurs mondiaux.",
+    "有効な証明書を提供して、グローバルバイヤーとのRequest成約率を高めます。"
+  ],
+  "Request & Báo giá": [
+    "Requests & Quotes",
+    "Demandes de devis et offres",
+    "見積依頼と見積"
+  ],
+  "Yêu cầu báo giá (Request)": [
+    "Request for Quotation (Request)",
+    "Demande de devis (Request)",
+    "見積依頼 (Request)"
+  ],
+  "Tỷ lệ phản hồi Request": [
+    "Request response rate",
+    "Taux de réponse aux appels d'offres",
+    "Request 応答率"
+  ],
+  "Xem danh sách Request": [
+    "See Request list",
+    "Voir la liste des appels d'offres",
+    "Request リストを参照"
+  ],
+  "Cơ hội kết nối & Đơn hỏi hàng B2B (Request)": [
+    "B2B Networking Opportunities & Requests (Request)",
+    "Opportunités et demandes de réseautage B2B (Request)",
+    "B2B ネットワーキングの機会とリクエスト (Request)"
+  ],
+  "là giấy phép đăng ký kinh doanh bắt buộc của doanh nghiệp. Việc xóa tài liệu này sẽ khiến tài khoản mất trạng thái xác minh L1/L2 và có thể bị tạm dừng nhận Request từ đối tác xuất khẩu.": [
+    "is the mandatory business registration license of the enterprise. Deleting this document will cause the account to lose its L1/L2 verification status and may be suspended from receiving Requests from export partners.",
+    "est la licence d'enregistrement d'entreprise obligatoire de l'entreprise. La suppression de ce document entraînera la perte du statut de vérification L1/L2 du compte et pourra être suspendu de la réception des demandes de prix des partenaires d'exportation.",
+    "は企業の必須の事業登録ライセンスです。この文書を削除すると、アカウントの L1/L2 検証ステータスが失われ、輸出パートナーからの Request の受信が停止される可能性があります。"
+  ],
+  "Chuẩn hóa quy trình tạo và phản hồi Yêu cầu Báo giá (Request), đàm phán thông số kỹ thuật (Specs), gửi mẫu kiểm nghiệm (Sample Request) và lưu vết bằng chứng giao dịch thương mại an toàn.": [
+    "Standardize the process of creating and responding to Requests for Quotation (Requests), negotiating specifications (Specs), submitting test samples (Sample Requests), and securely tracking evidence of commercial transactions.",
+    "Standardisez le processus de création et de réponse aux demandes de devis (Request), de négociation des spécifications (Specs), de soumission d'échantillons de test (Sample Requests) et de suivi sécurisé des preuves de transactions commerciales.",
+    "見積依頼書(Request)の作成と応答、仕様書(スペック)の交渉、テストサンプルの提出(サンプルリクエスト)、商取引の証拠の安全な追跡のプロセスを標準化する。"
+  ],
+  "Bộ mẫu Request chuẩn hóa theo quy ước thương mại quốc tế (ICC Incoterms)": [
+    "Standardized set of Request templates according to international trade conventions (ICC Incoterms)",
+    "Ensemble standardisé de modèles de Request selon les conventions commerciales internationales (ICC Incoterms)",
+    "国際貿易規約 (ICC インコタームズ) に準拠した標準化された Request テンプレートのセット"
+  ],
+  "Request & Chốt Giao dịch": [
+    "Request & Deal Closing",
+    "Appel d'offres et clôture de la transaction",
+    "Request と取引の成立"
+  ],
+  "Request & Commercial Workflow (Giao dịch & Hợp đồng)": [
+    "Request & Commercial Workflow (Transactions & Contracts)",
+    "Workflow d'appel d'offres et commercial (transactions et contrats)",
+    "Request および商用ワークフロー (取引および契約)"
+  ],
+  "Request & Commercial Workflow": [
+    "Request & Commercial Workflow",
+    "Appel d'offres et flux de travail commercial",
+    "Request と商用ワークフロー"
+  ],
+  "Trợ lý": [
+    "Assistant",
+    "Assistant",
+    "アシスタント"
+  ],
+  "Công cụ hỗ trợ": [
+    "Support tools",
+    "Outils d'aide",
+    "サポートツール"
+  ],
+  "Nhà cung cấp đã xác minh từ Việt Nam và Đông Nam Á": [
+    "Verified suppliers from Vietnam and Southeast Asia",
+    "Fournisseurs vérifiés du Vietnam et d'Asie du Sud-Est",
+    "ベトナムおよび東南アジアの認証済みサプライヤー"
   ]
 }

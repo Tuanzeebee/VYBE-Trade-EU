@@ -179,16 +179,16 @@ export default function SolutionsPage({
     },
     {
       id: 'rfq-workflow',
-      title: 'RFQ & Commercial Workflow',
+      title: 'Request & Commercial Workflow',
       tag: 'Giao dịch Minh bạch',
       audience: ['seller', 'buyer'],
       icon: Send,
       iconBg: 'bg-emerald-50 text-emerald-600',
       iconColor: 'text-emerald-600',
       borderHover: 'hover:border-emerald-300 hover:shadow-emerald-50/50',
-      description: 'Chuẩn hóa quy trình tạo và phản hồi Yêu cầu Báo giá (RFQ), đàm phán thông số kỹ thuật (Specs), gửi mẫu kiểm nghiệm (Sample Request) và lưu vết bằng chứng giao dịch thương mại an toàn.',
+      description: 'Chuẩn hóa quy trình tạo và phản hồi Yêu cầu Báo giá (Request), đàm phán thông số kỹ thuật (Specs), gửi mẫu kiểm nghiệm (Sample Request) và lưu vết bằng chứng giao dịch thương mại an toàn.',
       features: [
-        'Bộ mẫu RFQ chuẩn hóa theo quy ước thương mại quốc tế (ICC Incoterms)',
+        'Bộ mẫu Request chuẩn hóa theo quy ước thương mại quốc tế (ICC Incoterms)',
         'Quy trình xác nhận và theo dõi chuyển phát mẫu kiểm nghiệm SGS / Vinacontrol',
         'Lưu trữ bằng chứng thỏa thuận số hóa không thể chỉnh sửa, bảo vệ cả hai bên'
       ],
@@ -439,7 +439,7 @@ export default function SolutionsPage({
               },
               {
                 step: '04',
-                title: 'RFQ & Chốt Giao dịch',
+                title: 'Request & Chốt Giao dịch',
                 desc: 'Nhận yêu cầu báo giá chuẩn hóa, xác thực mẫu thử nghiệm và ký hợp đồng an toàn không qua môi giới rác.',
                 icon: Send,
                 color: 'text-emerald-600 bg-emerald-50'
@@ -809,7 +809,7 @@ export default function SolutionsPage({
                       <option value="ai-trust">{tr("AI Trust Co-pilot (Thẩm định tín nhiệm & rủi ro AI)")}</option>
                       <option value="matching">{tr("Supplier & Buyer Matching (Kết nối đối tác quốc tế)")}</option>
                       <option value="trust-profile">{tr("Verified Trust Profile (Hộ chiếu số doanh nghiệp)")}</option>
-                      <option value="rfq-workflow">{tr("RFQ & Commercial Workflow (Giao dịch & Hợp đồng)")}</option>
+                      <option value="rfq-workflow">{tr("Request & Commercial Workflow (Giao dịch & Hợp đồng)")}</option>
                       <option value="market-intel">{tr("Export Market Intelligence (Phân tích thị trường xuất khẩu)")}</option>
                     </select>
                   </div>

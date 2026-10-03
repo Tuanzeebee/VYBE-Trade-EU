@@ -1,4 +1,4 @@
-// Trợ lý AI tuân thủ (D2, D3): gọi /api/public/copilot/*. Không có phiên thì vẫn dùng được.
+// Trợ lý (D2, D3): gọi /api/public/copilot/*. Không có phiên thì vẫn dùng được.
 import { createApiClient } from './api/client';
 import type { components } from './api/schema';
 

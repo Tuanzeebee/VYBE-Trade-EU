@@ -26,7 +26,7 @@ export default async function SupplierDirectory({ query, locale }: { query: Supp
   return (
     <div className="mx-auto max-w-6xl px-5 py-10 sm:px-8">
       <h1 className="text-2xl font-extrabold text-slate-900 sm:text-3xl">
-        {t(services ? 'Nhà cung cấp dịch vụ xuất khẩu đã xác minh' : 'Nhà cung cấp Việt Nam đã xác minh')}
+        {t(services ? 'Nhà cung cấp dịch vụ xuất khẩu đã xác minh' : 'Nhà cung cấp đã xác minh từ Việt Nam và Đông Nam Á')}
       </h1>
       <p className="mt-2 text-sm text-slate-600">{t('Chỉ những doanh nghiệp đã được xác minh mới xuất hiện trong danh bạ.')}</p>
       <nav aria-label={t('Loại nhà cung cấp')} className="mt-5 flex flex-wrap gap-2">

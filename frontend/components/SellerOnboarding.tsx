@@ -361,7 +361,7 @@ export default function SellerOnboarding({ account, initialStep = 2, initialComp
             { icon: User, title: 'Hiển thị với buyer toàn cầu', text: 'Tiếp cận đúng đối tác, đúng nhu cầu' },
             { icon: ShieldCheck, title: 'Tăng mức độ tin cậy', text: 'Được xác minh theo tiêu chuẩn quốc tế' },
             { icon: Layers, title: 'Quản lý sản phẩm chuyên nghiệp', text: 'Giới thiệu năng lực và chứng nhận rõ ràng' },
-            { icon: TrendingUp, title: 'Mở rộng cơ hội xuất khẩu', text: 'Tham gia vào các cơ hội RFQ chất lượng' },
+            { icon: TrendingUp, title: 'Mở rộng cơ hội xuất khẩu', text: 'Tham gia vào các Request chất lượng' },
           ]}
         />
       }

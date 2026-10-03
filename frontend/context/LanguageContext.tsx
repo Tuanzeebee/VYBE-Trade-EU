@@ -81,10 +81,10 @@ export const TRANSLATIONS = {
       home: 'Về trang chủ Sàn B2B'
     },
     hero: {
-      kicker: 'NHÀ CUNG CẤP VIỆT NAM UY TÍN. CƠ HỘI TOÀN CẦU.',
+      kicker: 'NHÀ CUNG CẤP UY TÍN TỪ VIỆT NAM VÀ ĐÔNG NAM Á. CƠ HỘI TOÀN CẦU.',
       titlePre: 'Tìm nhà cung cấp ',
       titleHighlight: 'uy tín',
-      titlePost: ' từ Việt Nam cho thị trường quốc tế',
+      titlePost: ' từ Việt Nam và Đông Nam Á cho thị trường quốc tế',
       subtitle: 'Khám phá các doanh nghiệp đã được xác minh, sản phẩm chất lượng và cơ hội hợp tác trong ngành thực phẩm & nông sản.',
       searchPlaceholder: 'Tìm sản phẩm, ngành hàng, doanh nghiệp...',
       category: 'Ngành hàng',
@@ -118,9 +118,9 @@ export const TRANSLATIONS = {
       products: 'Sản phẩm đa dạng',
       productsDesc: 'Thực phẩm & nông sản Việt Nam',
       fast: 'Kết nối nhanh chóng',
-      fastDesc: 'Gửi RFQ và trao đổi trực tiếp',
-      ai: 'Hỗ trợ bởi AI',
-      aiDesc: 'Phân tích tài liệu, phát hiện rủi ro'
+      fastDesc: 'Gửi Request và trao đổi trực tiếp',
+      ai: 'Trợ lý cá nhân hóa',
+      aiDesc: 'Gợi ý phù hợp với hồ sơ và nhu cầu của bạn'
     },
     featured: {
       title: 'Doanh nghiệp nổi bật',
@@ -170,10 +170,10 @@ export const TRANSLATIONS = {
       home: 'Back to B2B Marketplace'
     },
     hero: {
-      kicker: 'TRUSTED VIETNAMESE SUPPLIERS. GLOBAL OPPORTUNITIES.',
+      kicker: 'TRUSTED SUPPLIERS FROM VIETNAM AND SOUTHEAST ASIA. GLOBAL OPPORTUNITIES.',
       titlePre: 'Find ',
       titleHighlight: 'trusted suppliers',
-      titlePost: ' from Vietnam for global markets',
+      titlePost: ' from Vietnam and Southeast Asia for global markets',
       subtitle: 'Discover verified enterprises, premium agricultural & food commodities, and direct trade partnerships with Vietnamese exporters.',
       searchPlaceholder: 'Search products, categories, suppliers...',
       category: 'Category',
@@ -207,9 +207,9 @@ export const TRANSLATIONS = {
       products: 'Diverse Commodities',
       productsDesc: 'Vietnamese agricultural & food commodities',
       fast: 'Instant Connection',
-      fastDesc: 'Direct RFQ inquiry & trade messaging',
-      ai: 'AI-Powered Assurance',
-      aiDesc: 'Document OCR auditing & risk detection'
+      fastDesc: 'Direct request & trade messaging',
+      ai: 'Personal assistant',
+      aiDesc: 'Suggestions tailored to your profile and needs'
     },
     featured: {
       title: 'Featured Suppliers',

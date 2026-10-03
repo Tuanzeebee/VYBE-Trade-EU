@@ -1,6 +1,6 @@
 'use client';
 
-// Trợ lý AI tuân thủ (D2, D3). Khách dùng không cần đăng nhập.
+// Trợ lý (D2, D3). Khách dùng không cần đăng nhập.
 // Câu trả lời luôn kèm trích dẫn và mức tin cậy; ngoài phạm vi hoặc tin cậy thấp thì đưa nút chuyển chuyên gia.
 import React, { useState } from 'react';
 import HsCodePicker, { type HsCodeOption } from './HsCodePicker';
