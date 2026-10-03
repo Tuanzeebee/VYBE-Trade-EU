@@ -15,18 +15,28 @@ from decimal import Decimal
 from pathlib import Path
 from typing import Any
 
+# N5: định vị và năng lực đứng đầu. Đây là các phần do model/lời văn mẫu viết; mục "segments"
+# (phân khúc) là văn bản người duyệt nhập nên không nằm ở đây mà được ghép ở report_service.
 SECTIONS = (
+    "positioning",
     "summary",
     "market",
     "recommendations",
     "competition",
-    "positioning",
     "compliance",
     "branding",
     "risks",
     "next_steps",
 )
-SUMMARY_SECTIONS = ("summary", "recommendations")  # phần miễn phí; phần còn lại cần gói đầy đủ
+SEGMENTS_SECTION = "segments"
+# Thứ tự hiển thị: phân khúc nằm ngay sau "thị trường nên ưu tiên".
+DISPLAY_SECTIONS = (
+    *SECTIONS[: SECTIONS.index("recommendations") + 1],
+    SEGMENTS_SECTION,
+    *SECTIONS[SECTIONS.index("recommendations") + 1 :],
+)
+# Phần miễn phí; phần còn lại cần gói đầy đủ
+SUMMARY_SECTIONS = ("positioning", "summary", "recommendations")
 PLACEHOLDER = re.compile(r"\{([a-z0-9_]+)\}")
 DIGIT = re.compile(r"[0-9]")
 MAX_SECTION_CHARS = 2000
@@ -39,7 +49,8 @@ SECTION_TITLES = {
         "market": "Bức tranh thị trường EU",
         "recommendations": "Thị trường nên ưu tiên",
         "competition": "Đối thủ và thị phần",
-        "positioning": "Định vị giá và năng lực",
+        "positioning": "Định vị và năng lực",
+        "segments": "Phân khúc thị trường",
         "compliance": "Thuế, hạn ngạch và cảnh báo",
         "branding": "OEM hay thương hiệu riêng",
         "risks": "Rủi ro cần lưu ý",
@@ -50,7 +61,8 @@ SECTION_TITLES = {
         "market": "EU market overview",
         "recommendations": "Priority markets",
         "competition": "Competitors and market shares",
-        "positioning": "Price and capacity positioning",
+        "positioning": "Positioning and capacity",
+        "segments": "Market segments",
         "compliance": "Tariffs, quotas and alerts",
         "branding": "OEM or own brand",
         "risks": "Risks to watch",
@@ -161,6 +173,7 @@ METRIC_DESCRIPTIONS: dict[str, str] = {
     "budget_ratio": "ngân sách marketing dự kiến so với doanh thu dự kiến",
     "benchmark_pct": "mốc ngân sách marketing để xây thương hiệu ở EU",
     "branding_advice": "khuyến nghị OEM hay thương hiệu riêng theo quy tắc",
+    "positioning_score": "điểm năng lực tổng hợp của doanh nghiệp trên thang 100",
 }
 
 
@@ -171,6 +184,7 @@ class CompanyFacts:
     capacity_unit: str | None = None
     capacity_period: str | None = None
     brand_model: str | None = None  # oem | own_brand | both
+    positioning_score: str | None = None  # điểm định vị đã định dạng (N5), vd "58,3"
 
 
 def load_benchmarks(path: Path = BENCHMARKS_CSV) -> dict[str, Decimal]:
@@ -323,6 +337,8 @@ def build_metrics(
             if lang == "vi"
             else {"oem": "OEM", "own_brand": "own brand", "both": "both OEM and own brand"}
         ).get(company.brand_model, company.brand_model)
+    if company.positioning_score:
+        m["positioning_score"] = company.positioning_score
     benchmark: Decimal = load_benchmarks().get("marketing_pct_of_revenue") or Decimal(5)
     marketing, revenue = budget.get("marketing"), budget.get("revenue")
     budget_share = marketing / revenue if marketing and revenue and revenue > 0 else None

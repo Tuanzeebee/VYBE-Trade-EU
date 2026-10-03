@@ -189,6 +189,11 @@ class ReportListItemOut(BaseModel):
     finished_at: dt.datetime | None
 
 
+class PositioningOut(BaseModel):
+    score: Decimal
+    axes: dict[str, Decimal]
+
+
 class ReportOut(ReportListItemOut):
     """full = công ty có quyền xem bản đầy đủ. Bản tóm tắt: chỉ phần summary/recommendations có
     lời văn, bảng đối thủ và file PDF bị khoá."""
@@ -200,6 +205,7 @@ class ReportOut(ReportListItemOut):
     narrative_source: Literal["model", "template"] | None = None
     tariff_data_status: Literal["reviewed", "demo_unreviewed"] | None = None
     sections: list[ReportSectionOut] = Field(default_factory=list)
+    positioning: PositioningOut | None = None
     top_markets: list[ReportTableRowOut] = Field(default_factory=list)
     potential_markets: list[ReportTableRowOut] = Field(default_factory=list)
     competitors: list[ReportTableRowOut] = Field(default_factory=list)

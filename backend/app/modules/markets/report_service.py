@@ -26,11 +26,13 @@ from app.modules.companies import product_service
 from app.modules.companies import service as companies
 from app.modules.compliance import service as compliance
 from app.modules.compliance.schemas import TariffPreviewOut
-from app.modules.markets import recommendation
-from app.modules.markets.models import ConsultingLead, MarketReport
+from app.modules.markets import positioning, recommendation
+from app.modules.markets.models import ConsultingLead, MarketInsight, MarketReport
+from app.modules.markets.positioning import CapacityInput
 from app.modules.markets.report import (
+    DISPLAY_SECTIONS,
     SECTION_TITLES,
-    SECTIONS,
+    SEGMENTS_SECTION,
     SUMMARY_SECTIONS,
     CompanyFacts,
     build_metrics,
@@ -54,6 +56,7 @@ from app.modules.markets.schemas import (
     ReportSectionOut,
     ReportTableRowOut,
 )
+from app.modules.verification import evidence_service as evidence
 
 log = logging.getLogger(__name__)
 
@@ -265,6 +268,49 @@ def _pdf_tables(tables: dict[str, list[dict[str, Any]]], lang: str) -> list[Repo
     ]
 
 
+SEGMENT_LABELS = {
+    "vi": {
+        "horeca": "Nhà hàng, khách sạn, cà phê (Horeca)",
+        "retail": "Siêu thị, đại siêu thị",
+        "industrial_kitchen": "Bếp ăn công nghiệp",
+        "consumer_asian": "Người tiêu dùng gốc Á",
+        "consumer_european": "Người tiêu dùng gốc Âu",
+        "general": "Chung",
+    },
+    "en": {
+        "horeca": "Horeca (hotels, restaurants, cafés)",
+        "retail": "Supermarkets and hypermarkets",
+        "industrial_kitchen": "Industrial kitchens",
+        "consumer_asian": "Asian-origin consumers",
+        "consumer_european": "European-origin consumers",
+        "general": "General",
+    },
+}
+
+
+async def _segments_text(session: AsyncSession, countries: list[str], hs6: str, lang: str) -> str:
+    """Mục phân khúc: CHỈ ghi chú do người duyệt nhập (reviewed_by khác None) khớp nước và nhóm
+    hàng. Không có thì rỗng; không để model suy diễn dữ kiện thị trường."""
+    if not countries:
+        return ""
+    rows = await session.scalars(
+        select(MarketInsight)
+        .where(
+            MarketInsight.reviewed_by.is_not(None),
+            MarketInsight.country.in_(countries),
+        )
+        .order_by(MarketInsight.country, MarketInsight.segment)
+    )
+    labels = SEGMENT_LABELS.get(lang, SEGMENT_LABELS["vi"])
+    lines = [
+        f"{country(r.country, lang)} — {labels.get(r.segment, r.segment)}: "
+        f"{r.note_en if lang == 'en' else r.note_vi}"
+        for r in rows
+        if hs6.startswith(r.hs_prefix)
+    ]
+    return "\n".join(lines)
+
+
 async def _narrative(
     chat: ChatModel, metrics: dict[str, str], lang: str
 ) -> tuple[dict[str, str], str]:
@@ -302,12 +348,31 @@ async def run_report(
         tariff = await compliance.preview_tariff(session, hs6)
         alerts = [a.title_vi if lang == "vi" else a.title_en for a in tariff.alerts]
         company = await companies.get_company_for_review(session, row.company_id)
+        verification_state = await companies.get_verification_state(session, row.company_id)
+        capacity = CapacityInput(
+            annual_volume=_dec(row.input.get("annual_volume"))
+            or (
+                Decimal(company.capacity_value)
+                if company.capacity_value
+                and company.capacity_unit == "tonne"
+                and (company.capacity_period or "year") == "year"
+                else None
+            ),
+            certification_count=await evidence.count_approved_evidence(session, row.company_id),
+            verified=verification_state.status == "verified",
+            has_export_history=bool(company.export_markets),
+            has_brand_budget=_dec(row.input.get("budget")) is not None,
+        )
+        positioning_result = positioning.score(capacity)
         facts = CompanyFacts(
             name=company.legal_name,
             capacity_value=company.capacity_value,
             capacity_unit=company.capacity_unit,
             capacity_period=company.capacity_period,
             brand_model=row.input.get("brand_model"),
+            positioning_score=str(positioning_result.score).replace(".", ",")
+            if lang == "vi"
+            else str(positioning_result.score),
         )
         budget = {
             "marketing": _dec(row.input.get("marketing_budget")),
@@ -324,6 +389,9 @@ async def run_report(
         )
         narrative, source = await _narrative(chat or get_chat_model(), values, lang)
         tables = _tables(rec)
+        segments_text = await _segments_text(
+            session, [m.country for m in rec.top_markets], hs6, lang
+        )
         titles = SECTION_TITLES[lang]
         pdf = render_report(
             ReportDocument(
@@ -333,7 +401,15 @@ async def run_report(
                 created=dt.datetime.now(dt.UTC).date(),
                 source=values["source"],
                 narrative_source=source,
-                sections=[(key, titles[key], narrative.get(key, "")) for key in SECTIONS],
+                sections=[
+                    (
+                        key,
+                        titles[key],
+                        segments_text if key == SEGMENTS_SECTION else narrative.get(key, ""),
+                    )
+                    for key in DISPLAY_SECTIONS
+                    if key != SEGMENTS_SECTION or segments_text
+                ],
                 tables=_pdf_tables(tables, lang),
                 demo_data=tariff.data_status == "demo_unreviewed",
             )
@@ -356,6 +432,11 @@ async def run_report(
         "source": values["source"],
         "product_name": values["product_name"],
         "tariff_data_status": tariff.data_status,
+        "positioning": {
+            "score": str(positioning_result.score),
+            "axes": {k: str(v) for k, v in positioning_result.axes.items()},
+        },
+        "segments": segments_text,
     }
     row.narrative = narrative
     row.narrative_source = source
@@ -373,10 +454,18 @@ async def _out(storage: Storage, row: MarketReport, *, full: bool) -> ReportOut:
         return ReportOut(**base, full=full, error=row.error)
     titles = SECTION_TITLES.get(row.language, SECTION_TITLES["vi"])
     sections = []
-    for key in SECTIONS:
+    for key in DISPLAY_SECTIONS:
         locked = not full and key not in SUMMARY_SECTIONS
-        text = "" if locked else str(row.narrative.get(key, ""))
-        sections.append(ReportSectionOut(key=key, title=titles[key], text=text, locked=locked))
+        source_text = (
+            str(row.metrics.get("segments", ""))
+            if key == SEGMENTS_SECTION
+            else str(row.narrative.get(key, ""))
+        )
+        sections.append(
+            ReportSectionOut(
+                key=key, title=titles[key], text="" if locked else source_text, locked=locked
+            )
+        )
     tables = row.metrics.get("tables", {})
     return ReportOut.model_validate(
         {
@@ -388,6 +477,7 @@ async def _out(storage: Storage, row: MarketReport, *, full: bool) -> ReportOut:
             "narrative_source": row.narrative_source,
             "tariff_data_status": row.metrics.get("tariff_data_status"),
             "sections": sections,
+            "positioning": row.metrics.get("positioning"),
             "top_markets": tables.get("top_markets", []),
             "potential_markets": tables.get("potential_markets", []),
             "competitors": tables.get("competitors", []) if full else [],

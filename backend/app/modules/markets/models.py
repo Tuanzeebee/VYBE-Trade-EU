@@ -145,3 +145,37 @@ class ConsultingLead(Base):
     created_at: Mapped[dt.datetime] = mapped_column(
         DateTime(timezone=True), server_default=text("clock_timestamp()")
     )
+
+
+class MarketInsight(Base):
+    """Dữ kiện thị trường do người duyệt nhập (N5): phân khúc, nhóm tiêu dùng, rủi ro theo nước và
+    nhóm hàng. Không do AI viết; thiếu reviewed_by thì không bao giờ lộ ra báo cáo."""
+
+    __tablename__ = "market_insights"
+    __table_args__ = (
+        CheckConstraint("country ~ '^[A-Z]{2}$'", name="country_iso2"),
+        CheckConstraint("hs_prefix ~ '^[0-9]{2,6}$'", name="hs_prefix_digits"),
+        CheckConstraint(
+            "segment IN ('horeca', 'retail', 'industrial_kitchen', 'consumer_asian', "
+            "'consumer_european', 'general')",
+            name="segment_values",
+        ),
+        CheckConstraint(
+            "(reviewed_by IS NULL) = (reviewed_at IS NULL)", name="reviewed_by_and_at_together"
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, primary_key=True, default=uuid.uuid4, server_default=text("gen_random_uuid()")
+    )
+    country: Mapped[str] = mapped_column(String(2), index=True)
+    hs_prefix: Mapped[str] = mapped_column(String(6))
+    segment: Mapped[str] = mapped_column(String(32))
+    note_vi: Mapped[str] = mapped_column(Text)
+    note_en: Mapped[str] = mapped_column(Text)
+    source: Mapped[str] = mapped_column(String(255))
+    reviewed_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id"))
+    reviewed_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=text("clock_timestamp()")
+    )

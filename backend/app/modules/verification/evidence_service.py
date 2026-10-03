@@ -197,6 +197,18 @@ async def list_evidence(
     return [await to_out(session, storage, r) for r in rows]
 
 
+async def count_approved_evidence(session: AsyncSession, company_id: uuid.UUID) -> int:
+    """Số bằng chứng/chứng nhận đã được admin duyệt của công ty (N5: trục chứng nhận)."""
+    return int(
+        await session.scalar(
+            select(func.count())
+            .select_from(Evidence)
+            .where(Evidence.company_id == company_id, Evidence.approval_status == "approved")
+        )
+        or 0
+    )
+
+
 async def get_evidence(
     session: AsyncSession, user: CurrentUser, storage: Storage, evidence_id: uuid.UUID
 ) -> EvidenceOut:

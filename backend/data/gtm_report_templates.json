@@ -22,6 +22,7 @@
       "Việt Nam đứng thứ {vn_rank} với thị phần {vn_extra_eu_share}."
     ],
     "positioning": [
+      "Điểm năng lực tổng hợp của doanh nghiệp bạn là {positioning_score}/100, tính từ sản lượng, chứng nhận đã duyệt, xác minh doanh nghiệp và kinh nghiệm xuất khẩu.",
       "Đơn giá nhập khẩu EU của hàng Việt Nam là {vn_unit_price}, {price_position} mặt bằng hàng ngoài EU ({extra_eu_unit_price}).",
       "Công ty có thể cung cấp {company_capacity}; nên chọn nhà nhập khẩu có quy mô đơn hàng phù hợp."
     ],
@@ -67,6 +68,7 @@
       "Vietnam ranks #{vn_rank} with a {vn_extra_eu_share} share."
     ],
     "positioning": [
+      "Your overall capacity score is {positioning_score}/100, based on volume, approved certificates, company verification and export experience.",
       "The EU import unit price of Vietnamese goods is {vn_unit_price}, {price_position} the extra-EU average ({extra_eu_unit_price}).",
       "The company can supply {company_capacity}; target importers with matching order sizes."
     ],

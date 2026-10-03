@@ -24,7 +24,7 @@ from app.modules.auth.service import create_admin
 from app.modules.catalog.service import upsert_hs_codes
 from app.modules.companies.tests.helpers import PASSWORD, company_body, login_as, product_body
 from app.modules.markets import report_service
-from app.modules.markets.models import MarketReport
+from app.modules.markets.models import MarketInsight, MarketReport
 from app.modules.markets.report import (
     SECTIONS,
     CompanyFacts,
@@ -188,9 +188,10 @@ async def test_summary_is_free_full_report_needs_entitlement(
     got = (await api_client.get(f"{URL}/{report['id']}")).json()
     assert (got["status"], got["narrative_source"], got["full"]) == ("ready", "model", False)
     unlocked = [s["key"] for s in got["sections"] if not s["locked"]]
-    assert unlocked == ["summary", "recommendations"]
+    assert unlocked == ["positioning", "summary", "recommendations"]
     assert all(s["text"] == "" for s in got["sections"] if s["locked"])
-    assert "Tây Ban Nha" in got["sections"][0]["text"] or "Đức" in got["sections"][0]["text"]
+    summary = next(s for s in got["sections"] if s["key"] == "summary")
+    assert "Tây Ban Nha" in summary["text"] or "Đức" in summary["text"]
     assert len(got["top_markets"]) == 3
     assert got["competitors"] == [] and got["pdf_url"] is None  # bản đầy đủ bị khoá
     row = await db_session.get_one(MarketReport, uuid.UUID(report["id"]))
@@ -211,7 +212,7 @@ async def test_model_breaking_rules_falls_back_to_template(
     got = (await api_client.get(f"{URL}/{r.json()['id']}")).json()
     assert (got["narrative_source"], got["full"]) == ("template", True)
     assert all(not s["locked"] for s in got["sections"])
-    assert got["sections"][0]["title"] == "Summary"
+    assert got["sections"][1]["title"] == "Summary"
     assert got["competitors"][0]["country"] == "VN"
     assert got["pdf_url"].startswith("https://fake/market-reports/")
 
@@ -358,3 +359,63 @@ async def test_bulk_orientation_needs_no_budget(
     await exporter(api_client)
     body = {"q": "cá tra", "sales_orientation": "bulk", "expected_revenue": "1000000"}
     assert (await api_client.post(URL, json=body)).status_code == 202
+
+
+@api
+@pytest.mark.usefixtures("entitled")
+async def test_report_starts_with_positioning_and_has_segments_slot(
+    api_client: AsyncClient, db_session: AsyncSession, queued: list[uuid.UUID]
+) -> None:
+    """N5: định vị đứng đầu, có điểm 4 trục; mục phân khúc nằm sau 'thị trường nên ưu tiên'."""
+    await exporter(api_client)
+    r = await api_client.post(URL, json={"q": "cá tra"})
+    assert r.status_code == 202, r.text
+    await run(db_session, queued[0], FakeChatModel(lambda s, u: valid_narrative()))
+    got = (await api_client.get(f"{URL}/{r.json()['id']}")).json()
+    keys = [s["key"] for s in got["sections"]]
+    assert keys[0] == "positioning"
+    assert keys.index("segments") == keys.index("recommendations") + 1
+    assert set(got["positioning"]["axes"]) == {"volume", "certification", "trust", "experience"}
+    assert Decimal(got["positioning"]["score"]) >= 0
+    segments = next(s for s in got["sections"] if s["key"] == "segments")
+    assert segments["text"] == ""  # chưa có market_insights đã duyệt: không bịa nội dung
+
+
+@api
+@pytest.mark.usefixtures("entitled")
+async def test_segments_show_only_reviewed_insight(
+    api_client: AsyncClient, db_session: AsyncSession, queued: list[uuid.UUID]
+) -> None:
+    admin_id = await create_admin(db_session, "luat-tm@evfta.eu", PASSWORD)
+    now = dt.datetime.now(dt.UTC)
+    db_session.add_all(
+        [
+            MarketInsight(
+                country="ES",
+                hs_prefix="0304",
+                segment="horeca",
+                note_vi="Nhà hàng chuộng phi lê.",
+                note_en="Restaurants favour fillets.",
+                source="SYNTHETIC test",
+                reviewed_by=admin_id,
+                reviewed_at=now,
+            ),
+            MarketInsight(
+                country="ES",
+                hs_prefix="0304",
+                segment="retail",
+                note_vi="CHƯA DUYỆT KHÔNG ĐƯỢC LỘ.",
+                note_en="UNREVIEWED MUST NOT LEAK",
+                source="SYNTHETIC test",
+            ),
+        ]
+    )
+    await db_session.flush()
+    await exporter(api_client)
+    r = await api_client.post(URL, json={"hs": "030462"})
+    assert r.status_code == 202, r.text
+    await run(db_session, queued[0], FakeChatModel(lambda s, u: valid_narrative()))
+    got = (await api_client.get(f"{URL}/{r.json()['id']}")).json()
+    text = next(s for s in got["sections"] if s["key"] == "segments")["text"]
+    assert "Nhà hàng chuộng phi lê." in text
+    assert "KHÔNG ĐƯỢC LỘ" not in text
