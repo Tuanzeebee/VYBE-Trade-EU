@@ -6,39 +6,38 @@ import { useLanguage } from '../context/LanguageContext.tsx';
 import LanguageSelect from './LanguageSelect.tsx';
 import { ROLE_LABELS, type DemoUser, getUserPage } from '../lib/demoAuth.ts';
 import NotificationBell from './NotificationBell';
-import { Link, useRouter } from '../i18n/navigation';
+import { Link } from '../i18n/navigation';
+import { legacyHref } from './app-shell/useLegacyNavigate';
 
 export interface HeaderProps {
   currentPage: string;
   directoryNav: 'suppliers' | 'buyer';
   user: DemoUser | null;
-  onNavigate: (page: any) => void;
   onSetDirectoryNav: (nav: 'suppliers' | 'buyer') => void;
   onLogout: () => void;
-  onOpenNavModal?: (label: string) => void;
 }
 
 export default function Header({
   currentPage,
   directoryNav,
   user,
-  onNavigate,
   onSetDirectoryNav,
   onLogout,
-  onOpenNavModal
 }: HeaderProps) {
   const { tr, t } = useLanguage();
-  const router = useRouter();
   const [headerProfileOpen, setHeaderProfileOpen] = useState(false);
 
+  // <Link> thay cho <button onClick>: Next.js tải trước trang đích khi link hiện trên màn hình (bản production).
   const navLinks = [
-    { label: t.nav.solutions, id: 'solutions' },
-    { label: t.nav.suppliers, id: 'suppliers' },
-    { label: t.nav.buyer, id: 'buyer' },
-    { label: t.nav.products, id: 'products' },
-    { label: t.nav.pricing, id: 'pricing' },
-    { label: t.nav.about, id: 'about' }
+    { label: t.nav.solutions, id: 'solutions', href: legacyHref('solutions', user) },
+    { label: t.nav.suppliers, id: 'suppliers', href: legacyHref('buyer-directory', user, { directory: { nav: 'suppliers' } }) },
+    { label: t.nav.buyer, id: 'buyer', href: legacyHref('buyer-directory', user, { directory: { nav: 'buyer' } }) },
+    { label: t.nav.products, id: 'products', href: legacyHref('product', user) },
+    { label: t.nav.pricing, id: 'pricing', href: legacyHref('pricing', user) },
+    { label: t.nav.about, id: 'about', href: legacyHref('about', user) }
   ];
+  const homeHref = user ? (user.role === 'buyer' ? '/buyer' : legacyHref(getUserPage(user), user)) : '/';
+  const closeMenu = () => setHeaderProfileOpen(false);
 
   return (
     <>
@@ -46,8 +45,8 @@ export default function Header({
         <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-10 min-h-16 py-3 flex flex-wrap gap-3 items-center justify-between">
           
           {/* Brand Logo: chữ V hai màu + VYBE TRADE */}
-          <div 
-            onClick={() => onNavigate('home')}
+          <Link
+            href={legacyHref('home', user)}
             className="flex items-center gap-2.5 cursor-pointer group select-none"
           >
             <div className="w-8 h-8 flex items-center justify-center text-[#0b5e52]">
@@ -56,7 +55,7 @@ export default function Header({
             <span className="text-[#0f172a] font-bold text-lg sm:text-[19px] tracking-wide uppercase">
               {tr("VYBE TRADE")}
             </span>
-          </div>
+          </Link>
 
           {/* Center: Navigation Links */}
           <nav className="hidden lg:flex flex-wrap items-center gap-4 xl:gap-6">
@@ -69,25 +68,12 @@ export default function Header({
               const isActive = isBuyerActive || isProductActive || isPricingActive || isSolutionsActive || isAboutActive;
 
               return (
-                <button
+                <Link
                   key={link.id}
+                  href={link.href}
                   aria-current={isActive ? 'page' : undefined}
                   onClick={() => {
-                    if (link.id === 'solutions') {
-                      onNavigate('solutions');
-                    } else if (link.id === 'about') {
-                      onNavigate('about');
-                    } else if (link.id === 'products') {
-                      onNavigate('product');
-                    } else if (link.id === 'pricing') {
-                      onNavigate('pricing');
-                    } else if (link.id === 'buyer' || link.id === 'suppliers') {
-                      onSetDirectoryNav(link.id as 'buyer' | 'suppliers');
-                      onNavigate('buyer-directory');
-                    } else {
-                      onNavigate('home');
-                      if (onOpenNavModal) onOpenNavModal(link.label);
-                    }
+                    if (link.id === 'buyer' || link.id === 'suppliers') onSetDirectoryNav(link.id);
                   }}
                   className={`text-sm transition-colors cursor-pointer ${
                     isActive
@@ -96,7 +82,7 @@ export default function Header({
                   }`}
                 >
                   {tr(link.label)}
-                </button>
+                </Link>
               );
             })}
           </nav>
@@ -130,31 +116,26 @@ export default function Header({
                       <p className="mt-1 truncate text-xs text-slate-500">{user.email}</p>
                       <p className="mt-1 text-xs font-semibold text-teal-700">{tr(ROLE_LABELS[user.role])}</p>
                     </div>
-                    <button 
-                      onClick={() => { 
-                        if (user.role === 'buyer') router.push('/buyer');
-                        else onNavigate(getUserPage(user));
-                        setHeaderProfileOpen(false); 
-                      }} 
-                      className="w-full px-4 py-3 text-left font-semibold text-teal-900 hover:bg-teal-50 cursor-pointer"
+                    <Link
+                      href={homeHref}
+                      onClick={closeMenu}
+                      className="block w-full px-4 py-3 text-left font-semibold text-teal-900 hover:bg-teal-50 cursor-pointer"
                     >
                       {tr(user.role === 'seller' ? 'Workspace Seller' : user.role === 'admin' ? 'Quản trị hệ thống' : 'Bảng điều khiển')}
-                    </button>
+                    </Link>
                     {user.role === 'seller' && (
-                      <button 
-                        onClick={() => { 
-                          onNavigate('seller-profile'); 
-                          setHeaderProfileOpen(false); 
-                        }} 
-                        className="w-full px-4 py-3 text-left text-slate-600 hover:bg-slate-50 cursor-pointer"
+                      <Link
+                        href={legacyHref('seller-profile', user)}
+                        onClick={closeMenu}
+                        className="block w-full px-4 py-3 text-left text-slate-600 hover:bg-slate-50 cursor-pointer"
                       >
                         {tr("Cập nhật hồ sơ xuất khẩu")}
-                      </button>
+                      </Link>
                     )}
                     {user.role === 'buyer' && (
                       <Link
                         href="/suppliers"
-                        onClick={() => setHeaderProfileOpen(false)}
+                        onClick={closeMenu}
                         className="block w-full px-4 py-3 text-left text-slate-600 hover:bg-slate-50"
                       >
                         {tr("Tìm nhà cung cấp")}
@@ -162,16 +143,16 @@ export default function Header({
                     )}
                     <Link
                       href="/account"
-                      onClick={() => setHeaderProfileOpen(false)}
+                      onClick={closeMenu}
                       className="block w-full px-4 py-3 text-left text-slate-600 hover:bg-slate-50"
                     >
                       {tr("Tài khoản của tôi")}
                     </Link>
                     <button 
                       onClick={() => {
-                        setHeaderProfileOpen(false);
+                        closeMenu();
                         onLogout();
-                      }} 
+                      }}
                       className="w-full border-t border-slate-100 px-4 py-3 text-left font-semibold text-rose-600 hover:bg-rose-50 cursor-pointer"
                     >
                       {tr("Đăng xuất")}
@@ -181,18 +162,18 @@ export default function Header({
               </div>
             ) : (
               <div className="flex items-center gap-2">
-                <button 
-                  onClick={() => onNavigate('login')} 
-                  className="rounded-full px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100 sm:text-sm cursor-pointer"
+                <Link
+                  href="/login"
+                  className="inline-flex rounded-full px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100 sm:text-sm cursor-pointer"
                 >
                   {tr("Đăng nhập")}
-                </button>
-                <button 
-                  onClick={() => onNavigate('register')} 
+                </Link>
+                <Link
+                  href="/register"
                   className="hidden rounded-full bg-[#083832] px-3 py-2 text-xs font-semibold text-white hover:bg-[#062924] sm:inline-flex sm:px-4 sm:text-sm cursor-pointer"
                 >
                   {tr("Đăng ký")}
-                </button>
+                </Link>
               </div>
             )}
           </div>

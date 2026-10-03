@@ -15104,6 +15104,281 @@
     "Écart",
     "不一致"
   ],
+  "Tôi cam kết thông tin doanh nghiệp, sản phẩm và bằng chứng đã nộp là thật, hợp pháp và doanh nghiệp hoàn toàn chịu trách nhiệm trước pháp luật về tính chính xác của hồ sơ.": [
+    "I confirm that the company information, products and evidence submitted are genuine and lawful, and the company takes full legal responsibility for the accuracy of this application.",
+    "Je certifie que les informations sur l'entreprise, les produits et les justificatifs soumis sont authentiques et licites, et que l'entreprise assume l'entière responsabilité juridique de l'exactitude de ce dossier.",
+    "提出した企業情報、製品および証拠書類が真正かつ合法であり、申請内容の正確性について当社が法的責任を全面的に負うことを確認します。"
+  ],
+  "Danh tính & chặn": [
+    "Identity & blocklist",
+    "Identity & blocklist",
+    "Identity & blocklist"
+  ],
+  "Tên miền": [
+    "Domain",
+    "Domain",
+    "Domain"
+  ],
+  "Mã băm file": [
+    "File hash",
+    "File hash",
+    "File hash"
+  ],
+  "Cụm tài khoản và cờ danh tính chỉ để xếp ưu tiên xem xét, không tự đổi trạng thái xác minh. Mọi thao tác chặn và gỡ chặn được ghi nhật ký.": [
+    "Account clusters and identity flags only prioritise review; they never change verification status. Every block and unblock is logged.",
+    "Account clusters and identity flags only prioritise review; they never change verification status. Every block and unblock is logged.",
+    "Account clusters and identity flags only prioritise review; they never change verification status. Every block and unblock is logged."
+  ],
+  "Không tải được dữ liệu danh tính. Vui lòng thử lại.": [
+    "Could not load identity data. Please try again.",
+    "Could not load identity data. Please try again.",
+    "Could not load identity data. Please try again."
+  ],
+  "Cụm tài khoản dùng chung định danh": [
+    "Accounts sharing an identifier",
+    "Accounts sharing an identifier",
+    "Accounts sharing an identifier"
+  ],
+  "Chưa phát hiện doanh nghiệp nào dùng chung định danh.": [
+    "No companies sharing an identifier have been found.",
+    "No companies sharing an identifier have been found.",
+    "No companies sharing an identifier have been found."
+  ],
+  "Định danh": [
+    "Identifier",
+    "Identifier",
+    "Identifier"
+  ],
+  "Giá trị": [
+    "Value",
+    "Value",
+    "Value"
+  ],
+  "(đã băm, không lưu tên)": [
+    "(hashed, name not stored)",
+    "(hashed, name not stored)",
+    "(hashed, name not stored)"
+  ],
+  "Danh sách chặn": [
+    "Blocklist",
+    "Blocklist",
+    "Blocklist"
+  ],
+  "Loại định danh": [
+    "Identifier type",
+    "Identifier type",
+    "Identifier type"
+  ],
+  "Lý do chặn": [
+    "Reason for blocking",
+    "Reason for blocking",
+    "Reason for blocking"
+  ],
+  "Chặn": [
+    "Block",
+    "Block",
+    "Block"
+  ],
+  "Danh sách chặn đang trống.": [
+    "The blocklist is empty.",
+    "The blocklist is empty.",
+    "The blocklist is empty."
+  ],
+  "Thao tác": [
+    "Actions",
+    "Actions",
+    "Actions"
+  ],
+  "Gỡ chặn": [
+    "Unblock",
+    "Unblock",
+    "Unblock"
+  ],
+  "Vui lòng nhập giá trị và lý do chặn.": [
+    "Please enter a value and a reason for blocking.",
+    "Please enter a value and a reason for blocking.",
+    "Please enter a value and a reason for blocking."
+  ],
+  "Định danh này đã nằm trong danh sách chặn.": [
+    "This identifier is already blocked.",
+    "This identifier is already blocked.",
+    "This identifier is already blocked."
+  ],
+  "Giá trị không hợp lệ hoặc là domain email miễn phí.": [
+    "The value is invalid or is a free email domain.",
+    "The value is invalid or is a free email domain.",
+    "The value is invalid or is a free email domain."
+  ],
+  "Không tìm thấy doanh nghiệp.": [
+    "Company not found.",
+    "Company not found.",
+    "Company not found."
+  ],
+  "Thông tin kiểm chưa hợp lệ. Vui lòng kiểm tra lại.": [
+    "The check details are invalid. Please review them.",
+    "The check details are invalid. Please review them.",
+    "The check details are invalid. Please review them."
+  ],
+  "Không thể dùng thông tin này trên evfta.eu. Vui lòng liên hệ bộ phận hỗ trợ.": [
+    "These details cannot be used on evfta.eu. Please contact support.",
+    "These details cannot be used on evfta.eu. Please contact support.",
+    "These details cannot be used on evfta.eu. Please contact support."
+  ],
+  "Định danh nằm trong danh sách chặn": [
+    "Identifier is on the blocklist",
+    "Identifier is on the blocklist",
+    "Identifier is on the blocklist"
+  ],
+  "Dùng chung mã số thuế với doanh nghiệp khác": [
+    "Shares a tax ID with another company",
+    "Shares a tax ID with another company",
+    "Shares a tax ID with another company"
+  ],
+  "Dùng chung file bằng chứng với doanh nghiệp khác": [
+    "Shares an evidence file with another company",
+    "Shares an evidence file with another company",
+    "Shares an evidence file with another company"
+  ],
+  "Dùng chung số điện thoại với doanh nghiệp khác": [
+    "Shares a phone number with another company",
+    "Shares a phone number with another company",
+    "Shares a phone number with another company"
+  ],
+  "Dùng chung tên miền với doanh nghiệp khác": [
+    "Shares a domain with another company",
+    "Shares a domain with another company",
+    "Shares a domain with another company"
+  ],
+  "Dùng chung người đại diện với doanh nghiệp khác": [
+    "Shares a legal representative with another company",
+    "Shares a legal representative with another company",
+    "Shares a legal representative with another company"
+  ],
+  "Trạng thái thuế không hoạt động": [
+    "Tax status inactive",
+    "Tax status inactive",
+    "Tax status inactive"
+  ],
+  "Năm thành lập tự khai sớm hơn sổ đăng ký": [
+    "Declared founding year is earlier than the registry",
+    "Declared founding year is earlier than the registry",
+    "Declared founding year is earlier than the registry"
+  ],
+  "Vừa đổi tên": [
+    "Recently renamed",
+    "Recently renamed",
+    "Recently renamed"
+  ],
+  "Vừa đổi người đại diện": [
+    "Legal representative recently changed",
+    "Legal representative recently changed",
+    "Legal representative recently changed"
+  ],
+  "Email liên hệ là email miễn phí": [
+    "Contact email is a free email address",
+    "Contact email is a free email address",
+    "Contact email is a free email address"
+  ],
+  "Email liên hệ khác tên miền website": [
+    "Contact email domain differs from the website's",
+    "Contact email domain differs from the website's",
+    "Contact email domain differs from the website's"
+  ],
+  "Gọi lại số trên hồ sơ đăng ký chính thức": [
+    "Call back the number on the official registration record",
+    "Call back the number on the official registration record",
+    "Call back the number on the official registration record"
+  ],
+  "Email thuộc tên miền chính thức": [
+    "Email belongs to the official domain",
+    "Email belongs to the official domain",
+    "Email belongs to the official domain"
+  ],
+  "Tra sổ đăng ký / MST": [
+    "Registry / tax ID lookup",
+    "Registry / tax ID lookup",
+    "Registry / tax ID lookup"
+  ],
+  "Không khớp": [
+    "Mismatch",
+    "Mismatch",
+    "Mismatch"
+  ],
+  "Không tìm thấy": [
+    "Not found",
+    "Not found",
+    "Not found"
+  ],
+  "Chưa kiểm được": [
+    "Could not check",
+    "Could not check",
+    "Could not check"
+  ],
+  "Đang hoạt động": [
+    "Active",
+    "Active",
+    "Active"
+  ],
+  "Không hoạt động": [
+    "Inactive",
+    "Inactive",
+    "Inactive"
+  ],
+  "Kiểm danh tính": [
+    "Identity checks",
+    "Identity checks",
+    "Identity checks"
+  ],
+  "Đã chứng minh quyền sở hữu": [
+    "Ownership proven",
+    "Ownership proven",
+    "Ownership proven"
+  ],
+  "Chưa chứng minh quyền sở hữu": [
+    "Ownership not proven",
+    "Ownership not proven",
+    "Ownership not proven"
+  ],
+  "Cờ danh tính": [
+    "Identity flags",
+    "Identity flags",
+    "Identity flags"
+  ],
+  "Loại kiểm": [
+    "Check type",
+    "Check type",
+    "Check type"
+  ],
+  "Ghi chú kiểm": [
+    "Check note",
+    "Check note",
+    "Check note"
+  ],
+  "Người đại diện theo sổ đăng ký": [
+    "Legal representative per registry",
+    "Legal representative per registry",
+    "Legal representative per registry"
+  ],
+  "Năm thành lập theo sổ đăng ký": [
+    "Founding year per registry",
+    "Founding year per registry",
+    "Founding year per registry"
+  ],
+  "Trạng thái thuế": [
+    "Tax status",
+    "Tax status",
+    "Tax status"
+  ],
+  "Gọi lại số ghi trên hồ sơ đăng ký chính thức, không gọi số doanh nghiệp tự khai. Tên người đại diện chỉ được băm để so trùng, không lưu.": [
+    "Call the number on the official registration record, not the number the company declared. The representative name is only hashed for matching and never stored.",
+    "Call the number on the official registration record, not the number the company declared. The representative name is only hashed for matching and never stored.",
+    "Call the number on the official registration record, not the number the company declared. The representative name is only hashed for matching and never stored."
+  ],
+  "Ghi kết quả kiểm": [
+    "Record check result",
+    "Record check result",
+    "Record check result"
+  ],
   "Cấp 1": [
     "Level 1",
     "Niveau 1",

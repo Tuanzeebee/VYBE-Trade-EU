@@ -35,6 +35,7 @@ from app.modules.companies.schemas import (
     AdminCompanyOut,
     AdminCompanyPatch,
     CompanyFilters,
+    CompanyIdentityFacts,
     CompanyIn,
     CompanyOut,
     CompanyPatch,
@@ -311,6 +312,26 @@ async def list_exporter_ids(session: AsyncSession) -> list[uuid.UUID]:
     return list(rows)
 
 
+async def list_identity_facts(session: AsyncSession) -> list[CompanyIdentityFacts]:
+    """Định danh của mọi công ty (gom cụm chống mạo danh, I11)."""
+    # ponytail: đọc toàn bộ công ty mỗi lần — ổn tới vài nghìn hồ sơ; lớn hơn thì gom cụm bằng
+    # truy vấn GROUP BY theo từng loại định danh.
+    rows = await session.scalars(select(Company))
+    return [
+        CompanyIdentityFacts(
+            id=c.id,
+            legal_name=c.legal_name,
+            type=c.type.value,
+            tax_id=c.tax_id,
+            website=c.website,
+            contact_email=c.contact_email,
+            founded_year=c.founded_year,
+            owner_user_id=c.owner_user_id,
+        )
+        for c in rows
+    ]
+
+
 def register_evidence_counter(counter: completeness_service.EvidenceCounter) -> None:
     """verification đăng ký hàm đếm bằng chứng đã nộp còn hạn cho điểm hoàn thiện."""
     completeness_service.register_evidence_counter(counter)
@@ -566,6 +587,9 @@ async def create_company(session: AsyncSession, user: CurrentUser, data: Company
         raise AppError("company_exists", "Company profile already exists", 409)
     values: dict[str, Any] = data.model_dump()
     _reject_foreign_fields(company_type, values)
+    await auth.ensure_identifiers_allowed(
+        session, tax_id=data.tax_id, website=data.website, email=data.contact_email
+    )
     lists = {key: values.pop(key) for key in _LIST_FIELDS}
     if company_type is CompanyType.exporter and values.get("offering_type") is None:
         values["offering_type"] = OfferingType.products.value
@@ -591,6 +615,12 @@ async def update_company(
     company = await _own_company(session, user)
     changes = data.model_dump(exclude_unset=True)
     _reject_foreign_fields(company.type, changes)
+    await auth.ensure_identifiers_allowed(
+        session,
+        tax_id=changes.get("tax_id"),
+        website=changes.get("website"),
+        email=changes.get("contact_email"),
+    )
     logo_key = changes.get("logo_key")
     if logo_key is not None and not logo_key.startswith(f"logos/{company.id}/"):
         raise AppError("invalid_logo_key", "Logo does not belong to this company", 422)

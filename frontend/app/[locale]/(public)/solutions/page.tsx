@@ -1,6 +1,6 @@
 import { setRequestLocale } from 'next-intl/server';
 import { use } from 'react';
-import { SolutionsRoute } from '@/components/routes/PublicRoutes';
+import { SolutionsRoute } from '@/components/routes/SolutionsRoute';
 
 export default function Page({ params }: { params: Promise<{ locale: string }> }) {
   setRequestLocale(use(params).locale);

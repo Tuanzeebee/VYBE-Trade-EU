@@ -8,6 +8,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { Link, useRouter } from '../i18n/navigation';
 import { deleteAccount } from '../lib/accountApi';
 import { logout } from '../lib/demoAuth';
+import { PageLoader } from './PageLoader';
 
 const ERRORS = {
   wrong_password: 'Mật khẩu không đúng.',
@@ -24,7 +25,7 @@ export default function AccountSettings() {
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
 
-  if (!ready) return null;
+  if (!ready) return <PageLoader />;
   if (!user) {
     return (
       <main className="mx-auto max-w-2xl px-5 py-10 sm:px-8">

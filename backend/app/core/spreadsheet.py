@@ -17,7 +17,7 @@ from typing import Any, Literal
 from fastapi import Response, UploadFile
 from openpyxl import Workbook, load_workbook
 from openpyxl.comments import Comment
-from openpyxl.styles import Font, PatternFill
+from openpyxl.styles import Alignment, Font, PatternFill
 from openpyxl.worksheet.datavalidation import DataValidation
 from pydantic import BaseModel, ValidationError
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -71,10 +71,36 @@ def _cell_value(column: Column, value: Any) -> Any:
     return value
 
 
+def _merge_runs(
+    ws: Any, cols: Sequence[Column], rows: Sequence[Mapping[str, Any]], merge: Sequence[str]
+) -> None:
+    """Gộp dọc + căn giữa các cột `merge` trên những dòng liền nhau có cùng giá trị ở MỌI cột
+    `merge` (như merge center của Excel) — nhóm khác nhau không bao giờ bị gộp chung."""
+    positions = [i for i, c in enumerate(cols, start=1) if c.key in merge]
+    start = 0
+    for end in range(1, len(rows) + 1):
+        if end < len(rows) and all(rows[end].get(k) == rows[start].get(k) for k in merge):
+            continue
+        for col in positions:
+            if end - start > 1:
+                ws.merge_cells(
+                    start_row=start + 2, start_column=col, end_row=end + 1, end_column=col
+                )
+            ws.cell(row=start + 2, column=col).alignment = Alignment(
+                horizontal="center", vertical="center", wrap_text=True
+            )
+        start = end
+
+
 def build_workbook(
-    columns: Sequence[Column], rows: Sequence[Mapping[str, Any]], *, template: bool = False
+    columns: Sequence[Column],
+    rows: Sequence[Mapping[str, Any]],
+    *,
+    template: bool = False,
+    merge: Sequence[str] = (),
 ) -> bytes:
-    """`template` = file mẫu để điền (không có cột readonly, không có dữ liệu)."""
+    """`template` = file mẫu để điền (không có cột readonly, không có dữ liệu).
+    `merge` = khóa các cột gộp ô theo nhóm (chỉ dùng cho file xuất để đọc, không để nhập lại)."""
     cols = [c for c in columns if not (template and c.readonly)]
     wb = Workbook()
     ws = wb.create_sheet(DATA_SHEET)
@@ -106,6 +132,8 @@ def build_workbook(
                 cell.data_type = "s"  # chống formula injection: luôn là chuỗi
             if col.kind == "date" and value is not None:
                 cell.number_format = "yyyy-mm-dd"
+    if merge:
+        _merge_runs(ws, cols, rows, merge)
     guide = wb.create_sheet(GUIDE_SHEET)
     guide.append(["cột", "bắt buộc", "kiểu", "giá trị hợp lệ", "ý nghĩa"])
     for col in columns:

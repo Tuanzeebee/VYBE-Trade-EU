@@ -11596,6 +11596,396 @@
         }
       }
     },
+    "/api/admin/companies/{company_id}/identity": {
+      "get": {
+        "tags": [
+          "verification"
+        ],
+        "summary": "Company Identity",
+        "operationId": "company_identity_api_admin_companies__company_id__identity_get",
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Company Id"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompanyIdentityOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/companies/{company_id}/identity-checks": {
+      "post": {
+        "tags": [
+          "verification"
+        ],
+        "summary": "Record Identity Check",
+        "operationId": "record_identity_check_api_admin_companies__company_id__identity_checks_post",
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Company Id"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IdentityCheckIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdentityCheckOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/identity-clusters": {
+      "get": {
+        "tags": [
+          "verification"
+        ],
+        "summary": "Identity Clusters",
+        "operationId": "identity_clusters_api_admin_identity_clusters_get",
+        "parameters": [
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ClusterOut"
+                  },
+                  "title": "Response Identity Clusters Api Admin Identity Clusters Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/identity-clusters/export.xlsx": {
+      "get": {
+        "tags": [
+          "verification"
+        ],
+        "summary": "Identity Clusters Export",
+        "operationId": "identity_clusters_export_api_admin_identity_clusters_export_xlsx_get",
+        "parameters": [
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/blocklist": {
+      "get": {
+        "tags": [
+          "verification"
+        ],
+        "summary": "List Blocklist",
+        "operationId": "list_blocklist_api_admin_blocklist_get",
+        "parameters": [
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BlocklistOut"
+                  },
+                  "title": "Response List Blocklist Api Admin Blocklist Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "verification"
+        ],
+        "summary": "Add Blocklist",
+        "operationId": "add_blocklist_api_admin_blocklist_post",
+        "parameters": [
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BlocklistIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlocklistOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/blocklist/{entry_id}": {
+      "delete": {
+        "tags": [
+          "verification"
+        ],
+        "summary": "Remove Blocklist",
+        "operationId": "remove_blocklist_api_admin_blocklist__entry_id__delete",
+        "parameters": [
+          {
+            "name": "entry_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Entry Id"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/health": {
       "get": {
         "summary": "Health",
@@ -13140,6 +13530,80 @@
         "title": "BillingItemPatch",
         "description": "Admin chỉnh giá / bật tắt mục thu phí. Tiền nhận CHUỖI JSON (strict), không nhận số."
       },
+      "BlocklistIn": {
+        "properties": {
+          "identifier_type": {
+            "type": "string",
+            "enum": [
+              "tax_id",
+              "domain",
+              "phone",
+              "file_sha256"
+            ],
+            "title": "Identifier Type"
+          },
+          "value": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Value"
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Reason"
+          }
+        },
+        "type": "object",
+        "required": [
+          "identifier_type",
+          "value",
+          "reason"
+        ],
+        "title": "BlocklistIn"
+      },
+      "BlocklistOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "identifier_type": {
+            "type": "string",
+            "title": "Identifier Type"
+          },
+          "value": {
+            "type": "string",
+            "title": "Value"
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason"
+          },
+          "added_by": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Added By"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "identifier_type",
+          "value",
+          "reason",
+          "added_by",
+          "created_at"
+        ],
+        "title": "BlocklistOut"
+      },
       "Body_evidence_rules_import_api_admin_evidence_rules_import_post": {
         "properties": {
           "file": {
@@ -13412,6 +13876,51 @@
         ],
         "title": "CitationOut"
       },
+      "ClusterCompany": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "legal_name": {
+            "type": "string",
+            "title": "Legal Name"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "legal_name"
+        ],
+        "title": "ClusterCompany"
+      },
+      "ClusterOut": {
+        "properties": {
+          "identifier_type": {
+            "type": "string",
+            "title": "Identifier Type"
+          },
+          "value": {
+            "type": "string",
+            "title": "Value"
+          },
+          "companies": {
+            "items": {
+              "$ref": "#/components/schemas/ClusterCompany"
+            },
+            "type": "array",
+            "title": "Companies"
+          }
+        },
+        "type": "object",
+        "required": [
+          "identifier_type",
+          "value",
+          "companies"
+        ],
+        "title": "ClusterOut"
+      },
       "CompanyChecklistItemOut": {
         "properties": {
           "code": {
@@ -13568,6 +14077,49 @@
           "disclaimer"
         ],
         "title": "CompanyChecklistOut"
+      },
+      "CompanyIdentityOut": {
+        "properties": {
+          "company_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Company Id"
+          },
+          "ownership_proven": {
+            "type": "boolean",
+            "title": "Ownership Proven"
+          },
+          "signals": {
+            "items": {
+              "$ref": "#/components/schemas/SignalOut"
+            },
+            "type": "array",
+            "title": "Signals"
+          },
+          "checks": {
+            "items": {
+              "$ref": "#/components/schemas/IdentityCheckOut"
+            },
+            "type": "array",
+            "title": "Checks"
+          },
+          "clusters": {
+            "items": {
+              "$ref": "#/components/schemas/ClusterOut"
+            },
+            "type": "array",
+            "title": "Clusters"
+          }
+        },
+        "type": "object",
+        "required": [
+          "company_id",
+          "ownership_proven",
+          "signals",
+          "checks",
+          "clusters"
+        ],
+        "title": "CompanyIdentityOut"
       },
       "CompanyIn": {
         "properties": {
@@ -17548,6 +18100,130 @@
         ],
         "title": "HsCodeOut"
       },
+      "IdentityCheckIn": {
+        "properties": {
+          "check_type": {
+            "type": "string",
+            "enum": [
+              "registry_lookup",
+              "phone_callback",
+              "email_domain"
+            ],
+            "title": "Check Type"
+          },
+          "result": {
+            "type": "string",
+            "enum": [
+              "match",
+              "mismatch",
+              "not_found",
+              "unchecked"
+            ],
+            "title": "Result"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "registry": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RegistryFactsIn"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "check_type",
+          "result"
+        ],
+        "title": "IdentityCheckIn"
+      },
+      "IdentityCheckOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "subject": {
+            "type": "string",
+            "title": "Subject"
+          },
+          "check_type": {
+            "type": "string",
+            "title": "Check Type"
+          },
+          "result": {
+            "type": "string",
+            "title": "Result"
+          },
+          "facts": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Facts"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "checked_by": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Checked By"
+          },
+          "checked_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Checked At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "subject",
+          "check_type",
+          "result",
+          "facts",
+          "note",
+          "checked_by",
+          "checked_at"
+        ],
+        "title": "IdentityCheckOut"
+      },
       "ImportResult": {
         "properties": {
           "created": {
@@ -21226,6 +21902,19 @@
             },
             "type": "array",
             "title": "Findings"
+          },
+          "signals": {
+            "items": {
+              "$ref": "#/components/schemas/SignalOut"
+            },
+            "type": "array",
+            "title": "Signals",
+            "default": []
+          },
+          "ownership_proven": {
+            "type": "boolean",
+            "title": "Ownership Proven",
+            "default": false
           }
         },
         "type": "object",
@@ -22069,6 +22758,58 @@
           "accept_terms"
         ],
         "title": "RegisterIn"
+      },
+      "RegistryFactsIn": {
+        "properties": {
+          "legal_representative": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Legal Representative"
+          },
+          "founded_year": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 2100,
+                "minimum": 1900
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Founded Year"
+          },
+          "tax_status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "inactive",
+              "unknown"
+            ],
+            "title": "Tax Status",
+            "default": "unknown"
+          },
+          "name_changed_recently": {
+            "type": "boolean",
+            "title": "Name Changed Recently",
+            "default": false
+          },
+          "representative_changed_recently": {
+            "type": "boolean",
+            "title": "Representative Changed Recently",
+            "default": false
+          }
+        },
+        "type": "object",
+        "title": "RegistryFactsIn",
+        "description": "Dữ kiện admin đọc từ sổ đăng ký chính thức. Tên người đại diện chỉ dùng để băm, không lưu."
       },
       "ReportIn": {
         "properties": {
@@ -24458,6 +25199,30 @@
         },
         "type": "object",
         "title": "ServiceOfferingPatch"
+      },
+      "SignalOut": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "high",
+              "medium",
+              "low"
+            ],
+            "title": "Severity"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "severity"
+        ],
+        "title": "SignalOut",
+        "description": "Tín hiệu rủi ro danh tính (I11) — chỉ để xếp ưu tiên, không phải quyết định."
       },
       "SourcingNeedsIn": {
         "properties": {

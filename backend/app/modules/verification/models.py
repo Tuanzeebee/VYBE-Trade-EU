@@ -121,6 +121,7 @@ class Evidence(Base):
     certificate_number: Mapped[str | None] = mapped_column(String(128))
     issuer: Mapped[str | None] = mapped_column(String(255))
     # U4: không bắt buộc — seller chỉ cần loại + file; admin nhập ngày khi duyệt loại có hạn dùng.
+    file_sha256: Mapped[str | None] = mapped_column(String(64), index=True)  # I11: chặn/gom cụm
     issued_at: Mapped[dt.date | None] = mapped_column(Date)
     expires_at: Mapped[dt.date | None] = mapped_column(Date)  # ngày ĐÃ hết hiệu lực
     # Loại "Khác": tên giấy tờ do seller tự ghi.
@@ -161,6 +162,77 @@ class RequiredEvidenceRule(Base):
     note: Mapped[str | None] = mapped_column(Text)  # lời nhắc hiển thị (vd EUDR cho cà phê)
     reviewed_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id"))
     reviewed_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class CheckSubject(StrEnum):
+    legal_entity = "legal_entity"  # pháp nhân tồn tại, đang hoạt động
+    ownership = "ownership"  # đã chứng minh quyền sở hữu
+    evidence = "evidence"  # một bằng chứng cụ thể (I8)
+
+
+class CheckType(StrEnum):
+    registry_lookup = "registry_lookup"  # tra sổ đăng ký / MST
+    phone_callback = "phone_callback"  # gọi lại số trên hồ sơ đăng ký chính thức
+    email_domain = "email_domain"  # email thuộc domain chính thức
+
+
+class CheckResult(StrEnum):
+    match = "match"
+    mismatch = "mismatch"
+    not_found = "not_found"
+    unchecked = "unchecked"
+
+
+class EvidenceCheck(Base):
+    """Mỗi lần đối chiếu (I11, I8). Append-only: trigger forbid_mutation() (migration 0027) —
+    kết quả mới đè kết quả cũ bằng cách ghi thêm dòng. Không chứa tên người (GDPR): người đại
+    diện chỉ lưu dạng băm trong facts."""
+
+    __tablename__ = "evidence_checks"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, primary_key=True, default=uuid.uuid4, server_default=text("gen_random_uuid()")
+    )
+    company_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("companies.id"), index=True)
+    evidence_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("evidences.id"))
+    subject: Mapped[CheckSubject] = mapped_column(Enum(CheckSubject, name="evidence_check_subject"))
+    check_type: Mapped[CheckType] = mapped_column(Enum(CheckType, name="evidence_check_type"))
+    result: Mapped[CheckResult] = mapped_column(Enum(CheckResult, name="evidence_check_result"))
+    facts: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
+    snapshot_key: Mapped[str | None] = mapped_column(String(512))
+    note: Mapped[str | None] = mapped_column(Text)
+    checked_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id"))  # NULL = hệ thống
+    checked_at: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=text("clock_timestamp()")
+    )
+
+
+class IdentifierType(StrEnum):
+    tax_id = "tax_id"
+    domain = "domain"
+    phone = "phone"
+    file_sha256 = "file_sha256"
+
+
+class BlocklistIdentifier(Base):
+    """Định danh bị chặn (I11): kiểm khi đăng ký, tạo/sửa hồ sơ và nộp bằng chứng.
+    Giá trị lưu ở dạng đã chuẩn hoá (identity.normalize)."""
+
+    __tablename__ = "blocklist_identifiers"
+    __table_args__ = (UniqueConstraint("identifier_type", "value", name="type_value"),)
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, primary_key=True, default=uuid.uuid4, server_default=text("gen_random_uuid()")
+    )
+    identifier_type: Mapped[IdentifierType] = mapped_column(
+        Enum(IdentifierType, name="blocklist_identifier_type")
+    )
+    value: Mapped[str] = mapped_column(String(255))
+    reason: Mapped[str] = mapped_column(Text)
+    added_by: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"))
+    created_at: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=text("clock_timestamp()")
+    )
 
 
 class RequestStatus(StrEnum):

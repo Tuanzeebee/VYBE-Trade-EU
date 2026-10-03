@@ -5,6 +5,7 @@ import { usePathname, useRouter } from '../../i18n/navigation';
 import type { DemoUser } from '../../lib/demoAuth';
 import { hrefFor, PROTECTED_PAGES, resolvePage, type LegacyPage } from '../../lib/legacyNav';
 import { useDemoSession } from './useDemoSession';
+import { PageLoader } from '../PageLoader';
 
 /**
  * Chặn truy cập theo quy tắc cũ khi người dùng vào thẳng URL.
@@ -30,7 +31,7 @@ export function LegacyGate({
     if (mustRedirect) router.replace(target);
   }, [mustRedirect, router, target]);
 
-  if (mustRedirect) return null;
-  if (!ready && PROTECTED_PAGES.includes(page)) return null;
+  if (mustRedirect) return <PageLoader />;
+  if (!ready && PROTECTED_PAGES.includes(page)) return <PageLoader />;
   return <>{children(user)}</>;
 }

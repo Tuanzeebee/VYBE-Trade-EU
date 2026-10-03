@@ -10,6 +10,7 @@ import { Link } from '../i18n/navigation';
 import { countryName } from '../lib/suppliersApi';
 import { fetchBuyerDashboard, type BuyerDashboardData } from '../lib/dashboardApi';
 import { STATUS_LABELS, type RfqStatus } from '../lib/rfqApi';
+import { PageLoader } from './PageLoader';
 
 function Suppliers({ items }: { items: { slug: string; name: string; country: string }[] }) {
   return (
@@ -40,7 +41,7 @@ export default function BuyerDashboard() {
     };
   }, [ready, user]);
 
-  if (!ready) return null;
+  if (!ready) return <PageLoader />;
   if (user?.role !== 'buyer') {
     return (
       <main className="mx-auto max-w-4xl px-5 py-10 sm:px-8">

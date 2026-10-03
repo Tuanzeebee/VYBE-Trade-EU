@@ -71,29 +71,48 @@ def test_is_valid(status: str, expires: dt.date | None, expected: bool) -> None:
 
 
 # ── is_evfta_verified ───────────────────────────────────────────────────────
+def test_evfta_verified_requires_proven_ownership() -> None:
+    have = [ev("a")]
+    assert is_evfta_verified("verified", have, {"a"}, TODAY, ownership_proven=False) is False
+    assert is_evfta_verified("verified", have, {"a"}, TODAY, ownership_proven=True) is True
+
+
 def test_evfta_verified_requires_all_required_valid() -> None:
     have = [ev("a"), ev("b")]
-    assert is_evfta_verified("verified", have, {"a", "b"}, TODAY) is True
-    assert is_evfta_verified("verified", have, {"a", "b", "c"}, TODAY) is False
+    assert is_evfta_verified("verified", have, {"a", "b"}, TODAY, ownership_proven=True) is True
+    assert (
+        is_evfta_verified("verified", have, {"a", "b", "c"}, TODAY, ownership_proven=True) is False
+    )
 
 
 def test_extra_evidence_does_not_matter() -> None:
-    assert is_evfta_verified("verified", [ev("a"), ev("z")], {"a"}, TODAY) is True
+    assert (
+        is_evfta_verified("verified", [ev("a"), ev("z")], {"a"}, TODAY, ownership_proven=True)
+        is True
+    )
 
 
 @pytest.mark.parametrize("status", ["unverified", "pending", "rejected"])
 def test_only_verified_companies_can_be_evfta_verified(status: str) -> None:
-    assert is_evfta_verified(status, [ev("a")], {"a"}, TODAY) is False
+    assert is_evfta_verified(status, [ev("a")], {"a"}, TODAY, ownership_proven=True) is False
 
 
 def test_no_required_rules_means_not_evfta_verified() -> None:
     """Không có dữ liệu bắt buộc thì KHÔNG được coi là 'đủ' (an toàn: không tự nâng mức)."""
-    assert is_evfta_verified("verified", [ev("a")], set(), TODAY) is False
+    assert is_evfta_verified("verified", [ev("a")], set(), TODAY, ownership_proven=True) is False
 
 
 def test_expired_or_unapproved_evidence_does_not_count() -> None:
-    assert is_evfta_verified("verified", [ev("a", expires=TODAY)], {"a"}, TODAY) is False
-    assert is_evfta_verified("verified", [ev("a", status="pending")], {"a"}, TODAY) is False
+    assert (
+        is_evfta_verified("verified", [ev("a", expires=TODAY)], {"a"}, TODAY, ownership_proven=True)
+        is False
+    )
+    assert (
+        is_evfta_verified(
+            "verified", [ev("a", status="pending")], {"a"}, TODAY, ownership_proven=True
+        )
+        is False
+    )
 
 
 def test_one_valid_among_several_of_same_type_is_enough() -> None:
@@ -101,14 +120,19 @@ def test_one_valid_among_several_of_same_type_is_enough() -> None:
         ev("a", expires=TODAY - dt.timedelta(days=5)),
         ev("a", expires=TODAY + dt.timedelta(days=5)),
     ]
-    assert is_evfta_verified("verified", have, {"a"}, TODAY) is True
+    assert is_evfta_verified("verified", have, {"a"}, TODAY, ownership_proven=True) is True
 
 
 def test_expired_evidence_downgrades_level() -> None:
     """Hôm nay còn hạn, ngày mai hết hạn → hàm cho kết quả khác nhau (job dùng để hạ mức)."""
     have = [ev("a", expires=TODAY + dt.timedelta(days=1))]
-    assert is_evfta_verified("verified", have, {"a"}, TODAY) is True
-    assert is_evfta_verified("verified", have, {"a"}, TODAY + dt.timedelta(days=1)) is False
+    assert is_evfta_verified("verified", have, {"a"}, TODAY, ownership_proven=True) is True
+    assert (
+        is_evfta_verified(
+            "verified", have, {"a"}, TODAY + dt.timedelta(days=1), ownership_proven=True
+        )
+        is False
+    )
 
 
 # ── checklist ───────────────────────────────────────────────────────────────

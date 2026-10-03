@@ -6,7 +6,14 @@ from typing import Any
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.modules.verification.models import EvidenceType, RequiredEvidenceRule
+from app.modules.verification.models import (
+    CheckResult,
+    CheckSubject,
+    CheckType,
+    EvidenceCheck,
+    EvidenceType,
+    RequiredEvidenceRule,
+)
 
 TODAY = dt.datetime.now(dt.UTC).date()
 LIST = "/api/exporter/evidences"
@@ -50,6 +57,21 @@ async def add_rule(
             note=note,
             reviewed_by=reviewer,
             reviewed_at=dt.datetime.now(dt.UTC) if reviewer else None,
+        )
+    )
+    await session.flush()
+
+
+async def prove_ownership(
+    session: AsyncSession, company_id: uuid.UUID | str, result: str = "match"
+) -> None:
+    """Ghi kết quả gọi lại số chính thức (I11) — điều kiện để lên evfta_verified."""
+    session.add(
+        EvidenceCheck(
+            company_id=uuid.UUID(str(company_id)),
+            subject=CheckSubject.ownership,
+            check_type=CheckType.phone_callback,
+            result=CheckResult(result),
         )
     )
     await session.flush()
