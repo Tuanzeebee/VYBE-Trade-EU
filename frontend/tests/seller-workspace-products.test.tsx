@@ -137,11 +137,14 @@ describe('SellerWorkspace — sản phẩm lấy từ server (B5)', () => {
     expect(screen.queryByText(/Chưa có sản phẩm/)).not.toBeInTheDocument();
   });
 
-  it('nút Sản phẩm trong menu hiện đúng số lượng thật', async () => {
+  it('hành trình có bước Sản phẩm (rail bên + rail mobile) mở tab sản phẩm thật', async () => {
     serve([product(), product({ id: 'p2', name: 'Cà phê' })]);
     renderWorkspace('overview');
-    const [nav] = await screen.findAllByRole('button', { name: /Sản phẩm cung cấp/ }); // menu bên + menu mobile
-    expect(nav).toHaveTextContent('2');
+    const rails = await screen.findAllByRole('button', { name: /^(1|2|3|✓)?\s*Sản phẩm$/ });
+    expect(rails.length).toBeGreaterThanOrEqual(1);
+    fireEvent.click(rails[0]);
+    expect(await screen.findByRole('heading', { name: 'Gạo thơm Jasmine' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'Cà phê' })).toBeInTheDocument();
   });
 
   it('tab Hồ sơ có danh sách sản phẩm rút gọn từ server, bấm Quản lý sang tab Sản phẩm', async () => {

@@ -16,11 +16,8 @@ import TariffPanel from './TariffPanel';
 import CompanyProfileView from './CompanyProfileView';
 import LanguageSelect from './LanguageSelect';
 import {
-  Home,
   Building2,
   ShieldCheck,
-  Package,
-  Handshake,
   Bell,
   ChevronDown,
   ChevronRight,
@@ -28,13 +25,7 @@ import {
   ExternalLink,
   Edit3,
   Eye,
-  User,
   MessageSquare,
-  Calculator,
-  FileSignature,
-  Bot,
-  Globe,
-  FileText,
   CreditCard,
 } from 'lucide-react';
 import EvidenceManager from './EvidenceManager';
@@ -48,7 +39,11 @@ import ProfileViewers from './ProfileViewers';
 import MarketReportPanel from './MarketReportPanel';
 import SellerBilling from './SellerBilling';
 import { Link } from '../i18n/navigation';
-import ExporterDashboard from './ExporterDashboard';
+import JourneyHome from './JourneyHome';
+import JourneyRail from './JourneyRail';
+import JourneyNextButton from './JourneyNextButton';
+import { fetchExporterDashboard, type ExporterDashboardData } from '../lib/dashboardApi';
+import { stepForTab } from '../lib/journey';
 
 export type WorkspaceTabId = 'overview' | 'profile' | 'verification' | 'products' | 'rfq' | 'messages' | 'notifications' | 'licenses' | 'viewers' | 'report' | 'billing';
 
@@ -89,6 +84,16 @@ export default function SellerWorkspace({
       active = false;
     };
   }, []);
+  // Hành trình (N1): trạng thái từng bước lấy từ dashboard trên server.
+  const [journeyData, setJourneyData] = useState<ExporterDashboardData | null | undefined>(undefined);
+  useEffect(() => {
+    let active = true;
+    fetchExporterDashboard().then((d) => active && setJourneyData(d));
+    return () => {
+      active = false;
+    };
+  }, []);
+  const journeySteps = journeyData?.journey.steps ?? [];
   // Products List
   // Sản phẩm thật từ server (B5). null = đang tải; 'error' = không tải được.
   const [productsState, setProductsState] = useState<ProductOut[] | null | 'error'>(null);
@@ -119,26 +124,6 @@ export default function SellerWorkspace({
   // Hồ sơ công khai chỉ tồn tại khi công ty đã xác minh (§6.10); chưa xác minh thì không hiện lối xem.
   const publicHref = company && company.verification_status === 'verified' ? `/suppliers/${encodeURIComponent(company.slug)}` : null;
 
-  const navItems: { id: WorkspaceTabId; label: string; icon: typeof Home; badge?: string }[] = [
-              { id: 'profile', label: 'Hồ sơ doanh nghiệp', icon: Building2, badge: company ? `${Math.round(Number(company.profile_completeness_score))}%` : undefined },
-              { id: 'licenses', label: 'Tải lên & Quản lý Giấy phép & Chứng nhận', icon: Award },
-              { id: 'verification', label: 'Xác minh doanh nghiệp', icon: ShieldCheck, badge: statusBadge.short },
-              { id: 'overview', label: 'Tổng quan & Chỉ số', icon: Home },
-              { id: 'viewers', label: 'Ai đã xem hồ sơ', icon: Eye },
-              { id: 'products', label: 'Sản phẩm cung cấp', icon: Package, badge: `${productsList.length}` },
-              { id: 'rfq', label: 'RFQ & Báo giá', icon: Handshake },
-              { id: 'report', label: 'Báo cáo go-to-market', icon: FileText },
-              { id: 'billing', label: 'Gói dịch vụ & thanh toán', icon: CreditCard },
-              { id: 'messages', label: 'Tin nhắn', icon: MessageSquare },
-              { id: 'notifications', label: 'Thông báo', icon: Bell }
-            ];
-  const toolLinks = [
-    { href: '/tools/tariff', label: 'Công cụ tính thuế', icon: Calculator },
-    { href: '/tools/market-insights', label: 'Gợi ý thị trường EU', icon: Globe },
-    { href: '/tools/origin', label: 'Quy tắc xuất xứ & EUR.1 nháp', icon: FileSignature },
-    { href: '/copilot', label: 'Trợ lý AI tuân thủ', icon: Bot },
-  ] as const;
-
   return (
     <div className="min-h-screen bg-[#f8fafc] text-slate-900 font-['Plus_Jakarta_Sans',sans-serif] selection:bg-blue-600 selection:text-white flex">
       
@@ -167,50 +152,8 @@ export default function SellerWorkspace({
             </div>
           </div>
 
-          {/* Navigation Links */}
-          <nav className="space-y-1.5">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = activeTab === item.id;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => goTab(item.id as WorkspaceTabId)}
-                  className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs sm:text-[13px] font-semibold transition-all cursor-pointer text-left ${
-                    isActive
-                      ? 'bg-[#e6f4f2] text-[#0d766e]'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <Icon className={`w-4 h-4 stroke-[2] ${isActive ? 'text-[#0d766e]' : 'text-slate-500'}`} />
-                    <span>{tr(item.label)}</span>
-                  </div>
-                  {item.badge && (
-                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${
-                      isActive 
-                        ? 'bg-[#0d766e] text-white' 
-                        : 'bg-slate-100 text-slate-500'
-                    }`}>
-                      {tr(item.badge)}
-                    </span>
-                  )}
-                </button>
-              );
-            })}
-          </nav>
-
-          <div className="mt-6">
-            <p className="px-3.5 mb-2 text-[10px] font-bold uppercase tracking-wider text-slate-500">{tr("Công cụ tuân thủ")}</p>
-            <div className="space-y-1.5">
-              {toolLinks.map(({ href, label, icon: Icon }) => (
-                <Link key={href} href={href} className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs sm:text-[13px] font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-50">
-                  <Icon className="w-4 h-4 stroke-[2] text-slate-500" />
-                  <span>{tr(label)}</span>
-                </Link>
-              ))}
-            </div>
-          </div>
+          {/* Hành trình hai chặng (N1) */}
+          <JourneyRail steps={journeySteps} activeTab={activeTab} onSelectTab={goTab} />
 
         </div>
 
@@ -267,7 +210,7 @@ export default function SellerWorkspace({
                 {tr(activeTab === 'profile' && 'Hồ sơ doanh nghiệp (Company Profile)')}
                 {tr(activeTab === 'licenses' && 'Tải lên & Quản lý Giấy phép & Chứng nhận')}
                 {tr(activeTab === 'verification' && 'Xác minh doanh nghiệp')}
-                {tr(activeTab === 'overview' && 'Tổng quan & Chỉ số tăng trưởng')}
+                {tr(activeTab === 'overview' && 'Hành trình')}
                 {tr(activeTab === 'products' && 'Quản lý sản phẩm cung cấp')}
                 {tr(activeTab === 'rfq' && 'Cơ hội kết nối & Báo giá B2B')}
                 {tr(activeTab === 'messages' && 'Tin nhắn với buyer')}
@@ -304,6 +247,15 @@ export default function SellerWorkspace({
                 </Link>
               )}
 
+              <button
+                type="button"
+                onClick={() => goTab('messages')}
+                aria-label={tr('Tin nhắn')}
+                title={tr('Tin nhắn')}
+                className="p-2 rounded-xl hover:bg-slate-50 text-slate-600 cursor-pointer"
+              >
+                <MessageSquare className="w-5 h-5" />
+              </button>
               <NotificationBell />
 
               {/* Seller Profile Pill with Dropdown */}
@@ -387,6 +339,26 @@ export default function SellerWorkspace({
                       <ExternalLink className="w-3.5 h-3.5 text-slate-500" />
                       <span>{tr("Xem Sàn giao thương B2B")}</span>
                     </button>
+                    <button
+                      onClick={() => {
+                        goTab('billing');
+                        setProfileDropdownOpen(false);
+                      }}
+                      className="w-full px-4 py-2 text-left hover:bg-slate-50 text-slate-700 cursor-pointer flex items-center gap-2"
+                    >
+                      <CreditCard className="w-3.5 h-3.5 text-teal-700" />
+                      <span>{tr("Gói dịch vụ & thanh toán")}</span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        goTab('notifications');
+                        setProfileDropdownOpen(false);
+                      }}
+                      className="w-full px-4 py-2 text-left hover:bg-slate-50 text-slate-700 cursor-pointer flex items-center gap-2"
+                    >
+                      <Bell className="w-3.5 h-3.5 text-teal-700" />
+                      <span>{tr("Thông báo")}</span>
+                    </button>
                     <button 
                       onClick={() => {
                         setProfileDropdownOpen(false);
@@ -407,31 +379,10 @@ export default function SellerWorkspace({
         {/* =========================================================================
             3. TAB CONTENT DISPATCHER
            ========================================================================= */}
-        {/* Menu cho màn hình hẹp (thanh bên chỉ hiện từ md trở lên) */}
-        <nav aria-label={tr("Menu exporter")} className="md:hidden flex gap-2 overflow-x-auto px-4 py-2 bg-white border-b border-slate-100">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = activeTab === item.id;
-            return (
-              <button
-                key={item.id}
-                type="button"
-                aria-current={isActive ? 'page' : undefined}
-                onClick={() => goTab(item.id)}
-                className={`shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-semibold cursor-pointer ${isActive ? 'bg-[#e6f4f2] text-[#0d766e]' : 'bg-slate-50 text-slate-600'}`}
-              >
-                <Icon className="w-3.5 h-3.5" />
-                <span>{tr(item.label)}</span>
-              </button>
-            );
-          })}
-          {toolLinks.map(({ href, label, icon: Icon }) => (
-            <Link key={href} href={href} className="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-semibold bg-slate-50 text-slate-600">
-              <Icon className="w-3.5 h-3.5" />
-              <span>{tr(label)}</span>
-            </Link>
-          ))}
-        </nav>
+        {/* Hành trình cho màn hình hẹp (thanh bên chỉ hiện từ md trở lên) */}
+        <div className="md:hidden px-4 py-2 bg-white border-b border-slate-100">
+          <JourneyRail horizontal steps={journeySteps} activeTab={activeTab} onSelectTab={goTab} />
+        </div>
 
         <main className="flex-1 w-full max-w-7xl mx-auto p-5 sm:p-8 lg:p-10 select-none">
           
@@ -473,7 +424,7 @@ export default function SellerWorkspace({
           {activeTab === 'overview' && (
             <div className="space-y-6">
               <VerificationStatusCard company={company} onNavigateTab={goTab} onEditProfile={onNavigateOnboarding} />
-              <ExporterDashboard />
+              <JourneyHome data={journeyData} onGoTab={goTab} />
             </div>
           )}
 
@@ -602,6 +553,11 @@ export default function SellerWorkspace({
           {activeTab === 'report' && <MarketReportPanel products={productsList} />}
 
           {activeTab === 'billing' && <SellerBilling />}
+
+          {(() => {
+            const step = stepForTab(activeTab);
+            return step ? <JourneyNextButton current={step} onGoTab={goTab} /> : null;
+          })()}
 
         </main>
 
