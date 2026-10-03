@@ -70,6 +70,17 @@ from app.modules.compliance.origin import (
     answer_schema,
     evaluate_origin,
 )
+from app.modules.compliance.quota import (
+    BalanceInfo,
+    PeriodInfo,
+    QuotaEconomics,
+    balance_status,
+    convert_quantity,
+    period_info,
+    quota_economics,
+    shipment_share_pct,
+)
+from app.modules.compliance.quota_store import latest_balance
 from app.modules.compliance.schemas import (
     AgreementOut,
     EvidenceItemOut,
@@ -82,6 +93,8 @@ from app.modules.compliance.schemas import (
     OriginQuestionOut,
     OriginQuestionsOut,
     OriginReasonOut,
+    QuotaBalanceStateOut,
+    QuotaEconomicsOut,
     QuotaInfoOut,
     RequiredEvidenceOut,
     RooIn,
@@ -389,8 +402,45 @@ def _quota_data(row: TariffQuota) -> QuotaData:
     )
 
 
-def _quota_info(row: TariffQuota) -> QuotaInfoOut:
+def _quota_info(
+    row: TariffQuota,
+    *,
+    period: PeriodInfo | None = None,
+    balance: BalanceInfo | None = None,
+    balance_source: str | None = None,
+    share_pct: Decimal | None = None,
+    economics: QuotaEconomics | None = None,
+) -> QuotaInfoOut:
     return QuotaInfoOut(
+        period_start=row.period_start,
+        period_end=row.period_end,
+        days_left=None if period is None else period.days_left,
+        in_period=None if period is None else period.in_period,
+        allocation_method=row.allocation_method,
+        licence_required=row.licence_required,
+        licence_issuer_vi=row.licence_issuer_vi,
+        balance=None
+        if balance is None
+        else QuotaBalanceStateOut(
+            status=balance.status,
+            as_of=balance.as_of,
+            used=balance.used,
+            remaining=balance.remaining,
+            remaining_pct=balance.remaining_pct,
+            stale=balance.stale,
+            source=balance_source,
+        ),
+        share_pct=share_pct,
+        economics=None
+        if economics is None
+        else QuotaEconomicsOut(
+            savings=economics.savings,
+            savings_per_unit=economics.savings_per_unit,
+            savings_pct_of_value=economics.savings_pct_of_value,
+            access_cost=economics.access_cost,
+            net_benefit=economics.net_benefit,
+            worthwhile=economics.worthwhile,
+        ),
         quota_code=row.quota_code,
         quota_year=row.quota_year,
         volume=row.volume,
@@ -695,6 +745,7 @@ async def calculate_tariff(
     # đủ điều kiện ĐÃ DUYỆT; còn lại giữ needs_review của tariff_savings (không số).
     quota: TariffQuota | None = None
     quota_result: QuotaResult | None = None
+    quota_info: QuotaInfoOut | None = None
     subtypes: list[ProductSubtype] = []
     if line is not None and len(lines) == 1 and line.quota_required and agreement and value_ok:
         quotas, demo_quota = await visible_quotas(
@@ -719,14 +770,58 @@ async def calculate_tariff(
             or (demo_quota and quota is not None)
             or bool(chosen_eligible and chosen_eligible.reviewed_by is None)
         )
-        quota_result = quota_scenarios(
-            found,
-            None if quota is None else _quota_data(quota),
-            subtype_chosen=data.subtype_code is not None,
-            subtype_eligible=chosen_eligible is not None,
-            product_value=duty_value,
-            quantity=data.quantity,
+        # C2-C: quy đổi khối lượng người dùng nhập về đơn vị thuế của hạn ngạch (kg ↔ tấn); đơn vị
+        # không quy đổi được thì needs_review, không đoán.
+        qty_duty = data.quantity
+        qty_volume: Decimal | None = None
+        unit_mismatch = False
+        if quota is not None and data.quantity is not None:
+            given = data.quantity_unit or quota.specific_unit or quota.volume_unit
+            if quota.specific_unit:
+                qty_duty = convert_quantity(data.quantity, given, quota.specific_unit)
+                unit_mismatch = qty_duty is None
+            qty_volume = convert_quantity(data.quantity, given, quota.volume_unit)
+        quota_result = (
+            QuotaResult("needs_review", "unit_mismatch")
+            if unit_mismatch
+            else quota_scenarios(
+                found,
+                None if quota is None else _quota_data(quota),
+                subtype_chosen=data.subtype_code is not None,
+                subtype_eligible=chosen_eligible is not None,
+                product_value=duty_value,
+                quantity=qty_duty,
+            )
         )
+        if (
+            quota_result.status == "quota_scenarios"
+            and quota is not None
+            and quota_result.savings is not None
+        ):
+            real_today = dt.datetime.now(dt.UTC).date()
+            latest = await latest_balance(session, quota)
+            settings = get_settings()
+            quota_balance = balance_status(
+                quota.volume,
+                None if latest is None else latest.used_volume,
+                None if latest is None else latest.as_of,
+                today=real_today,
+                low_pct=settings.quota_low_balance_pct,
+                stale_days=settings.quota_balance_stale_days,
+            )
+            quota_info = _quota_info(
+                quota,
+                period=period_info(quota.period_start, quota.period_end, today),
+                balance=quota_balance,
+                balance_source=None if latest is None else latest.source,
+                share_pct=shipment_share_pct(qty_volume, quota.volume),
+                economics=quota_economics(
+                    quota_result.savings,
+                    duty_value,
+                    qty_duty if qty_duty is not None else qty_volume,
+                    data.quota_access_cost,
+                ),
+            )
         subtypes = await visible_subtypes(session, code)
     status = quota_result.status if quota_result is not None else result.status
     scenarios = quota_result.scenarios if quota_result is not None else ()
@@ -758,6 +853,10 @@ async def calculate_tariff(
                 "subtype_code": data.subtype_code,
                 "quantity": None if data.quantity is None else str(data.quantity),
                 "quota_allocated": data.quota_allocated,
+                "quantity_unit": data.quantity_unit,
+                "quota_access_cost": None
+                if data.quota_access_cost is None
+                else str(data.quota_access_cost),
                 "quota_id": None if quota is None else str(quota.id),
                 "review_reason": quota_result.review_reason,
             }
@@ -823,7 +922,7 @@ async def calculate_tariff(
             )
             for s in scenarios
         ],
-        quota=_quota_info(quota) if quota is not None and status == "quota_scenarios" else None,
+        quota=quota_info if status == "quota_scenarios" else None,
         subtype=None if chosen is None else _subtype_out(chosen),
         subtypes=[_subtype_out(s) for s in subtypes],
         conditions=conditions,

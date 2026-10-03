@@ -5,6 +5,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { downloadXlsx, type ImportResult } from '../lib/adminApi';
+import AdminQuotaBalances from './AdminQuotaBalances';
 import AdminReviewIssues from './AdminReviewIssues';
 import ImportDialog from './admin-compliance/ImportDialog';
 import Legend from './admin-compliance/Legend';
@@ -233,6 +234,7 @@ export default function AdminComplianceData() {
         />
       )}
       {importing && xlsxPath && <ImportDialog dataset={dataset} onClose={() => setImporting(false)} onDone={imported} />}
+      {dataset.key === 'quotas' && rows && !failed && <AdminQuotaBalances rows={rows} />}
       <AdminReviewIssues />
     </div>
   );

@@ -9,6 +9,7 @@ export type TariffOptions = components['schemas']['TariffOptionsOut'];
 export type Agreement = components['schemas']['AgreementOut'];
 export type Subtype = components['schemas']['SubtypeOut'];
 export type QuotaAllocated = 'yes' | 'no' | 'unknown';
+export type QuantityUnit = 'kg' | 'tonne';
 
 // U13: lý do "cần xem xét" của hàng có hạn ngạch → câu hướng dẫn (không có con số nào).
 export const QUOTA_REVIEW_MESSAGES: Record<string, string> = {
@@ -19,6 +20,7 @@ export const QUOTA_REVIEW_MESSAGES: Record<string, string> = {
   quantity_required: 'Thuế ngoài hạn ngạch là thuế tuyệt đối theo khối lượng. Nhập khối lượng lô hàng để tính.',
   mixed_duty: 'Mặt hàng áp thuế hỗn hợp, cần chuyên gia xem xét.',
   data_anomaly: 'Dữ liệu hạn ngạch bất thường, cần chuyên gia kiểm tra lại.',
+  unit_mismatch: 'Đơn vị khối lượng đã chọn không quy đổi được sang đơn vị của hạn ngạch. Vui lòng chọn lại đơn vị.',
 };
 
 // Điều kiện luôn đi kèm kịch bản hạn ngạch — không bao giờ là "0% vô điều kiện".
@@ -111,6 +113,8 @@ export async function calculateTariff(input: {
   subtypeCode?: string;
   quantity?: string;
   quotaAllocated?: QuotaAllocated;
+  quantityUnit?: QuantityUnit;
+  quotaAccessCost?: string;
   incoterm?: Incoterm;
   currency?: string;
   freight?: string;
@@ -129,6 +133,8 @@ export async function calculateTariff(input: {
         ...(input.subtypeCode ? { subtype_code: input.subtypeCode } : {}),
         ...(input.quantity ? { quantity: input.quantity } : {}),
         ...(input.quotaAllocated ? { quota_allocated: input.quotaAllocated } : {}),
+        ...(input.quantityUnit ? { quantity_unit: input.quantityUnit } : {}),
+        ...(input.quotaAccessCost !== undefined ? { quota_access_cost: input.quotaAccessCost } : {}),
         ...(input.incoterm ? { incoterm: input.incoterm } : {}),
         ...(input.currency ? { currency: input.currency } : {}),
         ...(input.freight !== undefined ? { freight: input.freight } : {}),

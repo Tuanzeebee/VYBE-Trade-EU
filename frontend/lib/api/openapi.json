@@ -5286,6 +5286,136 @@
         }
       }
     },
+    "/api/admin/tariff-quotas/{quota_id}/balances": {
+      "get": {
+        "tags": [
+          "compliance"
+        ],
+        "summary": "List Quota Balances",
+        "operationId": "list_quota_balances_api_admin_tariff_quotas__quota_id__balances_get",
+        "parameters": [
+          {
+            "name": "quota_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Quota Id"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/QuotaBalanceOut"
+                  },
+                  "title": "Response List Quota Balances Api Admin Tariff Quotas  Quota Id  Balances Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "compliance"
+        ],
+        "summary": "Add Quota Balance",
+        "operationId": "add_quota_balance_api_admin_tariff_quotas__quota_id__balances_post",
+        "parameters": [
+          {
+            "name": "quota_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Quota Id"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuotaBalanceIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuotaBalanceOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/admin/sector-alerts": {
       "get": {
         "tags": [
@@ -21801,6 +21931,247 @@
         ],
         "title": "QueueItem"
       },
+      "QuotaBalanceIn": {
+        "properties": {
+          "as_of": {
+            "type": "string",
+            "format": "date",
+            "title": "As Of"
+          },
+          "used_volume": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              }
+            ],
+            "title": "Used Volume"
+          },
+          "source": {
+            "type": "string",
+            "maxLength": 1024,
+            "minLength": 3,
+            "title": "Source"
+          }
+        },
+        "type": "object",
+        "required": [
+          "as_of",
+          "used_volume",
+          "source"
+        ],
+        "title": "QuotaBalanceIn",
+        "description": "Khối lượng đã dùng tại một ngày; ngày và nguồn bắt buộc (số liệu thực tế)."
+      },
+      "QuotaBalanceOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "quota_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Quota Id"
+          },
+          "as_of": {
+            "type": "string",
+            "format": "date",
+            "title": "As Of"
+          },
+          "used_volume": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Used Volume"
+          },
+          "source": {
+            "type": "string",
+            "title": "Source"
+          },
+          "entered_by": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Entered By"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "quota_id",
+          "as_of",
+          "used_volume",
+          "source",
+          "entered_by"
+        ],
+        "title": "QuotaBalanceOut"
+      },
+      "QuotaBalanceStateOut": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "unknown",
+              "open",
+              "low",
+              "exhausted"
+            ],
+            "title": "Status"
+          },
+          "as_of": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "As Of"
+          },
+          "used": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Used"
+          },
+          "remaining": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Remaining"
+          },
+          "remaining_pct": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Remaining Pct"
+          },
+          "stale": {
+            "type": "boolean",
+            "title": "Stale",
+            "default": false
+          },
+          "source": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status"
+        ],
+        "title": "QuotaBalanceStateOut",
+        "description": "Số dư hạn ngạch. status = unknown khi chưa có số liệu: KHÔNG được hiểu là còn hạn ngạch."
+      },
+      "QuotaEconomicsOut": {
+        "properties": {
+          "savings": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Savings"
+          },
+          "savings_per_unit": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Savings Per Unit"
+          },
+          "savings_pct_of_value": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Savings Pct Of Value"
+          },
+          "access_cost": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Access Cost"
+          },
+          "net_benefit": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Net Benefit"
+          },
+          "worthwhile": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Worthwhile"
+          }
+        },
+        "type": "object",
+        "required": [
+          "savings",
+          "savings_per_unit",
+          "savings_pct_of_value",
+          "access_cost",
+          "net_benefit",
+          "worthwhile"
+        ],
+        "title": "QuotaEconomicsOut",
+        "description": "Giá trị kinh tế của hạn ngạch cho lô hàng và điểm hòa vốn so với chi phí người dùng nhập."
+      },
       "QuotaInfoOut": {
         "properties": {
           "quota_code": {
@@ -21899,6 +22270,111 @@
               }
             ],
             "title": "Source Url"
+          },
+          "period_start": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Period Start"
+          },
+          "period_end": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Period End"
+          },
+          "days_left": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Days Left"
+          },
+          "in_period": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "In Period"
+          },
+          "allocation_method": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Allocation Method"
+          },
+          "licence_required": {
+            "type": "boolean",
+            "title": "Licence Required",
+            "default": false
+          },
+          "licence_issuer_vi": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Licence Issuer Vi"
+          },
+          "balance": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/QuotaBalanceStateOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "share_pct": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Share Pct"
+          },
+          "economics": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/QuotaEconomicsOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "type": "object",
@@ -25645,6 +26121,38 @@
             ],
             "title": "Quota Allocated"
           },
+          "quantity_unit": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "tonne",
+                  "kg",
+                  "piece",
+                  "liter"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quantity Unit"
+          },
+          "quota_access_cost": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quota Access Cost"
+          },
           "incoterm": {
             "anyOf": [
               {
@@ -27155,6 +27663,64 @@
             ],
             "title": "Allocation Note En"
           },
+          "period_start": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Period Start"
+          },
+          "period_end": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Period End"
+          },
+          "allocation_method": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "IMPORTER_FIRST_COME",
+                  "EXPORT_LICENCE",
+                  "ALLOCATION",
+                  "OTHER"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Allocation Method"
+          },
+          "licence_required": {
+            "type": "boolean",
+            "title": "Licence Required",
+            "default": false
+          },
+          "licence_issuer_vi": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 4000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Licence Issuer Vi"
+          },
           "source_url": {
             "anyOf": [
               {
@@ -27363,6 +27929,56 @@
             ],
             "title": "Allocation Note En"
           },
+          "period_start": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Period Start"
+          },
+          "period_end": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Period End"
+          },
+          "allocation_method": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Allocation Method"
+          },
+          "licence_required": {
+            "type": "boolean",
+            "title": "Licence Required"
+          },
+          "licence_issuer_vi": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Licence Issuer Vi"
+          },
           "source_url": {
             "anyOf": [
               {
@@ -27448,6 +28064,11 @@
           "licence_note_en",
           "allocation_note_vi",
           "allocation_note_en",
+          "period_start",
+          "period_end",
+          "allocation_method",
+          "licence_required",
+          "licence_issuer_vi",
           "source_url",
           "valid_from",
           "valid_until",
@@ -27694,6 +28315,70 @@
               }
             ],
             "title": "Allocation Note En"
+          },
+          "period_start": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Period Start"
+          },
+          "period_end": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Period End"
+          },
+          "allocation_method": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "IMPORTER_FIRST_COME",
+                  "EXPORT_LICENCE",
+                  "ALLOCATION",
+                  "OTHER"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Allocation Method"
+          },
+          "licence_required": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Licence Required"
+          },
+          "licence_issuer_vi": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 4000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Licence Issuer Vi"
           },
           "source_url": {
             "anyOf": [

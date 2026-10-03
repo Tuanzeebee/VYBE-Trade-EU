@@ -1176,6 +1176,24 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/tariff-quotas/{quota_id}/balances": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Quota Balances */
+        get: operations["list_quota_balances_api_admin_tariff_quotas__quota_id__balances_get"];
+        put?: never;
+        /** Add Quota Balance */
+        post: operations["add_quota_balance_api_admin_tariff_quotas__quota_id__balances_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/sector-alerts": {
         parameters: {
             query?: never;
@@ -5707,6 +5725,89 @@ export interface components {
             ownership_proven?: boolean;
         };
         /**
+         * QuotaBalanceIn
+         * @description Khối lượng đã dùng tại một ngày; ngày và nguồn bắt buộc (số liệu thực tế).
+         */
+        QuotaBalanceIn: {
+            /**
+             * As Of
+             * Format: date
+             */
+            as_of: string;
+            /** Used Volume */
+            used_volume: number | string;
+            /** Source */
+            source: string;
+        };
+        /** QuotaBalanceOut */
+        QuotaBalanceOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Quota Id
+             * Format: uuid
+             */
+            quota_id: string;
+            /**
+             * As Of
+             * Format: date
+             */
+            as_of: string;
+            /** Used Volume */
+            used_volume: string;
+            /** Source */
+            source: string;
+            /** Entered By */
+            entered_by: string | null;
+        };
+        /**
+         * QuotaBalanceStateOut
+         * @description Số dư hạn ngạch. status = unknown khi chưa có số liệu: KHÔNG được hiểu là còn hạn ngạch.
+         */
+        QuotaBalanceStateOut: {
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "unknown" | "open" | "low" | "exhausted";
+            /** As Of */
+            as_of?: string | null;
+            /** Used */
+            used?: string | null;
+            /** Remaining */
+            remaining?: string | null;
+            /** Remaining Pct */
+            remaining_pct?: string | null;
+            /**
+             * Stale
+             * @default false
+             */
+            stale?: boolean;
+            /** Source */
+            source?: string | null;
+        };
+        /**
+         * QuotaEconomicsOut
+         * @description Giá trị kinh tế của hạn ngạch cho lô hàng và điểm hòa vốn so với chi phí người dùng nhập.
+         */
+        QuotaEconomicsOut: {
+            /** Savings */
+            savings: string;
+            /** Savings Per Unit */
+            savings_per_unit: string | null;
+            /** Savings Pct Of Value */
+            savings_pct_of_value: string;
+            /** Access Cost */
+            access_cost: string | null;
+            /** Net Benefit */
+            net_benefit: string | null;
+            /** Worthwhile */
+            worthwhile: boolean | null;
+        };
+        /**
          * QuotaInfoOut
          * @description Thông tin hạn ngạch đã duyệt (hiển thị kèm kịch bản).
          */
@@ -5731,6 +5832,27 @@ export interface components {
             allocation_note_en: string | null;
             /** Source Url */
             source_url: string | null;
+            /** Period Start */
+            period_start?: string | null;
+            /** Period End */
+            period_end?: string | null;
+            /** Days Left */
+            days_left?: number | null;
+            /** In Period */
+            in_period?: boolean | null;
+            /** Allocation Method */
+            allocation_method?: string | null;
+            /**
+             * Licence Required
+             * @default false
+             */
+            licence_required?: boolean;
+            /** Licence Issuer Vi */
+            licence_issuer_vi?: string | null;
+            balance?: components["schemas"]["QuotaBalanceStateOut"] | null;
+            /** Share Pct */
+            share_pct?: string | null;
+            economics?: components["schemas"]["QuotaEconomicsOut"] | null;
         };
         /** QuoteDecisionIn */
         QuoteDecisionIn: {
@@ -6877,6 +6999,10 @@ export interface components {
             quantity?: number | string | null;
             /** Quota Allocated */
             quota_allocated?: ("yes" | "no" | "unknown") | null;
+            /** Quantity Unit */
+            quantity_unit?: ("tonne" | "kg" | "piece" | "liter") | null;
+            /** Quota Access Cost */
+            quota_access_cost?: number | string | null;
             /** Incoterm */
             incoterm?: ("EXW" | "FCA" | "FAS" | "FOB" | "CFR" | "CPT" | "CIF" | "CIP" | "DAP" | "DPU" | "DDP") | null;
             /** Currency */
@@ -7213,6 +7339,19 @@ export interface components {
             allocation_note_vi?: string | null;
             /** Allocation Note En */
             allocation_note_en?: string | null;
+            /** Period Start */
+            period_start?: string | null;
+            /** Period End */
+            period_end?: string | null;
+            /** Allocation Method */
+            allocation_method?: ("IMPORTER_FIRST_COME" | "EXPORT_LICENCE" | "ALLOCATION" | "OTHER") | null;
+            /**
+             * Licence Required
+             * @default false
+             */
+            licence_required?: boolean;
+            /** Licence Issuer Vi */
+            licence_issuer_vi?: string | null;
             /** Source Url */
             source_url?: string | null;
             /**
@@ -7266,6 +7405,16 @@ export interface components {
             allocation_note_vi: string | null;
             /** Allocation Note En */
             allocation_note_en: string | null;
+            /** Period Start */
+            period_start: string | null;
+            /** Period End */
+            period_end: string | null;
+            /** Allocation Method */
+            allocation_method: string | null;
+            /** Licence Required */
+            licence_required: boolean;
+            /** Licence Issuer Vi */
+            licence_issuer_vi: string | null;
             /** Source Url */
             source_url: string | null;
             /**
@@ -7320,6 +7469,16 @@ export interface components {
             allocation_note_vi?: string | null;
             /** Allocation Note En */
             allocation_note_en?: string | null;
+            /** Period Start */
+            period_start?: string | null;
+            /** Period End */
+            period_end?: string | null;
+            /** Allocation Method */
+            allocation_method?: ("IMPORTER_FIRST_COME" | "EXPORT_LICENCE" | "ALLOCATION" | "OTHER") | null;
+            /** Licence Required */
+            licence_required?: boolean | null;
+            /** Licence Issuer Vi */
+            licence_issuer_vi?: string | null;
             /** Source Url */
             source_url?: string | null;
             /** Valid From */
@@ -10616,6 +10775,76 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["TariffQuotaOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_quota_balances_api_admin_tariff_quotas__quota_id__balances_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                quota_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QuotaBalanceOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_quota_balance_api_admin_tariff_quotas__quota_id__balances_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                quota_id: string;
+            };
+            cookie?: {
+                evfta_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["QuotaBalanceIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QuotaBalanceOut"];
                 };
             };
             /** @description Validation Error */

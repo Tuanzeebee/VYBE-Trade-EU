@@ -23,6 +23,7 @@ from app.modules.compliance.admin_schemas import (
     CountryTermPatch,
     ProductSubtypeIn,
     ProductSubtypePatch,
+    QuotaBalanceIn,
     RooRuleIn,
     RooRulePatch,
     SectorAlertIn,
@@ -44,8 +45,10 @@ from app.modules.compliance.models import (
     SectorAlert,
     TariffLine,
     TariffQuota,
+    TariffQuotaBalance,
     TradeAgreement,
 )
+from app.modules.compliance.quota_store import group_balances, quota_group_ids
 
 TARIFF_ENTITY = "tariff_line"
 TERM_ENTITY = "country_term"
@@ -530,6 +533,55 @@ def quota_out(row: TariffQuota) -> TariffQuotaOut:
     )
 
 
+def _check_period(start: dt.date | None, end: dt.date | None) -> None:
+    if start is not None and end is not None and end <= start:
+        raise AppError("invalid_period", "period_end must be after period_start", 422)
+
+
+async def list_quota_balances(
+    session: AsyncSession, quota_id: uuid.UUID
+) -> list[TariffQuotaBalance]:
+    """Số dư của cả nhóm hạn ngạch dùng chung khối lượng (cùng số hiệu, chu kỳ), mới nhất trước."""
+    quota = await _get(session, TariffQuota, quota_id)  # 404 khi hạn ngạch không có
+    return await group_balances(session, quota)
+
+
+async def add_quota_balance(
+    session: AsyncSession, actor: CurrentUser, quota_id: uuid.UUID, data: QuotaBalanceIn
+) -> TariffQuotaBalance:
+    """Ghi số dư tại một ngày cho cả nhóm; đã có số dư cùng ngày trong nhóm thì cập nhật (audit)."""
+    quota = await _get(session, TariffQuota, quota_id)
+    ids = await quota_group_ids(session, quota)
+    row = await session.scalar(
+        select(TariffQuotaBalance).where(
+            TariffQuotaBalance.quota_id.in_(ids), TariffQuotaBalance.as_of == data.as_of
+        )
+    )
+    before = None if row is None else {"used_volume": str(row.used_volume), "source": row.source}
+    if row is None:
+        row = TariffQuotaBalance(quota_id=quota_id, as_of=data.as_of)
+        session.add(row)
+    row.used_volume, row.source, row.entered_by = data.used_volume, data.source, actor.id
+    await session.flush()
+    await record(
+        session,
+        actor_id=actor.id,
+        action_type="tariff_quota_balance.upsert",
+        entity_type="tariff_quota_balance",
+        entity_id=str(row.id),
+        before=before,
+        after={
+            "quota_id": str(row.quota_id),
+            "as_of": data.as_of.isoformat(),
+            "used_volume": str(data.used_volume),
+            "source": data.source,
+        },
+    )
+    await session.commit()
+    await session.refresh(row)
+    return row
+
+
 def _check_quota_duties(row: TariffQuota) -> None:
     for side in ("in_quota", "out_quota"):
         duty_type = getattr(row, f"{side}_duty_type")
@@ -571,6 +623,7 @@ async def create_quota(
 ) -> TariffQuota:
     await _require_agreement(session, data.agreement_code)
     _check_window(data.valid_from, data.valid_until)
+    _check_period(data.period_start, data.period_end)
     values = data.model_dump(exclude={"eligible_subtypes"})
     row = TariffQuota(**values)
     row.eligible_subtypes = await _subtypes_by_code(session, data.eligible_subtypes)
@@ -602,6 +655,12 @@ async def update_quota(
         patch.valid_from if "valid_from" in fields and patch.valid_from else row.valid_from,
         patch.valid_until if "valid_until" in fields else row.valid_until,
     )
+    _check_period(
+        patch.period_start if "period_start" in fields else row.period_start,
+        patch.period_end if "period_end" in fields else row.period_end,
+    )
+    if "licence_required" in fields and patch.licence_required is None:
+        raise AppError("invalid_patch", "licence_required cannot be null", 422)
     if patch.eligible_subtypes is not None:
         row.eligible_subtypes = await _subtypes_by_code(session, patch.eligible_subtypes)
     scalar_patch = patch.model_copy()

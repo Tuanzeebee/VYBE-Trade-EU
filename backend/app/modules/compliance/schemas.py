@@ -76,6 +76,9 @@ class TariffIn(BaseModel):
     subtype_code: Annotated[str | None, Field(pattern=r"^[a-z0-9_]{2,40}$")] = None
     quantity: Decimal | None = None
     quota_allocated: Literal["yes", "no", "unknown"] | None = None
+    # C2-C: đơn vị của `quantity` (mặc định: đơn vị thuế của hạn ngạch) và chi phí để có hạn ngạch
+    quantity_unit: Literal["kg", "tonne", "piece", "liter"] | None = None
+    quota_access_cost: Decimal | None = None
     # C2-A: trị giá tính thuế. Không khai Incoterm = lấy giá hóa đơn làm trị giá (có cảnh báo).
     # Mọi số tiền cùng một đơn vị tiền tệ (`currency` chỉ để hiển thị), không quy đổi.
     incoterm: Incoterm | None = None
@@ -85,7 +88,9 @@ class TariffIn(BaseModel):
     post_border_costs: Decimal | None = None
     import_date: dt.date | None = None
 
-    @field_validator("freight", "insurance", "post_border_costs", mode="before")
+    @field_validator(
+        "freight", "insurance", "post_border_costs", "quota_access_cost", mode="before"
+    )
     @classmethod
     def _cost(cls, value: Any) -> Decimal | None:
         return parse_cost(value)
@@ -128,6 +133,29 @@ class SubtypeOut(BaseModel):
     description_en: str | None
 
 
+class QuotaBalanceStateOut(BaseModel):
+    """Số dư hạn ngạch. status = unknown khi chưa có số liệu: KHÔNG được hiểu là còn hạn ngạch."""
+
+    status: Literal["unknown", "open", "low", "exhausted"]
+    as_of: dt.date | None = None
+    used: Decimal | None = None
+    remaining: Decimal | None = None
+    remaining_pct: Decimal | None = None
+    stale: bool = False
+    source: str | None = None
+
+
+class QuotaEconomicsOut(BaseModel):
+    """Giá trị kinh tế của hạn ngạch cho lô hàng và điểm hòa vốn so với chi phí người dùng nhập."""
+
+    savings: Decimal
+    savings_per_unit: Decimal | None
+    savings_pct_of_value: Decimal
+    access_cost: Decimal | None
+    net_benefit: Decimal | None
+    worthwhile: bool | None
+
+
 class QuotaInfoOut(BaseModel):
     """Thông tin hạn ngạch đã duyệt (hiển thị kèm kịch bản)."""
 
@@ -141,6 +169,17 @@ class QuotaInfoOut(BaseModel):
     allocation_note_vi: str | None
     allocation_note_en: str | None
     source_url: str | None
+    # C2-C: chu kỳ, cách phân bổ, số dư, tỷ trọng lô và giá trị kinh tế
+    period_start: dt.date | None = None
+    period_end: dt.date | None = None
+    days_left: int | None = None
+    in_period: bool | None = None  # None = hạn ngạch không khai chu kỳ
+    allocation_method: str | None = None
+    licence_required: bool = False
+    licence_issuer_vi: str | None = None
+    balance: QuotaBalanceStateOut | None = None
+    share_pct: Decimal | None = None
+    economics: QuotaEconomicsOut | None = None
 
 
 class SectorAlertOut(BaseModel):
