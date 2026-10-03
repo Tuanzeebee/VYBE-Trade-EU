@@ -46,7 +46,9 @@ export default function TrustScorePanel() {
       </p>
       {trust.uses_draft_criteria && <p className="mt-1 text-[11px] font-semibold text-amber-700">{tr('Tiêu chí đang là bản nháp minh hoạ, chờ duyệt.')}</p>}
 
-      <div className="mt-4 grid gap-3 md:grid-cols-3">
+      <details className="mt-4">
+      <summary className="cursor-pointer text-sm font-semibold text-teal-800">{tr('Xem chi tiết các tiêu chí')}</summary>
+      <div className="mt-3 grid gap-3 md:grid-cols-3">
         {trust.components.map((component) => (
           <div key={component.component} className="rounded-xl border border-slate-100 p-3" aria-label={language === 'en' ? component.label_en : component.label_vi}>
             <p className="flex items-baseline justify-between text-sm font-semibold text-slate-900">
@@ -67,6 +69,7 @@ export default function TrustScorePanel() {
           </div>
         ))}
       </div>
+      </details>
       {trust.self_declared.length > 0 && (
         <p className="mt-3 text-xs text-slate-500">
           {tr('Tự khai (không tính điểm)')}: {trust.self_declared.map((key) => tr(SELF_DECLARED_LABELS[key] ?? key)).join(', ')}

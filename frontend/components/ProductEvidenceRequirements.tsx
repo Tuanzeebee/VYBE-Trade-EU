@@ -47,30 +47,50 @@ export default function ProductEvidenceRequirements({ data }: { data: ExporterRe
         {tr('Theo mã HS bạn đã khai ở bước trước. Giấy tờ nào áp dụng còn tùy lô hàng cụ thể (trị giá, nguồn nguyên liệu, quá cảnh).')}
       </p>
       <UnreviewedNotice state={data.review_state} compact />
-      <div className="mt-3 space-y-4">
-      {products.map((product) => (
-        <div key={product.hs_code}>
-          <p className="text-xs font-bold text-slate-900">
-            {product.hs_formatted} — {language === 'en' ? product.name_en : product.name_vi}
-          </p>
-          <ul className="mt-2 space-y-2">
-            {product.items.map((item) => (
-              <li key={item.code} className="rounded-lg border border-slate-200 p-2.5 text-sm">
-                <p className="font-semibold text-slate-900">{language === 'vi' ? item.name_vi : item.name_en || item.name_vi}</p>
-                <p className="mt-0.5 text-[11px] text-slate-500">
-                  {tr(BLOCKS[item.blocks])}
-                  {item.scope === 'COMPANY' ? ` · ${tr('Cấp công ty')}` : ''}
-                </p>
-                <p className="mt-0.5 text-xs text-slate-600">
+      <div className="mt-3 space-y-3">
+        {products.map((product, index) => {
+          const always = product.items.filter((item) => item.conditions.includes('ALWAYS') && item.status !== 'CHECK_REQUIRED');
+          const depends = product.items.filter((item) => !always.includes(item));
+          const row = (item: EvidenceItem) => (
+            <li key={item.code} className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm">
+              <p className="font-semibold text-slate-900">{language === 'vi' ? item.name_vi : item.name_en || item.name_vi}</p>
+              <p className="mt-0.5 text-xs text-slate-600">
+                <span>{tr(BLOCKS[item.blocks])}</span>
+                {item.scope === 'COMPANY' && <span> · {tr('Cấp công ty')}</span>}
+                {' · '}
+                <span>
                   {item.status === 'CHECK_REQUIRED'
                     ? tr('Cần kiểm tra thêm (chưa có dữ liệu danh mục)')
                     : item.conditions.map(condition).join(' · ')}
-                </p>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))}
+                </span>
+              </p>
+            </li>
+          );
+          return (
+            <details key={product.hs_code} open={index === 0} className="rounded-xl border border-slate-200 bg-white/70 p-3">
+              <summary className="cursor-pointer text-sm font-bold text-slate-900">
+                {product.hs_formatted} — {language === 'en' ? product.name_en : product.name_vi}
+                <span className="ml-2 text-xs font-semibold text-slate-600">
+                  ({product.items.length} {tr('giấy tờ')})
+                </span>
+              </summary>
+              {always.length > 0 && (
+                <div className="mt-3">
+                  <p className="text-xs font-bold uppercase text-teal-900">{tr('Luôn cần chuẩn bị')}</p>
+                  <ul className="mt-1.5 space-y-1.5">{always.map(row)}</ul>
+                </div>
+              )}
+              {depends.length > 0 && (
+                <details className="mt-3">
+                  <summary className="cursor-pointer text-xs font-bold uppercase text-slate-700">
+                    {tr('Tùy lô hàng')} ({depends.length})
+                  </summary>
+                  <ul className="mt-1.5 space-y-1.5">{depends.map(row)}</ul>
+                </details>
+              )}
+            </details>
+          );
+        })}
       </div>
     </section>
   );

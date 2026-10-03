@@ -66,25 +66,37 @@ export default function VerificationTier() {
         </p>
       )}
 
-      {tiers.map((tier) => (
-        <div key={tier} className="mt-4">
-          <p className="text-sm font-semibold text-slate-900">
-            {tr(`Cấp ${TIER_LABELS[tier]}`)}
-            {tier <= data.tier && <span className="ml-2 text-xs font-normal text-emerald-700">{tr('đã đạt')}</span>}
-          </p>
+      {tiers.map((tier) => {
+        const achieved = tier <= data.tier;
+        const list = (
           <ul className="mt-1 space-y-1">
             {data.requirements
               .filter((r) => r.tier === tier)
               .map((r) => (
-                <li key={r.code} className="flex flex-wrap items-center gap-2 text-xs text-slate-700">
+                <li key={r.code} className="flex flex-wrap items-center gap-2 text-sm text-slate-700">
                   <span>{language === 'en' ? r.label_en : r.label_vi}</span>
-                  <span className={`rounded-full px-2 py-0.5 font-semibold ${REQUIREMENT_TONES[r.state]}`}>{tr(REQUIREMENT_STATES[r.state])}</span>
-                  {!r.is_required && <span className="text-slate-500">{tr('không bắt buộc')}</span>}
+                  <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${REQUIREMENT_TONES[r.state]}`}>{tr(REQUIREMENT_STATES[r.state])}</span>
+                  {!r.is_required && <span className="text-xs text-slate-500">{tr('không bắt buộc')}</span>}
                 </li>
               ))}
           </ul>
-        </div>
-      ))}
+        );
+        // Cấp đã đạt thu gọn: người dùng chỉ cần nhìn việc còn phải làm cho cấp kế tiếp.
+        return achieved ? (
+          <details key={tier} className="mt-3">
+            <summary className="cursor-pointer text-sm font-semibold text-slate-900">
+              {tr(`Cấp ${TIER_LABELS[tier]}`)}
+              <span className="ml-2 text-xs font-normal text-emerald-700">{tr('đã đạt')}</span>
+            </summary>
+            {list}
+          </details>
+        ) : (
+          <div key={tier} className="mt-4">
+            <p className="text-sm font-semibold text-slate-900">{tr(`Cấp ${TIER_LABELS[tier]}`)}</p>
+            {list}
+          </div>
+        );
+      })}
       {data.requirements.some((r) => !r.reviewed) && (
         <p className="mt-3 text-[11px] text-slate-500">{tr('Danh sách yêu cầu đang là bản nháp, chờ bộ phận pháp lý duyệt.')}</p>
       )}

@@ -17248,5 +17248,150 @@
     "to use this price.",
     "pour utiliser ce prix.",
     "この価格を使用します。"
+  ],
+  "Hồ sơ và sản phẩm": [
+    "Profile and products",
+    "Profile and products",
+    "Profile and products"
+  ],
+  "Điền thông tin công ty và thêm sản phẩm bạn muốn bán.": [
+    "Fill in your company details and add the products you want to sell.",
+    "Fill in your company details and add the products you want to sell.",
+    "Fill in your company details and add the products you want to sell."
+  ],
+  "Nhà máy, chứng nhận và chất lượng": [
+    "Factory, certificates and quality",
+    "Factory, certificates and quality",
+    "Factory, certificates and quality"
+  ],
+  "Tải chứng nhận và giấy tờ chất lượng để tăng độ tin cậy.": [
+    "Upload certificates and quality documents to build trust.",
+    "Upload certificates and quality documents to build trust.",
+    "Upload certificates and quality documents to build trust."
+  ],
+  "Thuế": [
+    "Tariffs",
+    "Tariffs",
+    "Tariffs"
+  ],
+  "Xuất xứ và pháp lý": [
+    "Origin and legal",
+    "Origin and legal",
+    "Origin and legal"
+  ],
+  "Yêu cầu và báo giá": [
+    "Requests and quotes",
+    "Requests and quotes",
+    "Requests and quotes"
+  ],
+  "Hải quan và dịch vụ": [
+    "Customs and services",
+    "Customs and services",
+    "Customs and services"
+  ],
+  "Hồ sơ doanh nghiệp và sản phẩm": [
+    "Company profile and products",
+    "Company profile and products",
+    "Company profile and products"
+  ],
+  "Yêu cầu báo giá mới": [
+    "New quote requests",
+    "New quote requests",
+    "New quote requests"
+  ],
+  "Chưa có. Thêm sản phẩm kèm mã HS ở mục Hồ sơ và sản phẩm.": [
+    "None yet. Add products with HS codes under Profile and products.",
+    "None yet. Add products with HS codes under Profile and products.",
+    "None yet. Add products with HS codes under Profile and products."
+  ],
+  "Thêm sản phẩm kèm mã HS, ảnh và giá để buyer tìm thấy bạn.": [
+    "Add products with HS code, photo and price so buyers can find you.",
+    "Add products with HS code, photo and price so buyers can find you.",
+    "Add products with HS code, photo and price so buyers can find you."
+  ],
+  "Chưa có ảnh": [
+    "No photo yet",
+    "No photo yet",
+    "No photo yet"
+  ],
+  "Buyer đọc phần này đầu tiên khi xem hồ sơ.": [
+    "Buyers read this first when they view your profile.",
+    "Buyers read this first when they view your profile.",
+    "Buyers read this first when they view your profile."
+  ],
+  "Sửa giới thiệu": [
+    "Edit introduction",
+    "Edit introduction",
+    "Edit introduction"
+  ],
+  "Chưa có phần giới thiệu. Viết vài câu về nhà máy, sản phẩm chính và thị trường bạn muốn bán.": [
+    "No introduction yet. Write a few sentences about your factory, main products and target markets.",
+    "No introduction yet. Write a few sentences about your factory, main products and target markets.",
+    "No introduction yet. Write a few sentences about your factory, main products and target markets."
+  ],
+  "Chứng nhận giúp buyer tin tưởng và giúp hồ sơ được xác minh.": [
+    "Certificates build buyer trust and help your profile get verified.",
+    "Certificates build buyer trust and help your profile get verified.",
+    "Certificates build buyer trust and help your profile get verified."
+  ],
+  "Quản lý chứng nhận": [
+    "Manage certificates",
+    "Manage certificates",
+    "Manage certificates"
+  ],
+  "Xem huy hiệu EVFTA-verified theo mã HS khác": [
+    "See EVFTA-verified badge for another HS code",
+    "See EVFTA-verified badge for another HS code",
+    "See EVFTA-verified badge for another HS code"
+  ],
+  "Chỉ doanh nghiệp đã xác minh mới hiện trong danh bạ nhà cung cấp.": [
+    "Only verified companies appear in the supplier directory.",
+    "Only verified companies appear in the supplier directory.",
+    "Only verified companies appear in the supplier directory."
+  ],
+  "Nhà máy": [
+    "Factory",
+    "Factory",
+    "Factory"
+  ],
+  "Địa chỉ, sản lượng và mã cơ sở giúp buyer biết bạn có đủ năng lực giao hàng.": [
+    "Address, output and facility codes show buyers you can deliver.",
+    "Address, output and facility codes show buyers you can deliver.",
+    "Address, output and facility codes show buyers you can deliver."
+  ],
+  "Sửa thông tin nhà máy": [
+    "Edit factory details",
+    "Edit factory details",
+    "Edit factory details"
+  ],
+  "Thêm thông tin nhà máy": [
+    "Add factory details",
+    "Add factory details",
+    "Add factory details"
+  ],
+  "giấy tờ": [
+    "documents",
+    "documents",
+    "documents"
+  ],
+  "Luôn cần chuẩn bị": [
+    "Always required",
+    "Always required",
+    "Always required"
+  ],
+  "Tùy lô hàng": [
+    "Depends on the shipment",
+    "Depends on the shipment",
+    "Depends on the shipment"
+  ],
+  "Xem chi tiết các tiêu chí": [
+    "See criteria details",
+    "See criteria details",
+    "See criteria details"
+  ],
+  "Xem kết quả kiểm chi tiết": [
+    "See detailed check results",
+    "See detailed check results",
+    "See detailed check results"
   ]
 }

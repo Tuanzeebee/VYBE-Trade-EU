@@ -77,7 +77,7 @@ function renderView(value: CompanyOut | null) {
   render(
     <NextIntlClientProvider locale="vi" messages={{}}>
       <LanguageProvider>
-        <CompanyProfileView company={value} products={[]} onEdit={vi.fn()} onNavigateTab={vi.fn()} />
+        <CompanyProfileView company={value} onEdit={vi.fn()} onNavigateTab={vi.fn()} />
       </LanguageProvider>
     </NextIntlClientProvider>,
   );

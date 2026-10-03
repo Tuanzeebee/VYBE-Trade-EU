@@ -57,7 +57,7 @@ const COMPANY = {
   profile_completeness_score: '40.00', created_at: '2026-09-29T00:00:00Z', updated_at: '2026-09-29T00:00:00Z',
 };
 
-function serve(products: unknown[] | 'error', tariff: unknown = null, company: unknown = null) {
+function serve(products: unknown[] | 'error', tariff: unknown = null, company: unknown = COMPANY) {
   vi.stubGlobal(
     'fetch',
     vi.fn(async (req: Request) => {
@@ -92,7 +92,7 @@ function renderWorkspace(initialTab: 'products' | 'profile' | 'overview') {
 describe('SellerWorkspace — sản phẩm lấy từ server (B5)', () => {
   afterEach(() => vi.unstubAllGlobals());
 
-  it('tab Sản phẩm hiện sản phẩm thật: tên, mã HS, giá, MOQ, ảnh, mô tả', async () => {
+  it('hồ sơ hiện sản phẩm thật: tên, mã HS, giá, MOQ, ảnh, mô tả', async () => {
     serve([product()]);
     renderWorkspace('products');
     const heading = await screen.findByRole('heading', { name: 'Gạo thơm Jasmine' });
@@ -117,7 +117,8 @@ describe('SellerWorkspace — sản phẩm lấy từ server (B5)', () => {
   it('chưa có sản phẩm: hiện hướng dẫn, không để trống', async () => {
     serve([]);
     renderWorkspace('products');
-    expect(await screen.findByRole('status')).toHaveTextContent('Chưa có sản phẩm');
+    const section = (await screen.findByRole('heading', { name: 'Sản phẩm cung cấp' })).closest('section') as HTMLElement;
+    expect(await within(section).findByRole('status')).toHaveTextContent('Chưa có sản phẩm');
   });
 
   it('sản phẩm đang ẩn được đánh dấu; sản phẩm không có ảnh/giá không làm hỏng thẻ', async () => {
@@ -133,7 +134,8 @@ describe('SellerWorkspace — sản phẩm lấy từ server (B5)', () => {
   it('server lỗi: báo lỗi nhẹ nhàng thay vì hiện sai là chưa có sản phẩm', async () => {
     serve('error');
     renderWorkspace('products');
-    expect(await screen.findByRole('alert')).toHaveTextContent('Không tải được danh sách sản phẩm');
+    const section = (await screen.findByRole('heading', { name: 'Sản phẩm cung cấp' })).closest('section') as HTMLElement;
+    expect(await within(section).findByRole('alert')).toHaveTextContent('Không tải được danh sách sản phẩm');
     expect(screen.queryByText(/Chưa có sản phẩm/)).not.toBeInTheDocument();
   });
 
@@ -145,26 +147,25 @@ describe('SellerWorkspace — sản phẩm lấy từ server (B5)', () => {
     expect(assistant.textContent).not.toMatch(/\bAI\b|tuân thủ/i);
   });
 
-  it('hành trình có bước Sản phẩm (rail bên + rail mobile) mở tab sản phẩm thật', async () => {
+  it('hành trình gộp sản phẩm vào bước Hồ sơ và sản phẩm (rail bên + rail mobile), không còn bước Sản phẩm riêng', async () => {
     serve([product(), product({ id: 'p2', name: 'Cà phê' })]);
     renderWorkspace('overview');
-    const rails = await screen.findAllByRole('button', { name: /^(1|2|3|✓)?\s*Sản phẩm$/ });
+    const rails = await screen.findAllByRole('button', { name: /^(1|2|3|✓)?\s*Hồ sơ và sản phẩm$/ });
     expect(rails.length).toBeGreaterThanOrEqual(1);
+    expect(screen.queryByRole('button', { name: /^(1|2|3|✓)?\s*Sản phẩm$/ })).not.toBeInTheDocument();
     fireEvent.click(rails[0]);
     expect(await screen.findByRole('heading', { name: 'Gạo thơm Jasmine' })).toBeInTheDocument();
     expect(await screen.findByRole('heading', { name: 'Cà phê' })).toBeInTheDocument();
   });
 
-  it('tab Hồ sơ có danh sách sản phẩm rút gọn từ server, bấm Quản lý sang tab Sản phẩm', async () => {
-    serve([product()], null, COMPANY);
-    renderWorkspace('profile');
-    const section = (await screen.findByRole('heading', { name: 'Sản phẩm cung cấp' })).closest('section') as HTMLElement;
-    expect(await within(section).findByText('Gạo thơm Jasmine')).toBeInTheDocument();
-    fireEvent.click(within(section).getByRole('button', { name: /Quản lý/ }));
-    expect(await screen.findByRole('heading', { name: 'Gạo thơm Jasmine' })).toBeInTheDocument();
+  it('tab products cũ (link cũ) mở trang hồ sơ có khối Sản phẩm cung cấp và nút thêm sản phẩm', async () => {
+    serve([product()]);
+    renderWorkspace('products');
+    expect(await screen.findByRole('heading', { name: 'Sản phẩm cung cấp' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Thêm sản phẩm mới/ })).toBeInTheDocument();
   });
 
-  it('tab Sản phẩm: bấm "Xem thuế MFN / EVFTA" mở đủ thông tin thuế của sản phẩm đó', async () => {
+  it('hồ sơ: bấm "Xem thuế MFN / EVFTA" mở đủ thông tin thuế của sản phẩm đó', async () => {
     serve([product()], {
       status: 'ok',
       hs_code: '100630',

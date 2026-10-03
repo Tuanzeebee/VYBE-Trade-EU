@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { nextAfter, stepForTab, STEP_META, STEP_ORDER } from '@/lib/journey';
 
 describe('journey', () => {
-  it('có đủ 9 bước theo thứ tự cố định và mỗi bước có đích', () => {
-    expect(STEP_ORDER).toEqual(['company', 'products', 'evidence', 'verification', 'market', 'tariff', 'origin', 'requests', 'services']);
+  it('có đủ 8 bước theo thứ tự cố định và mỗi bước có đích', () => {
+    expect(STEP_ORDER).toEqual(['company', 'evidence', 'verification', 'market', 'tariff', 'origin', 'requests', 'services']);
     for (const key of STEP_ORDER) {
       const meta = STEP_META[key];
       expect(meta.tab !== null || meta.href !== null).toBe(true);
@@ -16,16 +16,16 @@ describe('journey', () => {
   });
 
   it('tên và đích khớp nhau: thuế, xuất xứ, báo cáo thị trường, dịch vụ', () => {
-    expect(STEP_META.market.label).toBe('Báo cáo thị trường');
-    expect(STEP_META.tariff).toMatchObject({ label: 'Tính thuế', href: '/tools/tariff' });
-    expect(STEP_META.origin).toMatchObject({ label: 'Xuất xứ và EUR.1', href: '/tools/origin' });
-    expect(STEP_META.services.label).toBe('Dịch vụ hỗ trợ');
+    expect(STEP_META.market.label).toBe('Thị trường');
+    expect(STEP_META.tariff).toMatchObject({ label: 'Thuế', href: '/tools/tariff' });
+    expect(STEP_META.origin).toMatchObject({ label: 'Xuất xứ và pháp lý', href: '/tools/origin' });
+    expect(STEP_META.services.label).toBe('Hải quan và dịch vụ');
     expect(STEP_META.services.href).toBe('/suppliers?kind=services'); // nhà cung cấp dịch vụ, không phải công cụ xuất xứ
   });
 
   it('nextAfter trả bước kế tiếp, và null ở bước cuối', () => {
     expect(nextAfter('tariff')).toBe('origin');
-    expect(nextAfter('company')).toBe('products');
+    expect(nextAfter('company')).toBe('evidence');
     expect(nextAfter('requests')).toBe('services');
     expect(nextAfter('services')).toBeNull();
   });

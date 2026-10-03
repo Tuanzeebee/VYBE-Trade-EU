@@ -119,8 +119,8 @@ export default function VerificationPanel() {
         )}
       </section>
       <VerificationTier />
-      <TrustScorePanel />
       <OwnerChecks />
+      <TrustScorePanel />
     </div>
   );
 }

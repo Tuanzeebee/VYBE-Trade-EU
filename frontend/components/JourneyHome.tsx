@@ -1,5 +1,6 @@
 'use client';
-// Trang "Hành trình" (N1, N3): MỘT việc tiếp theo, hai thanh tiến độ, vài chỉ số nhỏ.
+// Trang "Hành trình" (N1, N3): to = việc tiếp theo + thẻ hồ sơ/xác minh (một chỉ số); vừa = 3 chỉ số kết quả;
+// nhỏ = tiến độ bán hàng và ngành hàng.
 import React from 'react';
 import DashboardTile from './DashboardTile';
 import { useLanguage } from '../context/LanguageContext';
@@ -7,6 +8,9 @@ import { Link } from '../i18n/navigation';
 import type { ExporterDashboardData } from '../lib/dashboardApi';
 import { STEP_META, type StepKey } from '../lib/journey';
 import type { WorkspaceTabId } from './SellerWorkspace';
+import VerificationStatusCard from './VerificationStatusCard';
+import type { CompanyOut } from '../lib/companyApi';
+import type { ProductOut } from '../lib/productsApi';
 
 function Bar({ label, done, total }: { label: string; done: number; total: number }) {
   const pct = total ? Math.round((done / total) * 100) : 0;
@@ -25,7 +29,15 @@ function Bar({ label, done, total }: { label: string; done: number; total: numbe
   );
 }
 
-export default function JourneyHome({ data, onGoTab }: { data: ExporterDashboardData | null | undefined; onGoTab: (tab: WorkspaceTabId) => void }) {
+type HomeProps = {
+  data: ExporterDashboardData | null | undefined;
+  onGoTab: (tab: WorkspaceTabId) => void;
+  company?: CompanyOut | null;
+  products?: ProductOut[] | null | 'error';
+  onEditProfile?: () => void;
+};
+
+export default function JourneyHome({ data, onGoTab, company = null, products = null, onEditProfile }: HomeProps) {
   const { tr, language } = useLanguage();
   if (data === undefined) return <p role="status" className="text-sm text-slate-600">{tr('Đang tải…')}</p>;
   if (data === null) {
@@ -37,6 +49,10 @@ export default function JourneyHome({ data, onGoTab }: { data: ExporterDashboard
   }
   const money = (v: string) => new Intl.NumberFormat(language === 'en' ? 'en-GB' : 'vi-VN', { style: 'currency', currency: 'EUR' }).format(Number(v));
   const j = data.journey;
+  // Ngành hàng: tên nhóm HS của các sản phẩm đã đăng (không trùng, tối đa 3).
+  const sectors = Array.isArray(products)
+    ? [...new Set(products.map((p) => (language === 'en' ? p.hs_name_en : p.hs_name_vi)).filter(Boolean))].slice(0, 3)
+    : [];
   const next = j.next_step ? STEP_META[j.next_step as StepKey] : null;
   const big = 'text-3xl font-extrabold text-[#083832]';
   const btn = 'mt-4 inline-block rounded-xl bg-[#083832] px-5 py-2.5 text-sm font-semibold text-white';
@@ -61,11 +77,8 @@ export default function JourneyHome({ data, onGoTab }: { data: ExporterDashboard
         ) : (
           <p className="mt-1 text-sm text-slate-700">{tr('Bạn đã hoàn thành các bước chính. Theo dõi Request mới ở mục Bán hàng.')}</p>
         )}
-        <div className="mt-5 grid gap-4 sm:grid-cols-2">
-          <Bar label={tr('Hoàn thiện hồ sơ')} done={j.product_done} total={j.product_total} />
-          <Bar label={tr('Bán hàng')} done={j.sales_done} total={j.sales_total} />
-        </div>
       </section>
+      {company && <VerificationStatusCard company={company} onNavigateTab={onGoTab} onEditProfile={() => onEditProfile?.()} />}
       <div className="grid gap-4 md:grid-cols-3">
         <DashboardTile title="Lượt xem hồ sơ tuần này" hint={data.profile_views.empty_hint_key}>
           {data.profile_views.data && (
@@ -77,12 +90,19 @@ export default function JourneyHome({ data, onGoTab }: { data: ExporterDashboard
             </>
           )}
         </DashboardTile>
-        <DashboardTile title="Request mới" hint={data.rfqs.empty_hint_key}>
+        <DashboardTile title="Yêu cầu báo giá mới" hint={data.rfqs.empty_hint_key}>
           {data.rfqs.data && data.rfqs.data.total > 0 && <p className={big}>{data.rfqs.data.counts.new ?? 0}</p>}
         </DashboardTile>
         <DashboardTile title="Tiết kiệm thuế ước tính" hint={data.tariff_savings.empty_hint_key}>
           {data.tariff_savings.data && data.tariff_savings.data.runs > 0 && <p className={big}>{money(data.tariff_savings.data.total_eur)}</p>}
         </DashboardTile>
+      </div>
+      <div className="grid gap-4 border-t border-slate-200 pt-4 text-xs text-slate-600 sm:grid-cols-2">
+        <Bar label={tr('Bán hàng')} done={j.sales_done} total={j.sales_total} />
+        <p>
+          <span className="font-semibold text-slate-700">{tr('Ngành hàng')}: </span>
+          {sectors.length > 0 ? sectors.join(', ') : tr('Chưa có. Thêm sản phẩm kèm mã HS ở mục Hồ sơ và sản phẩm.')}
+        </p>
       </div>
     </div>
   );

@@ -8,7 +8,7 @@ import { BrandMark } from './BrandMark';
 import React, { useEffect, useState } from 'react';
 import { getMyCompany, type CompanyOut } from '../lib/companyApi';
 import NotificationBell from './NotificationBell';
-import VerificationStatusCard, { STATUS_BADGE } from './VerificationStatusCard';
+import { STATUS_BADGE } from './VerificationStatusCard';
 import type { DemoUser } from '../lib/demoAuth';
 import { draftFromProduct, emptyDraft, formatMoq, formatPackaging, formatPrice, formatTiers, getMyProducts, type ProductDraft, type ProductOut } from '../lib/productsApi';
 import ProductDialog from './ProductDialog';
@@ -16,20 +16,15 @@ import TariffPanel from './TariffPanel';
 import CompanyProfileView from './CompanyProfileView';
 import LanguageSelect from './LanguageSelect';
 import {
-  Building2,
-  ShieldCheck,
   Bell,
   ChevronDown,
-  ChevronRight,
-  Award,
-  ExternalLink,
-  Edit3,
   Eye,
   MessageSquare,
   CreditCard,
   LifeBuoy,
 } from 'lucide-react';
 import EvidenceManager from './EvidenceManager';
+import FactoryInfo from './FactoryInfo';
 import CompanyEvidenceChecklist from './CompanyEvidenceChecklist';
 import VerificationPanel from './VerificationPanel';
 import { useLanguage } from "../context/LanguageContext";
@@ -57,6 +52,17 @@ interface SellerWorkspaceProps {
   initialTab?: WorkspaceTabId;
   /** Có → mỗi mục trong menu là một trang riêng (route); không có → đổi tab tại chỗ. */
   onNavigateTab?: (tab: WorkspaceTabId) => void;
+}
+
+/** Tiêu đề trang gọn: một dòng tên + một câu giải thích, không bọc thẻ. */
+function PageTitle({ title, hint }: { title: string; hint: string }) {
+  const { tr } = useLanguage();
+  return (
+    <div>
+      <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">{tr(title)}</h1>
+      <p className="mt-1 text-sm text-slate-600 max-w-2xl">{tr(hint)}</p>
+    </div>
+  );
 }
 
 export default function SellerWorkspace({ 
@@ -125,13 +131,102 @@ export default function SellerWorkspace({
   // Hồ sơ công khai chỉ tồn tại khi công ty đã xác minh (§6.10); chưa xác minh thì không hiện lối xem.
   const publicHref = company && company.verification_status === 'verified' ? `/suppliers/${encodeURIComponent(company.slug)}` : null;
 
+  // Sản phẩm cung cấp nằm trong hồ sơ doanh nghiệp (thêm/sửa tại chỗ).
+  const productsSection = (
+    <section aria-labelledby="profile-products" className="p-5 sm:p-6 rounded-3xl bg-white border border-slate-200/80 shadow-xs space-y-5 text-left">
+      <header className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h2 id="profile-products" className="text-base font-bold text-slate-900">{tr("Sản phẩm cung cấp")}</h2>
+          <p className="mt-1 text-sm text-slate-600">{tr("Thêm sản phẩm kèm mã HS, ảnh và giá để buyer tìm thấy bạn.")}</p>
+        </div>
+        <button
+          type="button"
+          onClick={() => setDialogDraft(emptyDraft())}
+          className="px-5 py-3 rounded-xl bg-[#083832] text-white text-sm font-semibold hover:bg-[#062924] transition-colors cursor-pointer"
+        >
+          {tr("+ Thêm sản phẩm mới")}</button>
+      </header>
+
+      {productsFailed && <p role="alert" className="rounded-2xl bg-rose-50 p-4 text-sm text-rose-700">{tr("Không tải được danh sách sản phẩm. Vui lòng thử lại.")}</p>}
+      {productsState !== null && !productsFailed && productsList.length === 0 && (
+        <p role="status" className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-6 text-sm text-slate-700">
+          {tr("Chưa có sản phẩm. Thêm sản phẩm kèm mã HS để buyer tìm thấy bạn.")}</p>
+      )}
+
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+        {productsList.map((product) => (
+          <div key={product.id} className="rounded-3xl bg-white border border-slate-200 shadow-xs flex flex-col overflow-hidden">
+            {product.images[0] ? (
+              <div className="w-full h-40 bg-slate-100 border-b border-slate-200">
+                <img src={product.images[0].url} alt={product.name} className="w-full h-full object-cover" />
+              </div>
+            ) : (
+              <div className="w-full h-40 bg-slate-50 border-b border-slate-200 flex items-center justify-center text-sm text-slate-500">
+                {tr("Chưa có ảnh")}
+              </div>
+            )}
+            <div className="p-5 flex flex-col gap-3 flex-1">
+              <div>
+                <h4 className="text-base font-bold text-slate-900 leading-snug">{product.name}</h4>
+                <p className="mt-1 text-xs text-slate-600">{hsLabel(product)}</p>
+                {!product.is_active && (
+                  <span className="mt-2 inline-block text-xs font-bold text-amber-900 bg-amber-100 px-2 py-0.5 rounded-md">{tr("Đang ẩn")}</span>
+                )}
+              </div>
+              <p className="text-sm text-slate-700 line-clamp-2">{descriptionOf(product)}</p>
+              <div className="pt-3 border-t border-slate-100 space-y-1.5 text-sm text-slate-700">
+                <div className="flex justify-between gap-3">
+                  <span className="text-slate-600">{tr("Giá:")}</span>
+                  <span className="font-semibold text-slate-900 text-right">{formatPrice(product, tr) || '—'}</span>
+                </div>
+                <div className="flex justify-between gap-3">
+                  <span className="text-slate-600">{tr("MOQ:")}</span>
+                  <span className="font-semibold text-slate-900 text-right">{formatMoq(product, tr) || '—'}</span>
+                </div>
+                {(product.price_tiers ?? []).length > 0 && (
+                  <ul aria-label={tr('Bậc giá')} className="pt-1 space-y-0.5 text-xs text-slate-600">
+                    {formatTiers(product, tr).map((line) => <li key={line}>{line}</li>)}
+                  </ul>
+                )}
+                {(product.packagings ?? []).length > 0 && (
+                  <p className="text-xs text-slate-600">
+                    {tr('Quy cách:')} {(product.packagings ?? []).map((x) => formatPackaging(x, tr)).join(' • ')}
+                  </p>
+                )}
+              </div>
+              <div className="mt-auto pt-2 space-y-2">
+                <button
+                  type="button"
+                  onClick={() => setDialogDraft(draftFromProduct(product))}
+                  className="w-full py-2.5 rounded-xl border border-teal-700 hover:bg-teal-50 text-teal-900 text-sm font-semibold transition-colors cursor-pointer"
+                >
+                  {tr("Sửa sản phẩm")}</button>
+                <button
+                  type="button"
+                  aria-expanded={taxOpenId === product.id}
+                  onClick={() => setTaxOpenId(taxOpenId === product.id ? null : product.id)}
+                  className="w-full py-1.5 text-sm font-semibold text-teal-800 underline cursor-pointer"
+                >
+                  {taxOpenId === product.id ? tr("Ẩn thuế") : tr("Xem thuế MFN / EVFTA")}</button>
+                {taxOpenId === product.id && <TariffPanel hsCode={product.hs_code} variant="full" />}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+
+  // Tab 'products' cũ (link cũ /exporter/products) hiển thị trang hồ sơ.
+  const view: WorkspaceTabId = activeTab === 'products' ? 'profile' : activeTab;
+
   return (
     <div className="min-h-screen bg-[#f8fafc] text-slate-900 font-['Plus_Jakarta_Sans',sans-serif] selection:bg-blue-600 selection:text-white flex">
       
       {/* =========================================================================
           1. LEFT SIDEBAR NAVIGATION
          ========================================================================= */}
-      <aside className="w-64 xl:w-72 bg-white border-r border-slate-200/80 flex flex-col justify-between shrink-0 select-none hidden md:flex">
+      <aside className="w-64 xl:w-72 bg-white border-r border-slate-200/80 flex flex-col shrink-0 select-none hidden md:flex">
         
         {/* Top: Brand Logo + Menu Items */}
         <div className="p-5 sm:p-6">
@@ -154,31 +249,8 @@ export default function SellerWorkspace({
           </div>
 
           {/* Hành trình hai chặng (N1) */}
-          <JourneyRail steps={journeySteps} activeTab={activeTab} onSelectTab={goTab} />
+          <JourneyRail steps={journeySteps} activeTab={view} onSelectTab={goTab} />
 
-        </div>
-
-        {/* Bottom User Profile Card */}
-        <div className="p-4 m-4 rounded-2xl bg-gradient-to-br from-slate-50 to-teal-50/40 border border-slate-200/80">
-          <div 
-            onClick={() => goTab('profile')}
-            className="flex items-center justify-between cursor-pointer group"
-          >
-            <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-10 h-10 rounded-xl bg-[#083832] text-white text-xs font-bold flex items-center justify-center shrink-0 shadow-xs border border-teal-700/50">
-                {tr("VN")}</div>
-              <div className="min-w-0">
-                <h4 className="text-xs font-bold text-slate-900 truncate">
-                  {companyName}
-                </h4>
-                <div className="flex items-center gap-1.5 mt-0.5">
-                  <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-sm ${statusBadge.tone}`}>
-                    {tr(statusBadge.label)}</span>
-                </div>
-              </div>
-            </div>
-            <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-slate-700 transition-colors shrink-0" />
-          </div>
         </div>
 
       </aside>
@@ -203,51 +275,10 @@ export default function SellerWorkspace({
               <span className="font-bold text-base uppercase text-slate-900">{tr("VYBE WORKSPACE")}</span>
             </div>
 
-            {/* Breadcrumb / Section indicator */}
-            <div className="hidden md:flex items-center gap-2 text-xs text-slate-500">
-              <span className="font-medium text-slate-400">{tr("Workspace")}</span>
-              <span>{tr("/")}</span>
-              <span className="font-bold text-slate-800">
-                {tr(activeTab === 'profile' && 'Hồ sơ doanh nghiệp (Company Profile)')}
-                {tr(activeTab === 'licenses' && 'Tải lên & Quản lý Giấy phép & Chứng nhận')}
-                {tr(activeTab === 'verification' && 'Xác minh doanh nghiệp')}
-                {tr(activeTab === 'overview' && 'Hành trình')}
-                {tr(activeTab === 'products' && 'Quản lý sản phẩm cung cấp')}
-                {tr(activeTab === 'rfq' && 'Cơ hội kết nối & Báo giá B2B')}
-                {tr(activeTab === 'messages' && 'Tin nhắn với buyer')}
-                {tr(activeTab === 'notifications' && 'Thông báo hệ thống')}
-                {tr(activeTab === 'viewers' && 'Ai đã xem hồ sơ của bạn')}
-                {tr(activeTab === 'report' && 'Báo cáo go-to-market')}
-                {tr(activeTab === 'billing' && 'Gói dịch vụ & thanh toán')}
-              </span>
-            </div>
-
             {/* Right Side Icons & Quick Action Buttons */}
             <div className="flex flex-wrap items-center gap-3 ml-auto">
               <LanguageSelect />
               
-              {/* Back to Onboarding */}
-              <button
-                onClick={() => onNavigateOnboarding()}
-                className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold transition-colors cursor-pointer"
-                title={tr("Cập nhật hồ sơ xuất khẩu")}
-              >
-                <Edit3 className="w-3.5 h-3.5 text-slate-500" />
-                <span>{tr("Cập nhật hồ sơ")}</span>
-              </button>
-
-              {/* Hồ sơ công khai thật (chỉ khi đã xác minh) */}
-              {publicHref && (
-                <Link
-                  href={publicHref}
-                  className="hidden lg:flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-teal-50 hover:bg-teal-100 text-[#083832] text-xs font-semibold border border-teal-200 transition-colors shadow-2xs"
-                  title={tr("Xem giao diện hồ sơ hiển thị với Buyer quốc tế")}
-                >
-                  <Eye className="w-3.5 h-3.5 text-teal-700" />
-                  <span>{tr("Xem hồ sơ công khai")}</span>
-                </Link>
-              )}
-
               <button
                 type="button"
                 onClick={() => goTab('messages')}
@@ -280,36 +311,22 @@ export default function SellerWorkspace({
                       <span className={`inline-block mt-1 px-2 py-0.5 rounded text-[10px] font-bold ${statusBadge.tone}`}>
                         {tr(statusBadge.label)}</span>
                     </div>
-                    <button 
-                      onClick={() => {
-                        goTab('profile');
-                        setProfileDropdownOpen(false);
-                      }}
-                      className="w-full px-4 py-2 text-left hover:bg-slate-50 text-slate-700 cursor-pointer flex items-center gap-2"
-                    >
-                      <Building2 className="w-3.5 h-3.5 text-teal-700" />
-                      <span>{tr("Xem hồ sơ công ty")}</span>
-                    </button>
-                    <button 
-                      onClick={() => {
-                        goTab('licenses');
-                        setProfileDropdownOpen(false);
-                      }}
-                      className="w-full px-4 py-2 text-left hover:bg-teal-50 text-teal-900 font-semibold cursor-pointer flex items-center gap-2"
-                    >
-                      <Award className="w-3.5 h-3.5 text-teal-700" />
-                      <span>{tr("Quản lý Giấy phép & Chứng nhận")}</span>
-                    </button>
-                    <button 
-                      onClick={() => {
-                        goTab('verification');
-                        setProfileDropdownOpen(false);
-                      }}
-                      className="w-full px-4 py-2 text-left hover:bg-slate-50 text-slate-700 cursor-pointer flex items-center gap-2"
-                    >
-                      <ShieldCheck className="w-3.5 h-3.5 text-teal-700" />
-                      <span>{tr("Xem tiến trình xác minh")}</span>
-                    </button>
+                    {[
+                      { tab: 'billing' as const, label: 'Gói dịch vụ & thanh toán', Icon: CreditCard },
+                      { tab: 'notifications' as const, label: 'Thông báo', Icon: Bell },
+                    ].map(({ tab, label, Icon }) => (
+                      <button
+                        key={tab}
+                        onClick={() => {
+                          goTab(tab);
+                          setProfileDropdownOpen(false);
+                        }}
+                        className="w-full px-4 py-2 text-left hover:bg-slate-50 text-slate-700 cursor-pointer flex items-center gap-2"
+                      >
+                        <Icon className="w-3.5 h-3.5 text-teal-700" />
+                        <span>{tr(label)}</span>
+                      </button>
+                    ))}
                     {publicHref && (
                       <Link
                         href={publicHref}
@@ -320,46 +337,6 @@ export default function SellerWorkspace({
                         <span>{tr("Xem hồ sơ công khai")}</span>
                       </Link>
                     )}
-                    <button 
-                      onClick={() => {
-                        onNavigateOnboarding();
-                        setProfileDropdownOpen(false);
-                      }}
-                      className="w-full px-4 py-2 text-left hover:bg-slate-50 text-slate-700 cursor-pointer flex items-center gap-2"
-                    >
-                      <Edit3 className="w-3.5 h-3.5 text-amber-600" />
-                      <span>{tr("Cập nhật hồ sơ xuất khẩu")}</span>
-                    </button>
-                    <button 
-                      onClick={() => {
-                        onNavigateHome();
-                        setProfileDropdownOpen(false);
-                      }}
-                      className="w-full px-4 py-2 text-left hover:bg-slate-50 text-slate-700 cursor-pointer flex items-center gap-2"
-                    >
-                      <ExternalLink className="w-3.5 h-3.5 text-slate-500" />
-                      <span>{tr("Xem Sàn giao thương B2B")}</span>
-                    </button>
-                    <button
-                      onClick={() => {
-                        goTab('billing');
-                        setProfileDropdownOpen(false);
-                      }}
-                      className="w-full px-4 py-2 text-left hover:bg-slate-50 text-slate-700 cursor-pointer flex items-center gap-2"
-                    >
-                      <CreditCard className="w-3.5 h-3.5 text-teal-700" />
-                      <span>{tr("Gói dịch vụ & thanh toán")}</span>
-                    </button>
-                    <button
-                      onClick={() => {
-                        goTab('notifications');
-                        setProfileDropdownOpen(false);
-                      }}
-                      className="w-full px-4 py-2 text-left hover:bg-slate-50 text-slate-700 cursor-pointer flex items-center gap-2"
-                    >
-                      <Bell className="w-3.5 h-3.5 text-teal-700" />
-                      <span>{tr("Thông báo")}</span>
-                    </button>
                     <button 
                       onClick={() => {
                         setProfileDropdownOpen(false);
@@ -382,39 +359,43 @@ export default function SellerWorkspace({
            ========================================================================= */}
         {/* Hành trình cho màn hình hẹp (thanh bên chỉ hiện từ md trở lên) */}
         <div className="md:hidden px-4 py-2 bg-white border-b border-slate-100">
-          <JourneyRail horizontal steps={journeySteps} activeTab={activeTab} onSelectTab={goTab} />
+          <JourneyRail horizontal steps={journeySteps} activeTab={view} onSelectTab={goTab} />
         </div>
 
         <main className="flex-1 w-full max-w-7xl mx-auto p-5 sm:p-8 lg:p-10 select-none">
           
           {/* Tab hồ sơ doanh nghiệp (U1): chỉ dữ liệu thật trên server */}
-          {activeTab === 'profile' && (
-            <CompanyProfileView company={company} products={productsState} onEdit={onNavigateOnboarding} onNavigateTab={goTab} />
+          {view === 'profile' && (
+            <CompanyProfileView company={company} productsSlot={productsSection} onEdit={onNavigateOnboarding} onNavigateTab={goTab} />
           )}
 
           {/* Tab bằng chứng (C6): dữ liệu thật trên server, không còn chứng chỉ mẫu */}
-          {activeTab === 'licenses' && (
+          {view === 'licenses' && (
             <div className="space-y-6 text-left animate-in fade-in duration-200">
-              <div className="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200/80 shadow-xs">
-                <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-                  {tr("Bằng chứng & chứng nhận")}</h1>
-                <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-2xl leading-relaxed">
-                  {tr("Nộp chứng nhận chất lượng, bằng chứng xuất xứ và các giấy tờ theo danh sách kiểm của nhóm hàng. Quản trị viên sẽ xem xét từng bằng chứng.")}</p>
-              </div>
+              <PageTitle
+                title="Nhà máy, chứng nhận và chất lượng"
+                hint="Tải chứng nhận và giấy tờ chất lượng để tăng độ tin cậy với buyer."
+              />
+              <FactoryInfo company={company} onEdit={() => onNavigateOnboarding(1)} />
               <EvidenceManager />
-              <CompanyEvidenceChecklist />
+              <details className="rounded-2xl border border-slate-200 bg-white p-4">
+                <summary className="cursor-pointer text-sm font-semibold text-teal-800">
+                  {tr('Xem huy hiệu EVFTA-verified theo mã HS khác')}
+                </summary>
+                <div className="mt-4">
+                  <CompanyEvidenceChecklist />
+                </div>
+              </details>
             </div>
           )}
 
           {/* Tab xác minh (I1, I2): trạng thái thật, gửi yêu cầu, lý do của quản trị viên. Không còn cấp độ L0–L3 mẫu. */}
-          {activeTab === 'verification' && (
+          {view === 'verification' && (
             <div className="space-y-6 text-left animate-in fade-in duration-200">
-              <div className="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200/80 shadow-xs">
-                <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-                  {tr("Xác minh doanh nghiệp")}</h1>
-                <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-2xl leading-relaxed">
-                  {tr("Gửi yêu cầu để quản trị viên xem xét hồ sơ và bằng chứng của bạn. Chỉ doanh nghiệp đã xác minh mới hiện trong danh bạ nhà cung cấp.")}</p>
-              </div>
+              <PageTitle
+                title="Xác minh doanh nghiệp"
+                hint="Chỉ doanh nghiệp đã xác minh mới hiện trong danh bạ nhà cung cấp."
+              />
               <VerificationPanel />
             </div>
           )}
@@ -422,103 +403,9 @@ export default function SellerWorkspace({
           {/* -----------------------------------------------------------------------
               TAB: TỔNG QUAN (OVERVIEW / METRICS)
              ----------------------------------------------------------------------- */}
-          {activeTab === 'overview' && (
+          {view === 'overview' && (
             <div className="space-y-6">
-              <VerificationStatusCard company={company} onNavigateTab={goTab} onEditProfile={onNavigateOnboarding} />
-              <JourneyHome data={journeyData} onGoTab={goTab} />
-            </div>
-          )}
-
-          {/* -----------------------------------------------------------------------
-              TAB: SẢN PHẨM (PRODUCTS)
-             ----------------------------------------------------------------------- */}
-          {activeTab === 'products' && (
-            <div className="space-y-4 text-left animate-in fade-in duration-200">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-lg font-bold text-slate-900">{tr("Danh mục sản phẩm cung cấp")}</h3>
-                  <p className="text-xs text-slate-500 mt-0.5">{tr("Các mặt hàng chính đã được đối soát thông số kỹ thuật và bao bì xuất khẩu")}</p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setDialogDraft(emptyDraft())}
-                  className="px-4 py-2 rounded-xl bg-[#083832] text-white text-xs font-semibold hover:bg-[#062924] transition-colors cursor-pointer"
-                >
-                  {tr("+ Thêm sản phẩm mới")}</button>
-              </div>
-
-              {productsFailed && <p role="alert" className="rounded-2xl bg-rose-50 p-4 text-sm text-rose-700">{tr("Không tải được danh sách sản phẩm. Vui lòng thử lại.")}</p>}
-              {productsState !== null && !productsFailed && productsList.length === 0 && (
-                <p role="status" className="rounded-2xl border border-dashed border-slate-300 bg-white p-6 text-sm text-slate-700">
-                  {tr("Chưa có sản phẩm. Thêm sản phẩm kèm mã HS để buyer tìm thấy bạn.")}</p>
-              )}
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                {productsList.map((product) => (
-                  <div key={product.id} className="p-5 rounded-3xl bg-white border border-slate-200 shadow-xs flex flex-col justify-between">
-                    <div>
-                      {product.images[0] && (
-                        <div className="w-full h-44 rounded-2xl overflow-hidden bg-slate-100 mb-4 border border-slate-200">
-                          <img src={product.images[0].url} alt={product.name} className="w-full h-full object-cover" />
-                        </div>
-                      )}
-                      <div className="flex items-center gap-2 mb-1.5">
-                        <span className="text-[10px] text-slate-500 font-medium">{hsLabel(product)}</span>
-                        {!product.is_active && (
-                          <span className="text-[10px] font-bold text-amber-900 bg-amber-100 px-2 py-0.5 rounded-md">{tr("Đang ẩn")}</span>
-                        )}
-                      </div>
-                      <h4 className="text-sm font-bold text-slate-900 leading-snug">{product.name}</h4>
-                      <p className="text-xs text-slate-600 mt-2 line-clamp-2">{descriptionOf(product)}</p>
-
-                      <div className="mt-4 pt-3 border-t border-slate-100 space-y-1.5 text-xs text-slate-600">
-                        <div className="flex justify-between gap-3">
-                          <span className="text-slate-500">{tr("Giá:")}</span>
-                          <span className="font-semibold text-slate-800 text-right">{formatPrice(product, tr) || '—'}</span>
-                        </div>
-                        <div className="flex justify-between gap-3">
-                          <span className="text-slate-500">{tr("MOQ:")}</span>
-                          <span className="font-semibold text-slate-800 text-right">{formatMoq(product, tr) || '—'}</span>
-                        </div>
-                        {(product.price_tiers ?? []).length > 0 && (
-                          <ul aria-label={tr('Bậc giá')} className="pt-1 space-y-0.5 text-[11px] text-slate-600">
-                            {formatTiers(product, tr).map((line) => <li key={line}>{line}</li>)}
-                          </ul>
-                        )}
-                        {(product.packagings ?? []).length > 0 && (
-                          <p className="text-[11px] text-slate-600">
-                            {tr('Quy cách:')} {(product.packagings ?? []).map((x) => formatPackaging(x, tr)).join(' • ')}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="pt-4 mt-2 space-y-2">
-                      <button
-                        type="button"
-                        onClick={() => setDialogDraft(draftFromProduct(product))}
-                        className="w-full py-2 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-800 text-xs font-semibold transition-colors cursor-pointer"
-                      >
-                        {tr("Sửa sản phẩm")}</button>
-                      <button
-                        type="button"
-                        aria-expanded={taxOpenId === product.id}
-                        onClick={() => setTaxOpenId(taxOpenId === product.id ? null : product.id)}
-                        className="w-full py-2 rounded-xl bg-teal-50 hover:bg-teal-100 text-teal-900 text-xs font-semibold transition-colors cursor-pointer"
-                      >
-                        {taxOpenId === product.id ? tr("Ẩn thuế") : tr("Xem thuế MFN / EVFTA")}</button>
-                      {taxOpenId === product.id && <TariffPanel hsCode={product.hs_code} variant="full" />}
-                      {publicHref && (
-                        <Link
-                          href={publicHref}
-                          className="block w-full py-2 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-semibold text-center transition-colors"
-                        >
-                          {tr("Xem hồ sơ công khai")}</Link>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <JourneyHome data={journeyData} onGoTab={goTab} company={company} products={productsState} onEditProfile={onNavigateOnboarding} />
             </div>
           )}
 
@@ -565,7 +452,7 @@ export default function SellerWorkspace({
           </Link>
 
           {(() => {
-            const step = stepForTab(activeTab);
+            const step = stepForTab(view);
             return step ? <JourneyNextButton current={step} onGoTab={goTab} /> : null;
           })()}
 

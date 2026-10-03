@@ -252,7 +252,7 @@ async def test_journey_without_company_points_at_company(api_client: AsyncClient
     journey = (await dashboard(api_client))["journey"]
     assert journey["next_step"] == "company"
     assert journey["steps"][0]["key"] == "company"
-    assert journey["product_total"] == 4
+    assert journey["product_total"] == 3
     assert journey["sales_total"] == 5
 
 
@@ -262,7 +262,7 @@ async def test_journey_with_company_but_no_product_never_skips_to_sales(
     await login_as(api_client, "exporter", "exp@x.vn")
     await api_client.post("/api/me/company", json=company_body())
     journey = (await dashboard(api_client))["journey"]
-    assert journey["next_step"] in ("company", "products")
+    assert journey["next_step"] == "company"
     assert journey["sales_done"] == 0
 
 

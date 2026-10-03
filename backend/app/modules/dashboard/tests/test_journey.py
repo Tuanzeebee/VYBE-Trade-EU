@@ -32,7 +32,7 @@ def state(**kw: object) -> JourneyState:
     [
         ({"has_company": False, "completeness_score": Decimal("0"), "product_count": 0}, "company"),
         ({"completeness_score": Decimal("59.99")}, "company"),
-        ({"product_count": 0}, "products"),
+        ({"product_count": 0}, "company"),
         ({"verification_status": "unverified"}, "evidence"),
         ({"verification_status": "rejected"}, "evidence"),
         ({"verification_status": "pending"}, "verification"),
@@ -58,13 +58,13 @@ def test_services_step_is_never_the_next_step_and_never_done() -> None:
 
 
 def test_track_progress_counts_per_track() -> None:
-    steps = build_steps(state(product_count=0, tariff_runs=0))
-    assert track_progress(steps, "product") == (3, 4)
+    steps = build_steps(state(verification_status="pending", tariff_runs=0))
+    assert track_progress(steps, "product") == (2, 3)
     assert track_progress(steps, "sales") == (3, 5)
 
 
 def test_steps_keep_a_fixed_order() -> None:
     assert [s.key for s in build_steps(state())] == [
-        "company", "products", "evidence", "verification",
+        "company", "evidence", "verification",
         "market", "tariff", "origin", "requests", "services",
     ]  # fmt: skip

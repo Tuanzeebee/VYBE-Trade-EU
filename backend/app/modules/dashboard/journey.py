@@ -34,10 +34,12 @@ class JourneyStep:
 
 def build_steps(s: JourneyState) -> list[JourneyStep]:
     return [
+        # Hồ sơ gồm cả sản phẩm cung cấp: xong khi đủ điểm hoàn thiện và có ít nhất một sản phẩm.
         JourneyStep(
-            "company", "product", s.has_company and s.completeness_score >= COMPANY_DONE_SCORE
+            "company",
+            "product",
+            s.has_company and s.completeness_score >= COMPANY_DONE_SCORE and s.product_count >= 1,
         ),
-        JourneyStep("products", "product", s.product_count >= 1),
         JourneyStep("evidence", "product", s.verification_status in ("pending", "verified")),
         JourneyStep("verification", "product", s.verification_status == "verified"),
         JourneyStep("market", "sales", s.gtm_report_count >= 1),

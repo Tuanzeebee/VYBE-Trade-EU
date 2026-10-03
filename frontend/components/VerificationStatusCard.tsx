@@ -90,6 +90,11 @@ export default function VerificationStatusCard({ company, onNavigateTab, onEditP
             <h2 className="text-base font-bold text-slate-900">{tr(copy.title)}</h2>
             <p className="mt-1 text-sm text-slate-700">{tr(copy.body)}</p>
             {Number.isFinite(score) && (
+              <div className="mt-3 h-2 w-full max-w-xs rounded-full bg-white/70 ring-1 ring-slate-200" role="progressbar" aria-label={tr('Hoàn thiện hồ sơ')} aria-valuenow={score} aria-valuemin={0} aria-valuemax={100}>
+                <div className="h-2 rounded-full bg-teal-700" style={{ width: `${Math.min(100, Math.max(0, score))}%` }} />
+              </div>
+            )}
+            {Number.isFinite(score) && (
               <p className="mt-2 text-xs font-semibold text-slate-600">
                 {tr('Hoàn thiện hồ sơ')}: {score}%
                 {score < 100 && (
