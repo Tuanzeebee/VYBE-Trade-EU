@@ -11,6 +11,7 @@ import { isRooStatus, rankMarkets, type MarketsResult, type RooStatus } from '..
 import UnreviewedNotice from './UnreviewedNotice';
 import QuotaInsights from './QuotaInsights';
 import ValuationBreakdown from './ValuationBreakdown';
+import { fetchShippingHints, insuranceFromRate, type ShippingHints } from '../lib/shippingHintsApi';
 import {
   calculateTariff,
   EU_COUNTRIES,
@@ -243,6 +244,21 @@ export default function TariffCalculator({ initialRoo }: { initialRoo?: RooStatu
   const [postBorder, setPostBorder] = useState('');
   const [importDate, setImportDate] = useState('');
   const incotermInfo = INCOTERMS.find((i) => i.code === incoterm);
+  // N6a: giá cước/bảo hiểm tham khảo đã duyệt (undefined = chưa tải, null = lỗi tải).
+  const [hints, setHints] = useState<ShippingHints | null | undefined>(undefined);
+  const needsShippingCosts = Boolean(incotermInfo?.costs.includes('freight') || incotermInfo?.costs.includes('insurance'));
+  useEffect(() => {
+    if (!needsShippingCosts || !/^[A-Z]{2}$/.test(destination)) {
+      setHints(undefined);
+      return;
+    }
+    let active = true;
+    fetchShippingHints(destination).then((h) => active && setHints(h));
+    return () => {
+      active = false;
+    };
+  }, [needsShippingCosts, destination]);
+  const goodsValue = Number(value);
   const resultRef = useRef<HTMLElement>(null);
   // Màn hình hẹp xếp một cột: cuộn tới kết quả khi có (hai cột thì kết quả đã nằm cạnh form).
   useEffect(() => {
@@ -539,6 +555,21 @@ export default function TariffCalculator({ initialRoo }: { initialRoo?: RooStatu
                 {tr('Cước vận chuyển quốc tế (đến cửa khẩu nhập)')}
               </label>
               <input id="tariff-freight" inputMode="decimal" value={freight} onChange={(e) => setFreight(e.target.value)} className={field} />
+              {hints !== undefined && hints !== null && hints.freight.length === 0 && (
+                <p className="mt-1 text-xs text-slate-600">
+                  {tr('Chưa có giá tham khảo cho tuyến này. Nhập giá từ báo giá thật của đơn vị vận chuyển.')}
+                </p>
+              )}
+              {hints?.freight.map((f) => (
+                <p key={f.container_type} className="mt-1 text-xs text-slate-700">
+                  {tr('Giá tham khảo')}: {f.price_low}–{f.price_high} {f.currency} / {f.container_type} ({tr('nguồn')}: {f.source}).{' '}
+                  {f.currency === currency && (
+                    <button type="button" onClick={() => setFreight(f.price_typical)} className="font-semibold text-teal-800 underline">
+                      {tr('Dùng giá này')}
+                    </button>
+                  )}
+                </p>
+              ))}
             </div>
           )}
           {incotermInfo?.costs.includes('insurance') && (
@@ -547,6 +578,18 @@ export default function TariffCalculator({ initialRoo }: { initialRoo?: RooStatu
                 {tr('Phí bảo hiểm hàng hóa quốc tế')}
               </label>
               <input id="tariff-insurance" inputMode="decimal" value={insurance} onChange={(e) => setInsurance(e.target.value)} className={field} />
+              {hints?.insurance && Number.isFinite(goodsValue) && goodsValue > 0 && (
+                <p className="mt-1 text-xs text-slate-700">
+                  {tr('Giá tham khảo')} ({tr('nguồn')}: {hints.insurance.source}).{' '}
+                  <button
+                    type="button"
+                    onClick={() => setInsurance(insuranceFromRate(hints.insurance?.rate_percent ?? '0', goodsValue))}
+                    className="font-semibold text-teal-800 underline"
+                  >
+                    {tr('Dùng')} {Number(hints.insurance.rate_percent)}% = {insuranceFromRate(hints.insurance.rate_percent, goodsValue)}
+                  </button>
+                </p>
+              )}
             </div>
           )}
           {incotermInfo?.costs.includes('postBorder') && (
@@ -558,6 +601,9 @@ export default function TariffCalculator({ initialRoo }: { initialRoo?: RooStatu
             </div>
           )}
         </fieldset>
+        <details className="rounded-xl border border-slate-200 p-3">
+          <summary className="cursor-pointer text-sm font-semibold text-slate-700">{tr('Thêm thông tin tùy chọn')}</summary>
+          <div className="mt-3 space-y-4">
         <div>
           <label htmlFor="tariff-import-date" className={label}>
             {tr('Ngày nhập khẩu dự kiến (không bắt buộc, mặc định hôm nay)')}
@@ -589,6 +635,8 @@ export default function TariffCalculator({ initialRoo }: { initialRoo?: RooStatu
             <option value="inconclusive">{tr('Chưa kết luận')}</option>
           </select>
         </div>
+          </div>
+        </details>
         {error && (
           <p role="alert" className="rounded-xl bg-rose-50 p-3 text-sm text-rose-700">
             {tr(error)}

@@ -639,6 +639,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/public/shipping-hints": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Shipping Hints */
+        get: operations["shipping_hints_api_public_shipping_hints_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/exporter/tariff-preview": {
         parameters: {
             query?: never;
@@ -4564,6 +4581,26 @@ export interface components {
             /** Message En */
             message_en: string;
         };
+        /** FreightHintOut */
+        FreightHintOut: {
+            /** Container Type */
+            container_type: string;
+            /** Price Low */
+            price_low: string;
+            /** Price Typical */
+            price_typical: string;
+            /** Price High */
+            price_high: string;
+            /** Currency */
+            currency: string;
+            /** Source */
+            source: string;
+            /**
+             * Valid Until
+             * Format: date
+             */
+            valid_until: string;
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
@@ -4650,6 +4687,15 @@ export interface components {
          * @enum {string}
          */
         Incoterm: "EXW" | "FCA" | "FAS" | "FOB" | "CFR" | "CIF" | "CPT" | "CIP" | "DAP" | "DPU" | "DDP";
+        /** InsuranceHintOut */
+        InsuranceHintOut: {
+            /** Rate Percent */
+            rate_percent: string;
+            /** Basis */
+            basis: string;
+            /** Source */
+            source: string;
+        };
         /**
          * InvoiceInfo
          * @description Thông tin xuất hoá đơn VAT (xuất ngoài hệ thống, ADR-0005). Tuỳ chọn.
@@ -6771,6 +6817,15 @@ export interface components {
             coverage_countries?: string[] | null;
             /** Is Active */
             is_active?: boolean | null;
+        };
+        /**
+         * ShippingHintsOut
+         * @description N6a: giá tham khảo đã duyệt và còn hạn. Không có dòng nào thì rỗng/None, không đoán.
+         */
+        ShippingHintsOut: {
+            /** Freight */
+            freight: components["schemas"]["FreightHintOut"][];
+            insurance: components["schemas"]["InsuranceHintOut"] | null;
         };
         /**
          * SignalOut
@@ -9416,6 +9471,38 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SectorAlertOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    shipping_hints_api_public_shipping_hints_get: {
+        parameters: {
+            query: {
+                dest_country: string;
+                cargo_class?: "dry" | "reefer" | "hazard";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ShippingHintsOut"];
                 };
             };
             /** @description Validation Error */

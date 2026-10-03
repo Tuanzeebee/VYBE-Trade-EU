@@ -16988,5 +16988,30 @@
     "No source citation (article, signing date, product list) for this rate yet. Please verify before relying on it.",
     "Pas encore de citation de source (article, date de signature, liste de produits) pour ce taux. Veuillez vérifier avant de vous y fier.",
     "この税率にはまだ出典（条項、署名日、品目リスト）がありません。ご利用前にご確認ください。"
+  ],
+  "Chưa có giá tham khảo cho tuyến này. Nhập giá từ báo giá thật của đơn vị vận chuyển.": [
+    "No reference price for this route yet. Enter a price from a real carrier quote.",
+    "Pas encore de prix de référence pour cette liaison. Saisissez un prix issu d'un devis réel du transporteur.",
+    "このルートの参考価格はまだありません。運送会社の実際の見積価格を入力してください。"
+  ],
+  "Giá tham khảo": [
+    "Reference price",
+    "Prix de référence",
+    "参考価格"
+  ],
+  "Dùng giá này": [
+    "Use this price",
+    "Utiliser ce prix",
+    "この価格を使う"
+  ],
+  "Dùng": [
+    "Use",
+    "Utiliser",
+    "使う"
+  ],
+  "Thêm thông tin tùy chọn": [
+    "Add optional details",
+    "Ajouter des informations facultatives",
+    "任意の情報を追加"
   ]
 }

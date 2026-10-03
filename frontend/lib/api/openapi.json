@@ -2761,6 +2761,64 @@
         }
       }
     },
+    "/api/public/shipping-hints": {
+      "get": {
+        "tags": [
+          "compliance"
+        ],
+        "summary": "Shipping Hints",
+        "operationId": "shipping_hints_api_public_shipping_hints_get",
+        "parameters": [
+          {
+            "name": "dest_country",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Z]{2}$",
+              "title": "Dest Country"
+            }
+          },
+          {
+            "name": "cargo_class",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "dry",
+                "reefer",
+                "hazard"
+              ],
+              "type": "string",
+              "default": "dry",
+              "title": "Cargo Class"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShippingHintsOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/exporter/tariff-preview": {
       "get": {
         "tags": [
@@ -18041,6 +18099,53 @@
         "title": "FindingOut",
         "description": "Kết quả luật kiểm chéo (U22): cờ cho admin, gợi ý cho chủ hồ sơ (owner_visible)."
       },
+      "FreightHintOut": {
+        "properties": {
+          "container_type": {
+            "type": "string",
+            "title": "Container Type"
+          },
+          "price_low": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Price Low"
+          },
+          "price_typical": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Price Typical"
+          },
+          "price_high": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Price High"
+          },
+          "currency": {
+            "type": "string",
+            "title": "Currency"
+          },
+          "source": {
+            "type": "string",
+            "title": "Source"
+          },
+          "valid_until": {
+            "type": "string",
+            "format": "date",
+            "title": "Valid Until"
+          }
+        },
+        "type": "object",
+        "required": [
+          "container_type",
+          "price_low",
+          "price_typical",
+          "price_high",
+          "currency",
+          "source",
+          "valid_until"
+        ],
+        "title": "FreightHintOut"
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -18286,6 +18391,30 @@
         ],
         "title": "Incoterm",
         "description": "Incoterms 2020 (11 điều kiện của ICC). Danh sách áp dụng do PO chốt."
+      },
+      "InsuranceHintOut": {
+        "properties": {
+          "rate_percent": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Rate Percent"
+          },
+          "basis": {
+            "type": "string",
+            "title": "Basis"
+          },
+          "source": {
+            "type": "string",
+            "title": "Source"
+          }
+        },
+        "type": "object",
+        "required": [
+          "rate_percent",
+          "basis",
+          "source"
+        ],
+        "title": "InsuranceHintOut"
       },
       "InvoiceInfo": {
         "properties": {
@@ -25274,6 +25403,34 @@
         },
         "type": "object",
         "title": "ServiceOfferingPatch"
+      },
+      "ShippingHintsOut": {
+        "properties": {
+          "freight": {
+            "items": {
+              "$ref": "#/components/schemas/FreightHintOut"
+            },
+            "type": "array",
+            "title": "Freight"
+          },
+          "insurance": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/InsuranceHintOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "freight",
+          "insurance"
+        ],
+        "title": "ShippingHintsOut",
+        "description": "N6a: giá tham khảo đã duyệt và còn hạn. Không có dòng nào thì rỗng/None, không đoán."
       },
       "SignalOut": {
         "properties": {
