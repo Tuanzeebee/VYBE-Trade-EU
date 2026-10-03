@@ -32,3 +32,6 @@ multimodal_transport_licence,"Giấy phép kinh doanh vận tải đa phương t
 accounting_service_certificate,"Giấy chứng nhận đủ điều kiện kinh doanh dịch vụ kế toán","Accounting services eligibility certificate",licence,,ADR-0004 (U4)
 tax_agent_certificate,"Giấy xác nhận đủ điều kiện kinh doanh dịch vụ làm thủ tục về thuế","Tax agent services eligibility certificate",licence,,ADR-0004 (U4)
 other,"Khác (ghi tên giấy tờ)","Other (name the document)",other,,Demo 30/09/2026 (U4)
+# Bổ sung cho huy hiệu EVFTA-verified theo nhóm hàng (SPEC_compliance_data_20_codes §5.4) — CHƯA duyệt.
+eu_establishment_listing,"Bằng chứng cơ sở có tên trong danh sách cơ sở được EU cấp phép (TRACES)","Proof of listing in the EU list of approved establishments (TRACES)",regulatory,,SPEC compliance §5.4
+bivalve_area_classification,"Quyết định phân loại vùng thu hoạch nhuyễn thể hai mảnh vỏ","Classification decision of the bivalve mollusc production area",regulatory,,SPEC compliance §5.4

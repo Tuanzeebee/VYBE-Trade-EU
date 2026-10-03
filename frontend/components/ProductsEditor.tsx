@@ -145,20 +145,10 @@ export function ProductCard({
       aria-label={`${tr('Sản phẩm')} ${index + 1}`}
       className="rounded-2xl border border-slate-200/90 bg-white p-4 sm:p-5 shadow-xs space-y-4 text-left"
     >
+      {/* Mã HS trước: chọn mã thì tên sản phẩm tự điền theo mã (vẫn sửa được). */}
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
-          <label htmlFor={id('name')} className={LABEL}>
-            {tr('Tên sản phẩm')} *
-          </label>
-          <input
-            id={id('name')}
-            required
-            maxLength={255}
-            value={product.name}
-            onChange={(e) => set('name', e.target.value)}
-            className={`${FIELD} text-sm font-semibold`}
-            placeholder={tr('Ví dụ: Gạo thơm Jasmine xuất khẩu')}
-          />
+          <HsCodePicker label={`${tr('Mã HS')} *`} required value={product.hs} onChange={chooseHs} />
         </div>
         <button
           type="button"
@@ -170,19 +160,27 @@ export function ProductCard({
           <X className="w-4 h-4" />
         </button>
       </div>
-
-      {!product.hs && <HsSuggestions name={product.name} onPick={chooseHs} />}
-      <HsCodePicker
-        label={`${tr('Mã HS')} *`}
-        required
-        value={product.hs}
-        onChange={chooseHs}
-      />
       {!product.hs && (
         <p className="text-[11px] text-slate-500 -mt-2">
-          {tr('Không chắc mã HS? Gõ tên sản phẩm ở trên (ví dụ "cá tra", "hạt điều") rồi chọn gợi ý phù hợp nhất.')}
+          {tr('Không chắc mã HS? Gõ tên sản phẩm (ví dụ "cá tra", "hạt điều") vào ô Mã HS rồi chọn gợi ý phù hợp nhất.')}
         </p>
       )}
+
+      <div>
+        <label htmlFor={id('name')} className={LABEL}>
+          {tr('Tên sản phẩm')} *
+        </label>
+        <input
+          id={id('name')}
+          required
+          maxLength={255}
+          value={product.name}
+          onChange={(e) => set('name', e.target.value)}
+          className={`${FIELD} text-sm font-semibold`}
+          placeholder={tr('Tự điền theo mã HS, bạn có thể sửa lại cho đúng sản phẩm của mình')}
+        />
+      </div>
+      {!product.hs && <HsSuggestions name={product.name} onPick={chooseHs} />}
       {product.hs && <TariffPanel hsCode={product.hs.code} />}
       {product.hs && <PriceReference hsCode={product.hs.code} />}
 
@@ -204,7 +202,7 @@ export function ProductCard({
         </div>
         {product.pricingMode === 'tiers' ? (
           <div className="space-y-2">
-            <p className="text-[11px] text-slate-500">{tr('Mua càng nhiều giá càng tốt — như Alibaba. Bậc đầu tiên thường là MOQ.')}</p>
+            <p className="text-[11px] text-slate-500"></p>
             {product.tiers.map((tier, tierIndex) => (
               <div key={tierIndex} className="grid grid-cols-[1fr_1fr_auto] gap-2 items-end">
                 <div>

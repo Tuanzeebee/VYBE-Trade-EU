@@ -4,6 +4,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import SectorAlerts, { DemoDataBanner } from './SectorAlerts';
+import UnreviewedNotice from './UnreviewedNotice';
 import { getTariffPreview, parseRate, type TariffPreview } from '../lib/tariffPreviewApi';
 
 interface TariffPanelProps {
@@ -114,7 +115,8 @@ export default function TariffPanel({ hsCode, variant = 'summary' }: TariffPanel
   return (
     <div className="space-y-2">
       {content}
-      {d.data_status === 'demo_unreviewed' && <DemoDataBanner />}
+      <UnreviewedNotice state={d.review_state} compact />
+      {d.data_status === 'demo_unreviewed' && d.review_state !== 'UNREVIEWED' && <DemoDataBanner />}
       <SectorAlerts alerts={d.alerts ?? []} />
     </div>
   );

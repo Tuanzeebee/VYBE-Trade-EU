@@ -248,14 +248,17 @@ async def _get_owned(session: AsyncSession, company: Company, product_id: uuid.U
     return product
 
 
-async def list_active_hs_codes(session: AsyncSession, company_id: uuid.UUID) -> list[str]:
-    """Mã HS (không trùng) của các sản phẩm đang bật — module khác dùng để suy ra nhóm hàng."""
-    rows = await session.scalars(
-        select(Product.hs_code)
-        .where(Product.company_id == company_id, Product.is_active.is_(True))
-        .distinct()
-    )
-    return sorted(rows)
+async def list_active_hs_codes(
+    session: AsyncSession, company_id: uuid.UUID, *, include_inactive: bool = False
+) -> list[str]:
+    """Mã HS (không trùng) của các sản phẩm đang bật — module khác dùng để suy ra nhóm hàng.
+
+    include_inactive=True gồm cả sản phẩm đang ẩn (chưa hiển thị công khai): dùng để liệt kê giấy tờ
+    cần chuẩn bị, vì người bán vẫn chuẩn bị hồ sơ cho sản phẩm đã khai dù chưa công khai."""
+    query = select(Product.hs_code).where(Product.company_id == company_id)
+    if not include_inactive:
+        query = query.where(Product.is_active.is_(True))
+    return sorted(await session.scalars(query.distinct()))
 
 
 async def list_products_for_review(

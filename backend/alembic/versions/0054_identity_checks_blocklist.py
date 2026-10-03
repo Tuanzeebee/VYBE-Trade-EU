@@ -1,7 +1,7 @@
 """identity checks blocklist
 
-Revision ID: 0050
-Revises: 0049
+Revision ID: 0054
+Revises: 0053
 Create Date: 2026-09-30 10:57:32.511943
 """
 
@@ -12,8 +12,8 @@ from sqlalchemy.dialects import postgresql
 
 from alembic import op
 
-revision: str = "0050"
-down_revision: str | None = "0049"
+revision: str = "0054"
+down_revision: str | None = "0053"
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
 

@@ -1,0 +1,22 @@
+[
+  {
+    "code": "A",
+    "stages": 1,
+    "zero_from": "2020-08-01"
+  },
+  {
+    "code": "B3",
+    "stages": 4,
+    "zero_from": "2023-01-01"
+  },
+  {
+    "code": "B5",
+    "stages": 6,
+    "zero_from": "2025-01-01"
+  },
+  {
+    "code": "B7",
+    "stages": 8,
+    "zero_from": "2027-01-01"
+  }
+]

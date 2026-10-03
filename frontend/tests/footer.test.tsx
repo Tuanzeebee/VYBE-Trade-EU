@@ -25,7 +25,7 @@ describe('Footer', () => {
     const href = (name: string) => screen.getByRole('link', { name }).getAttribute('href');
     expect(href('Nhà cung cấp đã xác minh')).toContain('/suppliers');
     expect(href('Công cụ tính thuế')).toContain('/tools/tariff');
-    expect(href('Máy tính quy tắc xuất xứ')).toContain('/tools/origin');
+    expect(href('Kiểm tra xuất xứ hàng hóa')).toContain('/tools/origin');
     expect(href('Trợ lý tuân thủ EVFTA')).toContain('/copilot');
     expect(href('Điều khoản dịch vụ')).toContain('/terms');
     expect(href('Chính sách bảo mật')).toContain('/privacy');

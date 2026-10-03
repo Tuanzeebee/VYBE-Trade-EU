@@ -1,5 +1,6 @@
 """Hàm thuần của máy tính tuân thủ: không đụng DB/HTTP (AGENTS.md §5.3)."""
 
+import datetime as dt
 from collections.abc import Sequence
 from dataclasses import dataclass
 from decimal import ROUND_CEILING, ROUND_HALF_UP, Decimal
@@ -107,6 +108,147 @@ def tariff_savings(
         quota_note_en=line.quota_note_en,
         condition_note_en=line.condition_note_en,
     )
+
+
+# ── Lộ trình cắt giảm thuế EVFTA ────────────────────────────────────────────
+
+EVFTA_ENTRY_INTO_FORCE = dt.date(2020, 8, 1)
+RATE_PLACES = Decimal("0.0001")
+
+
+def evfta_stage(stages: int, on_date: dt.date) -> int:
+    """Số bậc cắt giảm đã qua vào `on_date`: bậc 1 từ 01/08/2020, mỗi 01/01 sau đó thêm một bậc,
+    tối đa `stages`. Trước ngày hiệu lực = 0 (chưa cắt)."""
+    if on_date < EVFTA_ENTRY_INTO_FORCE:
+        return 0
+    return min(stages, 1 + on_date.year - EVFTA_ENTRY_INTO_FORCE.year)
+
+
+def evfta_rate(base_rate: Decimal, stages: int, on_date: dt.date) -> Decimal:
+    """Thuế EVFTA tại một ngày: base × (stages − k) / stages, k = số bậc đã qua; làm tròn 4 chữ số
+    thập phân, ROUND_HALF_UP. Cùng đơn vị với `base_rate` (DB lưu %)."""
+    k = evfta_stage(stages, on_date)
+    return (base_rate * (stages - k) / stages).quantize(RATE_PLACES, rounding=ROUND_HALF_UP)
+
+
+def unreviewed_components(
+    *,
+    line_reviewed: bool,
+    mfn_source: str | None,
+    mfn_verified_taric: bool,
+    cn_mapping_verified: bool | None,
+) -> list[str]:
+    """Thành phần của kết quả thuế chưa được duyệt (SPEC §6.2); rỗng = REVIEWED.
+
+    mfn_source None = dòng nhập tay (không qua seed) → không xét cờ TARIC; cn_mapping_verified
+    None = mã chưa có hồ sơ đối chiếu CN → không xét.
+    """
+    out: list[str] = []
+    if not line_reviewed:
+        out.append("tariff_line")
+    if mfn_source is not None and not mfn_verified_taric:
+        out.append("mfn_taric")
+    if cn_mapping_verified is False:
+        out.append("cn_mapping")
+    return out
+
+
+# ── Trị giá tính thuế (C2-A, DE_XUAT_MAY_TINH_THUE.md tầng 1) ─────────────────────────────
+
+INCOTERMS = ("EXW", "FCA", "FAS", "FOB", "CFR", "CPT", "CIF", "CIP", "DAP", "DPU", "DDP")
+# Điều kiện giao hàng mà giá hóa đơn CHƯA gồm cước quốc tế / bảo hiểm quốc tế.
+_FREIGHT_NOT_IN_PRICE = frozenset({"EXW", "FCA", "FAS", "FOB"})
+_INSURANCE_NOT_IN_PRICE = frozenset({"EXW", "FCA", "FAS", "FOB", "CFR", "CPT"})
+# Giá hóa đơn đã gồm chi phí sau cửa khẩu nhập (vận chuyển nội địa, dỡ hàng...).
+_POST_BORDER_IN_PRICE = frozenset({"DAP", "DPU"})
+
+ValuationBasis = Literal["CIF", "FOB"]
+
+
+@dataclass(frozen=True)
+class ValueStep:
+    """Một bước đưa giá hóa đơn về trị giá tính thuế; amount có dấu (trừ là số âm)."""
+
+    code: Literal["invoice", "freight", "insurance", "post_border"]
+    amount: Decimal
+
+
+@dataclass(frozen=True)
+class CustomsValueResult:
+    """`needs_review` KHÔNG có trị giá (customs_value None). Cảnh báo là mã để giao diện dịch."""
+
+    status: Literal["ok", "needs_review"]
+    customs_value: Decimal | None
+    steps: tuple[ValueStep, ...]
+    warnings: tuple[str, ...] = ()
+    reason: str | None = None
+
+
+def _review(steps: list[ValueStep], warnings: list[str], reason: str) -> CustomsValueResult:
+    return CustomsValueResult("needs_review", None, tuple(steps), tuple(warnings), reason)
+
+
+def customs_value(
+    invoice: Decimal,
+    incoterm: str | None,
+    *,
+    freight: Decimal | None,
+    insurance: Decimal | None,
+    post_border: Decimal | None,
+    basis: ValuationBasis | None,
+) -> CustomsValueResult:
+    """Đưa giá hóa đơn về trị giá tính thuế theo cơ sở của nước đến (`basis`: CIF hay FOB).
+
+    Không đoán: thiếu cước/bảo hiểm thì tính với 0 và cảnh báo (không tự điền số); chưa khai
+    Incoterm hoặc nước chưa có quy tắc trị giá thì dùng nguyên giá hóa đơn kèm cảnh báo; DDP và các
+    tổ hợp chưa hỗ trợ → needs_review. Số tiền cùng một đơn vị tiền tệ, không quy đổi.
+    """
+    invoice = _money(invoice)
+    steps = [ValueStep("invoice", invoice)]
+    warnings: list[str] = []
+    if basis is None:
+        warnings.append("NO_VALUATION_RULE")
+    if incoterm is None:
+        warnings.append("INCOTERM_NOT_GIVEN")
+    if incoterm is None or basis is None:
+        return CustomsValueResult("ok", invoice, tuple(steps), tuple(warnings))
+    if incoterm == "DDP":
+        return _review(steps, warnings, "DDP_NOT_SUPPORTED")  # phải trừ ngược thuế đã gồm trong giá
+
+    if basis == "CIF":
+        if incoterm in _FREIGHT_NOT_IN_PRICE:
+            _add(steps, warnings, "freight", freight, "MISSING_FREIGHT", sign=1)
+        if incoterm in _INSURANCE_NOT_IN_PRICE:
+            _add(steps, warnings, "insurance", insurance, "MISSING_INSURANCE", sign=1)
+        if incoterm in _POST_BORDER_IN_PRICE:
+            _add(steps, warnings, "post_border", post_border, "MISSING_POST_BORDER", sign=-1)
+    else:  # FOB: bỏ cước và bảo hiểm quốc tế nếu giá hóa đơn đã gồm
+        if incoterm == "EXW" or incoterm in _POST_BORDER_IN_PRICE:
+            return _review(steps, warnings, "INCOTERM_NOT_SUPPORTED_FOR_BASIS")
+        if incoterm in ("CFR", "CPT", "CIF", "CIP"):
+            _add(steps, warnings, "freight", freight, "MISSING_FREIGHT", sign=-1)
+        if incoterm in ("CIF", "CIP"):
+            _add(steps, warnings, "insurance", insurance, "MISSING_INSURANCE", sign=-1)
+
+    total = sum((s.amount for s in steps), Decimal(0))
+    if total <= 0:
+        return _review(steps, warnings, "INVALID_VALUE")
+    return CustomsValueResult("ok", total, tuple(steps), tuple(warnings))
+
+
+def _add(
+    steps: list[ValueStep],
+    warnings: list[str],
+    code: Literal["freight", "insurance", "post_border"],
+    amount: Decimal | None,
+    missing_warning: str,
+    *,
+    sign: int,
+) -> None:
+    if amount is None:
+        warnings.append(missing_warning)  # tính với 0, không tự điền số
+    else:
+        steps.append(ValueStep(code, _money(amount) * sign))
 
 
 # ── Xếp hạng thị trường EU ──────────────────────────────────────────────────
@@ -241,6 +383,9 @@ class RooResult:
     reason: str | None = None
 
 
+_LEGACY_RULE_TYPES = frozenset((RuleType.WO, RuleType.CTH, RuleType.MaxNOM, RuleType.CTH_OR_MaxNOM))
+
+
 def _originating(material: Material, eu_cumulation: bool) -> bool:
     if material.origin_country == ORIGIN_COUNTRY:
         return True
@@ -285,6 +430,10 @@ def roo_verdict(
         return RooResult("unsupported", reason="no_rule")
     if rule.requires_expert:
         return RooResult("inconclusive", reason="requires_expert")
+    if rule.rule_type not in _LEGACY_RULE_TYPES:
+        # Quy tắc Chương 3/7/8 (WO_*) đánh giá bằng compliance.origin, không phải máy tính nguyên
+        # liệu này: không bao giờ rơi vào nhánh CTH_OR_MaxNOM bên dưới.
+        return RooResult("inconclusive", reason="use_origin_calculator")
     if not materials_declared:
         return RooResult("inconclusive", reason="materials_not_declared")
     non_originating = [m for m in materials if not _originating(m, eu_cumulation)]

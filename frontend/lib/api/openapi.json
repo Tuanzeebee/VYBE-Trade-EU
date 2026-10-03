@@ -2595,6 +2595,22 @@
         "operationId": "calculate_tariff_api_public_tariff_post",
         "parameters": [
           {
+            "name": "accept-language",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Accept-Language"
+            }
+          },
+          {
             "name": "evfta_session",
             "in": "cookie",
             "required": false,
@@ -2764,6 +2780,22 @@
             }
           },
           {
+            "name": "accept-language",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Accept-Language"
+            }
+          },
+          {
             "name": "evfta_session",
             "in": "cookie",
             "required": false,
@@ -2846,6 +2878,289 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/RooOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/public/hs-codes/{cn}/origin-questions": {
+      "get": {
+        "tags": [
+          "compliance"
+        ],
+        "summary": "Origin Questions",
+        "operationId": "origin_questions_api_public_hs_codes__cn__origin_questions_get",
+        "parameters": [
+          {
+            "name": "cn",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Cn"
+            }
+          },
+          {
+            "name": "accept-language",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Accept-Language"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OriginQuestionsOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/public/origin": {
+      "post": {
+        "tags": [
+          "compliance"
+        ],
+        "summary": "Calculate Origin",
+        "operationId": "calculate_origin_api_public_origin_post",
+        "parameters": [
+          {
+            "name": "accept-language",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Accept-Language"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OriginIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OriginOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/exporter/evidence-requirements": {
+      "get": {
+        "tags": [
+          "compliance"
+        ],
+        "summary": "Exporter Evidence Requirements",
+        "operationId": "exporter_evidence_requirements_api_exporter_evidence_requirements_get",
+        "parameters": [
+          {
+            "name": "accept-language",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Accept-Language"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExporterRequirementsOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/companies/{company_id}/evidence-checklist": {
+      "get": {
+        "tags": [
+          "compliance"
+        ],
+        "summary": "Evidence Checklist",
+        "operationId": "evidence_checklist_api_companies__company_id__evidence_checklist_get",
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Company Id"
+            }
+          },
+          {
+            "name": "hs",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 32,
+              "title": "Hs"
+            }
+          },
+          {
+            "name": "accept-language",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Accept-Language"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompanyChecklistOut"
                 }
               }
             }
@@ -5578,6 +5893,128 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CountryTermOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/compliance-review-issues": {
+      "get": {
+        "tags": [
+          "compliance"
+        ],
+        "summary": "List Review Issues",
+        "operationId": "list_review_issues_api_admin_compliance_review_issues_get",
+        "parameters": [
+          {
+            "name": "only_open",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": true,
+              "title": "Only Open"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReviewIssueOut"
+                  },
+                  "title": "Response List Review Issues Api Admin Compliance Review Issues Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/compliance-review-issues/{issue_id}/resolve": {
+      "post": {
+        "tags": [
+          "compliance"
+        ],
+        "summary": "Resolve Review Issue",
+        "operationId": "resolve_review_issue_api_admin_compliance_review_issues__issue_id__resolve_post",
+        "parameters": [
+          {
+            "name": "issue_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Issue Id"
+            }
+          },
+          {
+            "name": "evfta_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Evfta Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewIssueOut"
                 }
               }
             }
@@ -12670,6 +13107,69 @@
         ],
         "title": "AuditLogOut"
       },
+      "BadgeOut": {
+        "properties": {
+          "category": {
+            "type": "string",
+            "title": "Category"
+          },
+          "granted": {
+            "type": "boolean",
+            "title": "Granted"
+          },
+          "text_vi": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Text Vi"
+          },
+          "text_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Text En"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "missing": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Missing"
+          }
+        },
+        "type": "object",
+        "required": [
+          "category",
+          "granted",
+          "text_vi",
+          "text_en",
+          "reason",
+          "missing"
+        ],
+        "title": "BadgeOut",
+        "description": "Huy hiệu EVFTA-verified theo nhóm hàng. Văn bản chỉ nói về C/O EUR.1 đã cấp trong 12 tháng\ngần nhất, không nói hàng đạt xuất xứ EVFTA."
+      },
       "BalanceTerms": {
         "type": "string",
         "enum": [
@@ -13290,6 +13790,163 @@
           "companies"
         ],
         "title": "ClusterOut"
+      },
+      "CompanyChecklistItemOut": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "name_vi": {
+            "type": "string",
+            "title": "Name Vi"
+          },
+          "name_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name En"
+          },
+          "blocks": {
+            "type": "string",
+            "enum": [
+              "IMPORT",
+              "TARIFF_PREFERENCE",
+              "NONE"
+            ],
+            "title": "Blocks"
+          },
+          "legal_status": {
+            "type": "string",
+            "title": "Legal Status"
+          },
+          "verification_type_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Verification Type Code"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "approved",
+              "pending",
+              "expired",
+              "rejected",
+              "missing",
+              "not_mapped"
+            ],
+            "title": "State"
+          },
+          "review_state": {
+            "type": "string",
+            "enum": [
+              "REVIEWED",
+              "UNREVIEWED"
+            ],
+            "title": "Review State"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "name_vi",
+          "name_en",
+          "blocks",
+          "legal_status",
+          "verification_type_code",
+          "state",
+          "review_state"
+        ],
+        "title": "CompanyChecklistItemOut"
+      },
+      "CompanyChecklistOut": {
+        "properties": {
+          "hs_code": {
+            "type": "string",
+            "title": "Hs Code"
+          },
+          "hs_formatted": {
+            "type": "string",
+            "title": "Hs Formatted"
+          },
+          "category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/CompanyChecklistItemOut"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "badge": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/BadgeOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "review_state": {
+            "type": "string",
+            "enum": [
+              "REVIEWED",
+              "UNREVIEWED"
+            ],
+            "title": "Review State"
+          },
+          "unreviewed_components": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Unreviewed Components"
+          },
+          "disclaimer": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Disclaimer"
+          }
+        },
+        "type": "object",
+        "required": [
+          "hs_code",
+          "hs_formatted",
+          "category",
+          "items",
+          "badge",
+          "review_state",
+          "unreviewed_components",
+          "disclaimer"
+        ],
+        "title": "CompanyChecklistOut"
       },
       "CompanyIdentityOut": {
         "properties": {
@@ -16137,6 +16794,88 @@
         ],
         "title": "EvidenceIn"
       },
+      "EvidenceItemOut": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "name_vi": {
+            "type": "string",
+            "title": "Name Vi"
+          },
+          "name_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name En"
+          },
+          "layer": {
+            "type": "string",
+            "title": "Layer"
+          },
+          "scope": {
+            "type": "string",
+            "title": "Scope"
+          },
+          "blocks": {
+            "type": "string",
+            "enum": [
+              "IMPORT",
+              "TARIFF_PREFERENCE",
+              "NONE"
+            ],
+            "title": "Blocks"
+          },
+          "legal_status": {
+            "type": "string",
+            "title": "Legal Status"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "REQUIRED",
+              "NEEDS_INPUT",
+              "CHECK_REQUIRED"
+            ],
+            "title": "Status"
+          },
+          "conditions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Conditions"
+          },
+          "review_state": {
+            "type": "string",
+            "enum": [
+              "REVIEWED",
+              "UNREVIEWED"
+            ],
+            "title": "Review State"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "name_vi",
+          "name_en",
+          "layer",
+          "scope",
+          "blocks",
+          "legal_status",
+          "status",
+          "conditions",
+          "review_state"
+        ],
+        "title": "EvidenceItemOut"
+      },
       "EvidenceOut": {
         "properties": {
           "id": {
@@ -16701,6 +17440,50 @@
           "copilot"
         ],
         "title": "ExporterDashboard"
+      },
+      "ExporterRequirementsOut": {
+        "properties": {
+          "eur1_threshold_eur": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Eur1 Threshold Eur"
+          },
+          "products": {
+            "items": {
+              "$ref": "#/components/schemas/ProductRequirementsOut"
+            },
+            "type": "array",
+            "title": "Products"
+          },
+          "review_state": {
+            "type": "string",
+            "enum": [
+              "REVIEWED",
+              "UNREVIEWED"
+            ],
+            "title": "Review State"
+          },
+          "disclaimer": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Disclaimer"
+          }
+        },
+        "type": "object",
+        "required": [
+          "eur1_threshold_eur",
+          "products",
+          "review_state",
+          "disclaimer"
+        ],
+        "title": "ExporterRequirementsOut",
+        "description": "Bằng chứng cần chuẩn bị theo từng mã HS sản phẩm công ty đang bán (chưa biết trị giá lô,\nnguồn nguyên liệu: dòng có điều kiện kèm danh sách điều kiện để người dùng tự đối chiếu)."
       },
       "ExtractionApplyIn": {
         "properties": {
@@ -18402,6 +19185,588 @@
         ],
         "title": "OrderOut"
       },
+      "OriginIn": {
+        "properties": {
+          "hs_code": {
+            "type": "string",
+            "maxLength": 32,
+            "title": "Hs Code"
+          },
+          "consignment_value_eur": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Consignment Value Eur"
+          },
+          "transit_third_country": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Transit Third Country"
+          },
+          "transit_handling": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "STORAGE_UNDER_CUSTOMS",
+                  "PROCESSED"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Transit Handling"
+          },
+          "only_article6_operations": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Only Article6 Operations"
+          },
+          "sourcing": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "FARMED_IN_VN",
+                  "CAUGHT_IN_VN_TERRITORIAL_SEA",
+                  "CAUGHT_BY_VESSEL",
+                  "IMPORTED"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sourcing"
+          },
+          "vessel_registered_vn_eu": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vessel Registered Vn Eu"
+          },
+          "vessel_flag_vn_eu": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vessel Flag Vn Eu"
+          },
+          "vessel_ownership_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vessel Ownership Pct"
+          },
+          "materials_outside_territorial_sea": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Materials Outside Territorial Sea"
+          },
+          "restricted_nonorig_pct_weight": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Restricted Nonorig Pct Weight"
+          },
+          "restricted_nonorig_pct_value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Restricted Nonorig Pct Value"
+          },
+          "sugar_pct_weight": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sugar Pct Weight"
+          },
+          "raw_material_source": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "AQUACULTURE",
+                  "WILD_CAUGHT",
+                  "GROWN"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Raw Material Source"
+          },
+          "is_fresh": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Fresh"
+          }
+        },
+        "type": "object",
+        "required": [
+          "hs_code"
+        ],
+        "title": "OriginIn",
+        "description": "Câu trả lời cho máy tính xuất xứ. Trường bỏ trống = chưa trả lời (→ inconclusive)."
+      },
+      "OriginInputOut": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "boolean",
+              "percent",
+              "enum"
+            ],
+            "title": "Kind"
+          },
+          "options": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Options"
+          },
+          "required_if": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Required If"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "kind",
+          "options",
+          "required_if"
+        ],
+        "title": "OriginInputOut"
+      },
+      "OriginOut": {
+        "properties": {
+          "check_id": {
+            "type": "string",
+            "title": "Check Id"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pass",
+              "fail",
+              "inconclusive",
+              "unsupported"
+            ],
+            "title": "Status"
+          },
+          "reasons": {
+            "items": {
+              "$ref": "#/components/schemas/OriginReasonOut"
+            },
+            "type": "array",
+            "title": "Reasons"
+          },
+          "inputs_missing": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Inputs Missing"
+          },
+          "additional_evidence": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Additional Evidence"
+          },
+          "required_evidence": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RequiredEvidenceOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "hs_code": {
+            "type": "string",
+            "title": "Hs Code"
+          },
+          "hs_formatted": {
+            "type": "string",
+            "title": "Hs Formatted"
+          },
+          "rule_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rule Type"
+          },
+          "rule_text_vi": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rule Text Vi"
+          },
+          "rule_text_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rule Text En"
+          },
+          "insufficient_operations_vi": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Insufficient Operations Vi"
+          },
+          "tolerance_note_vi": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tolerance Note Vi"
+          },
+          "risk_note_vi": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Risk Note Vi"
+          },
+          "requires_expert": {
+            "type": "boolean",
+            "title": "Requires Expert"
+          },
+          "preference_applicable": {
+            "type": "boolean",
+            "title": "Preference Applicable"
+          },
+          "savings": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Savings"
+          },
+          "review_state": {
+            "type": "string",
+            "enum": [
+              "REVIEWED",
+              "UNREVIEWED"
+            ],
+            "title": "Review State"
+          },
+          "unreviewed_components": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Unreviewed Components"
+          },
+          "disclaimer": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Disclaimer"
+          }
+        },
+        "type": "object",
+        "required": [
+          "check_id",
+          "status",
+          "reasons",
+          "inputs_missing",
+          "additional_evidence",
+          "hs_code",
+          "hs_formatted",
+          "rule_type",
+          "rule_text_vi",
+          "rule_text_en",
+          "insufficient_operations_vi",
+          "tolerance_note_vi",
+          "risk_note_vi",
+          "requires_expert",
+          "preference_applicable",
+          "savings",
+          "review_state",
+          "unreviewed_components",
+          "disclaimer"
+        ],
+        "title": "OriginOut"
+      },
+      "OriginQuestionOut": {
+        "properties": {
+          "order": {
+            "type": "integer",
+            "title": "Order"
+          },
+          "text_vi": {
+            "type": "string",
+            "title": "Text Vi"
+          },
+          "text_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Text En"
+          }
+        },
+        "type": "object",
+        "required": [
+          "order",
+          "text_vi",
+          "text_en"
+        ],
+        "title": "OriginQuestionOut"
+      },
+      "OriginQuestionsOut": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "ok",
+              "unsupported"
+            ],
+            "title": "Status"
+          },
+          "hs_code": {
+            "type": "string",
+            "title": "Hs Code"
+          },
+          "hs_formatted": {
+            "type": "string",
+            "title": "Hs Formatted"
+          },
+          "rule_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rule Type"
+          },
+          "requires_expert": {
+            "type": "boolean",
+            "title": "Requires Expert"
+          },
+          "questions": {
+            "items": {
+              "$ref": "#/components/schemas/OriginQuestionOut"
+            },
+            "type": "array",
+            "title": "Questions"
+          },
+          "inputs": {
+            "items": {
+              "$ref": "#/components/schemas/OriginInputOut"
+            },
+            "type": "array",
+            "title": "Inputs"
+          },
+          "review_state": {
+            "type": "string",
+            "enum": [
+              "REVIEWED",
+              "UNREVIEWED"
+            ],
+            "title": "Review State"
+          },
+          "unreviewed_components": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Unreviewed Components"
+          },
+          "disclaimer": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Disclaimer"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "hs_code",
+          "hs_formatted",
+          "rule_type",
+          "requires_expert",
+          "questions",
+          "inputs",
+          "review_state",
+          "unreviewed_components",
+          "disclaimer"
+        ],
+        "title": "OriginQuestionsOut",
+        "description": "Câu hỏi hiển thị + các trường trả lời theo rule_type. `unsupported` thì không có gì."
+      },
+      "OriginReasonOut": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "vi": {
+            "type": "string",
+            "title": "Vi"
+          },
+          "en": {
+            "type": "string",
+            "title": "En"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "vi",
+          "en"
+        ],
+        "title": "OriginReasonOut"
+      },
       "PackagingIn": {
         "properties": {
           "pack_size": {
@@ -19406,6 +20771,42 @@
         "type": "object",
         "title": "ProductPatch",
         "description": "Chỉ các trường gửi lên mới được sửa; image_keys gửi lên thay thế toàn bộ ảnh."
+      },
+      "ProductRequirementsOut": {
+        "properties": {
+          "hs_code": {
+            "type": "string",
+            "title": "Hs Code"
+          },
+          "hs_formatted": {
+            "type": "string",
+            "title": "Hs Formatted"
+          },
+          "name_vi": {
+            "type": "string",
+            "title": "Name Vi"
+          },
+          "name_en": {
+            "type": "string",
+            "title": "Name En"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/EvidenceItemOut"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "required": [
+          "hs_code",
+          "hs_formatted",
+          "name_vi",
+          "name_en",
+          "items"
+        ],
+        "title": "ProductRequirementsOut"
       },
       "ProductSubtypeIn": {
         "properties": {
@@ -21367,6 +22768,44 @@
         ],
         "title": "ReportTableRowOut"
       },
+      "RequiredEvidenceOut": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/EvidenceItemOut"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "review_state": {
+            "type": "string",
+            "enum": [
+              "REVIEWED",
+              "UNREVIEWED"
+            ],
+            "title": "Review State"
+          },
+          "disclaimer": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Disclaimer"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "review_state",
+          "disclaimer"
+        ],
+        "title": "RequiredEvidenceOut",
+        "description": "Danh sách bằng chứng cho lô, sắp IMPORT → TARIFF_PREFERENCE → NONE. Có dòng chưa duyệt thì\nreview_state = UNREVIEWED và disclaimer hiển thị ở đầu danh sách."
+      },
       "ReturnVisitStats": {
         "properties": {
           "weeks": {
@@ -21399,6 +22838,66 @@
           "target_ratio"
         ],
         "title": "ReturnVisitStats"
+      },
+      "ReviewIssueOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "entity_type": {
+            "type": "string",
+            "title": "Entity Type"
+          },
+          "entity_id": {
+            "type": "string",
+            "title": "Entity Id"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "note": {
+            "type": "string",
+            "title": "Note"
+          },
+          "created_by": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Created By"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "resolved_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Resolved At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "entity_type",
+          "entity_id",
+          "label",
+          "note",
+          "created_by",
+          "created_at",
+          "resolved_at"
+        ],
+        "title": "ReviewIssueOut",
+        "description": "Hàng đợi admin: dòng luật sư trả \"SUA\" (cần sửa), chưa được duyệt."
       },
       "ReviewProductOut": {
         "properties": {
@@ -22558,7 +24057,13 @@
           "WO",
           "CTH",
           "MaxNOM",
-          "CTH_OR_MaxNOM"
+          "CTH_OR_MaxNOM",
+          "WO_PRODUCT",
+          "WO_PRODUCT_VESSEL",
+          "WO_MATERIALS",
+          "WO_MATERIALS_VESSEL",
+          "WO_MATERIALS_TOLERANCE",
+          "WO_MATERIALS_SUGAR_CAP"
         ],
         "title": "RuleType"
       },
@@ -23604,6 +25109,43 @@
         "type": "object",
         "title": "SourcingNeedsOut"
       },
+      "StagingOut": {
+        "properties": {
+          "category": {
+            "type": "string",
+            "title": "Category"
+          },
+          "stage": {
+            "type": "integer",
+            "title": "Stage"
+          },
+          "stages": {
+            "type": "integer",
+            "title": "Stages"
+          },
+          "zero_from": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Zero From"
+          }
+        },
+        "type": "object",
+        "required": [
+          "category",
+          "stage",
+          "stages",
+          "zero_from"
+        ],
+        "title": "StagingOut",
+        "description": "Bậc cắt giảm thuế EVFTA đang áp dụng tại ngày tính."
+      },
       "StatsOut": {
         "properties": {
           "verified_count": {
@@ -24102,6 +25644,99 @@
               }
             ],
             "title": "Quota Allocated"
+          },
+          "incoterm": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "EXW",
+                  "FCA",
+                  "FAS",
+                  "FOB",
+                  "CFR",
+                  "CPT",
+                  "CIF",
+                  "CIP",
+                  "DAP",
+                  "DPU",
+                  "DDP"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Incoterm"
+          },
+          "currency": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Z]{3}$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Currency"
+          },
+          "freight": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Freight"
+          },
+          "insurance": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Insurance"
+          },
+          "post_border_costs": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Post Border Costs"
+          },
+          "import_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Import Date"
           }
         },
         "type": "object",
@@ -24950,6 +26585,84 @@
             ],
             "title": "Data Status"
           },
+          "review_state": {
+            "type": "string",
+            "enum": [
+              "REVIEWED",
+              "UNREVIEWED"
+            ],
+            "title": "Review State",
+            "default": "REVIEWED"
+          },
+          "unreviewed_components": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Unreviewed Components"
+          },
+          "disclaimer": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Disclaimer"
+          },
+          "reasons": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Reasons"
+          },
+          "customs_value": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Customs Value"
+          },
+          "valuation": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ValuationOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "rate_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rate Date"
+          },
+          "staging": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/StagingOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "review_reason": {
             "anyOf": [
               {
@@ -25194,6 +26907,33 @@
               }
             ],
             "title": "Data Status"
+          },
+          "review_state": {
+            "type": "string",
+            "enum": [
+              "REVIEWED",
+              "UNREVIEWED"
+            ],
+            "title": "Review State",
+            "default": "REVIEWED"
+          },
+          "unreviewed_components": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Unreviewed Components"
+          },
+          "disclaimer": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Disclaimer"
           },
           "alerts": {
             "items": {
@@ -26828,6 +28568,115 @@
           "type"
         ],
         "title": "ValidationError"
+      },
+      "ValuationOut": {
+        "properties": {
+          "incoterm": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Incoterm"
+          },
+          "currency": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Currency"
+          },
+          "basis": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "CIF",
+                  "FOB"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Basis"
+          },
+          "invoice_value": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Invoice Value"
+          },
+          "customs_value": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Customs Value"
+          },
+          "steps": {
+            "items": {
+              "$ref": "#/components/schemas/ValueStepOut"
+            },
+            "type": "array",
+            "title": "Steps"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Warnings"
+          }
+        },
+        "type": "object",
+        "required": [
+          "incoterm",
+          "currency",
+          "basis",
+          "invoice_value",
+          "customs_value",
+          "steps",
+          "warnings"
+        ],
+        "title": "ValuationOut"
+      },
+      "ValueStepOut": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "enum": [
+              "invoice",
+              "freight",
+              "insurance",
+              "post_border"
+            ],
+            "title": "Code"
+          },
+          "amount": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Amount"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "amount"
+        ],
+        "title": "ValueStepOut",
+        "description": "Một bước từ giá hóa đơn đến trị giá tính thuế; amount có dấu (trừ là số âm)."
       },
       "VerificationData": {
         "properties": {

@@ -1,0 +1,247 @@
+[
+  {
+    "cn_code": "03061792",
+    "order": 1,
+    "text_vi": "Nguyên liệu nuôi tại VN (từ trứng/giống/ấu trùng) hay đánh bắt tại VN?"
+  },
+  {
+    "cn_code": "03061792",
+    "order": 2,
+    "text_vi": "Có dùng nguyên liệu nhập khẩu không?"
+  },
+  {
+    "cn_code": "03061799",
+    "order": 1,
+    "text_vi": "Nguyên liệu nuôi tại VN (từ trứng/giống/ấu trùng) hay đánh bắt tại VN?"
+  },
+  {
+    "cn_code": "03061799",
+    "order": 2,
+    "text_vi": "Có dùng nguyên liệu nhập khẩu không?"
+  },
+  {
+    "cn_code": "03046200",
+    "order": 1,
+    "text_vi": "Nguyên liệu nuôi tại VN (từ trứng/giống/ấu trùng) hay đánh bắt tại VN?"
+  },
+  {
+    "cn_code": "03046200",
+    "order": 2,
+    "text_vi": "Có dùng nguyên liệu nhập khẩu không?"
+  },
+  {
+    "cn_code": "03043200",
+    "order": 1,
+    "text_vi": "Nguyên liệu nuôi tại VN (từ trứng/giống/ấu trùng) hay đánh bắt tại VN?"
+  },
+  {
+    "cn_code": "03043200",
+    "order": 2,
+    "text_vi": "Có dùng nguyên liệu nhập khẩu không?"
+  },
+  {
+    "cn_code": "03032400",
+    "order": 1,
+    "text_vi": "Nguyên liệu nuôi tại VN (từ trứng/giống/ấu trùng) hay đánh bắt tại VN?"
+  },
+  {
+    "cn_code": "03032400",
+    "order": 2,
+    "text_vi": "Có dùng nguyên liệu nhập khẩu không?"
+  },
+  {
+    "cn_code": "03048700",
+    "order": 1,
+    "text_vi": "Tàu đánh bắt đăng ký & mang cờ VN/EU?"
+  },
+  {
+    "cn_code": "03048700",
+    "order": 2,
+    "text_vi": "Sở hữu ≥50% bởi công dân/pháp nhân VN/EU?"
+  },
+  {
+    "cn_code": "03048700",
+    "order": 3,
+    "text_vi": "Có dùng cá nhập khẩu không?"
+  },
+  {
+    "cn_code": "03034290",
+    "order": 1,
+    "text_vi": "Tàu đánh bắt đăng ký & mang cờ VN/EU?"
+  },
+  {
+    "cn_code": "03034290",
+    "order": 2,
+    "text_vi": "Sở hữu ≥50% bởi công dân/pháp nhân VN/EU?"
+  },
+  {
+    "cn_code": "03034290",
+    "order": 3,
+    "text_vi": "Có dùng cá nhập khẩu không?"
+  },
+  {
+    "cn_code": "03077100",
+    "order": 1,
+    "text_vi": "Nguyên liệu nuôi tại VN (từ trứng/giống/ấu trùng) hay đánh bắt tại VN?"
+  },
+  {
+    "cn_code": "03077100",
+    "order": 2,
+    "text_vi": "Có dùng nguyên liệu nhập khẩu không?"
+  },
+  {
+    "cn_code": "07123200",
+    "order": 1,
+    "text_vi": "Nguyên liệu trồng tại VN?"
+  },
+  {
+    "cn_code": "07123200",
+    "order": 2,
+    "text_vi": "Có nguyên liệu Chương 7 nhập khẩu không, tỷ trọng bao nhiêu?"
+  },
+  {
+    "cn_code": "07123900",
+    "order": 1,
+    "text_vi": "Nguyên liệu trồng tại VN?"
+  },
+  {
+    "cn_code": "07123900",
+    "order": 2,
+    "text_vi": "Có nguyên liệu Chương 7 nhập khẩu không, tỷ trọng bao nhiêu?"
+  },
+  {
+    "cn_code": "07108069",
+    "order": 1,
+    "text_vi": "Nguyên liệu trồng tại VN?"
+  },
+  {
+    "cn_code": "07108069",
+    "order": 2,
+    "text_vi": "Có nguyên liệu Chương 7 nhập khẩu không, tỷ trọng bao nhiêu?"
+  },
+  {
+    "cn_code": "07108095",
+    "order": 1,
+    "text_vi": "Nguyên liệu trồng tại VN?"
+  },
+  {
+    "cn_code": "07108095",
+    "order": 2,
+    "text_vi": "Có nguyên liệu Chương 7 nhập khẩu không, tỷ trọng bao nhiêu?"
+  },
+  {
+    "cn_code": "07096099",
+    "order": 1,
+    "text_vi": "Nguyên liệu trồng tại VN?"
+  },
+  {
+    "cn_code": "07096099",
+    "order": 2,
+    "text_vi": "Có nguyên liệu Chương 7 nhập khẩu không, tỷ trọng bao nhiêu?"
+  },
+  {
+    "cn_code": "08106000",
+    "order": 1,
+    "text_vi": "Quả trồng tại VN?"
+  },
+  {
+    "cn_code": "08106000",
+    "order": 2,
+    "text_vi": "Có quả nhập khẩu không?"
+  },
+  {
+    "cn_code": "08106000",
+    "order": 3,
+    "text_vi": "Tỷ lệ đường thêm vào (% trọng lượng)?"
+  },
+  {
+    "cn_code": "08109075",
+    "order": 1,
+    "text_vi": "Quả trồng tại VN?"
+  },
+  {
+    "cn_code": "08109075",
+    "order": 2,
+    "text_vi": "Có quả nhập khẩu không?"
+  },
+  {
+    "cn_code": "08109075",
+    "order": 3,
+    "text_vi": "Tỷ lệ đường thêm vào (% trọng lượng)?"
+  },
+  {
+    "cn_code": "08119085",
+    "order": 1,
+    "text_vi": "Quả trồng tại VN?"
+  },
+  {
+    "cn_code": "08119085",
+    "order": 2,
+    "text_vi": "Có quả nhập khẩu không?"
+  },
+  {
+    "cn_code": "08119085",
+    "order": 3,
+    "text_vi": "Tỷ lệ đường thêm vào (% trọng lượng)?"
+  },
+  {
+    "cn_code": "08043000",
+    "order": 1,
+    "text_vi": "Quả trồng tại VN?"
+  },
+  {
+    "cn_code": "08043000",
+    "order": 2,
+    "text_vi": "Có quả nhập khẩu không?"
+  },
+  {
+    "cn_code": "08043000",
+    "order": 3,
+    "text_vi": "Tỷ lệ đường thêm vào (% trọng lượng)?"
+  },
+  {
+    "cn_code": "08055090",
+    "order": 1,
+    "text_vi": "Quả trồng tại VN?"
+  },
+  {
+    "cn_code": "08055090",
+    "order": 2,
+    "text_vi": "Có quả nhập khẩu không?"
+  },
+  {
+    "cn_code": "08055090",
+    "order": 3,
+    "text_vi": "Tỷ lệ đường thêm vào (% trọng lượng)?"
+  },
+  {
+    "cn_code": "08013200",
+    "order": 1,
+    "text_vi": "Quả trồng tại VN?"
+  },
+  {
+    "cn_code": "08013200",
+    "order": 2,
+    "text_vi": "Có quả nhập khẩu không?"
+  },
+  {
+    "cn_code": "08013200",
+    "order": 3,
+    "text_vi": "Tỷ lệ đường thêm vào (% trọng lượng)?"
+  },
+  {
+    "cn_code": "08109020",
+    "order": 1,
+    "text_vi": "Quả trồng tại VN?"
+  },
+  {
+    "cn_code": "08109020",
+    "order": 2,
+    "text_vi": "Có quả nhập khẩu không?"
+  },
+  {
+    "cn_code": "08109020",
+    "order": 3,
+    "text_vi": "Tỷ lệ đường thêm vào (% trọng lượng)?"
+  }
+]

@@ -76,6 +76,20 @@ async def test_facility_codes_are_replaced_on_update(api_client: AsyncClient) ->
     assert r.json()["facility_codes"] == [{"code_type": "establishment", "code": "DL 123"}]
 
 
+async def test_facility_codes_keep_unchanged_code_on_update(api_client: AsyncClient) -> None:
+    await login_as(api_client, "exporter", "u2-c@x.vn")
+    keep = {"code_type": "growing_area", "code": "VN-ST-0012"}
+    await api_client.post(URL, json=company_body(facility_codes=[keep]))
+    r = await api_client.patch(
+        URL, json={"facility_codes": [keep, {"code_type": "establishment", "code": "DL 1"}]}
+    )
+    assert r.status_code == 200, r.text
+    assert {(f["code_type"], f["code"]) for f in r.json()["facility_codes"]} == {
+        ("growing_area", "VN-ST-0012"),
+        ("establishment", "DL 1"),
+    }
+
+
 @pytest.mark.parametrize(
     "bad",
     [

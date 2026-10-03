@@ -12,6 +12,10 @@ COVERED = {
         "get",
     ): "compliance: test_other_exporter_cannot_see_or_open_my_documents",
     (
+        "/api/companies/{company_id}/evidence-checklist",
+        "get",
+    ): "compliance: test_checklist_is_owner_or_admin_only",
+    (
         "/api/exporter/market-reports/{report_id}",
         "get",
     ): "markets: test_auth_and_idor",

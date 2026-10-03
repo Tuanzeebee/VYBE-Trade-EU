@@ -40,6 +40,20 @@ const PASS = result({ status: 'pass', nom_pct: '69.00', rvc_pct: '31.00', rule_t
 const json = (status: number, body: unknown) =>
   new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } });
 
+// Mã không thuộc 20 mã đợt 1: máy tính hướng dẫn trả unsupported → giữ form nguyên liệu cũ.
+const UNSUPPORTED_QUESTIONS = {
+  status: 'unsupported',
+  hs_code: '090121',
+  hs_formatted: '0901.21',
+  rule_type: null,
+  requires_expert: false,
+  questions: [],
+  inputs: [],
+  review_state: 'REVIEWED',
+  unreviewed_components: [],
+  disclaimer: null,
+};
+
 let bodies: Record<string, unknown>[] = [];
 
 function serve(roo: () => Response | Promise<Response>) {
@@ -49,6 +63,7 @@ function serve(roo: () => Response | Promise<Response>) {
     vi.fn(async (req: Request) => {
       const path = new URL(req.url).pathname;
       if (path === '/api/public/hs-codes') return json(200, [COFFEE]);
+      if (path.endsWith('/origin-questions')) return json(200, UNSUPPORTED_QUESTIONS);
       if (path === '/api/public/roo') {
         bodies.push(await req.json());
         return roo();
@@ -71,6 +86,7 @@ function renderCalc(locale: 'vi' | 'en' = 'vi') {
 async function pickCoffee() {
   fireEvent.change(screen.getByRole('combobox', { name: /Sản phẩm/ }), { target: { value: 'ca phe' } });
   fireEvent.click(await screen.findByRole('option', { name: /0901\.21/ }));
+  await screen.findByLabelText(/Giá xuất xưởng/); // form hiện sau khi biết mã không có máy tính hướng dẫn
 }
 const setExWorks = (v: string) => fireEvent.change(screen.getByLabelText(/Giá xuất xưởng/), { target: { value: v } });
 const submit = () => fireEvent.click(screen.getByRole('button', { name: 'Kiểm tra xuất xứ' }));

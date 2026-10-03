@@ -1,10 +1,11 @@
 'use client';
 
-// Máy tính quy tắc xuất xứ EVFTA (C4). Khách dùng không cần đăng nhập.
+// Kiểm tra xuất xứ hàng hóa EVFTA (C4). Khách dùng không cần đăng nhập.
 // Ba trạng thái riêng: Đạt / Không đạt / Chưa kết luận (thêm "ngoài phạm vi dữ liệu"). Không có tính năng cấp C/O.
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import HsCodePicker, { type HsCodeOption } from './HsCodePicker';
 import Eur1DraftPanel from './Eur1DraftPanel';
+import OriginGuided, { OriginResultPanel } from './OriginGuided';
 import { useLanguage } from '../context/LanguageContext';
 import { Link } from '../i18n/navigation';
 import {
@@ -18,6 +19,7 @@ import {
   type RooResult,
 } from '../lib/originApi';
 import { parseAmount } from '../lib/tariffApi';
+import { fetchOriginQuestions, type OriginQuestions, type OriginResult } from '../lib/complianceApi';
 
 type Declared = 'undeclared' | 'none' | 'list';
 
@@ -42,7 +44,7 @@ function Result({ data, goodsName }: { data: RooResult; goodsName: string }) {
   const tone = { pass: 'text-emerald-800', fail: 'text-rose-800', inconclusive: 'text-amber-800', unsupported: 'text-slate-800' }[data.status];
 
   return (
-    <section aria-label={tr('Kết quả')} className="mt-8 rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
+    <section aria-label={tr('Kết quả')} className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
       <p className={`text-3xl font-extrabold ${tone}`}>{tr(headline)}</p>
       {data.status === 'unsupported' && (
         <p className="mt-3 text-sm text-slate-700">
@@ -89,6 +91,35 @@ export default function OriginCalculator() {
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<RooResult | null>(null);
+  // Mã đã có dữ liệu Chương 3/7/8 → máy tính có hướng dẫn; còn lại dùng form nguyên liệu (máy tính cũ).
+  const [questions, setQuestions] = useState<OriginQuestions | null>(null);
+  const [checking, setChecking] = useState(false);
+  const code = hs?.code ?? null;
+  useEffect(() => {
+    setQuestions(null);
+    setResult(null);
+    if (!code) return;
+    let active = true;
+    setChecking(true);
+    fetchOriginQuestions(code).then((q) => {
+      if (!active) return;
+      setQuestions(q);
+      setChecking(false);
+    });
+    return () => {
+      active = false;
+    };
+  }, [code]);
+  const guided = questions?.status === 'ok' ? questions : null;
+  const [guidedResult, setGuidedResult] = useState<OriginResult | null>(null);
+  const resultRef = useRef<HTMLElement>(null);
+  useEffect(() => setGuidedResult(null), [code]);
+  const shown = guidedResult ?? result;
+  // Màn hình hẹp xếp một cột: cuộn tới kết quả khi có (hai cột thì kết quả đã nằm cạnh câu hỏi).
+  useEffect(() => {
+    if (!shown || typeof window.matchMedia !== 'function' || window.matchMedia('(min-width: 1024px)').matches) return;
+    resultRef.current?.scrollIntoView?.({ behavior: 'smooth', block: 'start' });
+  }, [shown]);
 
   const choose = (next: Declared) => {
     setDeclared(next);
@@ -144,13 +175,25 @@ export default function OriginCalculator() {
   ];
 
   return (
-    <div className="mx-auto max-w-2xl px-5 py-10 sm:px-8">
-      <h1 className="text-2xl font-extrabold text-slate-900 sm:text-3xl">{tr('Máy tính quy tắc xuất xứ EVFTA')}</h1>
+    <div className="mx-auto max-w-6xl px-5 py-10 sm:px-8">
+      <h1 className="text-2xl font-extrabold text-slate-900 sm:text-3xl">{tr('Kiểm tra xuất xứ hàng hóa')}</h1>
       <p className="mt-2 text-sm text-slate-600">
         {tr('Kiểm tra hàng Việt Nam xuất sang EU có đạt quy tắc xuất xứ hay không. Mọi số tiền dùng cùng một đơn vị tiền tệ.')}
       </p>
-      <form onSubmit={submit} noValidate className="mt-8 space-y-5">
-        <HsCodePicker label={tr('Sản phẩm (mã HS)')} value={hs} onChange={setHs} />
+      <div className="mt-8 grid gap-8 lg:grid-cols-2 lg:items-start">
+        <div>
+          <h2 className="text-base font-bold text-slate-900">{tr('Trả lời câu hỏi')}</h2>
+          <div className="mt-3">
+            <HsCodePicker label={tr('Sản phẩm (mã HS)')} value={hs} onChange={setHs} />
+          </div>
+          {checking && <p className="mt-3 text-sm text-slate-500">{tr('Đang tải câu hỏi...')}</p>}
+          {guided && code && (
+            <div className="mt-6">
+              <OriginGuided key={code} hsCode={code} questions={guided} onResult={setGuidedResult} />
+            </div>
+          )}
+      {!guided && !checking && (
+      <form onSubmit={submit} noValidate className="mt-6 space-y-5">
         <div>
           <label htmlFor="roo-exworks" className={label}>
             {tr('Giá xuất xưởng (EXW)')}
@@ -243,7 +286,23 @@ export default function OriginCalculator() {
           {tr(busy ? 'Đang kiểm tra...' : 'Kiểm tra xuất xứ')}
         </button>
       </form>
-      {result && <Result data={result} goodsName={hs?.name_en ?? ''} />}
+      )}
+        </div>
+        <aside ref={resultRef} className="lg:sticky lg:top-24">
+          <h2 className="text-base font-bold text-slate-900">{tr('Kết quả kiểm tra')}</h2>
+          <div className="mt-3">
+            {guided && guidedResult ? (
+              <OriginResultPanel data={guidedResult} goodsName={hs?.name_en ?? ''} />
+            ) : !guided && result ? (
+              <Result data={result} goodsName={hs?.name_en ?? ''} />
+            ) : (
+              <p data-testid="result-placeholder" className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-5 text-sm text-slate-600">
+                {tr('Trả lời các câu hỏi bên trái rồi bấm "Kiểm tra xuất xứ". Kết luận, lý do và danh sách giấy tờ cần chuẩn bị sẽ hiện ở đây.')}
+              </p>
+            )}
+          </div>
+        </aside>
+      </div>
     </div>
   );
 }

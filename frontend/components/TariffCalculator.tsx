@@ -2,29 +2,44 @@
 
 // Công cụ tính thuế (C2; tên mới từ U11 — tên hiệp định chỉ hiện trong kết quả). Khách dùng không cần đăng nhập.
 // unsupported / needs_review KHÔNG hiện con số nào — con số chỉ đến từ dòng thuế đã duyệt (backend).
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import HsCodePicker, { type HsCodeOption } from './HsCodePicker';
 import { useLanguage } from '../context/LanguageContext';
 import MarketRanking from './MarketRanking';
 import SectorAlerts, { DemoDataBanner } from './SectorAlerts';
 import { isRooStatus, rankMarkets, type MarketsResult, type RooStatus } from '../lib/marketsApi';
+import UnreviewedNotice from './UnreviewedNotice';
+import ValuationBreakdown from './ValuationBreakdown';
 import {
   calculateTariff,
   EU_COUNTRIES,
   fetchTariffOptions,
+  INCOTERMS,
   isEuMember,
   OTHER_MARKETS,
   parseAmount,
+  parseCost,
   QUOTA_CONDITIONS,
   QUOTA_REVIEW_MESSAGES,
   type Agreement,
+  type Incoterm,
   type QuotaAllocated,
   type Subtype,
   type TariffOutcome,
   type TariffResult,
+  VALUATION_REVIEW_MESSAGES,
 } from '../lib/tariffApi';
 
 const MAX_SHIPMENTS = 10000;
+const IMPORT_DATE_MIN = '2020-08-01';
+const CURRENCY_OPTIONS = ['EUR', 'USD', 'VND'];
+
+/** Ngày nhập khẩu muộn nhất cho phép: 3 năm kể từ hôm nay (khớp backend). */
+function importDateMax(): string {
+  const d = new Date();
+  d.setFullYear(d.getFullYear() + 3);
+  return d.toISOString().slice(0, 10);
+}
 
 const ERRORS = {
   rate_limited: 'Bạn đã tính quá nhiều lần. Vui lòng thử lại sau một phút.',
@@ -114,19 +129,23 @@ function QuotaScenarios({ data }: { data: TariffResult }) {
 function Result({ data }: { data: TariffResult }) {
   const { tr, language } = useLanguage();
   const money = (value: string) =>
-    new Intl.NumberFormat(language === 'en' ? 'en-GB' : 'vi-VN', { style: 'currency', currency: 'EUR' }).format(Number(value));
+    new Intl.NumberFormat(language === 'en' ? 'en-GB' : 'vi-VN', {
+      style: 'currency',
+      currency: data.valuation?.currency ?? 'EUR',
+    }).format(Number(value));
   // Ghi chú là dữ liệu do luật TM nhập (vi); giao diện EN dùng bản EN nếu có, thiếu thì rơi về bản vi.
   const pick = (vi: string | null, en: string | null) => (language === 'en' ? en || vi : vi);
   const notes = [...new Set([pick(data.quota_note, data.quota_note_en), pick(data.condition_note, data.condition_note_en)])].filter(Boolean);
   const agreementName = data.agreement ? (language === 'en' ? data.agreement.name_en : data.agreement.name_vi) : null;
 
   return (
-    <section aria-label={tr('Kết quả')} className="mt-8 space-y-4 rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
-      {data.data_status === 'demo_unreviewed' && <DemoDataBanner />}
+    <section aria-label={tr('Kết quả')} className="space-y-4 rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
+      {data.data_status === 'demo_unreviewed' && data.review_state !== 'UNREVIEWED' && <DemoDataBanner />}
       {data.status === 'ok' && data.savings !== null && data.mfn_duty !== null && data.evfta_duty !== null && (
         <>
           <p className="text-sm font-semibold text-slate-600">{tr('Tiết kiệm mỗi lô')}</p>
           <p className="mt-1 text-4xl font-extrabold text-[#083832]">{money(data.savings)}</p>
+          <UnreviewedNotice state={data.review_state} />
           <dl className="mt-5 grid gap-3 sm:grid-cols-2">
             <div className="rounded-xl bg-slate-50 p-4">
               <dt className="text-xs font-semibold text-slate-500">
@@ -149,6 +168,7 @@ function Result({ data }: { data: TariffResult }) {
           )}
         </>
       )}
+      {(data.status === 'ok' || data.status === 'needs_review') && <ValuationBreakdown data={data} />}
       {data.status === 'unsupported' && (
         <p className="text-base font-semibold text-slate-800">
           {tr('Mã HS này chưa được hỗ trợ. Vui lòng liên hệ để được tư vấn.')}
@@ -158,7 +178,7 @@ function Result({ data }: { data: TariffResult }) {
       {data.status === 'needs_review' && (
         <p className="text-base font-semibold text-amber-800" data-testid="review-message">
           {tr(
-            (data.review_reason && QUOTA_REVIEW_MESSAGES[data.review_reason]) ||
+            (data.review_reason && (QUOTA_REVIEW_MESSAGES[data.review_reason] ?? VALUATION_REVIEW_MESSAGES[data.review_reason])) ||
               'Trường hợp này cần kiểm tra thêm (ví dụ hạn ngạch hoặc thuế tuyệt đối), nên chúng tôi không đưa ra con số.',
           )}
         </p>
@@ -204,6 +224,20 @@ export default function TariffCalculator({ initialRoo }: { initialRoo?: RooStatu
   const [subtype, setSubtype] = useState('');
   const [allocated, setAllocated] = useState<QuotaAllocated | ''>('');
   const [quantity, setQuantity] = useState('');
+  // C2-A: trị giá tính thuế. Một đơn vị tiền tệ cho cả form, không quy đổi.
+  const [currency, setCurrency] = useState('EUR');
+  const [incoterm, setIncoterm] = useState<Incoterm | ''>('');
+  const [freight, setFreight] = useState('');
+  const [insurance, setInsurance] = useState('');
+  const [postBorder, setPostBorder] = useState('');
+  const [importDate, setImportDate] = useState('');
+  const incotermInfo = INCOTERMS.find((i) => i.code === incoterm);
+  const resultRef = useRef<HTMLElement>(null);
+  // Màn hình hẹp xếp một cột: cuộn tới kết quả khi có (hai cột thì kết quả đã nằm cạnh form).
+  useEffect(() => {
+    if (!result || typeof window.matchMedia !== 'function' || window.matchMedia('(min-width: 1024px)').matches) return;
+    resultRef.current?.scrollIntoView?.({ behavior: 'smooth', block: 'start' });
+  }, [result]);
 
   useEffect(() => {
     setAgreements(null);
@@ -260,6 +294,18 @@ export default function TariffCalculator({ initialRoo }: { initialRoo?: RooStatu
     if (count !== undefined && !(Number.isInteger(count) && count >= 1 && count <= MAX_SHIPMENTS)) {
       return setError('Số lô hàng mỗi năm phải là số nguyên từ 1 đến 10000.');
     }
+    const cost = (raw: string, show: boolean) => (show && raw.trim() !== '' ? parseCost(raw) : undefined);
+    const costs = {
+      freight: cost(freight, Boolean(incotermInfo?.costs.includes('freight'))),
+      insurance: cost(insurance, Boolean(incotermInfo?.costs.includes('insurance'))),
+      postBorder: cost(postBorder, Boolean(incotermInfo?.costs.includes('postBorder'))),
+    };
+    if (Object.values(costs).some((c) => c === null)) {
+      return setError('Chi phí phải là số không âm, tối đa 2 chữ số thập phân (ví dụ 3000 hoặc 3000.50).');
+    }
+    if (importDate && (importDate < IMPORT_DATE_MIN || importDate > importDateMax())) {
+      return setError('Ngày nhập khẩu phải từ 01/08/2020 đến tối đa 3 năm kể từ hôm nay.');
+    }
     setBusy(true);
     const outcome: TariffOutcome = await calculateTariff({
       hsCode: hs.code,
@@ -270,6 +316,12 @@ export default function TariffCalculator({ initialRoo }: { initialRoo?: RooStatu
       subtypeCode: hasQuota ? subtype || undefined : undefined,
       quantity: hasQuota ? qty : undefined,
       quotaAllocated: hasQuota ? allocated || undefined : undefined,
+      incoterm: incoterm || undefined,
+      currency: currency !== 'EUR' ? currency : undefined,
+      freight: costs.freight ?? undefined,
+      insurance: costs.insurance ?? undefined,
+      postBorderCosts: costs.postBorder ?? undefined,
+      importDate: importDate || undefined,
     });
     setBusy(false);
     if (outcome.ok) {
@@ -298,12 +350,15 @@ export default function TariffCalculator({ initialRoo }: { initialRoo?: RooStatu
   const label = 'block text-sm font-semibold text-slate-700';
 
   return (
-    <div className="mx-auto max-w-2xl px-5 py-10 sm:px-8">
+    <div className="mx-auto max-w-6xl px-5 py-10 sm:px-8">
       <h1 className="text-2xl font-extrabold text-slate-900 sm:text-3xl">{tr('Công cụ tính thuế')}</h1>
       <p className="mt-2 text-sm text-slate-600">
         {tr('Nhập mã HS, thị trường nhập khẩu và giá trị lô hàng để ước tính thuế nhập khẩu và khoản tiết kiệm nhờ hiệp định thương mại tự do (FTA).')}
       </p>
-      <form onSubmit={submit} noValidate className="mt-8 space-y-5">
+      <div className="mt-8 grid gap-8 lg:grid-cols-2 lg:items-start">
+      <div>
+      <h2 className="text-base font-bold text-slate-900">{tr('Thông tin lô hàng')}</h2>
+      <form onSubmit={submit} noValidate className="mt-4 space-y-5">
         <HsCodePicker label={tr('Sản phẩm (mã HS)')} value={hs} onChange={changeHs} />
         <div>
           <label htmlFor="tariff-destination" className={label}>
@@ -393,11 +448,87 @@ export default function TariffCalculator({ initialRoo }: { initialRoo?: RooStatu
             {tr('Chưa có dữ liệu thuế đã được chuyên gia duyệt cho mã HS và thị trường này.')}
           </p>
         )}
+        <div className="grid gap-3 sm:grid-cols-[1fr_9rem]">
+          <div>
+            <label htmlFor="tariff-value" className={label}>
+              {tr(`Giá trị lô hàng (${currency})`)}
+            </label>
+            <input id="tariff-value" inputMode="decimal" value={value} onChange={(e) => changeValue(e.target.value)} className={field} />
+          </div>
+          <div>
+            <label htmlFor="tariff-currency" className={label}>
+              {tr('Tiền tệ')}
+            </label>
+            <select id="tariff-currency" value={currency} onChange={(e) => setCurrency(e.target.value)} className={field}>
+              {CURRENCY_OPTIONS.map((c) => (
+                <option key={c} value={c}>
+                  {c}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <fieldset className="space-y-3 rounded-xl border border-slate-200 p-4">
+          <legend className="px-1 text-sm font-semibold text-slate-700">{tr('Điều kiện giao hàng và chi phí')}</legend>
+          <p className="text-xs text-slate-600">
+            {tr('EU và Anh tính thuế trên trị giá CIF tại cửa khẩu nhập (giá hàng cộng cước và bảo hiểm quốc tế). Chọn đúng điều kiện trong hợp đồng và khai chi phí để trị giá chính xác.')}
+          </p>
+          <div>
+            <label htmlFor="tariff-incoterm" className={label}>
+              {tr('Điều kiện giao hàng (Incoterm)')}
+            </label>
+            <select id="tariff-incoterm" value={incoterm} onChange={(e) => setIncoterm(e.target.value as Incoterm | '')} className={field}>
+              <option value="">{tr('Chưa chọn')}</option>
+              {INCOTERMS.map((i) => (
+                <option key={i.code} value={i.code}>
+                  {tr(i.label)}
+                </option>
+              ))}
+            </select>
+          </div>
+          {incoterm === 'DDP' && (
+            <p role="status" className="rounded-lg bg-amber-50 p-3 text-xs text-amber-900">
+              {tr(VALUATION_REVIEW_MESSAGES.ddp_not_supported)}
+            </p>
+          )}
+          {incotermInfo?.costs.includes('freight') && (
+            <div>
+              <label htmlFor="tariff-freight" className={label}>
+                {tr('Cước vận chuyển quốc tế (đến cửa khẩu nhập)')}
+              </label>
+              <input id="tariff-freight" inputMode="decimal" value={freight} onChange={(e) => setFreight(e.target.value)} className={field} />
+            </div>
+          )}
+          {incotermInfo?.costs.includes('insurance') && (
+            <div>
+              <label htmlFor="tariff-insurance" className={label}>
+                {tr('Phí bảo hiểm hàng hóa quốc tế')}
+              </label>
+              <input id="tariff-insurance" inputMode="decimal" value={insurance} onChange={(e) => setInsurance(e.target.value)} className={field} />
+            </div>
+          )}
+          {incotermInfo?.costs.includes('postBorder') && (
+            <div>
+              <label htmlFor="tariff-post-border" className={label}>
+                {tr('Chi phí sau cửa khẩu nhập (vận chuyển nội địa, dỡ hàng...)')}
+              </label>
+              <input id="tariff-post-border" inputMode="decimal" value={postBorder} onChange={(e) => setPostBorder(e.target.value)} className={field} />
+            </div>
+          )}
+        </fieldset>
         <div>
-          <label htmlFor="tariff-value" className={label}>
-            {tr('Giá trị lô hàng (EUR)')}
+          <label htmlFor="tariff-import-date" className={label}>
+            {tr('Ngày nhập khẩu dự kiến (không bắt buộc, mặc định hôm nay)')}
           </label>
-          <input id="tariff-value" inputMode="decimal" value={value} onChange={(e) => changeValue(e.target.value)} className={field} />
+          <input
+            id="tariff-import-date"
+            type="date"
+            min={IMPORT_DATE_MIN}
+            max={importDateMax()}
+            value={importDate}
+            onChange={(e) => setImportDate(e.target.value)}
+            className={field}
+          />
         </div>
         <div>
           <label htmlFor="tariff-shipments" className={label}>
@@ -429,18 +560,31 @@ export default function TariffCalculator({ initialRoo }: { initialRoo?: RooStatu
           {tr(busy ? 'Đang tính...' : 'Tính tiết kiệm thuế')}
         </button>
       </form>
-      {result && <Result data={result} />}
-      {result && result.status === 'ok' && (result.agreement?.code ?? 'EVFTA') === 'EVFTA' && (
-        <button
-          type="button"
-          disabled={marketsBusy}
-          onClick={() => void showMarkets()}
-          className="mt-4 rounded-xl border border-[#083832] px-5 py-2.5 text-sm font-semibold text-[#083832] hover:bg-slate-50 disabled:opacity-60"
-        >
-          {tr(marketsBusy ? 'Đang tính...' : 'Xem thị trường nên xuất')}
-        </button>
-      )}
-      {markets && <MarketRanking data={markets} />}
+      </div>
+      <aside ref={resultRef} className="lg:sticky lg:top-24">
+        <h2 className="text-base font-bold text-slate-900">{tr('Kết quả tính thuế')}</h2>
+        <div className="mt-4">
+          {result ? (
+            <Result data={result} />
+          ) : (
+            <p data-testid="result-placeholder" className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-5 text-sm text-slate-600">
+              {tr('Nhập thông tin lô hàng bên trái rồi bấm "Tính tiết kiệm thuế". Trị giá tính thuế, thuế phải nộp và khoản tiết kiệm nhờ FTA sẽ hiện ở đây.')}
+            </p>
+          )}
+          {result && result.status === 'ok' && (result.agreement?.code ?? 'EVFTA') === 'EVFTA' && (
+            <button
+              type="button"
+              disabled={marketsBusy}
+              onClick={() => void showMarkets()}
+              className="mt-4 rounded-xl border border-[#083832] px-5 py-2.5 text-sm font-semibold text-[#083832] hover:bg-slate-50 disabled:opacity-60"
+            >
+              {tr(marketsBusy ? 'Đang tính...' : 'Xem thị trường nên xuất')}
+            </button>
+          )}
+          {markets && <MarketRanking data={markets} />}
+        </div>
+      </aside>
+      </div>
     </div>
   );
 }

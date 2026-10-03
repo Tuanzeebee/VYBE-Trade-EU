@@ -1,3 +1,4 @@
+from decimal import Decimal
 from functools import lru_cache
 
 from pydantic import model_validator
@@ -69,6 +70,9 @@ class Settings(BaseSettings):
     # Dữ liệu tuân thủ minh hoạ (AGENTS.md §6.2 ngoại lệ DEMO): chỉ staging/dev được bật. Khi bật,
     # dòng is_demo chưa duyệt được trả kèm data_status="demo_unreviewed". ENV=prod + bật → từ chối.
     demo_compliance_data: bool = False
+    # Ngưỡng trị giá lô để chọn EUR.1 hay tự chứng nhận xuất xứ trên hoá đơn (SPEC compliance
+    # §5.3, NĐT1 Điều 15.2). Cấu hình, không viết cứng trong logic.
+    eur1_consignment_threshold_eur: Decimal = Decimal("6000")
     # Điểm tín nhiệm seller (ADR-0004): công khai trên hồ sơ khi bật; tắt thì chỉ owner và admin
     # thấy. Production giữ tắt cho tới khi pháp lý/GDPR duyệt.
     trust_score_public: bool = False
