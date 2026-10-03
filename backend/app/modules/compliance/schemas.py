@@ -257,6 +257,8 @@ class TariffOut(BaseModel):
     condition_note: str | None
     quota_note_en: str | None
     condition_note_en: str | None
+    # N6b: True khi mức thuế ưu đãi chưa có trích dẫn nguồn (điều khoản, ngày ký, danh mục).
+    citation_missing: bool = True
     # U12: hiệp định của kết quả. evfta_rate/evfta_duty giữ tên cũ (tương thích) và bằng
     # preferential_rate/preferential_duty — thuế ưu đãi theo hiệp định đã chọn.
     agreement: AgreementOut | None = None

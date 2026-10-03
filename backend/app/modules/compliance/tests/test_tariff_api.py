@@ -268,3 +268,16 @@ async def test_shipments_optional(
     await add_line(db_session, reviewer_id)
     r = await api_client.post(URL, json=body(shipments_per_year=None))
     assert r.json()["annual_savings"] is None
+
+
+async def test_tariff_result_exposes_citation_missing(
+    api_client: AsyncClient, db_session: AsyncSession, reviewer_id: uuid.UUID
+) -> None:
+    """N6b: dòng thuế chưa có trích dẫn điều khoản/ngày ký thì kết quả mang cờ citation_missing."""
+    await add_line(db_session, reviewer_id, evfta_rate_current=Decimal("0"))
+    r = await api_client.post(URL, json=body())
+    assert r.status_code == 200, r.text
+    d = r.json()
+    assert d["status"] == "ok"
+    assert d["evfta_rate"] is not None and Decimal(d["evfta_rate"]) == 0
+    assert d["citation_missing"] is True

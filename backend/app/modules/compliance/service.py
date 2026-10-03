@@ -948,6 +948,7 @@ async def calculate_tariff(
         condition_note=result.condition_note,
         quota_note_en=result.quota_note_en,
         condition_note_en=result.condition_note_en,
+        citation_missing=result.citation_missing,
     )
 
 

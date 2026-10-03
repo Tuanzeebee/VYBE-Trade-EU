@@ -39,6 +39,8 @@ class TariffLineData:
     condition_note: str | None
     quota_note_en: str | None = None
     condition_note_en: str | None = None
+    # N6b: dòng thuế chưa có trích dẫn điều khoản/ngày ký/danh mục (cột chưa có → luôn True; C3).
+    citation_missing: bool = True
 
 
 @dataclass(frozen=True)
@@ -56,6 +58,7 @@ class TariffResult:
     condition_note: str | None = None
     quota_note_en: str | None = None
     condition_note_en: str | None = None
+    citation_missing: bool = True
 
 
 def _money(value: Decimal) -> Decimal:
@@ -107,6 +110,7 @@ def tariff_savings(
         condition_note=line.condition_note,
         quota_note_en=line.quota_note_en,
         condition_note_en=line.condition_note_en,
+        citation_missing=line.citation_missing,
     )
 
 

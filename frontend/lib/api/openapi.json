@@ -27119,6 +27119,11 @@
             ],
             "title": "Condition Note En"
           },
+          "citation_missing": {
+            "type": "boolean",
+            "title": "Citation Missing",
+            "default": true
+          },
           "agreement": {
             "anyOf": [
               {

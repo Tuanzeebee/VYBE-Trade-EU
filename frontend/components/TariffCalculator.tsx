@@ -162,6 +162,11 @@ function Result({ data }: { data: TariffResult }) {
                 {agreementName ? ` · ${agreementName}` : ''} ({percent(data.evfta_rate ?? '0')})
               </dt>
               <dd className="text-lg font-bold text-teal-900">{money(data.evfta_duty)}</dd>
+              {data.citation_missing && (
+                <p data-testid="citation-missing" className="mt-1 text-xs font-semibold text-amber-800">
+                  {tr('Chưa có trích dẫn nguồn (điều khoản, ngày ký, danh mục) cho mức thuế này. Hãy đối chiếu trước khi dùng.')}
+                </p>
+              )}
             </div>
           </dl>
           {data.annual_savings !== null && (

@@ -128,3 +128,17 @@ def test_needs_review_carries_english_notes() -> None:
         None,
     )
     assert (r.quota_note_en, r.condition_note_en) == ("TRQ 80,000 t", "Licence needed")
+
+
+def test_zero_percent_preferential_rate_is_flagged_as_missing_citation() -> None:
+    """Ca demo 2: ô xanh 0% không được trơ trọi; phải biết là chưa có trích dẫn nguồn."""
+    r = tariff_savings(line(evfta_rate_current=D("0.0000")), 1, D("50000.00"), None)
+    assert r.status == "ok"
+    assert r.evfta_rate == D("0.0000")
+    assert r.citation_missing is True
+
+
+def test_quota_line_still_needs_review_not_zero() -> None:
+    r = tariff_savings(line(quota_required=True), 1, D("50000.00"), None)
+    assert r.status == "needs_review"
+    assert r.evfta_rate is None

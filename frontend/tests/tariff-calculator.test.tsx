@@ -183,6 +183,25 @@ describe('Máy tính tiết kiệm thuế (C2)', () => {
     expect(screen.getByRole('link', { name: /Xem nhà cung cấp/ })).toHaveAttribute('href', expect.stringContaining('/suppliers?hs=090111'));
   });
 
+  it('N6b: thuế ưu đãi chưa có trích dẫn nguồn thì hiện cảnh báo, không để ô 0% trơ trọi', async () => {
+    serve(() => json(200, { ...OK, evfta_rate: '0.0000', evfta_duty: '0.00', savings: '1200.00', citation_missing: true }));
+    renderCalc();
+    await pickCoffee();
+    fillValue('10000');
+    submit();
+    expect(await screen.findByTestId('citation-missing')).toHaveTextContent('Chưa có trích dẫn nguồn');
+  });
+
+  it('N6b: có trích dẫn thì không hiện cảnh báo', async () => {
+    serve(() => json(200, { ...OK, citation_missing: false }));
+    renderCalc();
+    await pickCoffee();
+    fillValue('10000');
+    submit();
+    await screen.findByRole('region', { name: 'Kết quả' });
+    expect(screen.queryByTestId('citation-missing')).not.toBeInTheDocument();
+  });
+
   it('mã 8 số: link nhà cung cấp dùng nhóm 6 số (danh bạ lọc theo 6 số)', async () => {
     serve(() => json(200, result({ ...OK, hs_code: '03061792', hs_formatted: '0306.17.92' })));
     renderCalc();

@@ -7232,6 +7232,11 @@ export interface components {
             quota_note_en: string | null;
             /** Condition Note En */
             condition_note_en: string | null;
+            /**
+             * Citation Missing
+             * @default true
+             */
+            citation_missing?: boolean;
             agreement?: components["schemas"]["AgreementOut"] | null;
             /** Preferential Rate */
             preferential_rate?: string | null;
