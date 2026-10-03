@@ -1,7 +1,7 @@
 """Cách phân bổ hạn ngạch: thêm IMPORT_LICENCE (giấy phép nhập khẩu do cơ quan nước nhập cấp)
 
-Revision ID: 0055
-Revises: 0054
+Revision ID: 0056
+Revises: 0055
 Create Date: 2026-10-03 09:00:00.000000
 """
 
@@ -9,8 +9,8 @@ from collections.abc import Sequence
 
 from alembic import op
 
-revision: str = "0055"
-down_revision: str | None = "0054"
+revision: str = "0056"
+down_revision: str | None = "0055"
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
 

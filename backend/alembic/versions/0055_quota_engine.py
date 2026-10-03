@@ -1,7 +1,7 @@
 """Hạn ngạch (C2-C): chu kỳ, cách phân bổ có cấu trúc và số dư theo ngày
 
-Revision ID: 0054
-Revises: 0053
+Revision ID: 0055
+Revises: 0054
 Create Date: 2026-10-02 22:00:00.000000
 """
 
@@ -11,8 +11,8 @@ import sqlalchemy as sa
 
 from alembic import op
 
-revision: str = "0054"
-down_revision: str | None = "0053"
+revision: str = "0055"
+down_revision: str | None = "0054"
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
 
