@@ -40,6 +40,16 @@ class Incoterm(StrEnum):
     DDP = "DDP"
 
 
+class RfqKind(StrEnum):
+    """Loại Request (N4): chỉ `quote` đi vào luồng báo giá."""
+
+    quote = "quote"
+    meeting = "meeting"
+    packaging = "packaging"
+    quality = "quality"
+    other = "other"
+
+
 class RfqStatus(StrEnum):
     new = "new"
     viewed = "viewed"
@@ -76,6 +86,9 @@ class Rfq(Base):
     message: Mapped[str | None] = mapped_column(Text)
     status: Mapped[RfqStatus] = mapped_column(
         Enum(RfqStatus, name="rfq_status"), default=RfqStatus.new, server_default="new"
+    )
+    kind: Mapped[RfqKind] = mapped_column(
+        Enum(RfqKind, name="rfq_kind"), default=RfqKind.quote, server_default="quote"
     )
     created_at: Mapped[dt.datetime] = mapped_column(
         DateTime(timezone=True), server_default=text("clock_timestamp()")

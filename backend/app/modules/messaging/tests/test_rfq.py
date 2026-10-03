@@ -435,3 +435,79 @@ async def test_rfq_quota_is_buyer_only(api_client: AsyncClient, db_session: Asyn
     await as_user(api_client, "buyer", "nocompany@x.de")
     r = await api_client.get("/api/buyer/rfq-quota")
     assert r.status_code == 409 and r.json()["error"]["code"] == "company_required"
+
+
+# ── N4: Request nhiều loại ───────────────────────────────────────────────────
+def request_body(product_id: str, kind: str, **over: Any) -> dict[str, Any]:
+    """Body cho loại Request không phải báo giá: chỉ cần sản phẩm, loại và nội dung."""
+    body: dict[str, Any] = {"product_id": product_id, "kind": kind, "message": "Hẹn họp 15 phút"}
+    body.update(over)
+    return body
+
+
+async def test_rfq_kind_defaults_to_quote(
+    api_client: AsyncClient, db_session: AsyncSession
+) -> None:
+    _, product_id = await make_exporter(api_client, db_session)
+    await make_buyer(api_client)
+    r = await send(api_client, product_id)
+    assert r.status_code == 201, r.text
+    assert r.json()["kind"] == "quote"
+
+
+@pytest.mark.parametrize("kind", ["meeting", "packaging", "quality", "other"])
+async def test_non_quote_request_needs_message_not_quantity(
+    api_client: AsyncClient, db_session: AsyncSession, kind: str
+) -> None:
+    _, product_id = await make_exporter(api_client, db_session)
+    await make_buyer(api_client)
+    await login_as(api_client, "buyer", "buyer@x.de")
+    r = await api_client.post(URL, json=request_body(product_id, kind))
+    assert r.status_code == 201, r.text
+    assert r.json()["kind"] == kind
+    assert r.json()["message"] == "Hẹn họp 15 phút"
+
+
+async def test_non_quote_request_without_message_is_rejected(
+    api_client: AsyncClient, db_session: AsyncSession
+) -> None:
+    _, product_id = await make_exporter(api_client, db_session)
+    await make_buyer(api_client)
+    await login_as(api_client, "buyer", "buyer@x.de")
+    for message in (None, "", "   "):
+        body = request_body(product_id, "packaging", message=message)
+        assert (await api_client.post(URL, json=body)).status_code == 422
+
+
+async def test_quote_request_still_requires_quantity(
+    api_client: AsyncClient, db_session: AsyncSession
+) -> None:
+    _, product_id = await make_exporter(api_client, db_session)
+    await make_buyer(api_client)
+    await login_as(api_client, "buyer", "buyer@x.de")
+    body = rfq_body(product_id)
+    del body["quantity"]
+    assert (await api_client.post(URL, json=body)).status_code == 422
+
+
+async def test_unknown_kind_is_rejected(api_client: AsyncClient, db_session: AsyncSession) -> None:
+    _, product_id = await make_exporter(api_client, db_session)
+    await make_buyer(api_client)
+    await login_as(api_client, "buyer", "buyer@x.de")
+    assert (await api_client.post(URL, json=request_body(product_id, "gift"))).status_code == 422
+
+
+async def test_exporter_cannot_quote_a_non_quote_request(
+    api_client: AsyncClient, db_session: AsyncSession
+) -> None:
+    from app.modules.messaging.tests.test_quotes import quote_body
+
+    _, product_id = await make_exporter(api_client, db_session)
+    await make_buyer(api_client)
+    await login_as(api_client, "buyer", "buyer@x.de")
+    created = await api_client.post(URL, json=request_body(product_id, "quality"))
+    rfq_id = created.json()["id"]
+    await as_user(api_client, "exporter", "exp@x.vn")
+    r = await api_client.post(f"/api/exporter/rfqs/{rfq_id}/quotes", json=quote_body())
+    assert r.status_code == 409
+    assert r.json()["error"]["code"] == "rfq_not_quotable"

@@ -4,9 +4,16 @@ import uuid
 from decimal import Decimal
 from typing import Annotated, Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, StringConstraints, field_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    StringConstraints,
+    field_validator,
+    model_validator,
+)
 
-from app.modules.messaging.models import Incoterm, RfqStatus
+from app.modules.messaging.models import Incoterm, RfqKind, RfqStatus
 from app.modules.messaging.quote_logic import BalanceTerms
 
 _AMOUNT = re.compile(r"[0-9]{1,12}(\.[0-9]{1,2})?")
@@ -27,20 +34,38 @@ class RfqIn(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     product_id: uuid.UUID
-    quantity: Decimal
-    unit: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=32)]
+    kind: RfqKind = RfqKind.quote
+    # Loại `quote` bắt buộc năm trường dưới đây; loại khác chỉ cần message (xem _by_kind).
+    quantity: Decimal | None = None
+    unit: (
+        Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=32)] | None
+    ) = None
     target_price: Decimal | None = None
     currency: Annotated[str, Field(pattern=r"^[A-Z]{3}$")] = "EUR"
-    incoterms: Incoterm
-    destination_country: Annotated[str, Field(pattern=r"^[A-Z]{2}$")]
+    incoterms: Incoterm | None = None
+    destination_country: Annotated[str, Field(pattern=r"^[A-Z]{2}$")] | None = None
     destination_port: Annotated[str | None, Field(max_length=100)] = None
-    required_date: dt.date
+    required_date: dt.date | None = None
     message: Annotated[str | None, Field(max_length=2000)] = None
 
     @field_validator("quantity", mode="before")
     @classmethod
-    def _quantity(cls, value: Any) -> Decimal:
-        return _amount(value)
+    def _quantity(cls, value: Any) -> Decimal | None:
+        return None if value is None else _amount(value)
+
+    @model_validator(mode="after")
+    def _by_kind(self) -> "RfqIn":
+        if self.kind is RfqKind.quote:
+            missing = [
+                f
+                for f in ("quantity", "unit", "incoterms", "destination_country", "required_date")
+                if getattr(self, f) is None
+            ]
+            if missing:
+                raise ValueError(f"quote request requires: {', '.join(missing)}")
+        elif not (self.message and self.message.strip()):
+            raise ValueError("message is required for this request type")
+        return self
 
     @field_validator("target_price", mode="before")
     @classmethod
@@ -82,6 +107,7 @@ class RfqOut(BaseModel):
     required_date: dt.date
     message: str | None
     status: RfqStatus
+    kind: RfqKind = RfqKind.quote
     created_at: dt.datetime
     updated_at: dt.datetime
 

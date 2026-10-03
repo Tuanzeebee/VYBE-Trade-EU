@@ -17,7 +17,15 @@ from app.modules.companies import product_service
 from app.modules.companies import service as companies
 from app.modules.messaging import conversation_service
 from app.modules.messaging.events import RfqCreated, RfqStatusChanged
-from app.modules.messaging.models import Conversation, Message, Rfq, RfqQuote, RfqStatus
+from app.modules.messaging.models import (
+    Conversation,
+    Incoterm,
+    Message,
+    Rfq,
+    RfqKind,
+    RfqQuote,
+    RfqStatus,
+)
 from app.modules.messaging.schemas import (
     ResponseStats,
     RfqIn,
@@ -68,6 +76,7 @@ async def _to_out(session: AsyncSession, rows: list[Rfq]) -> list[RfqOut]:
             required_date=r.required_date,
             message=r.message,
             status=r.status,
+            kind=r.kind,
             created_at=r.created_at,
             updated_at=r.updated_at,
         )
@@ -118,10 +127,12 @@ async def create_rfq(
     moment = now or dt.datetime.now(dt.UTC)
     buyer_company_id = await _my_company_id(session, user)
     today = moment.date()
-    if data.required_date < today:
-        raise AppError("required_date_in_past", "Required date cannot be in the past", 422)
-    if data.required_date > today + dt.timedelta(days=MAX_HORIZON_DAYS):
-        raise AppError("required_date_too_far", "Required date is too far ahead", 422)
+    is_quote = data.kind is RfqKind.quote
+    if is_quote and data.required_date is not None:
+        if data.required_date < today:
+            raise AppError("required_date_in_past", "Required date cannot be in the past", 422)
+        if data.required_date > today + dt.timedelta(days=MAX_HORIZON_DAYS):
+            raise AppError("required_date_too_far", "Required date is too far ahead", 422)
     product = await product_service.get_orderable_product(session, data.product_id, moment)
     if product is None:
         raise AppError("product_not_found", "Product not found", 404)
@@ -136,14 +147,16 @@ async def create_rfq(
         buyer_company_id=buyer_company_id,
         exporter_company_id=product.company_id,
         product_id=product.id,
-        quantity=data.quantity,
-        unit=data.unit,
+        kind=data.kind,
+        # Loại không phải báo giá: điền mặc định kỹ thuật cho các cột NOT NULL (không hiển thị).
+        quantity=data.quantity if data.quantity is not None else Decimal(1),
+        unit=data.unit or "n/a",
         target_price=data.target_price,
         currency=data.currency,
-        incoterms=data.incoterms,
-        destination_country=data.destination_country,
+        incoterms=data.incoterms or Incoterm.EXW,
+        destination_country=data.destination_country or "VN",
         destination_port=data.destination_port,
-        required_date=data.required_date,
+        required_date=data.required_date or today + dt.timedelta(days=30),
         message=data.message,
     )
     session.add(rfq)

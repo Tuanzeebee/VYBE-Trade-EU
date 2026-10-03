@@ -18,7 +18,7 @@ from app.modules.companies import product_service
 from app.modules.companies import service as companies
 from app.modules.messaging import quote_logic
 from app.modules.messaging.events import QuoteDecided, QuoteSent
-from app.modules.messaging.models import Rfq, RfqQuote, RfqStatus
+from app.modules.messaging.models import Rfq, RfqKind, RfqQuote, RfqStatus
 from app.modules.messaging.quote_logic import QuoteStatus
 from app.modules.messaging.schemas import QuoteDecisionIn, QuoteIn, QuoteOut
 
@@ -81,6 +81,8 @@ async def create_quote(
         raise AppError("rfq_not_found", "RFQ not found", 404)
     if rfq.status is RfqStatus.closed:
         raise AppError("rfq_closed", "This RFQ is closed", 409)
+    if rfq.kind is not RfqKind.quote:
+        raise AppError("rfq_not_quotable", "This request type cannot be quoted", 409)
     for code in (
         quote_logic.terms_error(data.deposit_percent, data.balance_terms),
         quote_logic.validity_error(data.valid_until, today),
