@@ -1,0 +1,21 @@
+# Danh sách mã HS ưu tiên nạp thống kê thương mại (U15) và họ sản phẩm để gợi ý thị trường (U16).
+# keywords: từ khoá (vi/en, không dấu cũng được) cách nhau bằng dấu |; family: họ sản phẩm cho báo cáo.
+hs_code,family,name_vi,name_en,keywords
+100630,rice,Gạo xay xát,Milled rice,gạo|gao|rice|gạo thơm|jasmine|st25
+090111,coffee,Cà phê nhân chưa rang,Green coffee,cà phê|ca phe|coffee|robusta|arabica
+090121,coffee,Cà phê rang,Roasted coffee,cà phê rang|roasted coffee
+090411,pepper,Hạt tiêu chưa xay,Pepper not ground,tiêu|tieu|hạt tiêu|pepper|black pepper
+080132,cashew,Hạt điều đã bóc vỏ,Cashew nuts shelled,điều|dieu|hạt điều|cashew
+030462,pangasius,Phi lê cá tra đông lạnh,Frozen pangasius fillets,cá tra|ca tra|basa|pangasius|catfish
+030432,pangasius,Phi lê cá tra tươi/ướp lạnh,Fresh pangasius fillets,cá tra tươi|fresh pangasius
+030617,shrimp,Tôm đông lạnh,Frozen shrimps,tôm|tom|shrimp|prawn|tôm thẻ|tôm sú
+160521,shrimp,Tôm chế biến (không bao bì kín khí),Prepared shrimps,tôm chế biến|prepared shrimp
+160529,shrimp,Tôm chế biến khác,Other prepared shrimps,tôm hấp|cooked shrimp
+160414,tuna,Cá ngừ chế biến,Prepared tuna,cá ngừ|ca ngu|tuna
+081060,fruit,Sầu riêng tươi,Fresh durians,sầu riêng|sau rieng|durian
+081090,fruit,Quả tươi khác (thanh long, chanh leo…),Other fresh fruit,thanh long|dragon fruit|chanh leo|passion fruit|vải|lychee|mít|jackfruit
+040900,honey,Mật ong tự nhiên,Natural honey,mật ong|mat ong|honey
+090240,tea,Chè đen,Black tea,chè|che|trà|tra|tea
+090230,tea,Chè xanh (gói lớn),Green tea,chè xanh|green tea
+090611,cinnamon,Quế (Cinnamomum zeylanicum),Cinnamon (zeylanicum),quế|que|cinnamon
+090619,cinnamon,Quế khác,Other cinnamon,quế|cassia

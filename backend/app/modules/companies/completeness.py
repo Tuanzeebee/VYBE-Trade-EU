@@ -45,8 +45,12 @@ class CompletenessResult:
     missing: tuple[MissingItem, ...]  # xếp theo trọng số giảm dần
 
 
-def compute_score(facts: Mapping[str, bool], rows: Sequence[WeightRow]) -> CompletenessResult:
-    enabled = [r for r in rows if r.is_enabled]
+def compute_score(
+    facts: Mapping[str, bool | None], rows: Sequence[WeightRow]
+) -> CompletenessResult:
+    """facts[k] = None nghĩa là "không áp dụng" cho hồ sơ này (vd ảnh sản phẩm với công ty chỉ làm
+    dịch vụ): dòng đó ra khỏi cả tử số lẫn mẫu số, không bị tính là thiếu."""
+    enabled = [r for r in rows if r.is_enabled and facts.get(r.field_key, False) is not None]
     total = sum((r.weight for r in enabled), Decimal(0))
     earned = sum((r.weight for r in enabled if facts.get(r.field_key, False)), Decimal(0))
     score = (earned * 100 / total) if total > 0 else Decimal(0)
@@ -116,13 +120,16 @@ class CompanyFacts:
     languages: Sequence[str]
     sourcing_categories: Sequence[str]
     evidence_count: int = 0  # C6: số bằng chứng đã nộp và còn hạn
+    offering_type: str = "products"  # U2: products | services | both
+    service_count: int = 0  # dịch vụ đang bật (nhà cung cấp dịch vụ)
+    service_description_max: int = 0  # độ dài mô tả dài nhất trong các dịch vụ đang bật
 
 
 def _text_len(value: str | None) -> int:
     return len((value or "").strip())
 
 
-def build_facts(company: CompanyFacts, products: Sequence[ProductFacts]) -> dict[str, bool]:
+def build_facts(company: CompanyFacts, products: Sequence[ProductFacts]) -> dict[str, bool | None]:
     """Đổi dữ liệu hồ sơ thành điều kiện đạt/không đạt (khóa = field_key của bảng trọng số).
 
     Không có khóa cho trường tự điền (legal_name, country, contact_email, registration_number):
@@ -140,8 +147,14 @@ def build_facts(company: CompanyFacts, products: Sequence[ProductFacts]) -> dict
             "website": _text_len(company.website) > 0,
             "logo": bool(company.logo_key),
         }
-    return {
-        "tax_id": is_valid_vn_tax_id(company.tax_id),
+    # Mã số thuế Việt Nam có định dạng kiểm được; seller nước ngoài (U2) chỉ cần có khai báo.
+    tax_ok = (
+        is_valid_vn_tax_id(company.tax_id)
+        if company.country == "VN"
+        else _text_len(company.tax_id) > 0
+    )
+    facts: dict[str, bool | None] = {
+        "tax_id": tax_ok,
         "business_model": company.business_type in BUSINESS_MODELS,
         "founded_year": company.founded_year is not None,
         "address": _text_len(company.address) >= ADDRESS_MIN,
@@ -160,3 +173,11 @@ def build_facts(company: CompanyFacts, products: Sequence[ProductFacts]) -> dict
         "product_price": any(p.has_price for p in products),
         "evidence": company.evidence_count >= 1,
     }
+    if company.offering_type == "services":
+        # Nhà cung cấp chỉ làm dịch vụ: "sản phẩm" là dịch vụ; ảnh, giá, ngành hàng, thị trường xuất
+        # khẩu không áp dụng (không trừ điểm).
+        facts["product_hs"] = company.service_count >= 1
+        facts["product_description"] = company.service_description_max >= PRODUCT_DESCRIPTION_MIN
+        for key in ("product_image", "product_price", "industry_sector", "export_markets"):
+            facts[key] = None
+    return facts

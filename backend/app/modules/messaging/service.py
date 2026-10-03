@@ -4,8 +4,9 @@ kiểm tra từng bản ghi thuộc về công ty của người gọi (buyer g�
 
 import datetime as dt
 import uuid
+from decimal import Decimal
 
-from sqlalchemy import func, select
+from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import get_settings
@@ -16,8 +17,14 @@ from app.modules.companies import product_service
 from app.modules.companies import service as companies
 from app.modules.messaging import conversation_service
 from app.modules.messaging.events import RfqCreated, RfqStatusChanged
-from app.modules.messaging.models import Rfq, RfqStatus
-from app.modules.messaging.schemas import RfqIn, RfqOut, RfqSummary
+from app.modules.messaging.models import Conversation, Message, Rfq, RfqQuote, RfqStatus
+from app.modules.messaging.schemas import (
+    ResponseStats,
+    RfqIn,
+    RfqOut,
+    RfqQuotaOut,
+    RfqSummary,
+)
 
 MAX_HORIZON_DAYS = 5 * 366  # ngày cần hàng không quá xa (chặn nhập nhầm năm)
 
@@ -48,6 +55,7 @@ async def _to_out(session: AsyncSession, rows: list[Rfq]) -> list[RfqOut]:
             product_name=products.get(r.product_id, ""),
             buyer_company_id=r.buyer_company_id,
             buyer_name=names[r.buyer_company_id].legal_name,
+            buyer_verified=names[r.buyer_company_id].verification_status == "verified",
             exporter_company_id=r.exporter_company_id,
             exporter_name=names[r.exporter_company_id].legal_name,
             quantity=str(r.quantity),
@@ -68,11 +76,40 @@ async def _to_out(session: AsyncSession, rows: list[Rfq]) -> list[RfqOut]:
 
 
 async def daily_limit_for(session: AsyncSession, company_id: uuid.UUID) -> int:
-    """PO chốt: buyer đã xác minh 5 RFQ/24h, chưa xác minh 0 (cấu hình rfq_daily_limit_*)."""
+    """Buyer đã xác minh 5 RFQ/24h, chưa xác minh 3 (U6: không chặn buyer; cấu hình
+    rfq_daily_limit_*, con số cuối do PO chốt)."""
     settings = get_settings()
     state = await companies.get_verification_state(session, company_id)
     verified = state.status == "verified"
     return settings.rfq_daily_limit_verified if verified else settings.rfq_daily_limit_unverified
+
+
+async def _sent_last_24h(session: AsyncSession, company_id: uuid.UUID, moment: dt.datetime) -> int:
+    sent = await session.scalar(
+        select(func.count())
+        .select_from(Rfq)
+        .where(
+            Rfq.buyer_company_id == company_id,
+            Rfq.created_at > moment - dt.timedelta(hours=24),
+        )
+    )
+    return sent or 0
+
+
+async def rfq_quota(
+    session: AsyncSession, user: CurrentUser, now: dt.datetime | None = None
+) -> RfqQuotaOut:
+    """Hạn mức còn lại để form RFQ báo trước cho buyer (thay vì chỉ báo lỗi 429 sau khi gửi)."""
+    company_id = await _my_company_id(session, user)
+    limit = await daily_limit_for(session, company_id)
+    used = await _sent_last_24h(session, company_id, now or dt.datetime.now(dt.UTC))
+    state = await companies.get_verification_state(session, company_id)
+    return RfqQuotaOut(
+        limit=limit,
+        used=used,
+        remaining=max(limit - used, 0),
+        verified=state.status == "verified",
+    )
 
 
 async def create_rfq(
@@ -92,15 +129,7 @@ async def create_rfq(
     limit = await daily_limit_for(session, buyer_company_id)
     if limit == 0:
         raise AppError("buyer_not_verified", "Verify your company to send quote requests", 403)
-    sent = await session.scalar(
-        select(func.count())
-        .select_from(Rfq)
-        .where(
-            Rfq.buyer_company_id == buyer_company_id,
-            Rfq.created_at > moment - dt.timedelta(hours=24),
-        )
-    )
-    if (sent or 0) >= limit:
+    if await _sent_last_24h(session, buyer_company_id, moment) >= limit:
         raise AppError("rfq_daily_limit", "Daily request limit reached. Try again tomorrow.", 429)
 
     rfq = Rfq(
@@ -240,4 +269,69 @@ async def summarize_rfqs(
         total=sum(counts.values()),
         created_since=created_since or 0,
         recent=await _to_out(session, list(rows)),
+    )
+
+
+# ── Thống kê phản hồi của seller (U23 điểm tín nhiệm — phần hành vi) ─────────────────────────
+REPLY_WINDOW = dt.timedelta(days=7)
+
+
+async def seller_response_stats(
+    session: AsyncSession, company_id: uuid.UUID, since: dt.datetime
+) -> ResponseStats:
+    """Hội thoại mà bên kia nhắn trước tới công ty từ `since`: bao nhiêu được trả lời trong 7 ngày,
+    trung vị giờ tới câu trả lời đầu; RFQ nhận được và bao nhiêu RFQ có báo giá. Chỉ đọc."""
+    conversation_ids = list(
+        await session.scalars(
+            select(Conversation.id).where(
+                or_(
+                    Conversation.company_a_id == company_id, Conversation.company_b_id == company_id
+                ),
+                Conversation.created_at >= since,
+            )
+        )
+    )
+    first_in: dict[uuid.UUID, dt.datetime] = {}
+    first_reply: dict[uuid.UUID, dt.datetime] = {}
+    if conversation_ids:
+        rows = await session.execute(
+            select(Message.conversation_id, Message.sender_company_id, Message.sent_at)
+            .where(Message.conversation_id.in_(conversation_ids))
+            .order_by(Message.sent_at)
+        )
+        for conversation_id, sender, sent_at in rows:
+            if sender != company_id:
+                first_in.setdefault(conversation_id, sent_at)
+            elif conversation_id in first_in:
+                first_reply.setdefault(conversation_id, sent_at)
+    waits = sorted((first_reply[c] - first_in[c]) for c in first_in if c in first_reply)
+    replied = sum(
+        1 for c in first_in if c in first_reply and first_reply[c] - first_in[c] <= REPLY_WINDOW
+    )
+    median = None
+    if waits:
+        half = len(waits) // 2
+        middle = waits[half] if len(waits) % 2 else (waits[half - 1] + waits[half]) / 2
+        median = Decimal(str(round(middle.total_seconds() / 3600, 2)))
+    rfq_ids = list(
+        await session.scalars(
+            select(Rfq.id).where(Rfq.exporter_company_id == company_id, Rfq.created_at >= since)
+        )
+    )
+    quoted = 0
+    if rfq_ids:
+        quoted = int(
+            await session.scalar(
+                select(func.count(func.distinct(RfqQuote.rfq_id))).where(
+                    RfqQuote.rfq_id.in_(rfq_ids)
+                )
+            )
+            or 0
+        )
+    return ResponseStats(
+        conversations=len(first_in),
+        replied=replied,
+        median_reply_hours=median,
+        rfqs=len(rfq_ids),
+        quoted=quoted,
     )

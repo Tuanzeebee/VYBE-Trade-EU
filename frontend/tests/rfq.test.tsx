@@ -25,6 +25,7 @@ const rfq = (over: Record<string, unknown> = {}) => ({
   product_name: 'Gạo thơm Jasmine',
   buyer_company_id: 'b-1',
   buyer_name: 'Global Foods GmbH',
+  buyer_verified: false,
   exporter_company_id: 'e-1',
   exporter_name: 'Nông Sản Lúa Vàng',
   quantity: '500.50',
@@ -48,6 +49,7 @@ interface World {
   rfqs?: unknown[] | null;
   opened?: unknown;
   patched?: unknown;
+  quota?: unknown;
 }
 let calls: { method: string; path: string; body: unknown }[] = [];
 
@@ -63,7 +65,9 @@ function serve(world: World) {
         return world.role ? json(200, { id: 'u-1', email: 'u@x.vn', role: world.role, preferred_language: 'vi' }) : json(401, {});
       }
       if (path === '/api/buyer/rfqs') return world.create ? world.create() : json(201, rfq());
+      if (path === '/api/buyer/rfq-quota') return world.quota ? json(200, world.quota) : json(404, {});
       if (path === '/api/me/rfqs') return world.rfqs === null ? json(500, {}) : json(200, world.rfqs ?? []);
+      if (req.method === 'GET' && path.endsWith('/quotes')) return json(200, []);
       if (req.method === 'GET' && path.startsWith('/api/me/rfqs/')) return json(200, world.opened ?? rfq({ status: 'viewed' }));
       if (req.method === 'PATCH') return world.patched ? json(200, world.patched) : json(409, {});
       return json(404, {});
@@ -158,6 +162,24 @@ describe('Form yêu cầu báo giá (F1)', () => {
     expect((await screen.findByRole('alert')).textContent).toContain(text);
   });
 
+  it('U6: buyer chưa xác minh thấy hạn mức còn lại và lối xác minh tùy chọn', async () => {
+    serve({ role: 'buyer', quota: { limit: 3, used: 1, remaining: 2, verified: false } });
+    wrap(<RfqForm products={PRODUCTS} supplierName="X" />);
+    const note = await screen.findByTestId('rfq-quota');
+    expect(note).toHaveTextContent('Còn 2/3 yêu cầu báo giá trong 24 giờ.');
+    expect(note).toHaveTextContent('vẫn gửi được');
+    expect(within(note).getByRole('link', { name: 'Xác minh doanh nghiệp' }).getAttribute('href')).toContain('/buyer/profile');
+    expect(screen.getByRole('button', { name: 'Gửi yêu cầu báo giá' })).toBeEnabled();
+  });
+
+  it('U6: buyer đã xác minh chỉ thấy số còn lại', async () => {
+    serve({ role: 'buyer', quota: { limit: 5, used: 0, remaining: 5, verified: true } });
+    wrap(<RfqForm products={PRODUCTS} supplierName="X" />);
+    const note = await screen.findByTestId('rfq-quota');
+    expect(note).toHaveTextContent('Còn 5/5');
+    expect(within(note).queryByRole('link')).toBeNull();
+  });
+
   it('không có sản phẩm nào thì không hiện form', async () => {
     serve({ role: 'buyer' });
     const { container } = wrap(<RfqForm products={[]} supplierName="X" />);
@@ -190,6 +212,32 @@ describe('Danh sách RFQ (F1)', () => {
     await waitFor(() => expect(within(item).getByTestId('rfq-status')).toHaveTextContent('Đã báo giá'));
     expect(calls.find((c) => c.method === 'PATCH')?.body).toEqual({ status: 'quoted' });
     expect(within(item).queryByRole('button', { name: /Đánh dấu: Đã xem/ })).toBeNull(); // không lùi trạng thái
+  });
+
+  it('U6: seller thấy buyer chưa xác minh kèm khuyến nghị điều khoản thanh toán an toàn', async () => {
+    serve({ rfqs: [rfq({ status: 'viewed' })] });
+    wrap(<RfqInbox role="exporter" />);
+    const item = await screen.findByRole('listitem', { name: /Global Foods GmbH/ });
+    expect(within(item).getByTestId('buyer-verification')).toHaveTextContent('Buyer chưa xác minh');
+    fireEvent.click(within(item).getByRole('button', { name: /Global Foods GmbH/ }));
+    const note = within(item).getByRole('note');
+    expect(note).toHaveTextContent('Đặt cọc 30–50%');
+    expect(note).toHaveTextContent('L/C at sight');
+    expect(note).toHaveTextContent('không phải tư vấn pháp lý');
+  });
+
+  it('U6: buyer đã xác minh — nhãn xanh, không có khuyến nghị; buyer không thấy nhãn này', async () => {
+    serve({ rfqs: [rfq({ status: 'viewed', buyer_verified: true })] });
+    const { unmount } = wrap(<RfqInbox role="exporter" />);
+    const item = await screen.findByRole('listitem', { name: /Global Foods GmbH/ });
+    expect(within(item).getByTestId('buyer-verification')).toHaveTextContent('Doanh nghiệp đã xác minh');
+    fireEvent.click(within(item).getByRole('button', { name: /Global Foods GmbH/ }));
+    expect(within(item).queryByRole('note')).toBeNull();
+    unmount();
+    serve({ rfqs: [rfq({ status: 'viewed' })] });
+    wrap(<RfqInbox role="buyer" />);
+    await screen.findByRole('listitem', { name: /Nông Sản Lúa Vàng/ });
+    expect(screen.queryByTestId('buyer-verification')).toBeNull();
   });
 
   it('đổi trạng thái thất bại: báo lỗi và giữ trạng thái cũ', async () => {

@@ -79,6 +79,7 @@ def parse_tariff(path: Path) -> list[tuple[int, TariffLineIn]]:
             data: dict[str, Any] = {
                 "hs_code": _text(row, "hs_code") or "",
                 "destination": _text(row, "destination") or "",
+                "agreement_code": _text(row, "agreement_code") or "EVFTA",
                 "duty_type": _text(row, "duty_type") or "",
                 "mfn_rate": _text(row, "mfn_rate"),
                 "mfn_specific": _text(row, "mfn_specific"),
@@ -133,6 +134,7 @@ async def import_tariff(
             select(TariffLine.id).where(
                 TariffLine.hs_code == data.hs_code,
                 TariffLine.destination == data.destination,
+                TariffLine.agreement_code == data.agreement_code,
                 TariffLine.valid_from == data.valid_from,
             )
         )

@@ -2,8 +2,21 @@
 
 // Khung riêng cho buyer đã đăng nhập: sidebar (desktop), thanh menu dưới (điện thoại 390px), header gọn.
 // Guest hoặc role khác giữ khung công khai cũ; buyer chưa có hồ sơ công ty bị đưa tới onboarding.
+import { BrandMark } from '../BrandMark';
 import React, { useEffect, useState } from 'react';
-import { Bell, Bot, Calculator, FileText, LayoutDashboard, LogOut, MessageSquare, Search, UserRound } from 'lucide-react';
+import {
+  Bell,
+  Bot,
+  Building2,
+  Calculator,
+  FileText,
+  LayoutDashboard,
+  LogOut,
+  MessageSquare,
+  Search,
+  UserRound,
+  Globe,
+} from 'lucide-react';
 import LanguageSelect from '../LanguageSelect';
 import NotificationBell from '../NotificationBell';
 import { PublicShell } from './PublicShell';
@@ -19,11 +32,13 @@ export const BUYER_NAV = [
   { href: '/buyer/rfqs', label: 'Yêu cầu báo giá', icon: FileText },
   { href: '/buyer/messages', label: 'Tin nhắn', icon: MessageSquare },
   { href: '/buyer/notifications', label: 'Thông báo', icon: Bell },
+  { href: '/buyer/profile', label: 'Hồ sơ công ty', icon: Building2 },
   { href: '/account', label: 'Tài khoản của tôi', icon: UserRound },
 ] as const;
 
 const TOOLS = [
-  { href: '/tools/tariff', label: 'Máy tính thuế EVFTA', icon: Calculator },
+  { href: '/tools/tariff', label: 'Công cụ tính thuế', icon: Calculator },
+  { href: '/tools/market-insights', label: 'Gợi ý thị trường EU', icon: Globe },
   { href: '/copilot', label: 'Trợ lý AI tuân thủ', icon: Bot },
 ] as const;
 
@@ -34,10 +49,7 @@ function Brand() {
   const { tr } = useLanguage();
   return (
     <Link href="/buyer" className="flex items-center gap-2.5 select-none">
-      <svg viewBox="0 0 32 32" className="h-7 w-7" fill="none" aria-hidden="true">
-        <path d="M 16 26 C 14 18 8 13 4 10 C 3 9 4 7 5 7 C 11 8 15 13 16 26 Z" fill="#0b5e52" />
-        <path d="M 16 26 C 18 18 24 13 28 10 C 29 9 28 7 27 7 C 21 8 17 13 16 26 Z" fill="#0b5e52" />
-      </svg>
+      <BrandMark className="h-7 w-7" />
       <span className="leading-none">
         <span className="block text-lg font-bold uppercase tracking-wide text-[#0f172a]">{tr('VYBE TRADE')}</span>
         <span className="mt-1 block text-[10px] font-semibold uppercase tracking-wider text-teal-800">{tr('BUYER WORKSPACE')}</span>

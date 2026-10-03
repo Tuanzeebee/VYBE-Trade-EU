@@ -1,0 +1,4 @@
+# Mốc so sánh cho phần "OEM hay thương hiệu riêng" của báo cáo go-to-market (U18).
+# BẢN NHÁP — chuyên gia thị trường / PO duyệt trước khi dùng chính thức. Đơn vị: % doanh thu.
+key,value,note
+marketing_pct_of_revenue,5,Ngân sách marketing để xây thương hiệu tiêu dùng ở EU (vd Đức/Pháp) thường vào khoảng 5% doanh thu

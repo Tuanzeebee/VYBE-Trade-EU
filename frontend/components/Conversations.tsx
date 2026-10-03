@@ -38,6 +38,16 @@ function Bubble({ message }: { message: Message }) {
   );
 }
 
+
+function VerifiedTag({ verified }: { verified: boolean }) {
+  const { tr } = useLanguage();
+  return (
+    <span data-testid="counterpart-verification" className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${verified ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-600'}`}>
+      {tr(verified ? 'Đã xác minh' : 'Chưa xác minh')}
+    </span>
+  );
+}
+
 function Thread({ conversation, onActivity }: { conversation: Conversation; onActivity: () => void }) {
   const { tr } = useLanguage();
   const [messages, setMessages] = useState<Message[] | null>(null);
@@ -106,8 +116,11 @@ function Thread({ conversation, onActivity }: { conversation: Conversation; onAc
   return (
     <section aria-label={tr('Nội dung hội thoại')} className="flex min-h-[24rem] flex-col rounded-2xl border border-slate-200 bg-white">
       <header className="border-b border-slate-100 p-4">
-        <h2 className="text-sm font-bold text-slate-900">{conversation.counterpart_name}</h2>
-        <p className="text-xs text-slate-600">{conversation.product_name}</p>
+        <h2 className="flex flex-wrap items-center gap-2 text-sm font-bold text-slate-900">
+          {conversation.counterpart_name}
+          <VerifiedTag verified={conversation.counterpart_verified} />
+        </h2>
+        <p className="text-xs text-slate-600">{conversation.product_name || tr('Tin nhắn trực tiếp')}</p>
       </header>
       {failed ? (
         <p role="alert" className="m-4 rounded-xl bg-rose-50 p-3 text-sm text-rose-700">
@@ -209,7 +222,7 @@ export default function Conversations() {
         </p>
       ) : list !== null && list.length === 0 ? (
         <p role="status" className="mt-6 rounded-xl bg-white p-6 text-sm text-slate-700">
-          {tr('Chưa có hội thoại nào. Hội thoại được mở tự động khi có yêu cầu báo giá.')}
+          {tr('Chưa có hội thoại nào. Nhắn tin cho nhà cung cấp từ hồ sơ của họ, hoặc gửi yêu cầu báo giá.')}
         </p>
       ) : (
         <div className="mt-6 grid gap-4 md:grid-cols-[18rem_1fr]">
@@ -230,7 +243,7 @@ export default function Conversations() {
                       </span>
                     )}
                   </span>
-                  <span className="block text-xs text-slate-600">{c.product_name}</span>
+                  <span className="block text-xs text-slate-600">{c.product_name || tr('Tin nhắn trực tiếp')}</span>
                   {c.last_message && <span className="mt-1 block truncate text-xs text-slate-500">{c.last_message}</span>}
                 </button>
               </li>

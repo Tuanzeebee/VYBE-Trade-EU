@@ -1,0 +1,402 @@
+[
+  {
+    "cn_code": "03061792",
+    "rule_type": "WO_PRODUCT",
+    "rule_text_en": "All fish and crustaceans, molluscs and other aquatic invertebrates are wholly obtained. (ex Chapter 3)",
+    "rule_text_vi": "Sản phẩm phải có xuất xứ thuần tuý: nuôi/đánh bắt tại VN hoặc bởi tàu đủ điều kiện",
+    "params": {},
+    "insufficient_operations_vi": "Đông lạnh, bảo quản; phân loại; đóng gói đơn giản",
+    "tolerance_note_vi": "Không áp dụng nếu là sản phẩm có xuất xứ thuần tuý (Điều 5.5); với phi lê 0304 cần luật sư xác nhận Chương 3 thuộc Điều 5.3(a) hay (b)",
+    "risk_note_vi": "Tôm nuôi từ tôm giống nhập khẩu VẪN đạt (Điều 4.1(g): nuôi tại VN từ ấu trùng). Tôm nguyên liệu nhập khẩu để sơ chế KHÔNG đạt",
+    "requires_expert": false,
+    "requires_expert_reason": null,
+    "source": "EVFTA Nghị định thư 1, Phụ lục II (OJ L186, 12.6.2020; PSR cập nhật HS2022 theo Quyết định 2/2024)",
+    "reviewed_by": null,
+    "reviewed_at": null
+  },
+  {
+    "cn_code": "03061799",
+    "rule_type": "WO_PRODUCT",
+    "rule_text_en": "All fish and crustaceans, molluscs and other aquatic invertebrates are wholly obtained. (ex Chapter 3)",
+    "rule_text_vi": "Sản phẩm phải có xuất xứ thuần tuý: nuôi/đánh bắt tại VN hoặc bởi tàu đủ điều kiện",
+    "params": {},
+    "insufficient_operations_vi": "Đông lạnh, bảo quản; phân loại; đóng gói đơn giản",
+    "tolerance_note_vi": "Không áp dụng nếu là sản phẩm có xuất xứ thuần tuý (Điều 5.5); với phi lê 0304 cần luật sư xác nhận Chương 3 thuộc Điều 5.3(a) hay (b)",
+    "risk_note_vi": "Như trên",
+    "requires_expert": false,
+    "requires_expert_reason": null,
+    "source": "EVFTA Nghị định thư 1, Phụ lục II (OJ L186, 12.6.2020; PSR cập nhật HS2022 theo Quyết định 2/2024)",
+    "reviewed_by": null,
+    "reviewed_at": null
+  },
+  {
+    "cn_code": "03046200",
+    "rule_type": "WO_MATERIALS",
+    "rule_text_en": "Manufacture in which all the materials of Chapter 3 used are wholly obtained. (0304)",
+    "rule_text_vi": "Mọi cá/nguyên liệu Chương 3 dùng để làm phi lê phải có xuất xứ thuần tuý",
+    "params": {
+      "restricted_chapters": [
+        3
+      ],
+      "tolerance_pct": null,
+      "tolerance_status": "PENDING_LEGAL"
+    },
+    "insufficient_operations_vi": "Đông lạnh, bảo quản; phân loại; đóng gói đơn giản",
+    "tolerance_note_vi": "Không áp dụng nếu là sản phẩm có xuất xứ thuần tuý (Điều 5.5); với phi lê 0304 cần luật sư xác nhận Chương 3 thuộc Điều 5.3(a) hay (b)",
+    "risk_note_vi": "Thấp: cá tra nuôi trong nước",
+    "requires_expert": true,
+    "requires_expert_reason": "Dung sai cho phi lê 0304: Chương 3 thuộc Điều 5.3(a) hay (b) — chờ luật TM",
+    "source": "EVFTA Nghị định thư 1, Phụ lục II (OJ L186, 12.6.2020; PSR cập nhật HS2022 theo Quyết định 2/2024)",
+    "reviewed_by": null,
+    "reviewed_at": null
+  },
+  {
+    "cn_code": "03043200",
+    "rule_type": "WO_MATERIALS",
+    "rule_text_en": "Manufacture in which all the materials of Chapter 3 used are wholly obtained. (0304)",
+    "rule_text_vi": "Mọi cá/nguyên liệu Chương 3 dùng để làm phi lê phải có xuất xứ thuần tuý",
+    "params": {
+      "restricted_chapters": [
+        3
+      ],
+      "tolerance_pct": null,
+      "tolerance_status": "PENDING_LEGAL"
+    },
+    "insufficient_operations_vi": "Đông lạnh, bảo quản; phân loại; đóng gói đơn giản",
+    "tolerance_note_vi": "Không áp dụng nếu là sản phẩm có xuất xứ thuần tuý (Điều 5.5); với phi lê 0304 cần luật sư xác nhận Chương 3 thuộc Điều 5.3(a) hay (b)",
+    "risk_note_vi": "Thấp",
+    "requires_expert": true,
+    "requires_expert_reason": "Dung sai cho phi lê 0304: Chương 3 thuộc Điều 5.3(a) hay (b) — chờ luật TM",
+    "source": "EVFTA Nghị định thư 1, Phụ lục II (OJ L186, 12.6.2020; PSR cập nhật HS2022 theo Quyết định 2/2024)",
+    "reviewed_by": null,
+    "reviewed_at": null
+  },
+  {
+    "cn_code": "03032400",
+    "rule_type": "WO_PRODUCT",
+    "rule_text_en": "All fish and crustaceans, molluscs and other aquatic invertebrates are wholly obtained. (ex Chapter 3)",
+    "rule_text_vi": "Sản phẩm phải có xuất xứ thuần tuý: nuôi/đánh bắt tại VN hoặc bởi tàu đủ điều kiện",
+    "params": {},
+    "insufficient_operations_vi": "Đông lạnh, bảo quản; phân loại; đóng gói đơn giản",
+    "tolerance_note_vi": "Không áp dụng nếu là sản phẩm có xuất xứ thuần tuý (Điều 5.5); với phi lê 0304 cần luật sư xác nhận Chương 3 thuộc Điều 5.3(a) hay (b)",
+    "risk_note_vi": "Thấp",
+    "requires_expert": false,
+    "requires_expert_reason": null,
+    "source": "EVFTA Nghị định thư 1, Phụ lục II (OJ L186, 12.6.2020; PSR cập nhật HS2022 theo Quyết định 2/2024)",
+    "reviewed_by": null,
+    "reviewed_at": null
+  },
+  {
+    "cn_code": "03048700",
+    "rule_type": "WO_MATERIALS_VESSEL",
+    "rule_text_en": "Manufacture in which all the materials of Chapter 3 used are wholly obtained. (0304)",
+    "rule_text_vi": "Mọi cá/nguyên liệu Chương 3 dùng để làm phi lê phải có xuất xứ thuần tuý",
+    "params": {
+      "restricted_chapters": [
+        3
+      ],
+      "tolerance_pct": null,
+      "tolerance_status": "PENDING_LEGAL",
+      "vessel_min_ownership_pct": "50"
+    },
+    "insufficient_operations_vi": "Đông lạnh, bảo quản; phân loại; đóng gói đơn giản",
+    "tolerance_note_vi": "Không áp dụng nếu là sản phẩm có xuất xứ thuần tuý (Điều 5.5); với phi lê 0304 cần luật sư xác nhận Chương 3 thuộc Điều 5.3(a) hay (b)",
+    "risk_note_vi": "Cao: cá ngừ nhập khẩu hoặc do tàu không đủ điều kiện sở hữu/cờ (Điều 4.2) KHÔNG đạt",
+    "requires_expert": true,
+    "requires_expert_reason": "Dung sai cho phi lê 0304: Chương 3 thuộc Điều 5.3(a) hay (b) — chờ luật TM",
+    "source": "EVFTA Nghị định thư 1, Phụ lục II (OJ L186, 12.6.2020; PSR cập nhật HS2022 theo Quyết định 2/2024)",
+    "reviewed_by": null,
+    "reviewed_at": null
+  },
+  {
+    "cn_code": "03034290",
+    "rule_type": "WO_PRODUCT_VESSEL",
+    "rule_text_en": "All fish and crustaceans, molluscs and other aquatic invertebrates are wholly obtained. (ex Chapter 3)",
+    "rule_text_vi": "Sản phẩm phải có xuất xứ thuần tuý: nuôi/đánh bắt tại VN hoặc bởi tàu đủ điều kiện",
+    "params": {
+      "vessel_min_ownership_pct": "50"
+    },
+    "insufficient_operations_vi": "Đông lạnh, bảo quản; phân loại; đóng gói đơn giản",
+    "tolerance_note_vi": "Không áp dụng nếu là sản phẩm có xuất xứ thuần tuý (Điều 5.5); với phi lê 0304 cần luật sư xác nhận Chương 3 thuộc Điều 5.3(a) hay (b)",
+    "risk_note_vi": "Cao (như trên)",
+    "requires_expert": false,
+    "requires_expert_reason": null,
+    "source": "EVFTA Nghị định thư 1, Phụ lục II (OJ L186, 12.6.2020; PSR cập nhật HS2022 theo Quyết định 2/2024)",
+    "reviewed_by": null,
+    "reviewed_at": null
+  },
+  {
+    "cn_code": "03077100",
+    "rule_type": "WO_PRODUCT",
+    "rule_text_en": "All fish and crustaceans, molluscs and other aquatic invertebrates are wholly obtained. (ex Chapter 3)",
+    "rule_text_vi": "Sản phẩm phải có xuất xứ thuần tuý: nuôi/đánh bắt tại VN hoặc bởi tàu đủ điều kiện",
+    "params": {},
+    "insufficient_operations_vi": "Đông lạnh, bảo quản; phân loại; đóng gói đơn giản",
+    "tolerance_note_vi": "Không áp dụng nếu là sản phẩm có xuất xứ thuần tuý (Điều 5.5); với phi lê 0304 cần luật sư xác nhận Chương 3 thuộc Điều 5.3(a) hay (b)",
+    "risk_note_vi": "Thấp nếu nuôi/khai thác tại VN",
+    "requires_expert": false,
+    "requires_expert_reason": null,
+    "source": "EVFTA Nghị định thư 1, Phụ lục II (OJ L186, 12.6.2020; PSR cập nhật HS2022 theo Quyết định 2/2024)",
+    "reviewed_by": null,
+    "reviewed_at": null
+  },
+  {
+    "cn_code": "07123200",
+    "rule_type": "WO_MATERIALS_TOLERANCE",
+    "rule_text_en": "Manufacture in which all the materials of Chapter 7 used are wholly obtained. (Chapter 7)",
+    "rule_text_vi": "Mọi nguyên liệu Chương 7 phải có xuất xứ thuần tuý (trồng, thu hoạch tại VN/EU)",
+    "params": {
+      "tolerance_pct": "10",
+      "tolerance_basis": "WEIGHT_AND_VALUE",
+      "restricted_chapters": [
+        7
+      ]
+    },
+    "insufficient_operations_vi": "Bảo quản; làm sạch; cắt đơn giản; phân loại; đóng gói đơn giản; làm khô đơn giản",
+    "tolerance_note_vi": "Tối đa 10% trọng lượng hoặc giá xuất xưởng cho nguyên liệu không đạt (Điều 5.3(a)); không áp dụng cho sản phẩm xuất xứ thuần tuý",
+    "risk_note_vi": "Nhập nấm khô từ Trung Quốc rồi đóng gói lại KHÔNG đạt (vừa không thuần tuý, vừa là thao tác đơn giản)",
+    "requires_expert": false,
+    "requires_expert_reason": null,
+    "source": "EVFTA Nghị định thư 1, Phụ lục II (OJ L186, 12.6.2020; PSR cập nhật HS2022 theo Quyết định 2/2024)",
+    "reviewed_by": null,
+    "reviewed_at": null
+  },
+  {
+    "cn_code": "07123900",
+    "rule_type": "WO_MATERIALS_TOLERANCE",
+    "rule_text_en": "Manufacture in which all the materials of Chapter 7 used are wholly obtained. (Chapter 7)",
+    "rule_text_vi": "Mọi nguyên liệu Chương 7 phải có xuất xứ thuần tuý (trồng, thu hoạch tại VN/EU)",
+    "params": {
+      "tolerance_pct": "10",
+      "tolerance_basis": "WEIGHT_AND_VALUE",
+      "restricted_chapters": [
+        7
+      ]
+    },
+    "insufficient_operations_vi": "Bảo quản; làm sạch; cắt đơn giản; phân loại; đóng gói đơn giản; làm khô đơn giản",
+    "tolerance_note_vi": "Tối đa 10% trọng lượng hoặc giá xuất xưởng cho nguyên liệu không đạt (Điều 5.3(a)); không áp dụng cho sản phẩm xuất xứ thuần tuý",
+    "risk_note_vi": "Như trên",
+    "requires_expert": false,
+    "requires_expert_reason": null,
+    "source": "EVFTA Nghị định thư 1, Phụ lục II (OJ L186, 12.6.2020; PSR cập nhật HS2022 theo Quyết định 2/2024)",
+    "reviewed_by": null,
+    "reviewed_at": null
+  },
+  {
+    "cn_code": "07108069",
+    "rule_type": "WO_MATERIALS_TOLERANCE",
+    "rule_text_en": "Manufacture in which all the materials of Chapter 7 used are wholly obtained. (Chapter 7)",
+    "rule_text_vi": "Mọi nguyên liệu Chương 7 phải có xuất xứ thuần tuý (trồng, thu hoạch tại VN/EU)",
+    "params": {
+      "tolerance_pct": "10",
+      "tolerance_basis": "WEIGHT_AND_VALUE",
+      "restricted_chapters": [
+        7
+      ]
+    },
+    "insufficient_operations_vi": "Bảo quản; làm sạch; cắt đơn giản; phân loại; đóng gói đơn giản; làm khô đơn giản",
+    "tolerance_note_vi": "Tối đa 10% trọng lượng hoặc giá xuất xưởng cho nguyên liệu không đạt (Điều 5.3(a)); không áp dụng cho sản phẩm xuất xứ thuần tuý",
+    "risk_note_vi": "Trung bình: kiểm soát nguồn nấm tươi",
+    "requires_expert": false,
+    "requires_expert_reason": null,
+    "source": "EVFTA Nghị định thư 1, Phụ lục II (OJ L186, 12.6.2020; PSR cập nhật HS2022 theo Quyết định 2/2024)",
+    "reviewed_by": null,
+    "reviewed_at": null
+  },
+  {
+    "cn_code": "07108095",
+    "rule_type": "WO_MATERIALS_TOLERANCE",
+    "rule_text_en": "Manufacture in which all the materials of Chapter 7 used are wholly obtained. (Chapter 7)",
+    "rule_text_vi": "Mọi nguyên liệu Chương 7 phải có xuất xứ thuần tuý (trồng, thu hoạch tại VN/EU)",
+    "params": {
+      "tolerance_pct": "10",
+      "tolerance_basis": "WEIGHT_AND_VALUE",
+      "restricted_chapters": [
+        7
+      ]
+    },
+    "insufficient_operations_vi": "Bảo quản; làm sạch; cắt đơn giản; phân loại; đóng gói đơn giản; làm khô đơn giản",
+    "tolerance_note_vi": "Tối đa 10% trọng lượng hoặc giá xuất xưởng cho nguyên liệu không đạt (Điều 5.3(a)); không áp dụng cho sản phẩm xuất xứ thuần tuý",
+    "risk_note_vi": "Thấp",
+    "requires_expert": false,
+    "requires_expert_reason": null,
+    "source": "EVFTA Nghị định thư 1, Phụ lục II (OJ L186, 12.6.2020; PSR cập nhật HS2022 theo Quyết định 2/2024)",
+    "reviewed_by": null,
+    "reviewed_at": null
+  },
+  {
+    "cn_code": "07096099",
+    "rule_type": "WO_MATERIALS_TOLERANCE",
+    "rule_text_en": "Manufacture in which all the materials of Chapter 7 used are wholly obtained. (Chapter 7)",
+    "rule_text_vi": "Mọi nguyên liệu Chương 7 phải có xuất xứ thuần tuý (trồng, thu hoạch tại VN/EU)",
+    "params": {
+      "tolerance_pct": "10",
+      "tolerance_basis": "WEIGHT_AND_VALUE",
+      "restricted_chapters": [
+        7
+      ]
+    },
+    "insufficient_operations_vi": "Bảo quản; làm sạch; cắt đơn giản; phân loại; đóng gói đơn giản; làm khô đơn giản",
+    "tolerance_note_vi": "Tối đa 10% trọng lượng hoặc giá xuất xưởng cho nguyên liệu không đạt (Điều 5.3(a)); không áp dụng cho sản phẩm xuất xứ thuần tuý",
+    "risk_note_vi": "Thấp",
+    "requires_expert": false,
+    "requires_expert_reason": null,
+    "source": "EVFTA Nghị định thư 1, Phụ lục II (OJ L186, 12.6.2020; PSR cập nhật HS2022 theo Quyết định 2/2024)",
+    "reviewed_by": null,
+    "reviewed_at": null
+  },
+  {
+    "cn_code": "08106000",
+    "rule_type": "WO_MATERIALS_SUGAR_CAP",
+    "rule_text_en": "Manufacture in which: all the fruit, nuts and peels of citrus fruits or melons of Chapter 8 used are wholly obtained; and the weight of sugar used does not exceed 20 % of the weight of the final product. (Chapter 8)",
+    "rule_text_vi": "Mọi quả, hạt Chương 8 phải có xuất xứ thuần tuý VÀ đường ≤ 20% trọng lượng thành phẩm",
+    "params": {
+      "tolerance_pct": "10",
+      "tolerance_basis": "WEIGHT_AND_VALUE",
+      "sugar_max_pct_weight": "20",
+      "restricted_chapters": [
+        8
+      ]
+    },
+    "insufficient_operations_vi": "Bóc vỏ, bỏ hạt, tách vỏ quả/hạt; bảo quản; phân loại; đóng gói",
+    "tolerance_note_vi": "Tối đa 10% trọng lượng hoặc giá xuất xưởng cho nguyên liệu không đạt (Điều 5.3(a)); không áp dụng cho sản phẩm xuất xứ thuần tuý",
+    "risk_note_vi": "Thấp",
+    "requires_expert": false,
+    "requires_expert_reason": null,
+    "source": "EVFTA Nghị định thư 1, Phụ lục II (OJ L186, 12.6.2020; PSR cập nhật HS2022 theo Quyết định 2/2024)",
+    "reviewed_by": null,
+    "reviewed_at": null
+  },
+  {
+    "cn_code": "08109075",
+    "rule_type": "WO_MATERIALS_SUGAR_CAP",
+    "rule_text_en": "Manufacture in which: all the fruit, nuts and peels of citrus fruits or melons of Chapter 8 used are wholly obtained; and the weight of sugar used does not exceed 20 % of the weight of the final product. (Chapter 8)",
+    "rule_text_vi": "Mọi quả, hạt Chương 8 phải có xuất xứ thuần tuý VÀ đường ≤ 20% trọng lượng thành phẩm",
+    "params": {
+      "tolerance_pct": "10",
+      "tolerance_basis": "WEIGHT_AND_VALUE",
+      "sugar_max_pct_weight": "20",
+      "restricted_chapters": [
+        8
+      ]
+    },
+    "insufficient_operations_vi": "Bóc vỏ, bỏ hạt, tách vỏ quả/hạt; bảo quản; phân loại; đóng gói",
+    "tolerance_note_vi": "Tối đa 10% trọng lượng hoặc giá xuất xưởng cho nguyên liệu không đạt (Điều 5.3(a)); không áp dụng cho sản phẩm xuất xứ thuần tuý",
+    "risk_note_vi": "Thấp",
+    "requires_expert": false,
+    "requires_expert_reason": null,
+    "source": "EVFTA Nghị định thư 1, Phụ lục II (OJ L186, 12.6.2020; PSR cập nhật HS2022 theo Quyết định 2/2024)",
+    "reviewed_by": null,
+    "reviewed_at": null
+  },
+  {
+    "cn_code": "08119085",
+    "rule_type": "WO_MATERIALS_SUGAR_CAP",
+    "rule_text_en": "Manufacture in which: all the fruit, nuts and peels of citrus fruits or melons of Chapter 8 used are wholly obtained; and the weight of sugar used does not exceed 20 % of the weight of the final product. (Chapter 8)",
+    "rule_text_vi": "Mọi quả, hạt Chương 8 phải có xuất xứ thuần tuý VÀ đường ≤ 20% trọng lượng thành phẩm",
+    "params": {
+      "tolerance_pct": "10",
+      "tolerance_basis": "WEIGHT_AND_VALUE",
+      "sugar_max_pct_weight": "20",
+      "restricted_chapters": [
+        8
+      ]
+    },
+    "insufficient_operations_vi": "Bóc vỏ, bỏ hạt, tách vỏ quả/hạt; bảo quản; phân loại; đóng gói",
+    "tolerance_note_vi": "Tối đa 10% trọng lượng hoặc giá xuất xưởng cho nguyên liệu không đạt (Điều 5.3(a)); không áp dụng cho sản phẩm xuất xứ thuần tuý",
+    "risk_note_vi": "Trung bình: nhà máy có thể trộn quả nhập khẩu",
+    "requires_expert": false,
+    "requires_expert_reason": null,
+    "source": "EVFTA Nghị định thư 1, Phụ lục II (OJ L186, 12.6.2020; PSR cập nhật HS2022 theo Quyết định 2/2024)",
+    "reviewed_by": null,
+    "reviewed_at": null
+  },
+  {
+    "cn_code": "08043000",
+    "rule_type": "WO_MATERIALS_SUGAR_CAP",
+    "rule_text_en": "Manufacture in which: all the fruit, nuts and peels of citrus fruits or melons of Chapter 8 used are wholly obtained; and the weight of sugar used does not exceed 20 % of the weight of the final product. (Chapter 8)",
+    "rule_text_vi": "Mọi quả, hạt Chương 8 phải có xuất xứ thuần tuý VÀ đường ≤ 20% trọng lượng thành phẩm",
+    "params": {
+      "tolerance_pct": "10",
+      "tolerance_basis": "WEIGHT_AND_VALUE",
+      "sugar_max_pct_weight": "20",
+      "restricted_chapters": [
+        8
+      ]
+    },
+    "insufficient_operations_vi": "Bóc vỏ, bỏ hạt, tách vỏ quả/hạt; bảo quản; phân loại; đóng gói",
+    "tolerance_note_vi": "Tối đa 10% trọng lượng hoặc giá xuất xưởng cho nguyên liệu không đạt (Điều 5.3(a)); không áp dụng cho sản phẩm xuất xứ thuần tuý",
+    "risk_note_vi": "Thấp",
+    "requires_expert": false,
+    "requires_expert_reason": null,
+    "source": "EVFTA Nghị định thư 1, Phụ lục II (OJ L186, 12.6.2020; PSR cập nhật HS2022 theo Quyết định 2/2024)",
+    "reviewed_by": null,
+    "reviewed_at": null
+  },
+  {
+    "cn_code": "08055090",
+    "rule_type": "WO_MATERIALS_SUGAR_CAP",
+    "rule_text_en": "Manufacture in which: all the fruit, nuts and peels of citrus fruits or melons of Chapter 8 used are wholly obtained; and the weight of sugar used does not exceed 20 % of the weight of the final product. (Chapter 8)",
+    "rule_text_vi": "Mọi quả, hạt Chương 8 phải có xuất xứ thuần tuý VÀ đường ≤ 20% trọng lượng thành phẩm",
+    "params": {
+      "tolerance_pct": "10",
+      "tolerance_basis": "WEIGHT_AND_VALUE",
+      "sugar_max_pct_weight": "20",
+      "restricted_chapters": [
+        8
+      ]
+    },
+    "insufficient_operations_vi": "Bóc vỏ, bỏ hạt, tách vỏ quả/hạt; bảo quản; phân loại; đóng gói",
+    "tolerance_note_vi": "Tối đa 10% trọng lượng hoặc giá xuất xưởng cho nguyên liệu không đạt (Điều 5.3(a)); không áp dụng cho sản phẩm xuất xứ thuần tuý",
+    "risk_note_vi": "Thấp",
+    "requires_expert": false,
+    "requires_expert_reason": null,
+    "source": "EVFTA Nghị định thư 1, Phụ lục II (OJ L186, 12.6.2020; PSR cập nhật HS2022 theo Quyết định 2/2024)",
+    "reviewed_by": null,
+    "reviewed_at": null
+  },
+  {
+    "cn_code": "08013200",
+    "rule_type": "WO_MATERIALS_SUGAR_CAP",
+    "rule_text_en": "Manufacture in which: all the fruit, nuts and peels of citrus fruits or melons of Chapter 8 used are wholly obtained; and the weight of sugar used does not exceed 20 % of the weight of the final product. (Chapter 8)",
+    "rule_text_vi": "Mọi quả, hạt Chương 8 phải có xuất xứ thuần tuý VÀ đường ≤ 20% trọng lượng thành phẩm",
+    "params": {
+      "tolerance_pct": "10",
+      "tolerance_basis": "WEIGHT_AND_VALUE",
+      "sugar_max_pct_weight": "20",
+      "restricted_chapters": [
+        8
+      ]
+    },
+    "insufficient_operations_vi": "Bóc vỏ, bỏ hạt, tách vỏ quả/hạt; bảo quản; phân loại; đóng gói",
+    "tolerance_note_vi": "Tối đa 10% trọng lượng hoặc giá xuất xưởng cho nguyên liệu không đạt (Điều 5.3(a)); không áp dụng cho sản phẩm xuất xứ thuần tuý",
+    "risk_note_vi": "Điều nhân từ điều thô nhập khẩu KHÔNG đạt (bóc vỏ là thao tác không đủ) – không ảnh hưởng thuế vì 0%",
+    "requires_expert": false,
+    "requires_expert_reason": null,
+    "source": "EVFTA Nghị định thư 1, Phụ lục II (OJ L186, 12.6.2020; PSR cập nhật HS2022 theo Quyết định 2/2024)",
+    "reviewed_by": null,
+    "reviewed_at": null
+  },
+  {
+    "cn_code": "08109020",
+    "rule_type": "WO_MATERIALS_SUGAR_CAP",
+    "rule_text_en": "Manufacture in which: all the fruit, nuts and peels of citrus fruits or melons of Chapter 8 used are wholly obtained; and the weight of sugar used does not exceed 20 % of the weight of the final product. (Chapter 8)",
+    "rule_text_vi": "Mọi quả, hạt Chương 8 phải có xuất xứ thuần tuý VÀ đường ≤ 20% trọng lượng thành phẩm",
+    "params": {
+      "tolerance_pct": "10",
+      "tolerance_basis": "WEIGHT_AND_VALUE",
+      "sugar_max_pct_weight": "20",
+      "restricted_chapters": [
+        8
+      ]
+    },
+    "insufficient_operations_vi": "Bóc vỏ, bỏ hạt, tách vỏ quả/hạt; bảo quản; phân loại; đóng gói",
+    "tolerance_note_vi": "Tối đa 10% trọng lượng hoặc giá xuất xưởng cho nguyên liệu không đạt (Điều 5.3(a)); không áp dụng cho sản phẩm xuất xứ thuần tuý",
+    "risk_note_vi": "Thấp",
+    "requires_expert": false,
+    "requires_expert_reason": null,
+    "source": "EVFTA Nghị định thư 1, Phụ lục II (OJ L186, 12.6.2020; PSR cập nhật HS2022 theo Quyết định 2/2024)",
+    "reviewed_by": null,
+    "reviewed_at": null
+  }
+]

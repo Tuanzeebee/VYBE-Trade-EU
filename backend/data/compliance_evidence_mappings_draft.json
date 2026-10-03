@@ -1,0 +1,20 @@
+{
+  "_note": "ĐỀ XUẤT ánh xạ loại bằng chứng cấp công ty của compliance sang loại bằng chứng người dùng nộp ở verification. CHƯA duyệt: luật TM duyệt trước khi coi là căn cứ pháp lý.",
+  "mappings": [
+    {
+      "compliance_code": "EUR1_ISSUED_12M",
+      "verification_code": "eur1_issued",
+      "note": "EUR.1 đã cấp (che giá), hạn 12 tháng do hệ thống tính."
+    },
+    {
+      "compliance_code": "EU_ESTABLISHMENT_LISTING",
+      "verification_code": "eu_establishment_listing",
+      "note": "Loại mới (nháp) — verification chưa có loại bằng chứng tương ứng."
+    },
+    {
+      "compliance_code": "BIVALVE_AREA_CLASSIFICATION",
+      "verification_code": "bivalve_area_classification",
+      "note": "Loại mới (nháp) — chỉ cần với nhuyễn thể hai mảnh vỏ."
+    }
+  ]
+}

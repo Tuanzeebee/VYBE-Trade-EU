@@ -25,12 +25,15 @@ def add_months(start: dt.date, months: int) -> dt.date:
 
 
 def evidence_expiry(
-    issued_at: dt.date, validity_months: int | None, supplied: dt.date | None
+    issued_at: dt.date | None, validity_months: int | None, supplied: dt.date | None
 ) -> dt.date | None:
     """Loại bằng chứng có validity_months (vd xuất xứ: 12) thì hạn do hệ thống tính từ ngày cấp,
-    không tin ngày client gửi; loại khác dùng ngày do người dùng khai (có thể không có hạn)."""
+    không tin ngày client gửi; loại khác dùng ngày do người dùng khai (có thể không có hạn).
+
+    U4: chưa có ngày cấp thì loại có validity_months chưa tính được hạn (None); admin nhập ngày
+    cấp mới duyệt được (admin_service.review_evidence)."""
     if validity_months is not None:
-        return add_months(issued_at, validity_months)
+        return add_months(issued_at, validity_months) if issued_at is not None else None
     return supplied
 
 

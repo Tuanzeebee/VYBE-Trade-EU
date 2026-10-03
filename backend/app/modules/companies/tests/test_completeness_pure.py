@@ -353,3 +353,16 @@ def test_buyer_products_are_ignored() -> None:
 def test_buyer_eori_alone_counts_and_wrong_country_prefix_does_not() -> None:
     assert build_facts(buyer(eori_number="DE123456789012"), [])["vat_or_eori"] is True
     assert build_facts(buyer(vat_number="FR123456789"), [])["vat_or_eori"] is False
+
+
+def test_not_applicable_fact_leaves_numerator_and_denominator() -> None:
+    """U2: fact None = không áp dụng (vd ảnh sản phẩm với công ty chỉ làm dịch vụ)."""
+    from app.modules.companies.completeness import WeightRow, compute_score
+
+    rows = [
+        WeightRow("a", "g", Decimal("10"), True),
+        WeightRow("b", "g", Decimal("30"), True),
+    ]
+    result = compute_score({"a": True, "b": None}, rows)
+    assert result.score == Decimal("100.00")
+    assert result.missing == ()

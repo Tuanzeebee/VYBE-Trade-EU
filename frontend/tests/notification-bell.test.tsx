@@ -138,8 +138,13 @@ describe('describe()', () => {
     ['verification_status', { outcome: 'expire' }, 'hết hạn'],
     ['expiry_alert', {}, 'sắp hết hạn'],
     ['rfq', {}, 'báo giá'],
+    ['rfq', { event: 'quote_sent' }, 'nhận được báo giá mới'],
+    ['rfq', { event: 'quote_accepted' }, 'đã chấp nhận báo giá'],
+    ['rfq', { event: 'quote_declined' }, 'đã từ chối báo giá'],
+    ['rfq', { event: 'status' }, 'đã cập nhật yêu cầu báo giá'],
     ['message', {}, 'tin nhắn'],
     ['new_match', {}, 'phù hợp'],
+    ['reengagement', { kind: 'digest', counts: { message: 2 }, total: 2 }, 'chưa đọc đang chờ bạn'],
   ] as const)('%s %j', (type, payload, expected) => {
     expect(describeNotification({ type, payload })).toContain(expected);
   });

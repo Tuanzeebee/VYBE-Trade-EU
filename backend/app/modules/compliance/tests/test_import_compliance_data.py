@@ -145,7 +145,7 @@ async def test_unknown_hs_reports_line_and_writes_nothing(
         ({"duty_type": "other"}, "duty_type"),
         ({"quota_required": "maybe"}, "quota_required"),
         ({"valid_from": "không-phải-ngày"}, ""),
-        ({"destination": "US"}, "destination"),
+        ({"destination": "USA"}, "destination"),
     ],
 )
 def test_bad_values_are_reported_with_line_number(

@@ -1,6 +1,6 @@
 'use client';
 
-// Ô chọn mã HS có gợi ý (B4). Dùng chung cho sản phẩm, máy tính thuế/xuất xứ, bộ lọc danh bạ.
+// Ô chọn mã HS có gợi ý (B4). Dùng chung cho sản phẩm, công cụ tính thuế/xuất xứ, bộ lọc danh bạ.
 import React, { useEffect, useId, useState } from 'react';
 import { createApiClient } from '../lib/api/client';
 import type { components } from '../lib/api/schema';
@@ -36,6 +36,13 @@ export default function HsCodePicker({ label, value, onChange, required, disable
   const [status, setStatus] = useState<Status>('idle');
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(-1);
+
+  // Mã được chọn từ bên ngoài (U3: gợi ý theo tên sản phẩm) → hiện đúng mã đó trong ô.
+  const valueCode = value?.code ?? null;
+  useEffect(() => {
+    if (value) setText(display(value));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [valueCode, language]);
 
   // Lấy gợi ý sau khi ngừng gõ; kết quả của lần gõ cũ bị bỏ (cancelled) để không ghi đè lần mới.
   useEffect(() => {

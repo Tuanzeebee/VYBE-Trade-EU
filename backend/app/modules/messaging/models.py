@@ -11,14 +11,17 @@ from sqlalchemy import (
     ForeignKey,
     Index,
     Numeric,
+    SmallInteger,
     String,
     Text,
     Uuid,
+    func,
     text,
 )
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.db import Base
+from app.modules.messaging.quote_logic import BalanceTerms, QuoteStatus
 
 
 class Incoterm(StrEnum):
@@ -84,11 +87,81 @@ class Rfq(Base):
     )
 
 
+class RfqQuote(Base):
+    """Báo giá có cấu trúc của seller cho một RFQ (U8). Trạng thái đổi theo quote_logic."""
+
+    __tablename__ = "rfq_quotes"
+    __table_args__ = (
+        CheckConstraint("unit_price > 0", name="positive_price"),
+        CheckConstraint("quantity > 0", name="positive_quantity"),
+        CheckConstraint("deposit_percent BETWEEN 0 AND 100", name="deposit_range"),
+        CheckConstraint(
+            "balance_terms IN ('tt_before_shipment', 'against_bl_copy', 'lc_at_sight', 'none')",
+            name="balance",
+        ),
+        CheckConstraint(
+            "(deposit_percent = 100) = (balance_terms = 'none')", name="balance_matches_deposit"
+        ),
+        CheckConstraint("lead_time_days BETWEEN 1 AND 365", name="lead_time_range"),
+        CheckConstraint(
+            "status IN ('sent', 'accepted', 'declined', 'withdrawn', 'superseded')", name="status"
+        ),
+        Index("ix_rfq_quotes_rfq_created", "rfq_id", "created_at"),
+        Index(
+            "uq_rfq_quotes_one_open",
+            "rfq_id",
+            unique=True,
+            postgresql_where=text("status = 'sent'"),
+        ),
+        Index(
+            "uq_rfq_quotes_one_accepted",
+            "rfq_id",
+            unique=True,
+            postgresql_where=text("status = 'accepted'"),
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, primary_key=True, default=uuid.uuid4, server_default=text("gen_random_uuid()")
+    )
+    rfq_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("rfqs.id"))
+    exporter_company_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("companies.id"))
+    unit_price: Mapped[Decimal] = mapped_column(Numeric(14, 2))
+    currency: Mapped[str] = mapped_column(String(3))
+    quantity: Mapped[Decimal] = mapped_column(Numeric(14, 2))
+    unit: Mapped[str] = mapped_column(String(32))
+    incoterm: Mapped[Incoterm] = mapped_column(Enum(Incoterm, name="incoterm"))
+    named_place: Mapped[str | None] = mapped_column(String(100))
+    deposit_percent: Mapped[int] = mapped_column(SmallInteger)
+    balance_terms: Mapped[BalanceTerms] = mapped_column(
+        Enum(BalanceTerms, native_enum=False, length=32, create_constraint=False)
+    )
+    lead_time_days: Mapped[int] = mapped_column(SmallInteger)
+    valid_until: Mapped[dt.date] = mapped_column(Date)
+    notes: Mapped[str | None] = mapped_column(Text)
+    status: Mapped[QuoteStatus] = mapped_column(
+        Enum(QuoteStatus, native_enum=False, length=16, create_constraint=False),
+        default=QuoteStatus.sent,
+        server_default="sent",
+    )
+    decision_reason: Mapped[str | None] = mapped_column(Text)
+    decided_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=text("clock_timestamp()")
+    )
+
+
 class Conversation(Base):
-    """Hội thoại giữa hai công ty, mở tự động cùng RFQ (F2). Mỗi RFQ đúng một hội thoại."""
+    """Hội thoại giữa hai công ty (F2).
+
+    - Theo RFQ: mở tự động cùng RFQ, mỗi RFQ đúng một hội thoại; a = buyer, b = exporter.
+    - Trực tiếp (U7): rfq_id NULL; a = bên mở, b = nhà cung cấp. Mỗi cặp công ty tối đa MỘT hội
+      thoại trực tiếp, không phân biệt chiều (unique index uq_conversations_direct_pair bên dưới).
+    """
 
     __tablename__ = "conversations"
     __table_args__ = (
+        CheckConstraint("company_a_id <> company_b_id", name="two_companies"),
         Index("ix_conversations_company_a", "company_a_id"),
         Index("ix_conversations_company_b", "company_b_id"),
     )
@@ -96,12 +169,21 @@ class Conversation(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         Uuid, primary_key=True, default=uuid.uuid4, server_default=text("gen_random_uuid()")
     )
-    rfq_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("rfqs.id"), unique=True)
-    company_a_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("companies.id"))  # buyer
+    rfq_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("rfqs.id"), unique=True)
+    company_a_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("companies.id"))  # buyer / bên mở
     company_b_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("companies.id"))  # exporter
     created_at: Mapped[dt.datetime] = mapped_column(
         DateTime(timezone=True), server_default=text("clock_timestamp()")
     )
+
+
+Index(
+    "uq_conversations_direct_pair",
+    func.least(Conversation.company_a_id, Conversation.company_b_id),
+    func.greatest(Conversation.company_a_id, Conversation.company_b_id),
+    unique=True,
+    postgresql_where=Conversation.rfq_id.is_(None),
+)
 
 
 class Message(Base):

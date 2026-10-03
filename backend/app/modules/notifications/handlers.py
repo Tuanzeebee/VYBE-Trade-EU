@@ -11,9 +11,17 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 from app.core.db import get_sessionmaker
 from app.core.events import subscribe
 from app.modules.auth import service as auth
+from app.modules.billing.events import OrderPaid
 from app.modules.companies import product_service
 from app.modules.companies import service as companies
-from app.modules.messaging.events import MessageSent, RfqCreated, RfqStatusChanged
+from app.modules.dashboard.events import ProfileViewed
+from app.modules.messaging.events import (
+    MessageSent,
+    QuoteDecided,
+    QuoteSent,
+    RfqCreated,
+    RfqStatusChanged,
+)
 from app.modules.notifications import center
 from app.modules.notifications.models import NotificationType
 from app.modules.verification.events import VerificationStatusChanged
@@ -162,6 +170,73 @@ async def on_rfq_status_changed(event: RfqStatusChanged) -> None:
     )
 
 
+async def on_quote_sent(event: QuoteSent) -> None:
+    """Buyer thấy có báo giá mới cho RFQ của mình (chỉ trong ứng dụng)."""
+    await _record_in_app(
+        NotificationType.rfq,
+        event.buyer_company_id,
+        {
+            "event": "quote_sent",
+            "rfq_id": str(event.rfq_id),
+            "quote_id": str(event.quote_id),
+            "exporter_name": event.exporter_name,
+            "product_name": event.product_name,
+        },
+    )
+
+
+async def on_quote_decided(event: QuoteDecided) -> None:
+    """Seller thấy buyer chấp nhận hoặc từ chối báo giá (chỉ trong ứng dụng)."""
+    await _record_in_app(
+        NotificationType.rfq,
+        event.exporter_company_id,
+        {
+            "event": f"quote_{event.decision}",
+            "rfq_id": str(event.rfq_id),
+            "quote_id": str(event.quote_id),
+            "buyer_name": event.buyer_name,
+            "product_name": event.product_name,
+        },
+    )
+
+
+PROFILE_VIEW_REPEAT = dt.timedelta(hours=24)
+
+
+async def on_profile_viewed(event: ProfileViewed) -> None:
+    """Seller thấy buyer đã xác minh vừa xem hồ sơ; cùng một buyer tối đa một thông báo mỗi 24 giờ.
+    Chỉ trong ứng dụng; lỗi chỉ ghi log."""
+    try:
+        async with _session_factory()() as session:
+            user_id = await companies.get_owner_user_id(session, event.company_id)
+            if user_id is None:
+                return
+            since = dt.datetime.now(dt.UTC) - PROFILE_VIEW_REPEAT
+            viewer = str(event.viewer_company_id)
+            if await center.has_recent(
+                session,
+                user_id,
+                NotificationType.profile_viewed,
+                "viewer_company_id",
+                viewer,
+                since,
+            ):
+                return
+            await center.create_notification(
+                session,
+                user_id,
+                NotificationType.profile_viewed,
+                {
+                    "viewer_company_id": viewer,
+                    "viewer_name": event.viewer_name,
+                    "viewer_country": event.viewer_country,
+                },
+                role="exporter",
+            )
+    except Exception:
+        log.exception("Không tạo được thông báo profile_viewed cho %s", event.company_id)
+
+
 async def on_message_sent(event: MessageSent) -> None:
     """Bên nhận thấy tin mới trong ứng dụng và nhận email (không kèm nội dung tin)."""
     await _record_in_app(
@@ -178,9 +253,28 @@ async def on_message_sent(event: MessageSent) -> None:
     )
 
 
+async def on_order_paid(event: OrderPaid) -> None:
+    """U19: admin xác nhận đã nhận chuyển khoản — công ty thấy quyền dùng đã mở (trong ứng dụng)."""
+    await _record_in_app(
+        NotificationType.order,
+        event.company_id,
+        {
+            "event": "paid",
+            "order_id": str(event.order_id),
+            "reference": event.reference,
+            "item_name_vi": event.item_name_vi,
+            "item_name_en": event.item_name_en,
+        },
+    )
+
+
 def register() -> None:
     subscribe(VerificationStatusChanged, on_verification_status_changed)
     subscribe(VerificationStatusChanged, on_new_supplier_verified)
     subscribe(RfqCreated, on_rfq_created)
     subscribe(RfqStatusChanged, on_rfq_status_changed)
     subscribe(MessageSent, on_message_sent)
+    subscribe(QuoteSent, on_quote_sent)
+    subscribe(QuoteDecided, on_quote_decided)
+    subscribe(ProfileViewed, on_profile_viewed)
+    subscribe(OrderPaid, on_order_paid)

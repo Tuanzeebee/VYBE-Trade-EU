@@ -6,6 +6,9 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { getMyCompany, type CompanyOut } from '../lib/companyApi';
 import { listMyRequests, submitRequest, type VerificationRequest } from '../lib/verificationApi';
+import VerificationTier from './VerificationTier';
+import OwnerChecks from './OwnerChecks';
+import TrustScorePanel from './TrustScorePanel';
 
 const STATUS: Record<string, { label: string; tone: string }> = {
   unverified: { label: 'Chưa xác minh', tone: 'bg-slate-100 text-slate-700' },
@@ -75,8 +78,8 @@ export default function VerificationPanel() {
         {status === 'verified' && (
           <p className="mt-3 text-sm text-slate-700">
             {company.verification_level === 'evfta_verified'
-              ? tr('Mức EVFTA-verified: đã đủ bằng chứng bắt buộc còn hạn cho nhóm hàng của bạn.')
-              : tr('Mức cơ bản: nộp đủ bằng chứng bắt buộc còn hạn để đạt EVFTA-verified.')}
+              ? tr('Đủ bằng chứng xuất xứ bắt buộc còn hạn cho nhóm hàng của bạn.')
+              : tr('Chưa đủ bằng chứng xuất xứ bắt buộc còn hạn cho nhóm hàng của bạn.')}
             {company.expires_at && (
               <>
                 {' '}
@@ -114,6 +117,9 @@ export default function VerificationPanel() {
           </button>
         )}
       </section>
+      <VerificationTier />
+      <TrustScorePanel />
+      <OwnerChecks />
     </div>
   );
 }

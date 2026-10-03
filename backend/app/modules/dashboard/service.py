@@ -14,12 +14,15 @@ from typing import Any
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core import entitlements
 from app.core.errors import AppError
+from app.core.events import publish
 from app.modules.auth.schemas import CurrentUser
 from app.modules.companies import product_service
 from app.modules.companies import service as companies
 from app.modules.compliance import service as compliance
 from app.modules.copilot import service as copilot
+from app.modules.dashboard.events import ProfileViewed
 from app.modules.dashboard.models import DashboardEvent, ProfileView
 from app.modules.dashboard.schemas import (
     BuyerDashboard,
@@ -28,6 +31,8 @@ from app.modules.dashboard.schemas import (
     CopilotTile,
     ExporterDashboard,
     MissingItem,
+    ProfileViewerOut,
+    ProfileViewersOut,
     ProfileViewsData,
     ProfileViewsTile,
     QuestionBrief,
@@ -50,6 +55,7 @@ WEEK = dt.timedelta(days=7)
 RECENT_LIMIT = 5
 TARGET_RATIO = Decimal("0.90")  # spec §5.8: thông tin mới ở 90% lượt quay lại
 VIEW_DEDUPE = dt.timedelta(hours=1)
+FREE_VIEWERS = 3  # U19: số buyer hiện tên khi chưa mua "danh sách đầy đủ"
 
 
 # ── Lượt xem hồ sơ (G1) ────────────────────────────────────────────────────────
@@ -80,10 +86,100 @@ async def record_profile_view(
     session.add(
         ProfileView(company_id=company_id, viewer_company_id=viewer_company, viewed_at=moment)
     )
+    identity = None
+    if viewer_company is not None:
+        identity = (await companies.get_viewer_identities(session, [viewer_company], moment)).get(
+            viewer_company
+        )
     await session.commit()
+    if identity is not None and identity.identifiable:
+        await publish(
+            ProfileViewed(
+                company_id=company_id,
+                viewer_company_id=identity.id,
+                viewer_name=identity.legal_name,
+                viewer_country=identity.country,
+            )
+        )
+
+
+async def list_profile_viewers(
+    session: AsyncSession, user: CurrentUser, days: int, now: dt.datetime | None = None
+) -> ProfileViewersOut:
+    """U9: ai đã xem hồ sơ của công ty người gọi trong `days` ngày. Chưa có công ty → rỗng.
+    U19: tên đầy đủ cần quyền profile_viewers_full; chưa có thì chỉ FREE_VIEWERS tên gần nhất."""
+    moment = now or dt.datetime.now(dt.UTC)
+    empty = ProfileViewersOut(
+        days=days, total_views=0, guest_views=0, anonymous_company_views=0, viewers=[]
+    )
+    company_id = await companies.get_company_id(session, user.id)
+    if company_id is None:
+        return empty
+    rows = (
+        await session.execute(
+            select(
+                ProfileView.viewer_company_id,
+                func.count(),
+                func.max(ProfileView.viewed_at),
+            )
+            .where(
+                ProfileView.company_id == company_id,
+                ProfileView.viewed_at > moment - dt.timedelta(days=days),
+            )
+            .group_by(ProfileView.viewer_company_id)
+        )
+    ).all()
+    identities = await companies.get_viewer_identities(
+        session, [r[0] for r in rows if r[0] is not None], moment
+    )
+    guests = anonymous = 0
+    viewers: list[ProfileViewerOut] = []
+    for viewer_id, views, last in rows:
+        identity = identities.get(viewer_id) if viewer_id is not None else None
+        if viewer_id is None:
+            guests += views
+        elif identity is None or not identity.identifiable:
+            anonymous += views
+        else:
+            viewers.append(
+                ProfileViewerOut(
+                    legal_name=identity.legal_name,
+                    country=identity.country,
+                    business_type=identity.business_type,
+                    views=views,
+                    last_viewed_at=last,
+                )
+            )
+    viewers.sort(key=lambda v: v.last_viewed_at, reverse=True)
+    full = await entitlements.has_feature(session, company_id, entitlements.PROFILE_VIEWERS_FULL)
+    shown = viewers if full else viewers[:FREE_VIEWERS]
+    return ProfileViewersOut(
+        days=days,
+        total_views=guests + anonymous + sum(v.views for v in viewers),
+        guest_views=guests,
+        anonymous_company_views=anonymous,
+        viewers=shown,
+        full=full,
+        hidden_viewers=len(viewers) - len(shown),
+    )
 
 
 # ── Dấu vân tay và ghi sự kiện (G3) ────────────────────────────────────────────
+async def last_opened_at(
+    session: AsyncSession, user_ids: list[uuid.UUID]
+) -> dict[uuid.UUID, dt.datetime]:
+    """Lần mở dashboard gần nhất của từng người (J4): tín hiệu "còn dùng" tốt hơn last_login_at vì
+    phiên đăng nhập kéo dài. Người chưa từng mở thì vắng trong kết quả."""
+    if not user_ids:
+        return {}
+    rows = await session.execute(
+        select(DashboardEvent.user_id, func.max(DashboardEvent.opened_at))
+        .where(DashboardEvent.user_id.in_(user_ids))
+        .group_by(DashboardEvent.user_id)
+    )
+    return {uid: opened for uid, opened in rows.all()}
+
+
 def _fingerprint(data: Any) -> str:
     raw = json.dumps(data, sort_keys=True, default=str, ensure_ascii=False)
     return hashlib.sha256(raw.encode()).hexdigest()[:16]

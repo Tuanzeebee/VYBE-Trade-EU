@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { NextIntlClientProvider } from 'next-intl';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import TariffCalculator from '@/components/TariffCalculator';
@@ -75,14 +75,23 @@ const RANKED = (over: Record<string, unknown> = {}) => ({
   ...over,
 });
 
+const EVFTA = { code: 'EVFTA', name_vi: 'Hiệp định EVFTA (Việt Nam – EU)', name_en: 'EU–Vietnam FTA (EVFTA)' };
+let agreementsFor: (destination: string) => unknown[] = () => [EVFTA];
+let quotaOptions: { subtypes: unknown[]; quota_agreements: string[] } = { subtypes: [], quota_agreements: [] };
+
 function serve(tariff: () => Response | Promise<Response>, markets: () => Response | Promise<Response> = () => json(200, RANKED())) {
   tariffBodies = [];
   marketBodies = [];
   vi.stubGlobal(
     'fetch',
     vi.fn(async (req: Request) => {
-      const path = new URL(req.url).pathname;
+      const url = new URL(req.url);
+      const path = url.pathname;
       if (path === '/api/public/hs-codes') return json(200, [COFFEE]);
+      if (path === '/api/public/tariff/options') {
+        const destination = url.searchParams.get('destination') ?? '';
+        return json(200, { hs_code: '090111', destination, agreements: agreementsFor(destination), ...quotaOptions });
+      }
       if (path === '/api/public/tariff') {
         tariffBodies.push(await req.json());
         return tariff();
@@ -140,7 +149,7 @@ describe('Máy tính tiết kiệm thuế (C2)', () => {
     serve(() => json(200, OK));
     renderCalc();
     await pickCoffee();
-    fireEvent.change(screen.getByLabelText(/Nước EU nhập khẩu/), { target: { value: 'FR' } });
+    fireEvent.change(screen.getByLabelText(/Thị trường nhập khẩu/), { target: { value: 'FR' } });
     fillValue(' 10000.50 ');
     fireEvent.change(screen.getByLabelText(/Số lô hàng mỗi năm/), { target: { value: '4' } });
     submit();
@@ -276,16 +285,163 @@ describe('Máy tính tiết kiệm thuế (C2)', () => {
     expect(await screen.findByText(/chưa được hỗ trợ/)).toBeInTheDocument();
   });
 
-  it('có đủ 27 nước EU để chọn', () => {
+  it('có đủ 27 nước EU để chọn, và nhóm thị trường ngoài EU (U12)', () => {
     serve(() => json(200, OK));
     renderCalc();
-    expect(screen.getByLabelText(/Nước EU nhập khẩu/).querySelectorAll('option')).toHaveLength(27);
+    const select = screen.getByLabelText(/Thị trường nhập khẩu/);
+    const groups = select.querySelectorAll('optgroup');
+    expect(groups[0].getAttribute('label')).toBe('Liên minh châu Âu (EU)');
+    expect(groups[0].querySelectorAll('option')).toHaveLength(27);
+    const others = Array.from(groups[1].querySelectorAll('option')).map((o) => o.getAttribute('value'));
+    expect(others).toContain('JP');
+    expect(others).not.toContain('VN');
+  });
+
+  it('U12: thị trường có nhiều hiệp định phải chọn hiệp định; kết quả ghi tên hiệp định', async () => {
+    agreementsFor = (d) =>
+      d === 'JP'
+        ? [
+            { code: 'CPTPP', name_vi: 'Hiệp định CPTPP', name_en: 'CPTPP' },
+            { code: 'VJEPA', name_vi: 'Hiệp định VJEPA (Việt Nam – Nhật Bản)', name_en: 'Vietnam–Japan EPA (VJEPA)' },
+          ]
+        : [EVFTA];
+    serve(() => json(200, { ...OK, destination: 'JP', agreement: { code: 'VJEPA', name_vi: 'Hiệp định VJEPA (Việt Nam – Nhật Bản)', name_en: 'VJEPA' } }));
+    renderCalc();
+    await pickCoffee();
+    fireEvent.change(screen.getByLabelText(/Thị trường nhập khẩu/), { target: { value: 'JP' } });
+    const agreementSelect = await screen.findByLabelText('Hiệp định áp dụng');
+    fillValue('10000');
+    submit();
+    expect((await screen.findByRole('alert')).textContent).toContain('nhiều hiệp định');
+    expect(tariffBodies).toHaveLength(0);
+    fireEvent.change(agreementSelect, { target: { value: 'VJEPA' } });
+    submit();
+    expect(await screen.findByTestId('preferential-label')).toHaveTextContent('Hiệp định VJEPA');
+    expect(tariffBodies[0]).toMatchObject({ destination: 'JP', agreement: 'VJEPA' });
+    expect(screen.queryByRole('button', { name: 'Xem thị trường nên xuất' })).toBeNull(); // xếp hạng chỉ cho EU
+    agreementsFor = () => [EVFTA];
+  });
+
+  it('U12: thị trường chưa có dữ liệu đã duyệt được báo trước', async () => {
+    agreementsFor = (d) => (d === 'US' ? [] : [EVFTA]);
+    serve(() => json(200, OK));
+    renderCalc();
+    await pickCoffee();
+    fireEvent.change(screen.getByLabelText(/Thị trường nhập khẩu/), { target: { value: 'US' } });
+    expect(await screen.findByTestId('no-agreement')).toHaveTextContent('Chưa có dữ liệu thuế đã được chuyên gia duyệt');
+    agreementsFor = () => [EVFTA];
   });
 
   it('bản tiếng Anh dùng nhãn tiếng Anh', () => {
     serve(() => json(200, OK));
     renderCalc('en');
     expect(screen.getByRole('button', { name: /Calculate/ })).toBeInTheDocument();
+  });
+
+
+  describe('hạn ngạch thuế quan (U13)', () => {
+    const SUBTYPES = [
+      { code: 'rice_fragrant_listed', name_vi: 'Gạo thơm (giống trong danh sách)', name_en: 'Fragrant rice (listed)', description_vi: null, description_en: null },
+      { code: 'rice_fragrant_other', name_vi: 'Gạo thơm giống khác (vd ST25)', name_en: 'Other fragrant rice', description_vi: null, description_en: null },
+    ];
+    const SCENARIOS = result({
+      status: 'quota_scenarios',
+      data_status: 'reviewed',
+      savings: '10000.00',
+      scenarios: [
+        { kind: 'in_quota', duty_type: 'ad_valorem', rate: '0.0000', specific: null, duty: '0.00' },
+        { kind: 'out_of_quota', duty_type: 'specific', rate: null, specific: '100.0000', duty: '10000.00' },
+      ],
+      conditions: ['origin', 'allocation', 'subtype', 'licence'],
+      quota: {
+        quota_code: '09.TEST', quota_year: 2026, volume: '30000.000', volume_unit: 'tonne', specific_unit: 'tonne',
+        licence_note_vi: 'Cần giấy chứng nhận chủng loại gạo thơm.', licence_note_en: null, allocation_note_vi: null, allocation_note_en: null, source_url: null,
+      },
+      subtype: SUBTYPES[0],
+      quantity: '100',
+      quota_allocated: 'unknown',
+    });
+
+    afterEach(() => {
+      quotaOptions = { subtypes: [], quota_agreements: [] };
+    });
+
+    it('hỏi phân nhóm, phân bổ và khối lượng; gửi đúng tham số; kết quả là bảng kịch bản kèm điều kiện', async () => {
+      quotaOptions = { subtypes: SUBTYPES, quota_agreements: ['EVFTA'] };
+      serve(() => json(200, SCENARIOS));
+      renderCalc();
+      await pickCoffee();
+      const fields = await screen.findByTestId('quota-fields');
+      fireEvent.change(within(fields).getByLabelText('Phân nhóm hàng'), { target: { value: 'rice_fragrant_listed' } });
+      fireEvent.click(within(fields).getByLabelText('Không rõ'));
+      fireEvent.change(within(fields).getByLabelText('Khối lượng lô hàng (tấn)'), { target: { value: '100' } });
+      fillValue('50000');
+      submit();
+      const table = await screen.findByTestId('quota-scenarios');
+      expect(within(table).getByTestId('scenario-in_quota')).toHaveTextContent('0%');
+      expect(within(table).getByTestId('scenario-out_of_quota')).toHaveTextContent('100 EUR/tấn');
+      expect(table).toHaveTextContent('Chênh lệch nếu được phân bổ hạn ngạch');
+      expect(within(table).getByTestId('quota-conditions').querySelectorAll('li')).toHaveLength(4);
+      expect(table).toHaveTextContent('xác nhận với nhà nhập khẩu');
+      expect(table).toHaveTextContent('Cần giấy chứng nhận chủng loại gạo thơm.');
+      expect(tariffBodies[0]).toMatchObject({ subtype_code: 'rice_fragrant_listed', quantity: '100', quota_allocated: 'unknown' });
+    });
+
+    it('U14: kết quả dùng dữ liệu minh hoạ hiện banner; cảnh báo ngành hiện trong kết quả', async () => {
+      serve(() =>
+        json(200, {
+          ...OK,
+          data_status: 'demo_unreviewed',
+          alerts: [{ code: 'iuu_yellow_card', severity: 'warning', title_vi: 'Thẻ vàng IUU', title_en: 'IUU yellow card', body_vi: null, body_en: null, source_url: null, data_status: 'demo_unreviewed' }],
+        }),
+      );
+      renderCalc();
+      await pickCoffee();
+      fillValue('10000');
+      submit();
+      expect(await screen.findByTestId('demo-banner')).toHaveTextContent('Dữ liệu minh hoạ — chưa được chuyên gia pháp lý duyệt');
+      expect(screen.getByRole('list', { name: 'Cảnh báo ngành' })).toHaveTextContent('Thẻ vàng IUU');
+    });
+
+    it('không có hạn ngạch đã duyệt thì không hỏi phân nhóm, không gửi tham số hạn ngạch', async () => {
+      serve(() => json(200, OK));
+      renderCalc();
+      await pickCoffee();
+      await screen.findByLabelText(/Thị trường nhập khẩu/);
+      expect(screen.queryByTestId('quota-fields')).toBeNull();
+      fillValue('10000');
+      submit();
+      await screen.findByText(/Tiết kiệm mỗi lô/);
+      expect(tariffBodies[0]).not.toHaveProperty('subtype_code');
+    });
+
+    it.each([
+      ['subtype_not_eligible', 'không thuộc danh sách đủ điều kiện'],
+      ['quantity_required', 'Nhập khối lượng'],
+      ['no_quota_data', 'Chưa có dữ liệu hạn ngạch'],
+    ])('cần xem xét (%s): câu hướng dẫn riêng, không có con số', async (reason, text) => {
+      serve(() => json(200, result({ status: 'needs_review', review_reason: reason })));
+      renderCalc();
+      await pickCoffee();
+      fillValue('10000');
+      submit();
+      expect(await screen.findByTestId('review-message')).toHaveTextContent(text);
+      expect(screen.queryByTestId('quota-scenarios')).toBeNull();
+      expect(screen.queryByText(/Tiết kiệm mỗi lô/)).toBeNull();
+    });
+
+    it('khối lượng sai định dạng bị chặn trước khi gọi API', async () => {
+      quotaOptions = { subtypes: SUBTYPES, quota_agreements: ['EVFTA'] };
+      serve(() => json(200, SCENARIOS));
+      renderCalc();
+      await pickCoffee();
+      const fields = await screen.findByTestId('quota-fields');
+      fireEvent.change(within(fields).getByLabelText('Khối lượng lô hàng (tấn)'), { target: { value: '1,5' } });
+      fillValue('50000');
+      submit();
+      expect((await screen.findByRole('alert')).textContent).toContain('Khối lượng phải là số dương');
+      expect(tariffBodies).toHaveLength(0);
+    });
   });
 
   describe('thị trường nên xuất', () => {

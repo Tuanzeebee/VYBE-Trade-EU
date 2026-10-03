@@ -19,7 +19,9 @@ const conversation = (over: Record<string, unknown> = {}) => ({
   id: 'c-1',
   rfq_id: 'r-1',
   product_name: 'Gạo thơm Jasmine',
+  counterpart_company_id: 'b-1',
   counterpart_name: 'Global Foods GmbH',
+  counterpart_verified: false,
   last_message: null,
   last_message_at: '2026-09-30T01:00:00Z',
   unread_count: 0,
@@ -133,6 +135,23 @@ describe('Hội thoại (F2, F3)', () => {
     wrap();
     expect(await screen.findByText('Chào từ Hai')).toBeInTheDocument();
     expect(calls.some((c) => c.path === '/api/me/conversations/c-1/messages')).toBe(false);
+  });
+
+  it('U7: hội thoại trực tiếp (không RFQ) ghi rõ, ?c= chọn đúng, kèm nhãn xác minh của bên kia', async () => {
+    search = 'c=c-2';
+    serve({
+      conversations: [
+        conversation(),
+        conversation({ id: 'c-2', rfq_id: null, product_name: '', counterpart_name: 'Nông Sản Lúa Vàng', counterpart_verified: true }),
+      ],
+    });
+    wrap();
+    const thread = await screen.findByRole('region', { name: 'Nội dung hội thoại' });
+    expect(within(thread).getByRole('heading')).toHaveTextContent('Nông Sản Lúa Vàng');
+    expect(within(thread).getByTestId('counterpart-verification')).toHaveTextContent('Đã xác minh');
+    expect(thread).toHaveTextContent('Tin nhắn trực tiếp');
+    const list = screen.getByRole('list', { name: 'Danh sách hội thoại' });
+    expect(within(list).getByRole('button', { name: /Global Foods GmbH/ })).toHaveTextContent('Gạo thơm Jasmine');
   });
 
   it('gửi tin: hiện ngay trong luồng và xóa ô nhập', async () => {

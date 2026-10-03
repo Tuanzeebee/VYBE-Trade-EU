@@ -25,6 +25,7 @@ from app.modules.verification.admin_schemas import (
     RuleIn,
     RulePatch,
 )
+from app.modules.verification.logic import evidence_expiry
 from app.modules.verification.models import (
     ApprovalStatus,
     Evidence,
@@ -280,6 +281,19 @@ async def review_evidence(
     if data.decision == "reject" and reason is None:
         raise AppError("reason_required", "A reason is required to reject evidence", 422)
     before = evidence_service.snapshot(row)
+    if data.decision == "approve":
+        # U4: admin đọc giấy tờ rồi nhập ngày (seller không bắt buộc nhập). Loại có hạn dùng mà chưa
+        # có ngày cấp thì không duyệt được — tránh bằng chứng "còn hạn vĩnh viễn".
+        type_row = await session.get_one(EvidenceType, row.type_code)
+        issued_at = data.issued_at or row.issued_at
+        supplied = data.expires_at if data.expires_at is not None else row.expires_at
+        if type_row.validity_months is not None and issued_at is None:
+            raise AppError(
+                "issued_at_required", "Enter the issue date to approve this evidence type", 422
+            )
+        expires_at = evidence_expiry(issued_at, type_row.validity_months, supplied)
+        evidence_service.check_dates(issued_at, expires_at)
+        row.issued_at, row.expires_at = issued_at, expires_at
     row.approval_status = (
         ApprovalStatus.approved if data.decision == "approve" else ApprovalStatus.rejected
     )

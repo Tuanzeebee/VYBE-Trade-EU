@@ -3,6 +3,8 @@
 // Thuế MFN so với EVFTA của một mã HS, hiện tại sản phẩm. Chỉ đọc số liệu đã được người duyệt luật TM duyệt.
 import React, { useCallback, useEffect, useState } from 'react';
 import { useLanguage } from '../context/LanguageContext';
+import SectorAlerts, { DemoDataBanner } from './SectorAlerts';
+import UnreviewedNotice from './UnreviewedNotice';
 import { getTariffPreview, parseRate, type TariffPreview } from '../lib/tariffPreviewApi';
 
 interface TariffPanelProps {
@@ -57,25 +59,23 @@ export default function TariffPanel({ hsCode, variant = 'summary' }: TariffPanel
   const conditionText = note(d.condition_note, d.condition_note_en);
   const quotaText = note(d.quota_note, d.quota_note_en);
 
+  let content: React.ReactNode;
   if (d.status === 'unsupported') {
-    return (
+    content = (
       <p role="status" className={box}>
         {tr('Mã HS này chưa có dữ liệu thuế được duyệt. Bạn vẫn lưu được sản phẩm.')}
       </p>
     );
-  }
-
-  if (d.status === 'needs_review') {
-    return (
+  } else if (d.status === 'needs_review') {
+    content = (
       <div role="status" className={`${box} border-amber-200 bg-amber-50 text-amber-900`}>
         <p className="font-semibold">{tr('Mã HS này cần chuyên gia xem lại thuế (hạn ngạch hoặc thuế đặc biệt).')}</p>
         {quotaText && <p>{quotaText}</p>}
         {variant === 'full' && conditionText && <p>{conditionText}</p>}
       </div>
     );
-  }
-
-  return (
+  } else {
+    content = (
     <div role="status" className={box}>
       <p className="font-semibold text-slate-900">
         <span>MFN {pct(mfnRate as number)}</span>
@@ -108,6 +108,16 @@ export default function TariffPanel({ hsCode, variant = 'summary' }: TariffPanel
           {tr('Nguồn')}
         </a>
       )}
+    </div>
+  );
+  }
+
+  return (
+    <div className="space-y-2">
+      {content}
+      <UnreviewedNotice state={d.review_state} compact />
+      {d.data_status === 'demo_unreviewed' && d.review_state !== 'UNREVIEWED' && <DemoDataBanner />}
+      <SectorAlerts alerts={d.alerts ?? []} />
     </div>
   );
 }

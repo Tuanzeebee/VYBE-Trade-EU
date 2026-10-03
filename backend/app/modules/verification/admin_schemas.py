@@ -75,3 +75,7 @@ class RuleOut(BaseModel):
 class EvidenceReviewIn(BaseModel):
     decision: Literal["approve", "reject"]
     reason: Annotated[str | None, Field(max_length=2000)] = None
+    # U4: seller có thể nộp không kèm ngày; admin đọc giấy tờ và nhập khi duyệt. Loại có hạn dùng
+    # (validity_months) bắt buộc có ngày cấp để duyệt — không để bằng chứng "còn hạn vĩnh viễn".
+    issued_at: dt.date | None = None
+    expires_at: dt.date | None = None

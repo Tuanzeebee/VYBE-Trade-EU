@@ -7,11 +7,13 @@ from sqlalchemy.ext.asyncio import create_async_engine
 # Import models của từng module ở đây khi module có bảng, để autogenerate thấy chúng.
 import app.core.audit
 import app.modules.auth.models
+import app.modules.billing.models
 import app.modules.catalog.models
 import app.modules.companies.models
 import app.modules.compliance.models
 import app.modules.copilot.models
 import app.modules.dashboard.models
+import app.modules.markets.models
 import app.modules.messaging.models
 import app.modules.notifications.models
 import app.modules.verification.models  # noqa: F401

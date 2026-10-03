@@ -5369,10 +5369,10 @@
     "Présentation et index",
     "概要と索引"
   ],
-  "Cơ hội kết nối B2B": [
-    "B2B networking opportunities",
-    "Opportunités de réseautage B2B",
-    "B2B ネットワーキングの機会"
+  "RFQ & Báo giá": [
+    "RFQs & Quotes",
+    "Demandes de devis et offres",
+    "見積依頼と見積"
   ],
   "3 mới": [
     "3 new",
@@ -8019,16 +8019,56 @@
     "Supported by calculators",
     "Supported by calculators"
   ],
-  "Đang tra thuế…": ["Checking duty…","Checking duty…","Checking duty…"],
-  "Không tải được thông tin thuế.": ["Could not load duty information.","Could not load duty information.","Could not load duty information."],
-  "Thử lại": ["Try again","Try again","Try again"],
-  "Mã HS này chưa có dữ liệu thuế được duyệt. Bạn vẫn lưu được sản phẩm.": ["No reviewed duty data for this HS code yet. You can still save the product.","No reviewed duty data for this HS code yet. You can still save the product.","No reviewed duty data for this HS code yet. You can still save the product."],
-  "Mã HS này cần chuyên gia xem lại thuế (hạn ngạch hoặc thuế đặc biệt).": ["This HS code needs expert review of duty (quota or special duty).","This HS code needs expert review of duty (quota or special duty).","This HS code needs expert review of duty (quota or special duty)."],
-  "Giảm": ["Down","Down","Down"],
-  "điểm phần trăm": ["percentage points","percentage points","percentage points"],
-  "Về 0% từ": ["Zero duty from","Zero duty from","Zero duty from"],
-  "Xem thuế MFN / EVFTA": ["View MFN / EVFTA duty","View MFN / EVFTA duty","View MFN / EVFTA duty"],
-  "Ẩn thuế": ["Hide duty","Hide duty","Hide duty"],
+  "Đang tra thuế…": [
+    "Checking duty…",
+    "Checking duty…",
+    "Checking duty…"
+  ],
+  "Không tải được thông tin thuế.": [
+    "Could not load duty information.",
+    "Could not load duty information.",
+    "Could not load duty information."
+  ],
+  "Thử lại": [
+    "Try again",
+    "Try again",
+    "Try again"
+  ],
+  "Mã HS này chưa có dữ liệu thuế được duyệt. Bạn vẫn lưu được sản phẩm.": [
+    "No reviewed duty data for this HS code yet. You can still save the product.",
+    "No reviewed duty data for this HS code yet. You can still save the product.",
+    "No reviewed duty data for this HS code yet. You can still save the product."
+  ],
+  "Mã HS này cần chuyên gia xem lại thuế (hạn ngạch hoặc thuế đặc biệt).": [
+    "This HS code needs expert review of duty (quota or special duty).",
+    "This HS code needs expert review of duty (quota or special duty).",
+    "This HS code needs expert review of duty (quota or special duty)."
+  ],
+  "Giảm": [
+    "Down",
+    "Down",
+    "Down"
+  ],
+  "điểm phần trăm": [
+    "percentage points",
+    "percentage points",
+    "percentage points"
+  ],
+  "Về 0% từ": [
+    "Zero duty from",
+    "Zero duty from",
+    "Zero duty from"
+  ],
+  "Xem thuế MFN / EVFTA": [
+    "View MFN / EVFTA duty",
+    "View MFN / EVFTA duty",
+    "View MFN / EVFTA duty"
+  ],
+  "Ẩn thuế": [
+    "Hide duty",
+    "Hide duty",
+    "Hide duty"
+  ],
   "Chưa hỗ trợ máy tính": [
     "Not yet supported by calculators",
     "Not yet supported by calculators",
@@ -8599,11 +8639,6 @@
     "The ex-works price must be a positive number with at most 2 decimal places (for example 1000 or 1000.50).",
     "The ex-works price must be a positive number with at most 2 decimal places (for example 1000 or 1000.50)."
   ],
-  "Máy tính quy tắc xuất xứ EVFTA": [
-    "EVFTA rules of origin calculator",
-    "EVFTA rules of origin calculator",
-    "EVFTA rules of origin calculator"
-  ],
   "Kiểm tra hàng Việt Nam xuất sang EU có đạt quy tắc xuất xứ hay không. Mọi số tiền dùng cùng một đơn vị tiền tệ.": [
     "Check whether goods exported from Vietnam to the EU meet the rules of origin. All amounts use the same currency.",
     "Check whether goods exported from Vietnam to the EU meet the rules of origin. All amounts use the same currency.",
@@ -9020,9 +9055,9 @@
     "Tariff lines"
   ],
   "Quy tắc xuất xứ": [
-    "Rules of origin",
-    "Rules of origin",
-    "Rules of origin"
+    "Rules of origin & EUR.1 draft",
+    "Règles d'origine et brouillon EUR.1",
+    "原産地規則とEUR.1ドラフト"
   ],
   "Luật bằng chứng theo nhóm hàng": [
     "Evidence rules by product group",
@@ -10499,11 +10534,6 @@
     "Tariff savings calculator",
     "Tariff savings calculator"
   ],
-  "Máy tính quy tắc xuất xứ": [
-    "Rules of origin calculator",
-    "Rules of origin calculator",
-    "Rules of origin calculator"
-  ],
   "Dữ liệu mới thêm, mới nhập hoặc vừa sửa. Không hiện công khai và máy tính tuân thủ chưa dùng.": [
     "Newly added, imported or just edited data. Not shown publicly and not yet used by the compliance calculator.",
     "Données récemment ajoutées, importées ou modifiées. Non publiques et pas encore utilisées par le calculateur de conformité.",
@@ -10979,11 +11009,6 @@
     "Calculateur de droits EVFTA",
     "EVFTA関税計算ツール"
   ],
-  "Quy tắc xuất xứ & EUR.1 nháp": [
-    "Rules of origin & EUR.1 draft",
-    "Règles d'origine et brouillon EUR.1",
-    "原産地規則とEUR.1ドラフト"
-  ],
   "Trợ lý AI tuân thủ": [
     "AI compliance assistant",
     "Assistant IA de conformité",
@@ -11328,5 +11353,4820 @@
     "Price",
     "Price",
     "Price"
+  ],
+  "Chưa khai báo": [
+    "Not provided",
+    "Non renseigné",
+    "未入力"
+  ],
+  "Đang tải hồ sơ doanh nghiệp…": [
+    "Loading company profile…",
+    "Chargement du profil de l'entreprise…",
+    "企業プロフィールを読み込み中…"
+  ],
+  "Hồ sơ công khai hiển thị với buyer sau khi doanh nghiệp được xác minh.": [
+    "Your public profile becomes visible to buyers once the company is verified.",
+    "Votre profil public devient visible pour les acheteurs une fois l'entreprise vérifiée.",
+    "企業が認証されると、公開プロフィールがバイヤーに表示されます。"
+  ],
+  "Thông tin pháp lý & liên hệ": [
+    "Legal & contact details",
+    "Informations juridiques et coordonnées",
+    "法人情報・連絡先"
+  ],
+  "Năng lực & thị trường": [
+    "Capability & markets",
+    "Capacités et marchés",
+    "供給能力・市場"
+  ],
+  "Chưa có phần giới thiệu. Buyer đọc phần này đầu tiên khi xem hồ sơ.": [
+    "No company introduction yet. Buyers read this first when they open your profile.",
+    "Pas encore de présentation. Les acheteurs la lisent en premier en ouvrant votre profil.",
+    "会社紹介がまだありません。バイヤーはプロフィールを開くと最初にここを読みます。"
+  ],
+  "Viết giới thiệu": [
+    "Write an introduction",
+    "Rédiger une présentation",
+    "紹介文を書く"
+  ],
+  "Chứng nhận & giấy phép": [
+    "Certificates & licences",
+    "Certificats et licences",
+    "認証・許可証"
+  ],
+  "Quản lý": [
+    "Manage",
+    "Gérer",
+    "管理"
+  ],
+  "Không tải được danh sách chứng nhận. Vui lòng thử lại.": [
+    "Could not load certificates. Please try again.",
+    "Impossible de charger les certificats. Veuillez réessayer.",
+    "認証の一覧を読み込めませんでした。もう一度お試しください。"
+  ],
+  "Chưa có chứng nhận nào. Tải lên giấy phép kinh doanh và chứng nhận chất lượng để được xác minh.": [
+    "No certificates yet. Upload your business licence and quality certificates to get verified.",
+    "Aucun certificat pour l'instant. Téléversez votre licence commerciale et vos certificats qualité pour être vérifié.",
+    "認証はまだありません。認証を受けるには営業許可証と品質認証をアップロードしてください。"
+  ],
+  "Sản phẩm cung cấp": [
+    "Products offered",
+    "Produits proposés",
+    "取扱製品"
+  ],
+  "Các nhà cung cấp đã được xác minh sẽ hiện ở đây.": [
+    "Verified suppliers will appear here.",
+    "Les fournisseurs vérifiés apparaîtront ici.",
+    "認証済みのサプライヤーがここに表示されます。"
+  ],
+  "Đăng ký hồ sơ nhà cung cấp": [
+    "Register as a supplier",
+    "S'inscrire comme fournisseur",
+    "サプライヤーとして登録"
+  ],
+  "Tên đăng ký kinh doanh": [
+    "Registered business name",
+    "Raison sociale",
+    "登記上の商号"
+  ],
+  "Thị trường đã xuất khẩu": [
+    "Markets exported to",
+    "Marchés d'exportation",
+    "輸出実績のある市場"
+  ],
+  "Ngôn ngữ làm việc": [
+    "Working languages",
+    "Langues de travail",
+    "対応言語"
+  ],
+  "MST: {0}": [
+    "Tax ID: {0}",
+    "N° fiscal : {0}",
+    "税番号: {0}"
+  ],
+  "Thành lập: {0}": [
+    "Founded: {0}",
+    "Fondée : {0}",
+    "設立: {0}"
+  ],
+  "Hết hạn: {0}": [
+    "Expires: {0}",
+    "Expire le : {0}",
+    "有効期限: {0}"
+  ],
+  "Trạng thái hiện tại: {0}": [
+    "Current status: {0}",
+    "Statut actuel : {0}",
+    "現在の状態: {0}"
+  ],
+  "Tải lên giấy phép và chứng nhận để quản trị viên xác minh doanh nghiệp.": [
+    "Upload licences and certificates so our team can verify your company.",
+    "Téléversez licences et certificats pour que notre équipe vérifie votre entreprise.",
+    "許可証と認証をアップロードすると、運営チームが企業を認証します。"
+  ],
+  "Dịch vụ cung cấp": [
+    "Services offered",
+    "Services proposés",
+    "提供サービス"
+  ],
+  "Chưa có dịch vụ. Thêm ít nhất một dịch vụ để buyer và nhà xuất khẩu tìm thấy bạn.": [
+    "No services yet. Add at least one service so buyers and exporters can find you.",
+    "Aucun service pour l'instant. Ajoutez au moins un service pour que les acheteurs et exportateurs vous trouvent.",
+    "サービスがまだありません。バイヤーや輸出企業に見つけてもらうため、少なくとも1つ追加してください。"
+  ],
+  "Sản phẩm, dịch vụ & năng lực": [
+    "Products, services & capacity",
+    "Produits, services et capacités",
+    "製品・サービス・供給能力"
+  ],
+  "Doanh nghiệp của bạn cung cấp *": [
+    "Your company offers *",
+    "Votre entreprise propose *",
+    "貴社が提供するもの *"
+  ],
+  "Ví dụ: +84 28 3829 9842": [
+    "e.g. +84 28 3829 9842",
+    "ex. +84 28 3829 9842",
+    "例: +84 28 3829 9842"
+  ],
+  "Người đại diện pháp luật": [
+    "Legal representative",
+    "Représentant légal",
+    "法定代表者"
+  ],
+  "Họ và tên như trên giấy ĐKKD": [
+    "Full name as on the business registration",
+    "Nom complet tel qu'indiqué sur l'enregistrement",
+    "登記証明書に記載の氏名"
+  ],
+  "Chức vụ": [
+    "Position",
+    "Fonction",
+    "役職"
+  ],
+  "Ví dụ: Giám đốc": [
+    "e.g. Director",
+    "ex. Directeur",
+    "例: 代表取締役"
+  ],
+  "Cơ quan cấp đăng ký kinh doanh": [
+    "Business registration authority",
+    "Autorité d'enregistrement",
+    "事業登録の発行機関"
+  ],
+  "Ghi đúng như trên giấy đăng ký kinh doanh": [
+    "Enter exactly as printed on the business registration",
+    "Saisir exactement comme sur l'enregistrement",
+    "事業登録証明書の記載どおりに入力"
+  ],
+  "Từ 01/03/2025, Sở Kế hoạch và Đầu tư đã hợp nhất vào Sở Tài chính. Hồ sơ công khai sẽ hiển thị:": [
+    "Since 1 March 2025 the Department of Planning and Investment has merged into the Department of Finance. Your public profile will show:",
+    "Depuis le 1er mars 2025, le Département du Plan et de l'Investissement a fusionné avec le Département des Finances. Votre profil public affichera :",
+    "2025年3月1日より計画投資局は財務局に統合されました。公開プロフィールには次のように表示されます:"
+  ],
+  "Tên ngành hàng khác": [
+    "Other industry name",
+    "Nom de l'autre secteur",
+    "その他の業種名"
+  ],
+  "Ví dụ: Dược liệu": [
+    "e.g. Medicinal herbs",
+    "ex. Plantes médicinales",
+    "例: 薬用植物"
+  ],
+  "Gõ tên sản phẩm, hệ thống gợi ý mã HS. Buyer tìm thấy bạn qua tên sản phẩm, giá và MOQ.": [
+    "Type the product name and we suggest the HS code. Buyers find you by product name, price and MOQ.",
+    "Saisissez le nom du produit, nous suggérons le code SH. Les acheteurs vous trouvent par nom de produit, prix et MOQ.",
+    "製品名を入力するとHSコードを提案します。バイヤーは製品名・価格・MOQで検索します。"
+  ],
+  "Năng lực đáp ứng": [
+    "Supply capacity",
+    "Capacité d'approvisionnement",
+    "供給能力"
+  ],
+  "Không bắt buộc, nhưng buyer cần biết bạn đáp ứng được đơn lớn đến đâu.": [
+    "Optional, but buyers need to know how large an order you can handle.",
+    "Facultatif, mais les acheteurs veulent savoir quelle taille de commande vous pouvez honorer.",
+    "任意ですが、バイヤーはどの規模の注文に対応できるかを知りたがっています。"
+  ],
+  "Địa chỉ nhà máy / kho": [
+    "Factory / warehouse address",
+    "Adresse de l'usine / de l'entrepôt",
+    "工場・倉庫の所在地"
+  ],
+  "Sản lượng có thể cung cấp": [
+    "Available supply volume",
+    "Volume disponible",
+    "供給可能量"
+  ],
+  "Ví dụ: 1500": [
+    "e.g. 1500",
+    "ex. 1500",
+    "例: 1500"
+  ],
+  "Mỗi": [
+    "Per",
+    "Par",
+    "期間"
+  ],
+  "năm": [
+    "year",
+    "an",
+    "年"
+  ],
+  "tháng": [
+    "month",
+    "mois",
+    "月"
+  ],
+  "Quy mô nhân sự": [
+    "Staff size",
+    "Effectif",
+    "従業員規模"
+  ],
+  "Chọn quy mô": [
+    "Select size",
+    "Choisir l'effectif",
+    "規模を選択"
+  ],
+  "Nhiều mã cách nhau bằng dấu phẩy": [
+    "Separate multiple codes with commas",
+    "Séparez plusieurs codes par des virgules",
+    "複数のコードはカンマで区切ってください"
+  ],
+  "Khách hàng chính (không bắt buộc)": [
+    "Main customers (optional)",
+    "Principaux clients (facultatif)",
+    "主要顧客（任意）"
+  ],
+  "Ví dụ: nhà nhập khẩu tại Hamburg (từ 2021). Tên khách hàng giúp buyer tin hồ sơ hơn.": [
+    "e.g. an importer in Hamburg (since 2021). Naming customers makes your profile more credible to buyers.",
+    "ex. un importateur à Hambourg (depuis 2021). Citer vos clients rend votre profil plus crédible.",
+    "例: ハンブルクの輸入業者（2021年から）。顧客名があるとプロフィールの信頼性が高まります。"
+  ],
+  "Giấy phép hành nghề (nếu có) nộp ở bước tiếp theo để được xác minh.": [
+    "Upload any professional licences in the next step to get verified.",
+    "Téléversez vos licences professionnelles à l'étape suivante pour être vérifié.",
+    "業務許可証がある場合は、次のステップでアップロードして認証を受けてください。"
+  ],
+  "Hồ sơ doanh nghiệp, sản phẩm, dịch vụ và bằng chứng đã nộp đã được ghi nhận. Quản trị viên sẽ xem xét bằng chứng của bạn.": [
+    "Your company profile, products, services and evidence have been saved. Our team will review your evidence.",
+    "Votre profil, vos produits, services et justificatifs ont été enregistrés. Notre équipe examinera vos justificatifs.",
+    "企業プロフィール、製品、サービス、証拠書類を保存しました。運営チームが証拠を確認します。"
+  ],
+  "Danh mục sản phẩm cung cấp": [
+    "Product catalogue",
+    "Catalogue de produits",
+    "製品カタログ"
+  ],
+  "Loại dịch vụ *": [
+    "Service type *",
+    "Type de service *",
+    "サービスの種類 *"
+  ],
+  "Chọn loại dịch vụ": [
+    "Select a service type",
+    "Choisir un type de service",
+    "サービスの種類を選択"
+  ],
+  "Tên dịch vụ *": [
+    "Service name *",
+    "Nom du service *",
+    "サービス名 *"
+  ],
+  "Ví dụ: Khai báo hải quan hàng nông sản tại cảng Cát Lái": [
+    "e.g. Customs declarations for agricultural exports at Cat Lai port",
+    "ex. Déclarations en douane pour exportations agricoles au port de Cat Lai",
+    "例: カットライ港での農産物輸出の通関申告"
+  ],
+  "Mô tả ngắn": [
+    "Short description",
+    "Description courte",
+    "簡単な説明"
+  ],
+  "Bạn làm gì, cho ai, thời gian xử lý bao lâu.": [
+    "What you do, for whom, and how long it takes.",
+    "Ce que vous faites, pour qui et en combien de temps.",
+    "何を、誰のために、どのくらいの期間で行うか。"
+  ],
+  "Nước phục vụ": [
+    "Countries served",
+    "Pays desservis",
+    "対応国"
+  ],
+  "Giữ Ctrl (hoặc Cmd) để chọn nhiều nước.": [
+    "Hold Ctrl (or Cmd) to select several countries.",
+    "Maintenez Ctrl (ou Cmd) pour sélectionner plusieurs pays.",
+    "複数の国を選ぶには Ctrl（または Cmd）を押したまま選択してください。"
+  ],
+  "Xóa dịch vụ": [
+    "Remove service",
+    "Supprimer le service",
+    "サービスを削除"
+  ],
+  "Thêm dịch vụ": [
+    "Add service",
+    "Ajouter un service",
+    "サービスを追加"
+  ],
+  "Dịch vụ": [
+    "Services",
+    "Services",
+    "サービス"
+  ],
+  "Cả hai": [
+    "Both",
+    "Les deux",
+    "両方"
+  ],
+  "Nông sản, thủy sản, thực phẩm, hàng hóa…": [
+    "Agricultural, seafood, food and other goods…",
+    "Produits agricoles, de la mer, alimentaires, marchandises…",
+    "農産物・水産物・食品・その他の商品…"
+  ],
+  "Logistics, hải quan, kế toán-thuế, kiểm nghiệm…": [
+    "Logistics, customs, accounting & tax, testing…",
+    "Logistique, douane, comptabilité et fiscalité, analyses…",
+    "物流・通関・会計税務・検査…"
+  ],
+  "Vừa bán sản phẩm vừa cung cấp dịch vụ": [
+    "You sell products and provide services",
+    "Vous vendez des produits et fournissez des services",
+    "製品の販売とサービス提供の両方"
+  ],
+  "Mã số vùng trồng": [
+    "Growing area code",
+    "Code de zone de culture",
+    "栽培地域コード"
+  ],
+  "Mã số cơ sở đóng gói": [
+    "Packing facility code",
+    "Code de station de conditionnement",
+    "包装施設コード"
+  ],
+  "Mã cơ sở được EU cấp phép (thủy sản, thực phẩm)": [
+    "EU-approved establishment number (seafood, food)",
+    "N° d'établissement agréé UE (produits de la mer, alimentaires)",
+    "EU認可施設番号（水産物・食品）"
+  ],
+  "Rau quả": [
+    "Fruits & vegetables",
+    "Fruits et légumes",
+    "青果"
+  ],
+  "Cà phê & chè": [
+    "Coffee & tea",
+    "Café et thé",
+    "コーヒー・茶"
+  ],
+  "Doanh nghiệp cung cấp": [
+    "Company offers",
+    "L'entreprise propose",
+    "提供内容"
+  ],
+  "Cơ quan cấp ĐKKD": [
+    "Registration authority",
+    "Autorité d'enregistrement",
+    "登録発行機関"
+  ],
+  "Khách hàng chính": [
+    "Main customers",
+    "Principaux clients",
+    "主要顧客"
+  ],
+  "Trên giấy tờ: {0}": [
+    "On the document: {0}",
+    "Sur le document : {0}",
+    "書類上の記載: {0}"
+  ],
+  "Dịch vụ {0}": [
+    "Service {0}",
+    "Service {0}",
+    "サービス {0}"
+  ],
+  "2. Sản phẩm & dịch vụ ({0} sản phẩm, {1} dịch vụ)": [
+    "2. Products & services ({0} products, {1} services)",
+    "2. Produits et services ({0} produits, {1} services)",
+    "2. 製品・サービス（製品 {0} 件、サービス {1} 件）"
+  ],
+  "Không lưu được dịch vụ \"{0}\". Vui lòng kiểm tra lại.": [
+    "Could not save service \"{0}\". Please check it.",
+    "Impossible d'enregistrer le service « {0} ». Veuillez vérifier.",
+    "サービス「{0}」を保存できませんでした。内容をご確認ください。"
+  ],
+  "Vui lòng thêm ít nhất một dịch vụ.": [
+    "Please add at least one service.",
+    "Veuillez ajouter au moins un service.",
+    "少なくとも1つのサービスを追加してください。"
+  ],
+  "Vui lòng chọn loại dịch vụ.": [
+    "Please select a service type.",
+    "Veuillez choisir un type de service.",
+    "サービスの種類を選択してください。"
+  ],
+  "Vui lòng nhập tên dịch vụ.": [
+    "Please enter a service name.",
+    "Veuillez saisir le nom du service.",
+    "サービス名を入力してください。"
+  ],
+  "Sản phẩm mới đăng (7 ngày)": [
+    "New products (last 7 days)",
+    "Nouveaux produits (7 derniers jours)",
+    "新規掲載製品（7日間）"
+  ],
+  "Sản phẩm hiện ngay khi đăng; xem lại ở đây và ẩn nếu không phù hợp. Cờ \"Lệch ngành\" = nhóm hàng của mã HS khác ngành công ty khai.": [
+    "Products go live when posted; review them here and hide any that are unsuitable. \"Industry mismatch\" = the HS code's product group differs from the company's declared industry.",
+    "Les produits sont publiés immédiatement ; vérifiez-les ici et masquez ceux qui ne conviennent pas. « Secteur incohérent » = le groupe du code SH diffère du secteur déclaré.",
+    "製品は掲載と同時に公開されます。ここで確認し、不適切なものは非表示にしてください。「業種不一致」= HSコードの品目群が申告業種と異なります。"
+  ],
+  "Không có sản phẩm mới.": [
+    "No new products.",
+    "Aucun nouveau produit.",
+    "新しい製品はありません。"
+  ],
+  "Lệch ngành": [
+    "Industry mismatch",
+    "Secteur incohérent",
+    "業種不一致"
+  ],
+  "Gợi ý mã HS theo tên sản phẩm": [
+    "HS codes suggested from the product name",
+    "Codes SH suggérés d'après le nom du produit",
+    "製品名から提案されたHSコード"
+  ],
+  "Không chắc mã HS? Gõ tên sản phẩm ở trên (ví dụ \"cá tra\", \"hạt điều\") rồi chọn gợi ý phù hợp nhất.": [
+    "Not sure of the HS code? Type the product name above (e.g. \"pangasius\", \"cashew\") and pick the best suggestion.",
+    "Pas sûr du code SH ? Saisissez le nom du produit ci-dessus (ex. « pangasius », « noix de cajou ») puis choisissez la meilleure suggestion.",
+    "HSコードが分からない場合は、上に製品名（例: 「パンガシウス」「カシューナッツ」）を入力し、最適な候補を選んでください。"
+  ],
+  "Giá bán": [
+    "Selling price",
+    "Prix de vente",
+    "販売価格"
+  ],
+  "Cách báo giá": [
+    "Pricing method",
+    "Mode de tarification",
+    "価格の提示方法"
+  ],
+  "Giá theo số lượng đặt": [
+    "Price by order quantity",
+    "Prix selon la quantité",
+    "数量別価格"
+  ],
+  "Mua càng nhiều giá càng tốt — như Alibaba. Bậc đầu tiên thường là MOQ.": [
+    "The more buyers order, the better the price — like Alibaba. The first tier is usually the MOQ.",
+    "Plus la commande est grande, meilleur est le prix — comme sur Alibaba. Le premier palier correspond en général au MOQ.",
+    "注文量が多いほど単価が下がります（Alibaba方式）。最初の段階は通常MOQです。"
+  ],
+  "Từ số lượng": [
+    "From quantity",
+    "À partir de",
+    "数量（以上）"
+  ],
+  "Đơn giá": [
+    "Unit price",
+    "Prix unitaire",
+    "単価"
+  ],
+  "Xóa bậc giá": [
+    "Remove price tier",
+    "Supprimer le palier",
+    "価格段階を削除"
+  ],
+  "+ Thêm bậc giá": [
+    "+ Add price tier",
+    "+ Ajouter un palier",
+    "+ 価格段階を追加"
+  ],
+  "Giá ước tính": [
+    "Estimated price",
+    "Prix estimé",
+    "概算価格"
+  ],
+  "Đến (nếu là khoảng giá)": [
+    "To (for a price range)",
+    "Jusqu'à (fourchette de prix)",
+    "上限（価格幅の場合）"
+  ],
+  "Mặc định = bậc giá đầu": [
+    "Defaults to the first tier",
+    "Par défaut = premier palier",
+    "既定 = 最初の段階"
+  ],
+  "Ví dụ: bao 25 kg cho nhà hàng, túi 1 kg cho siêu thị. Buyer lọc theo quy cách phù hợp kênh bán.": [
+    "e.g. 25 kg sacks for restaurants, 1 kg bags for supermarkets. Buyers filter by the packaging that suits their channel.",
+    "ex. sacs de 25 kg pour la restauration, sachets de 1 kg pour la grande distribution. Les acheteurs filtrent selon leur canal.",
+    "例: 飲食店向け25kg袋、スーパー向け1kg袋。バイヤーは販売チャネルに合う包装で絞り込みます。"
+  ],
+  "Khối lượng": [
+    "Size",
+    "Quantité",
+    "容量"
+  ],
+  "Loại bao bì": [
+    "Packaging type",
+    "Type d'emballage",
+    "包装の種類"
+  ],
+  "Phù hợp kênh": [
+    "Suitable channel",
+    "Canal adapté",
+    "適したチャネル"
+  ],
+  "Xóa quy cách": [
+    "Remove packaging",
+    "Supprimer le conditionnement",
+    "包装を削除"
+  ],
+  "+ Thêm quy cách": [
+    "+ Add packaging",
+    "+ Ajouter un conditionnement",
+    "+ 包装を追加"
+  ],
+  "Hình thức kinh doanh sản phẩm": [
+    "How you sell this product",
+    "Mode de commercialisation",
+    "販売形態"
+  ],
+  "Chọn (không bắt buộc)": [
+    "Select (optional)",
+    "Choisir (facultatif)",
+    "選択（任意）"
+  ],
+  "Ngôn ngữ mô tả": [
+    "Description language",
+    "Langue de la description",
+    "説明の言語"
+  ],
+  "Giống, tiêu chuẩn, độ ẩm, hạn dùng…": [
+    "Variety, grade, moisture, shelf life…",
+    "Variété, qualité, humidité, durée de conservation…",
+    "品種・規格・水分・賞味期限など…"
+  ],
+  "Dịch máy — sửa được": [
+    "Machine translation — editable",
+    "Traduction automatique — modifiable",
+    "機械翻訳（編集可）"
+  ],
+  "Viết bằng tiếng Việt": [
+    "Write in Vietnamese",
+    "Rédiger en vietnamien",
+    "ベトナム語で書く"
+  ],
+  "Viết bằng tiếng Anh": [
+    "Write in English",
+    "Rédiger en anglais",
+    "英語で書く"
+  ],
+  "Chỉ cần viết một ngôn ngữ — hệ thống tự dịch sang tiếng Anh cho buyer quốc tế.": [
+    "Write in one language only — we translate it into English for international buyers.",
+    "Une seule langue suffit — nous traduisons en anglais pour les acheteurs internationaux.",
+    "1つの言語で書くだけで、海外バイヤー向けに英語へ自動翻訳します。"
+  ],
+  "Chỉ cần viết một ngôn ngữ — hệ thống tự dịch sang tiếng Việt.": [
+    "Write in one language only — we translate it into Vietnamese.",
+    "Une seule langue suffit — nous traduisons en vietnamien.",
+    "1つの言語で書くだけで、ベトナム語へ自動翻訳します。"
+  ],
+  "Bản tiếng Anh": [
+    "English version",
+    "Version anglaise",
+    "英語版"
+  ],
+  "Bản tiếng Việt": [
+    "Vietnamese version",
+    "Version vietnamienne",
+    "ベトナム語版"
+  ],
+  "+ Tự viết bản tiếng Anh (không bắt buộc)": [
+    "+ Write the English version yourself (optional)",
+    "+ Rédiger vous-même la version anglaise (facultatif)",
+    "+ 英語版を自分で書く（任意）"
+  ],
+  "+ Tự viết bản tiếng Việt (không bắt buộc)": [
+    "+ Write the Vietnamese version yourself (optional)",
+    "+ Rédiger vous-même la version vietnamienne (facultatif)",
+    "+ ベトナム語版を自分で書く（任意）"
+  ],
+  "Gia công OEM (in nhãn cho khách)": [
+    "OEM manufacturing (buyer's label)",
+    "Fabrication OEM (marque du client)",
+    "OEM製造（顧客ブランド）"
+  ],
+  "Bán thương hiệu riêng": [
+    "Own brand",
+    "Marque propre",
+    "自社ブランド"
+  ],
+  "Túi / bao": [
+    "Bag",
+    "Sachet / sac",
+    "袋"
+  ],
+  "Bao tải": [
+    "Sack",
+    "Sac en toile",
+    "大袋"
+  ],
+  "Thùng carton": [
+    "Carton",
+    "Carton",
+    "段ボール箱"
+  ],
+  "Hộp": [
+    "Box",
+    "Boîte",
+    "箱"
+  ],
+  "Lon": [
+    "Can",
+    "Boîte de conserve",
+    "缶"
+  ],
+  "Chai": [
+    "Bottle",
+    "Bouteille",
+    "瓶"
+  ],
+  "Hũ": [
+    "Jar",
+    "Pot",
+    "ジャー"
+  ],
+  "Hàng xá (bulk)": [
+    "Bulk",
+    "Vrac",
+    "ばら積み"
+  ],
+  "Mọi kênh": [
+    "Any channel",
+    "Tous canaux",
+    "全チャネル"
+  ],
+  "Nhà hàng, khách sạn (Horeca)": [
+    "Hotels & restaurants (HoReCa)",
+    "Hôtellerie-restauration (CHR)",
+    "ホテル・飲食店（HoReCa）"
+  ],
+  "Siêu thị, bán lẻ": [
+    "Supermarkets & retail",
+    "Grande distribution, commerce de détail",
+    "スーパー・小売"
+  ],
+  "Nhà máy chế biến": [
+    "Food processors",
+    "Industrie de transformation",
+    "加工工場"
+  ],
+  "Bậc giá": [
+    "Price tiers",
+    "Paliers de prix",
+    "価格段階"
+  ],
+  "Quy cách:": [
+    "Packaging:",
+    "Conditionnement :",
+    "包装:"
+  ],
+  "Sửa sản phẩm": [
+    "Edit product",
+    "Modifier le produit",
+    "製品を編集"
+  ],
+  "Đang lưu…": [
+    "Saving…",
+    "Enregistrement…",
+    "保存中…"
+  ],
+  "Sản phẩm \"{0}\": mỗi bậc giá cần cả số lượng và đơn giá.": [
+    "Product \"{0}\": each price tier needs both a quantity and a unit price.",
+    "Produit « {0} » : chaque palier doit avoir une quantité et un prix unitaire.",
+    "製品「{0}」: 各価格段階には数量と単価の両方が必要です。"
+  ],
+  "Sản phẩm \"{0}\": hai bậc giá không được cùng số lượng.": [
+    "Product \"{0}\": two price tiers cannot have the same quantity.",
+    "Produit « {0} » : deux paliers ne peuvent pas avoir la même quantité.",
+    "製品「{0}」: 同じ数量の価格段階は設定できません。"
+  ],
+  "Sản phẩm \"{0}\" chưa nhập bậc giá.": [
+    "Product \"{0}\" has no price tiers yet.",
+    "Le produit « {0} » n'a pas encore de palier de prix.",
+    "製品「{0}」に価格段階がありません。"
+  ],
+  "Quy cách đóng gói không hợp lệ (số dương, tối đa 3 chữ số thập phân).": [
+    "Invalid packaging size (positive number, up to 3 decimals).",
+    "Conditionnement invalide (nombre positif, 3 décimales max).",
+    "包装容量が不正です（正の数、小数点以下3桁まで）。"
+  ],
+  "Không xóa được sản phẩm. Vui lòng thử lại.": [
+    "Could not delete the product. Please try again.",
+    "Impossible de supprimer le produit. Veuillez réessayer.",
+    "製品を削除できませんでした。もう一度お試しください。"
+  ],
+  "Chưa có ngày cấp": [
+    "No issue date yet",
+    "Pas encore de date d'émission",
+    "発行日未入力"
+  ],
+  "Ngày cấp đọc trên giấy tờ": [
+    "Issue date as read on the document",
+    "Date d'émission lue sur le document",
+    "書類に記載の発行日"
+  ],
+  "Ngày hết hạn đọc trên giấy tờ": [
+    "Expiry date as read on the document",
+    "Date d'expiration lue sur le document",
+    "書類に記載の有効期限"
+  ],
+  "Tên giấy tờ": [
+    "Document name",
+    "Nom du document",
+    "書類名"
+  ],
+  "Ví dụ: Giấy chứng nhận Halal": [
+    "e.g. Halal certificate",
+    "ex. Certificat halal",
+    "例: ハラール認証"
+  ],
+  "PDF, PNG hoặc JPEG, tối đa 10MB. Chỉ cần loại giấy tờ và file — quản trị viên đọc thông tin trên giấy tờ khi duyệt.": [
+    "PDF, PNG or JPEG, max 10MB. Only the document type and file are needed — our team reads the details from the document when reviewing.",
+    "PDF, PNG ou JPEG, 10 Mo max. Seuls le type et le fichier sont requis — notre équipe lit les détails sur le document lors de l'examen.",
+    "PDF・PNG・JPEG、最大10MB。書類の種類とファイルだけで十分です。審査時に運営チームが書類から詳細を読み取ります。"
+  ],
+  "Vui lòng ghi tên giấy tờ.": [
+    "Please name the document.",
+    "Veuillez indiquer le nom du document.",
+    "書類名を入力してください。"
+  ],
+  "Ẩn thông tin thêm": [
+    "Hide extra details",
+    "Masquer les détails",
+    "詳細を隠す"
+  ],
+  "Thông tin thêm (không bắt buộc): số, tổ chức cấp, ngày": [
+    "Extra details (optional): number, issuer, dates",
+    "Détails (facultatif) : numéro, émetteur, dates",
+    "詳細（任意）: 番号・発行機関・日付"
+  ],
+  "Bằng chứng chưa hợp lệ. Vui lòng kiểm tra loại giấy tờ và file.": [
+    "Invalid evidence. Please check the document type and file.",
+    "Justificatif invalide. Vérifiez le type de document et le fichier.",
+    "証拠書類が不正です。書類の種類とファイルをご確認ください。"
+  ],
+  "Từ chối cần lý do; duyệt loại giấy tờ có hạn dùng cần ngày cấp (không ở tương lai, trước ngày hết hạn).": [
+    "Rejecting needs a reason; approving a document type with a validity period needs an issue date (not in the future, before expiry).",
+    "Un refus doit être motivé ; approuver un document à durée de validité exige une date d'émission (pas future, avant l'expiration).",
+    "却下には理由が必要です。有効期間のある書類の承認には発行日（未来日不可・期限前）が必要です。"
+  ],
+  "Tìm nguồn cung ổn định, giảm rủi ro khi đổi nhà cung cấp.": [
+    "Find stable supply and reduce the risk of switching suppliers.",
+    "Trouvez un approvisionnement stable et réduisez le risque de changer de fournisseur.",
+    "安定した供給先を見つけ、サプライヤー変更のリスクを減らしましょう。"
+  ],
+  "Nhà cung cấp trong danh bạ đã được kiểm tra pháp lý; xem năng lực, sản lượng và thị trường đã xuất khẩu trước khi liên hệ.": [
+    "Suppliers in the directory have passed a legal check; review their capacity, volumes and export markets before you get in touch.",
+    "Les fournisseurs de l'annuaire ont passé une vérification juridique ; consultez leurs capacités, volumes et marchés d'exportation avant de les contacter.",
+    "掲載サプライヤーは法的確認済みです。連絡前に供給能力・生産量・輸出実績市場をご確認ください。"
+  ],
+  "Cập nhật nhu cầu mua hàng": [
+    "Update your sourcing needs",
+    "Mettre à jour vos besoins d'achat",
+    "調達ニーズを更新"
+  ],
+  "Nhóm hàng bạn cần": [
+    "Product groups you need",
+    "Groupes de produits recherchés",
+    "必要な品目群"
+  ],
+  "Sản phẩm cụ thể": [
+    "Specific products",
+    "Produits précis",
+    "具体的な製品"
+  ],
+  "Ví dụ: phi lê cá tra đông lạnh 120–170 g, đóng túi 1 kg": [
+    "e.g. frozen pangasius fillets 120–170 g, 1 kg bags",
+    "ex. filets de pangasius surgelés 120–170 g, sachets de 1 kg",
+    "例: 冷凍パンガシウスフィレ 120–170g、1kg袋"
+  ],
+  "Khối lượng mỗi lần mua": [
+    "Quantity per order",
+    "Quantité par commande",
+    "1回あたりの購入量"
+  ],
+  "Tần suất mua": [
+    "Purchase frequency",
+    "Fréquence d'achat",
+    "購入頻度"
+  ],
+  "Chứng chỉ bạn yêu cầu ở nhà cung cấp": [
+    "Certificates you require from suppliers",
+    "Certificats exigés des fournisseurs",
+    "サプライヤーに求める認証"
+  ],
+  "Cấp xác minh nhà cung cấp tối thiểu": [
+    "Minimum supplier verification level",
+    "Niveau minimal de vérification du fournisseur",
+    "サプライヤーの最低認証レベル"
+  ],
+  "Nước nhận hàng": [
+    "Destination country",
+    "Pays de destination",
+    "仕向国"
+  ],
+  "Cảng nhận hàng": [
+    "Destination port",
+    "Port de destination",
+    "仕向港"
+  ],
+  "Ví dụ: Hamburg": [
+    "e.g. Hamburg",
+    "ex. Hambourg",
+    "例: ハンブルク"
+  ],
+  "Chưa rõ / thương lượng": [
+    "Not sure / negotiable",
+    "Indécis / à négocier",
+    "未定・交渉可"
+  ],
+  "Ngân sách tham khảo (đơn giá)": [
+    "Reference budget (unit price)",
+    "Budget de référence (prix unitaire)",
+    "参考予算（単価）"
+  ],
+  "Điều bạn quan tâm nhất ở nhà cung cấp": [
+    "What matters most to you in a supplier",
+    "Ce qui compte le plus pour vous chez un fournisseur",
+    "サプライヤーに最も重視すること"
+  ],
+  "Ví dụ: giao hàng đều mỗi tháng, chất lượng ổn định giữa các lô": [
+    "e.g. reliable monthly deliveries, consistent quality between batches",
+    "ex. livraisons mensuelles régulières, qualité constante d'un lot à l'autre",
+    "例: 毎月の安定した納品、ロット間で品質が一定"
+  ],
+  "Nguồn cung Việt Nam ổn định,": [
+    "Stable Vietnamese supply,",
+    "Un approvisionnement vietnamien stable,",
+    "安定したベトナムの供給元、"
+  ],
+  "đã được xác minh.": [
+    "already verified.",
+    "déjà vérifié.",
+    "認証済み。"
+  ],
+  "Đổi hoặc thêm nhà cung cấp mà ít rủi ro hơn: pháp lý, chứng nhận và năng lực của nhà cung cấp được kiểm tra trước khi hiện trong danh bạ.": [
+    "Switch or add suppliers with less risk: each supplier's legal status, certificates and capacity are checked before they appear in the directory.",
+    "Changez ou ajoutez des fournisseurs avec moins de risque : statut juridique, certificats et capacités sont vérifiés avant leur publication dans l'annuaire.",
+    "リスクを抑えてサプライヤーを変更・追加：掲載前に法的地位・認証・供給能力を確認しています。"
+  ],
+  "Thành phố *": [
+    "City *",
+    "Ville *",
+    "都市 *"
+  ],
+  "Quy mô công ty (không bắt buộc)": [
+    "Company size (optional)",
+    "Taille de l'entreprise (facultatif)",
+    "企業規模（任意）"
+  ],
+  "Bỏ qua, bổ sung sau": [
+    "Skip, add later",
+    "Passer, compléter plus tard",
+    "スキップして後で入力"
+  ],
+  "Hồ sơ công ty": [
+    "Company profile",
+    "Profil de l'entreprise",
+    "企業プロフィール"
+  ],
+  "Nhu cầu càng rõ, nhà cung cấp phù hợp càng dễ tìm thấy và báo giá đúng cho bạn.": [
+    "The clearer your needs, the easier it is for the right suppliers to find you and quote accurately.",
+    "Plus vos besoins sont précis, plus les bons fournisseurs vous trouvent et chiffrent juste.",
+    "ニーズが明確なほど、最適なサプライヤーが見つけやすく、正確な見積もりが届きます。"
+  ],
+  "Mã số VAT (không bắt buộc)": [
+    "VAT number (optional)",
+    "Numéro de TVA (facultatif)",
+    "VAT番号（任意）"
+  ],
+  "Mã EORI (không bắt buộc)": [
+    "EORI number (optional)",
+    "Numéro EORI (facultatif)",
+    "EORI番号（任意）"
+  ],
+  "Nhu cầu mua hàng": [
+    "Sourcing needs",
+    "Besoins d'achat",
+    "調達ニーズ"
+  ],
+  "Nhà bán buôn": [
+    "Wholesaler",
+    "Grossiste",
+    "卸売業者"
+  ],
+  "Siêu thị, chuỗi bán lẻ": [
+    "Supermarket / retail chain",
+    "Supermarché / chaîne de distribution",
+    "スーパー・小売チェーン"
+  ],
+  "Mua một lần": [
+    "One-off purchase",
+    "Achat ponctuel",
+    "単発購入"
+  ],
+  "Hằng tháng": [
+    "Monthly",
+    "Mensuel",
+    "毎月"
+  ],
+  "Hằng quý": [
+    "Quarterly",
+    "Trimestriel",
+    "四半期ごと"
+  ],
+  "Hằng năm": [
+    "Yearly",
+    "Annuel",
+    "毎年"
+  ],
+  "Cơ bản (pháp lý đã xác minh)": [
+    "Basic (legal status verified)",
+    "Basique (statut juridique vérifié)",
+    "ベーシック（法的地位を確認済み）"
+  ],
+  "Nâng cao (năng lực đã xác minh)": [
+    "Enhanced (capability verified)",
+    "Avancé (capacités vérifiées)",
+    "アドバンス（供給能力を確認済み）"
+  ],
+  "Chuyên sâu (bên thứ ba đánh giá)": [
+    "Advanced (third-party audited)",
+    "Approfondi (audité par un tiers)",
+    "プレミアム（第三者監査済み）"
+  ],
+  "Chỉ cần thông tin để nhà cung cấp liên hệ lại với bạn.": [
+    "Just the details suppliers need to get back to you.",
+    "Seulement les informations dont les fournisseurs ont besoin pour vous recontacter.",
+    "サプライヤーが連絡するために必要な情報だけです。"
+  ],
+  "Không bắt buộc — bạn có thể bỏ qua và bổ sung sau ở Hồ sơ công ty.": [
+    "Optional — you can skip this and add it later under Company profile.",
+    "Facultatif — vous pouvez passer cette étape et compléter plus tard dans Profil de l'entreprise.",
+    "任意です。スキップして後で企業プロフィールから入力できます。"
+  ],
+  "Chỉ doanh nghiệp đã được kiểm tra pháp lý mới hiện trong danh bạ.": [
+    "Only companies that passed a legal check appear in the directory.",
+    "Seules les entreprises ayant passé une vérification juridique figurent dans l'annuaire.",
+    "法的確認を通過した企業だけが掲載されます。"
+  ],
+  "Năng lực rõ ràng": [
+    "Clear capacity",
+    "Capacités claires",
+    "明確な供給能力"
+  ],
+  "Sản lượng, quy cách, MOQ và thị trường đã xuất khẩu trên từng hồ sơ.": [
+    "Volumes, packaging, MOQ and export markets on every profile.",
+    "Volumes, conditionnement, MOQ et marchés d'exportation sur chaque profil.",
+    "各プロフィールに生産量・包装・MOQ・輸出実績市場を掲載。"
+  ],
+  "Làm việc trực tiếp": [
+    "Deal directly",
+    "Traitez en direct",
+    "直接取引"
+  ],
+  "Nhắn tin và yêu cầu báo giá thẳng với nhà cung cấp.": [
+    "Message suppliers and request quotes directly.",
+    "Écrivez aux fournisseurs et demandez des devis directement.",
+    "サプライヤーに直接メッセージや見積依頼を送れます。"
+  ],
+  "Đã lưu hồ sơ.": [
+    "Profile saved.",
+    "Profil enregistré.",
+    "プロフィールを保存しました。"
+  ],
+  "Lưu hồ sơ": [
+    "Save profile",
+    "Enregistrer le profil",
+    "プロフィールを保存"
+  ],
+  "Bước {0} / {1}": [
+    "Step {0} / {1}",
+    "Étape {0} / {1}",
+    "ステップ {0} / {1}"
+  ],
+  "Nhu cầu mua hàng chưa hợp lệ. Vui lòng kiểm tra lại.": [
+    "Sourcing needs are invalid. Please check them.",
+    "Besoins d'achat invalides. Veuillez vérifier.",
+    "調達ニーズが不正です。ご確認ください。"
+  ],
+  "Kiểm tra buyer (KYB nhẹ)": [
+    "Buyer check (light KYB)",
+    "Vérification de l'acheteur (KYB léger)",
+    "バイヤー確認（簡易KYB）"
+  ],
+  "Xác minh buyer là tùy chọn. Đối chiếu mã VAT trên VIES và tên miền email với website. Buyer không cần khai sản phẩm.": [
+    "Buyer verification is optional. Check the VAT number on VIES and compare the email domain with the website. Buyers do not list products.",
+    "La vérification de l'acheteur est facultative. Contrôlez le numéro de TVA sur VIES et comparez le domaine de l'e-mail au site web. Les acheteurs ne déclarent pas de produits.",
+    "バイヤー認証は任意です。VIESでVAT番号を確認し、メールのドメインとウェブサイトを照合してください。バイヤーは製品を登録しません。"
+  ],
+  "Chưa đủ email và website để so tên miền.": [
+    "Not enough email and website data to compare domains.",
+    "E-mail et site web insuffisants pour comparer les domaines.",
+    "ドメインを照合するためのメールとウェブサイトが不足しています。"
+  ],
+  "Tên miền email khớp website.": [
+    "Email domain matches the website.",
+    "Le domaine de l'e-mail correspond au site web.",
+    "メールのドメインがウェブサイトと一致しています。"
+  ],
+  "Tên miền email KHÁC website — cần kiểm tra thêm.": [
+    "Email domain DIFFERS from the website — check further.",
+    "Le domaine de l'e-mail DIFFÈRE du site web — vérifiez davantage.",
+    "メールのドメインがウェブサイトと異なります — 追加確認が必要です。"
+  ],
+  "Tra cứu VAT trên VIES": [
+    "Look up VAT on VIES",
+    "Vérifier la TVA sur VIES",
+    "VIESでVATを照会"
+  ],
+  "Buyer — xác minh tùy chọn": [
+    "Buyer — optional verification",
+    "Acheteur — vérification facultative",
+    "バイヤー — 任意認証"
+  ],
+  "Số đăng ký doanh nghiệp (không bắt buộc)": [
+    "Company registration number (optional)",
+    "Numéro d'immatriculation (facultatif)",
+    "法人登録番号（任意）"
+  ],
+  "Hiệu lực đến": [
+    "Valid until",
+    "Valable jusqu'au",
+    "有効期限"
+  ],
+  "Lý do": [
+    "Reason",
+    "Motif",
+    "理由"
+  ],
+  "Cần lưu mã số VAT hoặc số đăng ký doanh nghiệp để quản trị viên đối chiếu.": [
+    "Save your VAT number or company registration number so an administrator can check it.",
+    "Enregistrez votre numéro de TVA ou d'immatriculation pour qu'un administrateur puisse le vérifier.",
+    "管理者が照合できるよう、VAT番号または法人登録番号を保存してください。"
+  ],
+  "Doanh nghiệp chưa xác minh vẫn gửi được; xác minh (không bắt buộc) để có hạn mức cao hơn.": [
+    "Unverified companies can still send requests; verify (optional) for a higher limit.",
+    "Les entreprises non vérifiées peuvent quand même envoyer des demandes ; vérifiez-vous (facultatif) pour une limite plus élevée.",
+    "未認証の企業も送信できます。認証（任意）すると上限が引き上げられます。"
+  ],
+  "Buyer chưa xác minh doanh nghiệp. Khuyến nghị điều khoản thanh toán an toàn:": [
+    "This buyer has not verified their company. Recommended safe payment terms:",
+    "Cet acheteur n'a pas vérifié son entreprise. Conditions de paiement sûres recommandées :",
+    "このバイヤーは企業認証を受けていません。推奨される安全な支払条件："
+  ],
+  "Đây là khuyến nghị chung, không phải tư vấn pháp lý.": [
+    "This is general guidance, not legal advice.",
+    "Il s'agit d'une recommandation générale, pas d'un conseil juridique.",
+    "これは一般的な推奨であり、法的助言ではありません。"
+  ],
+  "Đặt cọc 30–50% bằng chuyển khoản (T/T) trước khi sản xuất, phần còn lại trước khi giao bộ chứng từ.": [
+    "30–50% deposit by bank transfer (T/T) before production, the balance before releasing the shipping documents.",
+    "Acompte de 30 à 50 % par virement (T/T) avant production, le solde avant la remise des documents.",
+    "生産前に30〜50%を送金（T/T）で前払いし、残金は船積書類の引渡し前に受領。"
+  ],
+  "Hoặc dùng thư tín dụng trả ngay (L/C at sight) do ngân hàng uy tín phát hành.": [
+    "Or use a letter of credit at sight (L/C at sight) issued by a reputable bank.",
+    "Ou utilisez une lettre de crédit à vue (L/C at sight) émise par une banque réputée.",
+    "または信頼できる銀行が発行する一覧払信用状（L/C at sight）を利用。"
+  ],
+  "Không gửi vận đơn gốc (B/L) trước khi nhận đủ tiền.": [
+    "Do not release the original bill of lading (B/L) before full payment.",
+    "Ne remettez pas le connaissement original (B/L) avant paiement intégral.",
+    "全額受領前に船荷証券（B/L）原本を渡さない。"
+  ],
+  "Buyer chưa xác minh": [
+    "Unverified buyer",
+    "Acheteur non vérifié",
+    "未認証バイヤー"
+  ],
+  "Còn {0}/{1} yêu cầu báo giá trong 24 giờ.": [
+    "{0}/{1} quote requests left in the next 24 hours.",
+    "{0}/{1} demandes de devis restantes sur 24 heures.",
+    "24時間以内の見積依頼：残り {0}/{1} 件。"
+  ],
+  "Xác minh doanh nghiệp (không bắt buộc)": [
+    "Company verification (optional)",
+    "Vérification de l'entreprise (facultatif)",
+    "企業認証（任意）"
+  ],
+  "Bạn vẫn xem hồ sơ, nhắn tin và gửi yêu cầu báo giá khi chưa xác minh. Xác minh giúp nhà cung cấp tin tưởng hơn: nhãn \"Doanh nghiệp đã xác minh\" và hạn mức yêu cầu báo giá cao hơn.": [
+    "You can view profiles, message suppliers and send quote requests without verifying. Verification builds supplier trust: a \"Verified business\" label and a higher quote-request limit.",
+    "Vous pouvez consulter les profils, écrire aux fournisseurs et envoyer des demandes de devis sans vérification. La vérification renforce la confiance : badge « Entreprise vérifiée » et limite de demandes plus élevée.",
+    "認証なしでもプロフィール閲覧、メッセージ、見積依頼ができます。認証すると「認証済み企業」ラベルと見積依頼上限の引き上げでサプライヤーの信頼が高まります。"
+  ],
+  "Yêu cầu xác minh đang chờ duyệt": [
+    "Verification request awaiting review",
+    "Demande de vérification en attente",
+    "認証申請は審査待ちです"
+  ],
+  "Quản trị viên đang đối chiếu mã VAT hoặc số đăng ký của bạn. Trong lúc chờ, bạn vẫn dùng mọi tính năng như bình thường.": [
+    "An administrator is checking your VAT or registration number. Meanwhile you can use every feature as usual.",
+    "Un administrateur vérifie votre numéro de TVA ou d'immatriculation. En attendant, toutes les fonctionnalités restent disponibles.",
+    "管理者がVAT番号または登録番号を確認中です。その間もすべての機能を通常どおり利用できます。"
+  ],
+  "Nhà cung cấp thấy nhãn \"Doanh nghiệp đã xác minh\" trên yêu cầu báo giá của bạn.": [
+    "Suppliers see a \"Verified business\" label on your quote requests.",
+    "Les fournisseurs voient le badge « Entreprise vérifiée » sur vos demandes de devis.",
+    "サプライヤーにはあなたの見積依頼に「認証済み企業」ラベルが表示されます。"
+  ],
+  "Xem lý do của quản trị viên, cập nhật thông tin rồi gửi lại.": [
+    "Read the administrator's reason, update your details and resubmit.",
+    "Consultez le motif de l'administrateur, mettez à jour vos informations puis renvoyez.",
+    "管理者の理由を確認し、情報を更新して再申請してください。"
+  ],
+  "Thành phố": [
+    "City",
+    "Ville",
+    "都市"
+  ],
+  "Tin nhắn trực tiếp": [
+    "Direct message",
+    "Message direct",
+    "ダイレクトメッセージ"
+  ],
+  "Chưa có hội thoại nào. Nhắn tin cho nhà cung cấp từ hồ sơ của họ, hoặc gửi yêu cầu báo giá.": [
+    "No conversations yet. Message a supplier from their profile, or send a quote request.",
+    "Aucune conversation pour l'instant. Écrivez à un fournisseur depuis son profil ou envoyez une demande de devis.",
+    "まだ会話はありません。サプライヤーのプロフィールからメッセージを送るか、見積依頼を送信してください。"
+  ],
+  "Đăng nhập để nhắn tin": [
+    "Sign in to send a message",
+    "Connectez-vous pour écrire",
+    "ログインしてメッセージを送信"
+  ],
+  "Nhắn tin": [
+    "Message",
+    "Écrire",
+    "メッセージ"
+  ],
+  "Nhắn tin cho nhà cung cấp": [
+    "Message the supplier",
+    "Écrire au fournisseur",
+    "サプライヤーにメッセージ"
+  ],
+  "Tin nhắn tới": [
+    "Message to",
+    "Message à",
+    "宛先"
+  ],
+  "Ví dụ: Chào anh chị, chúng tôi cần 2 container cá tra phi lê mỗi tháng, xin báo giá CIF Hamburg.": [
+    "e.g. Hello, we need 2 containers of pangasius fillets per month — please quote CIF Hamburg.",
+    "ex. Bonjour, nous avons besoin de 2 conteneurs de filets de pangasius par mois — merci de coter CIF Hambourg.",
+    "例: こんにちは。パンガシウスフィレを月2コンテナ必要です。CIFハンブルクで見積をお願いします。"
+  ],
+  "Tin nhắn được dịch sang ngôn ngữ của người nhận.": [
+    "Messages are translated into the recipient's language.",
+    "Les messages sont traduits dans la langue du destinataire.",
+    "メッセージは受信者の言語に翻訳されます。"
+  ],
+  "Huỷ": [
+    "Cancel",
+    "Annuler",
+    "キャンセル"
+  ],
+  "Gửi tin nhắn": [
+    "Send message",
+    "Envoyer le message",
+    "メッセージを送信"
+  ],
+  "Bạn đã mở quá nhiều hội thoại mới hôm nay. Vui lòng thử lại vào ngày mai.": [
+    "You have opened too many new conversations today. Please try again tomorrow.",
+    "Vous avez ouvert trop de nouvelles conversations aujourd'hui. Réessayez demain.",
+    "本日は新しい会話を開きすぎました。明日もう一度お試しください。"
+  ],
+  "Nhà cung cấp này hiện không nhận tin nhắn.": [
+    "This supplier is not accepting messages right now.",
+    "Ce fournisseur n'accepte pas de messages pour le moment.",
+    "このサプライヤーは現在メッセージを受け付けていません。"
+  ],
+  "Vui lòng hoàn thiện hồ sơ doanh nghiệp của bạn trước khi nhắn tin.": [
+    "Please complete your company profile before sending messages.",
+    "Veuillez compléter le profil de votre entreprise avant d'écrire.",
+    "メッセージを送る前に企業プロフィールを完成させてください。"
+  ],
+  "Bạn không thể nhắn tin cho chính công ty mình.": [
+    "You cannot message your own company.",
+    "Vous ne pouvez pas écrire à votre propre entreprise.",
+    "自社にはメッセージを送れません。"
+  ],
+  "Vui lòng nhập nội dung tin nhắn.": [
+    "Please enter a message.",
+    "Veuillez saisir un message.",
+    "メッセージを入力してください。"
+  ],
+  "Vui lòng đăng nhập để nhắn tin.": [
+    "Please sign in to send messages.",
+    "Veuillez vous connecter pour écrire.",
+    "メッセージを送るにはログインしてください。"
+  ],
+  "Gửi báo giá": [
+    "Send quote",
+    "Envoyer le devis",
+    "見積を送信"
+  ],
+  "Địa điểm giao (không bắt buộc)": [
+    "Named place (optional)",
+    "Lieu convenu (facultatif)",
+    "指定地（任意）"
+  ],
+  "Ví dụ: Cát Lái, TP.HCM": [
+    "e.g. Cat Lai, Ho Chi Minh City",
+    "ex. Cat Lai, Hô-Chi-Minh-Ville",
+    "例: カットライ（ホーチミン市）"
+  ],
+  "Đặt cọc": [
+    "Deposit",
+    "Acompte",
+    "前払金"
+  ],
+  "Phần còn lại": [
+    "Balance",
+    "Solde",
+    "残金"
+  ],
+  "Thời gian giao hàng (ngày)": [
+    "Lead time (days)",
+    "Délai de livraison (jours)",
+    "納期（日）"
+  ],
+  "Báo giá có hiệu lực đến": [
+    "Quote valid until",
+    "Devis valable jusqu'au",
+    "見積有効期限"
+  ],
+  "Không tải được báo giá. Vui lòng thử lại.": [
+    "Could not load quotes. Please try again.",
+    "Impossible de charger les devis. Réessayez.",
+    "見積を読み込めませんでした。もう一度お試しください。"
+  ],
+  "Báo giá": [
+    "Quotes",
+    "Devis",
+    "見積"
+  ],
+  "Giao hàng sau": [
+    "Delivery in",
+    "Livraison sous",
+    "納期"
+  ],
+  "Hai bên hoàn tất hợp đồng và thanh toán trực tiếp với nhau; VYBE Trade chưa xử lý thanh toán.": [
+    "Both parties finalise the contract and payment directly; VYBE Trade does not process payments yet.",
+    "Les deux parties finalisent le contrat et le paiement directement ; VYBE Trade ne traite pas encore les paiements.",
+    "契約と支払いは両者間で直接行います。VYBE Tradeはまだ決済を扱っていません。"
+  ],
+  "Lý do từ chối (không bắt buộc)": [
+    "Reason for declining (optional)",
+    "Motif du refus (facultatif)",
+    "辞退理由（任意）"
+  ],
+  "Chấp nhận báo giá": [
+    "Accept quote",
+    "Accepter le devis",
+    "見積を承諾"
+  ],
+  "Rút báo giá": [
+    "Withdraw quote",
+    "Retirer le devis",
+    "見積を取り下げ"
+  ],
+  "Nhà cung cấp chưa gửi báo giá.": [
+    "The supplier has not sent a quote yet.",
+    "Le fournisseur n'a pas encore envoyé de devis.",
+    "サプライヤーはまだ見積を送っていません。"
+  ],
+  "Bạn chưa gửi báo giá cho yêu cầu này.": [
+    "You have not quoted this request yet.",
+    "Vous n'avez pas encore chiffré cette demande.",
+    "このリクエストにはまだ見積を送っていません。"
+  ],
+  "Gửi báo giá mới (thay báo giá hiện tại)": [
+    "Send a new quote (replaces the current one)",
+    "Envoyer un nouveau devis (remplace l'actuel)",
+    "新しい見積を送信（現在の見積を置き換え）"
+  ],
+  "Tạo báo giá": [
+    "Create quote",
+    "Créer un devis",
+    "見積を作成"
+  ],
+  "Đơn giá (/{0})": [
+    "Unit price (/{0})",
+    "Prix unitaire (/{0})",
+    "単価（/{0}）"
+  ],
+  "{0} ngày": [
+    "{0} days",
+    "{0} jours",
+    "{0}日"
+  ],
+  "Đang chờ buyer": [
+    "Awaiting buyer",
+    "En attente de l'acheteur",
+    "バイヤーの回答待ち"
+  ],
+  "Đã chấp nhận": [
+    "Accepted",
+    "Accepté",
+    "承諾済み"
+  ],
+  "Đã rút": [
+    "Withdrawn",
+    "Retiré",
+    "取り下げ済み"
+  ],
+  "Đã thay bằng báo giá mới": [
+    "Replaced by a newer quote",
+    "Remplacé par un devis plus récent",
+    "新しい見積に置き換え済み"
+  ],
+  "Hết hiệu lực": [
+    "Expired",
+    "Expiré",
+    "期限切れ"
+  ],
+  "Chuyển khoản (T/T) phần còn lại trước khi giao hàng": [
+    "Balance by bank transfer (T/T) before shipment",
+    "Solde par virement (T/T) avant expédition",
+    "残金は出荷前に送金（T/T）"
+  ],
+  "Chuyển khoản (T/T) khi nhận bản sao vận đơn (B/L)": [
+    "Bank transfer (T/T) against copy of bill of lading (B/L)",
+    "Virement (T/T) contre copie du connaissement (B/L)",
+    "船荷証券（B/L）写しと引換えに送金（T/T）"
+  ],
+  "Thư tín dụng trả ngay (L/C at sight)": [
+    "Letter of credit at sight (L/C at sight)",
+    "Lettre de crédit à vue (L/C at sight)",
+    "一覧払信用状（L/C at sight）"
+  ],
+  "Không còn phần phải trả (đã đặt cọc 100%)": [
+    "Nothing left to pay (100% deposit)",
+    "Rien à payer (acompte de 100 %)",
+    "残金なし（100%前払い）"
+  ],
+  "Điều khoản chưa hợp lệ: đặt cọc 100% thì không còn phần phải trả, và ngày hiệu lực phải trong 180 ngày tới.": [
+    "Invalid terms: a 100% deposit leaves no balance, and the validity date must be within the next 180 days.",
+    "Conditions invalides : un acompte de 100 % ne laisse aucun solde, et la date de validité doit être dans les 180 prochains jours.",
+    "条件が不正です。100%前払いの場合は残金なし、有効期限は180日以内にしてください。"
+  ],
+  "Yêu cầu báo giá đã đóng.": [
+    "This quote request is closed.",
+    "Cette demande de devis est clôturée.",
+    "この見積依頼は終了しています。"
+  ],
+  "Buyer đã chấp nhận một báo giá cho yêu cầu này.": [
+    "The buyer has already accepted a quote for this request.",
+    "L'acheteur a déjà accepté un devis pour cette demande.",
+    "バイヤーはこの依頼の見積を既に承諾しています。"
+  ],
+  "Báo giá đã hết hiệu lực. Hãy đề nghị nhà cung cấp gửi báo giá mới.": [
+    "This quote has expired. Ask the supplier for a new one.",
+    "Ce devis a expiré. Demandez-en un nouveau au fournisseur.",
+    "この見積は期限切れです。サプライヤーに新しい見積を依頼してください。"
+  ],
+  "Đơn giá phải là số dương, tối đa 2 chữ số thập phân.": [
+    "Unit price must be a positive number with at most 2 decimals.",
+    "Le prix unitaire doit être un nombre positif avec 2 décimales au plus.",
+    "単価は小数点以下2桁までの正の数にしてください。"
+  ],
+  "Thời gian giao hàng phải từ 1 đến 365 ngày.": [
+    "Lead time must be between 1 and 365 days.",
+    "Le délai doit être compris entre 1 et 365 jours.",
+    "納期は1〜365日にしてください。"
+  ],
+  "Bạn nhận được báo giá mới cho yêu cầu báo giá.": [
+    "You received a new quote for your request.",
+    "Vous avez reçu un nouveau devis pour votre demande.",
+    "見積依頼に新しい見積が届きました。"
+  ],
+  "Buyer đã chấp nhận báo giá của bạn.": [
+    "The buyer accepted your quote.",
+    "L'acheteur a accepté votre devis.",
+    "バイヤーが見積を承諾しました。"
+  ],
+  "Buyer đã từ chối báo giá của bạn.": [
+    "The buyer declined your quote.",
+    "L'acheteur a refusé votre devis.",
+    "バイヤーが見積を辞退しました。"
+  ],
+  "Nhà cung cấp đã cập nhật yêu cầu báo giá của bạn.": [
+    "The supplier updated your quote request.",
+    "Le fournisseur a mis à jour votre demande de devis.",
+    "サプライヤーが見積依頼を更新しました。"
+  ],
+  "Xem hồ sơ nhà cung cấp ở chế độ ẩn danh": [
+    "View supplier profiles anonymously",
+    "Consulter les profils fournisseurs en mode anonyme",
+    "サプライヤーのプロフィールを匿名で閲覧"
+  ],
+  "Khi bật, nhà cung cấp chỉ thấy có một doanh nghiệp đã xem, không thấy tên công ty của bạn.": [
+    "When on, suppliers only see that a business viewed them, not your company name.",
+    "Activé, les fournisseurs voient seulement qu'une entreprise les a consultés, pas le nom de votre société.",
+    "オンにすると、サプライヤーには企業が閲覧したことだけが表示され、貴社名は表示されません。"
+  ],
+  "Xem ai đã xem hồ sơ": [
+    "See who viewed your profile",
+    "Voir qui a consulté votre profil",
+    "プロフィールの閲覧者を見る"
+  ],
+  "Ai đã xem hồ sơ của bạn": [
+    "Who viewed your profile",
+    "Qui a consulté votre profil",
+    "プロフィールの閲覧者"
+  ],
+  "Ai đã xem hồ sơ": [
+    "Profile viewers",
+    "Visiteurs du profil",
+    "プロフィール閲覧者"
+  ],
+  "Khoảng thời gian": [
+    "Period",
+    "Période",
+    "期間"
+  ],
+  "Chỉ hiện tên buyer đã xác minh và không bật chế độ ẩn danh. Các lượt xem khác chỉ được đếm, không lộ danh tính.": [
+    "Only verified buyers who have not turned on anonymous mode are named. Other views are only counted, without revealing identity.",
+    "Seuls les acheteurs vérifiés n'ayant pas activé le mode anonyme sont nommés. Les autres consultations sont seulement comptées, sans révéler l'identité.",
+    "匿名モードをオンにしていない認証済みバイヤーのみ名前が表示されます。その他の閲覧は件数のみで、身元は表示されません。"
+  ],
+  "Không tải được dữ liệu lượt xem. Vui lòng thử lại.": [
+    "Could not load profile views. Please try again.",
+    "Impossible de charger les consultations. Réessayez.",
+    "閲覧データを読み込めませんでした。もう一度お試しください。"
+  ],
+  "Chưa có buyer đã xác minh nào xem hồ sơ trong khoảng này. Hồ sơ đầy đủ sản phẩm, năng lực và chứng nhận giúp buyer tìm thấy bạn.": [
+    "No verified buyer viewed your profile in this period. A complete profile with products, capacity and certificates helps buyers find you.",
+    "Aucun acheteur vérifié n'a consulté votre profil sur cette période. Un profil complet (produits, capacités, certificats) aide les acheteurs à vous trouver.",
+    "この期間に閲覧した認証済みバイヤーはいません。製品・供給能力・認証を充実させるとバイヤーに見つけてもらいやすくなります。"
+  ],
+  "Gần nhất": [
+    "Latest",
+    "Dernière",
+    "最新"
+  ],
+  "Tổng lượt xem": [
+    "Total views",
+    "Total des consultations",
+    "総閲覧数"
+  ],
+  "Khách chưa đăng nhập": [
+    "Guests (not signed in)",
+    "Visiteurs non connectés",
+    "未ログインのゲスト"
+  ],
+  "Doanh nghiệp ẩn danh": [
+    "Anonymous businesses",
+    "Entreprises anonymes",
+    "匿名の企業"
+  ],
+  "{0} ngày qua": [
+    "Last {0} days",
+    "{0} derniers jours",
+    "過去{0}日"
+  ],
+  "{0} lượt xem": [
+    "{0} views",
+    "{0} consultations",
+    "{0}回閲覧"
+  ],
+  "{0} vừa xem hồ sơ của bạn.": [
+    "{0} just viewed your profile.",
+    "{0} vient de consulter votre profil.",
+    "{0}があなたのプロフィールを閲覧しました。"
+  ],
+  "Một buyer đã xác minh vừa xem hồ sơ của bạn.": [
+    "A verified buyer just viewed your profile.",
+    "Un acheteur vérifié vient de consulter votre profil.",
+    "認証済みバイヤーがプロフィールを閲覧しました。"
+  ],
+  "Có cảnh báo mới cho ngành hàng của bạn.": [
+    "There is a new alert for your sector.",
+    "Nouvelle alerte pour votre secteur.",
+    "あなたの業界に新しい警告があります。"
+  ],
+  "Đơn hàng của bạn đã được cập nhật.": [
+    "Your order has been updated.",
+    "Votre commande a été mise à jour.",
+    "ご注文が更新されました。"
+  ],
+  "Nhà cung cấp dịch vụ xuất khẩu đã xác minh": [
+    "Verified export service providers",
+    "Prestataires de services à l'export vérifiés",
+    "認証済みの輸出サービス事業者"
+  ],
+  "Loại nhà cung cấp": [
+    "Supplier type",
+    "Type de fournisseur",
+    "サプライヤーの種類"
+  ],
+  "Nhà cung cấp dịch vụ": [
+    "Service providers",
+    "Prestataires de services",
+    "サービス事業者"
+  ],
+  "Tìm dịch vụ": [
+    "Search services",
+    "Rechercher un service",
+    "サービスを検索"
+  ],
+  "Tìm theo tên sản phẩm": [
+    "Search by product name",
+    "Rechercher par nom de produit",
+    "製品名で検索"
+  ],
+  "vận chuyển lạnh, khai báo hải quan, kiểm nghiệm…": [
+    "cold-chain shipping, customs clearance, testing…",
+    "transport frigorifique, dédouanement, analyses…",
+    "冷蔵輸送、通関、検査…"
+  ],
+  "hạt điều, tiêu, cá tra…": [
+    "cashew, pepper, pangasius…",
+    "noix de cajou, poivre, pangasius…",
+    "カシューナッツ、胡椒、パンガシウス…"
+  ],
+  "Loại dịch vụ": [
+    "Service type",
+    "Type de service",
+    "サービスの種類"
+  ],
+  "Vận tải & giao nhận": [
+    "Freight forwarding & logistics",
+    "Transit et logistique",
+    "フォワーディング・物流"
+  ],
+  "Đại lý hải quan": [
+    "Customs brokerage",
+    "Commissionnaire en douane",
+    "通関代理"
+  ],
+  "Kho bãi & kho lạnh": [
+    "Warehousing & cold storage",
+    "Entreposage et froid",
+    "倉庫・冷蔵保管"
+  ],
+  "Kế toán & thuế": [
+    "Accounting & tax",
+    "Comptabilité et fiscalité",
+    "会計・税務"
+  ],
+  "Pháp lý & luật": [
+    "Legal services",
+    "Services juridiques",
+    "法務サービス"
+  ],
+  "Chứng nhận & kiểm nghiệm": [
+    "Certification & testing",
+    "Certification et analyses",
+    "認証・検査"
+  ],
+  "Bảo hiểm hàng hóa": [
+    "Cargo insurance",
+    "Assurance marchandises",
+    "貨物保険"
+  ],
+  "Khác": [
+    "Other",
+    "Autre",
+    "その他"
+  ],
+  "Xác minh bởi VYBE Trade": [
+    "Verified by VYBE Trade",
+    "Vérifié par VYBE Trade",
+    "VYBE Tradeが認証"
+  ],
+  "Giới thiệu": [
+    "About",
+    "Présentation",
+    "会社紹介"
+  ],
+  "Vị trí": [
+    "Location",
+    "Localisation",
+    "所在地"
+  ],
+  "Địa chỉ nhà máy (doanh nghiệp đồng ý công khai)": [
+    "Factory address (published with the company's consent)",
+    "Adresse de l'usine (publiée avec l'accord de l'entreprise)",
+    "工場住所（企業の同意により公開）"
+  ],
+  "Hiển thị ở mức tỉnh/thành phố": [
+    "Shown at province/city level",
+    "Affiché au niveau de la province/ville",
+    "省・市レベルで表示"
+  ],
+  "Bản đồ vị trí nhà cung cấp": [
+    "Supplier location map",
+    "Carte de localisation du fournisseur",
+    "サプライヤー所在地の地図"
+  ],
+  "Dữ liệu đã kiểm": [
+    "Verified data",
+    "Données vérifiées",
+    "確認済みデータ"
+  ],
+  "Pháp lý doanh nghiệp được VYBE Trade đối chiếu": [
+    "Company legal status checked by VYBE Trade",
+    "Statut juridique vérifié par VYBE Trade",
+    "法的地位をVYBE Tradeが照合"
+  ],
+  "Đủ bằng chứng xuất xứ bắt buộc": [
+    "All required origin evidence on file",
+    "Toutes les preuves d'origine requises fournies",
+    "必要な原産地証拠がすべて揃っています"
+  ],
+  "Chứng nhận còn hạn": [
+    "Valid certificates",
+    "Certificats en cours de validité",
+    "有効な認証"
+  ],
+  "Còn hạn đến": [
+    "Valid until",
+    "Valable jusqu'au",
+    "有効期限"
+  ],
+  "Không ghi thời hạn": [
+    "No expiry stated",
+    "Sans date d'expiration",
+    "有効期限の記載なし"
+  ],
+  "Chưa có chứng nhận được duyệt để công khai.": [
+    "No approved certificates published yet.",
+    "Aucun certificat approuvé publié pour l'instant.",
+    "公開できる承認済み認証はまだありません。"
+  ],
+  "Ngôn ngữ giao dịch": [
+    "Business languages",
+    "Langues de travail",
+    "取引言語"
+  ],
+  "Mã cơ sở": [
+    "Facility code",
+    "Code d'établissement",
+    "施設コード"
+  ],
+  "Doanh nghiệp chưa công bố thông tin năng lực.": [
+    "The company has not published capacity information yet.",
+    "L'entreprise n'a pas encore publié ses capacités.",
+    "企業はまだ供給能力を公開していません。"
+  ],
+  "Quy cách": [
+    "Packaging",
+    "Conditionnement",
+    "包装"
+  ],
+  "Phạm vi": [
+    "Coverage",
+    "Couverture",
+    "対応範囲"
+  ],
+  "Tỉnh / thành phố": [
+    "Province / city",
+    "Province / ville",
+    "省・市"
+  ],
+  "Ví dụ: Cần Thơ": [
+    "e.g. Can Tho",
+    "ex. Cân Tho",
+    "例: カントー"
+  ],
+  "Hồ sơ công khai và bản đồ chỉ hiển thị ở mức tỉnh/thành phố.": [
+    "Your public profile and map only show the province/city.",
+    "Le profil public et la carte n'affichent que la province/ville.",
+    "公開プロフィールと地図には省・市のみ表示されます。"
+  ],
+  "Cho phép hiển thị địa chỉ nhà máy chính xác trên bản đồ hồ sơ công khai": [
+    "Show the exact factory address on the public profile map",
+    "Afficher l'adresse exacte de l'usine sur la carte du profil public",
+    "公開プロフィールの地図に工場の正確な住所を表示する"
+  ],
+  "Công cụ tính thuế": [
+    "Tariff tool",
+    "Outil de calcul des droits",
+    "関税計算ツール"
+  ],
+  "Mở công cụ tính thuế": [
+    "Open the tariff tool",
+    "Ouvrir l'outil de calcul des droits",
+    "関税計算ツールを開く"
+  ],
+  "Tiết kiệm thuế ước tính": [
+    "Estimated duty savings",
+    "Économies de droits estimées",
+    "推定関税削減額"
+  ],
+  "Nhập mã HS, thị trường nhập khẩu và giá trị lô hàng để ước tính thuế nhập khẩu và khoản tiết kiệm nhờ hiệp định thương mại tự do (FTA).": [
+    "Enter the HS code, import market and shipment value to estimate import duty and the savings from free trade agreements (FTAs).",
+    "Saisissez le code SH, le marché d'importation et la valeur de l'envoi pour estimer les droits à l'importation et les économies grâce aux accords de libre-échange (ALE).",
+    "HSコード、輸入市場、貨物価額を入力すると、輸入関税と自由貿易協定（FTA）による削減額を試算できます。"
+  ],
+  "Chưa có lần tính thuế nào. Dùng công cụ tính thuế để thấy tổng tiền tiết kiệm nhờ hiệp định thương mại.": [
+    "No tariff calculations yet. Use the tariff tool to see your total savings from trade agreements.",
+    "Aucun calcul de droits pour l'instant. Utilisez l'outil pour voir vos économies grâce aux accords commerciaux.",
+    "関税計算はまだありません。関税計算ツールで貿易協定による削減総額を確認しましょう。"
+  ],
+  "Thuế ưu đãi": [
+    "Preferential duty",
+    "Droit préférentiel",
+    "特恵税率"
+  ],
+  "Thị trường nhập khẩu": [
+    "Import market",
+    "Marché d'importation",
+    "輸入市場"
+  ],
+  "Liên minh châu Âu (EU)": [
+    "European Union (EU)",
+    "Union européenne (UE)",
+    "欧州連合（EU）"
+  ],
+  "Thị trường khác": [
+    "Other markets",
+    "Autres marchés",
+    "その他の市場"
+  ],
+  "Hiệp định áp dụng": [
+    "Applicable agreement",
+    "Accord applicable",
+    "適用協定"
+  ],
+  "Chọn hiệp định": [
+    "Choose an agreement",
+    "Choisir un accord",
+    "協定を選択"
+  ],
+  "Chưa có dữ liệu thuế đã được chuyên gia duyệt cho mã HS và thị trường này.": [
+    "No expert-reviewed tariff data yet for this HS code and market.",
+    "Aucune donnée tarifaire validée par un expert pour ce code SH et ce marché.",
+    "このHSコードと市場について、専門家が確認した関税データはまだありません。"
+  ],
+  "Thị trường này có nhiều hiệp định. Vui lòng chọn hiệp định áp dụng.": [
+    "This market has several agreements. Please choose the applicable one.",
+    "Ce marché relève de plusieurs accords. Choisissez l'accord applicable.",
+    "この市場には複数の協定があります。適用する協定を選択してください。"
+  ],
+  "Hiệp định": [
+    "Agreement",
+    "Accord",
+    "協定"
+  ],
+  "Hiệp định thương mại": [
+    "Trade agreements",
+    "Accords commerciaux",
+    "貿易協定"
+  ],
+  "Nước đối tác": [
+    "Partner countries",
+    "Pays partenaires",
+    "相手国"
+  ],
+  "Hiệu lực từ": [
+    "In force from",
+    "En vigueur depuis",
+    "発効日"
+  ],
+  "Thuế ưu đãi hiện hành (%)": [
+    "Current preferential rate (%)",
+    "Taux préférentiel actuel (%)",
+    "現行特恵税率（%）"
+  ],
+  "Theo hiệp định ở trên; 0–100, tối đa 4 chữ số thập phân.": [
+    "Under the agreement above; 0–100, up to 4 decimals.",
+    "Selon l'accord ci-dessus ; 0–100, 4 décimales max.",
+    "上記の協定に基づく。0〜100、小数点以下4桁まで。"
+  ],
+  "EU = biểu thuế chung của liên minh thuế quan; nước khác nhập mã ISO-2 (vd GB, JP).": [
+    "EU = the customs union's common tariff; for other countries enter the ISO-2 code (e.g. GB, JP).",
+    "EU = tarif commun de l'union douanière ; autres pays : code ISO-2 (ex. GB, JP).",
+    "EU＝関税同盟の共通関税。その他の国はISO-2コード（例：GB、JP）を入力。"
+  ],
+  "Mã hiệp định trong danh sách Hiệp định thương mại (vd EVFTA, UKVFTA, CPTPP).": [
+    "Agreement code from the Trade agreements list (e.g. EVFTA, UKVFTA, CPTPP).",
+    "Code d'accord de la liste Accords commerciaux (ex. EVFTA, UKVFTA, CPTPP).",
+    "貿易協定リストの協定コード（例：EVFTA、UKVFTA、CPTPP）。"
+  ],
+  "Thuế ưu đãi hiện hành theo hiệp định của dòng (mặc định EVFTA), tính bằng %.": [
+    "Current preferential rate under the line's agreement (EVFTA by default), in %.",
+    "Taux préférentiel actuel selon l'accord de la ligne (EVFTA par défaut), en %.",
+    "当該行の協定（既定はEVFTA）に基づく現行特恵税率（%）。"
+  ],
+  "Mã hiệp định (EVFTA, UKVFTA, CPTPP…). Hiệp định áp dụng cho một thị trường chỉ suy ra từ dòng thuế đã duyệt.": [
+    "Agreement code (EVFTA, UKVFTA, CPTPP…). The agreement applied to a market is derived only from reviewed tariff lines.",
+    "Code d'accord (EVFTA, UKVFTA, CPTPP…). L'accord appliqué à un marché ne découle que des lignes tarifaires validées.",
+    "協定コード（EVFTA、UKVFTA、CPTPPなど）。市場に適用される協定は確認済みの関税行からのみ導かれます。"
+  ],
+  "EU nếu áp dụng biểu thuế chung của cả liên minh thuế quan; nước khác dùng mã ISO-2 (GB, JP, KR…).": [
+    "EU for the whole customs union's common tariff; other countries use the ISO-2 code (GB, JP, KR…).",
+    "EU pour le tarif commun de l'union douanière ; autres pays : code ISO-2 (GB, JP, KR…).",
+    "関税同盟全体の共通関税はEU、その他の国はISO-2コード（GB、JP、KRなど）。"
+  ],
+  "Mã hiệp định (chữ in hoa, số, gạch dưới), vd EVFTA, UKVFTA. Không đổi được sau khi tạo.": [
+    "Agreement code (uppercase letters, digits, underscore), e.g. EVFTA, UKVFTA. Cannot be changed after creation.",
+    "Code d'accord (majuscules, chiffres, tiret bas), ex. EVFTA, UKVFTA. Non modifiable après création.",
+    "協定コード（大文字・数字・アンダースコア）、例：EVFTA、UKVFTA。作成後は変更不可。"
+  ],
+  "Mã ISO-2 cách nhau bằng dấu phẩy; EU = liên minh thuế quan. Chỉ để hiển thị — hiệp định áp dụng luôn suy ra từ dòng thuế đã duyệt.": [
+    "ISO-2 codes separated by commas; EU = customs union. Display only — the applicable agreement is always derived from reviewed tariff lines.",
+    "Codes ISO-2 séparés par des virgules ; EU = union douanière. Affichage seulement — l'accord applicable découle toujours des lignes validées.",
+    "カンマ区切りのISO-2コード。EU＝関税同盟。表示用のみで、適用協定は常に確認済みの関税行から導かれます。"
+  ],
+  "Danh sách ban đầu là bản nháp: luật TM rà tên, đối tác, ngày hiệu lực và nguồn rồi bấm duyệt.": [
+    "The initial list is a draft: the trade lawyer checks names, partners, entry-into-force dates and sources, then approves.",
+    "La liste initiale est un brouillon : le juriste vérifie noms, partenaires, dates d'entrée en vigueur et sources, puis valide.",
+    "初期リストは草案です。通商弁護士が名称・相手国・発効日・出典を確認して承認します。"
+  ],
+  "Bản nháp": [
+    "Draft",
+    "Brouillon",
+    "草案"
+  ],
+  "Chữ in hoa, số, gạch dưới (2–16 ký tự).": [
+    "Uppercase letters, digits, underscore (2–16 characters).",
+    "Majuscules, chiffres, tiret bas (2 à 16 caractères).",
+    "大文字・数字・アンダースコア（2〜16文字）。"
+  ],
+  "Mã ISO-2 cách nhau bằng dấu phẩy, vd JP, KR hoặc EU.": [
+    "ISO-2 codes separated by commas, e.g. JP, KR or EU.",
+    "Codes ISO-2 séparés par des virgules, ex. JP, KR ou EU.",
+    "カンマ区切りのISO-2コード、例：JP、KR、EU。"
+  ],
+  "Kịch bản hạn ngạch thuế quan": [
+    "Tariff-rate quota scenarios",
+    "Scénarios de contingent tarifaire",
+    "関税割当のシナリオ"
+  ],
+  "Phân nhóm": [
+    "Subtype",
+    "Sous-catégorie",
+    "区分"
+  ],
+  "Kịch bản": [
+    "Scenario",
+    "Scénario",
+    "シナリオ"
+  ],
+  "Mức thuế": [
+    "Duty rate",
+    "Taux de droit",
+    "税率"
+  ],
+  "Tiền thuế": [
+    "Duty amount",
+    "Montant des droits",
+    "関税額"
+  ],
+  "Chênh lệch nếu được phân bổ hạn ngạch": [
+    "Difference if the quota is allocated",
+    "Écart si le contingent est attribué",
+    "割当を受けた場合の差額"
+  ],
+  "Bạn cho biết chưa được phân bổ hạn ngạch: lô hàng sẽ chịu thuế ngoài hạn ngạch.": [
+    "You said the quota has not been allocated: the shipment will pay the out-of-quota duty.",
+    "Vous indiquez que le contingent n'est pas attribué : l'envoi paiera le droit hors contingent.",
+    "割当を受けていないとのことです。この貨物には割当外の関税が課されます。"
+  ],
+  "Chưa rõ đã được phân bổ hạn ngạch hay chưa: hãy xác nhận với nhà nhập khẩu trước khi chốt giá.": [
+    "Not sure whether the quota is allocated: confirm with the importer before fixing the price.",
+    "Attribution du contingent incertaine : confirmez avec l'importateur avant de fixer le prix.",
+    "割当の有無が不明です。価格を確定する前に輸入者に確認してください。"
+  ],
+  "Mặt hàng có hạn ngạch thuế quan": [
+    "This product has a tariff-rate quota",
+    "Ce produit est soumis à un contingent tarifaire",
+    "この品目には関税割当があります"
+  ],
+  "Phân nhóm hàng": [
+    "Product subtype",
+    "Sous-catégorie de produit",
+    "製品区分"
+  ],
+  "Chọn phân nhóm": [
+    "Choose a subtype",
+    "Choisir une sous-catégorie",
+    "区分を選択"
+  ],
+  "Bạn đã được phân bổ hạn ngạch chưa?": [
+    "Has the quota been allocated to you?",
+    "Le contingent vous a-t-il été attribué ?",
+    "関税割当を受けていますか？"
+  ],
+  "Khối lượng lô hàng (tấn)": [
+    "Shipment quantity (tonnes)",
+    "Quantité de l'envoi (tonnes)",
+    "貨物数量（トン）"
+  ],
+  "Cần khi thuế tính theo khối lượng (thuế tuyệt đối).": [
+    "Needed when the duty is charged by weight (specific duty).",
+    "Nécessaire lorsque le droit est calculé au poids (droit spécifique).",
+    "重量による課税（従量税）の場合に必要です。"
+  ],
+  "Trong hạn ngạch": [
+    "In quota",
+    "Dans le contingent",
+    "割当内"
+  ],
+  "Ngoài hạn ngạch": [
+    "Out of quota",
+    "Hors contingent",
+    "割当外"
+  ],
+  "Đã được phân bổ": [
+    "Allocated",
+    "Attribué",
+    "割当済み"
+  ],
+  "Không rõ": [
+    "Not sure",
+    "Je ne sais pas",
+    "不明"
+  ],
+  "Chưa có dữ liệu hạn ngạch đã được chuyên gia duyệt cho mặt hàng này, nên chúng tôi không đưa ra con số.": [
+    "There is no expert-reviewed quota data for this product yet, so we do not show figures.",
+    "Aucune donnée de contingent validée par un expert pour ce produit : nous n'affichons pas de chiffres.",
+    "この品目について専門家が確認した割当データがないため、数値は表示しません。"
+  ],
+  "Mặt hàng này có hạn ngạch thuế quan. Chọn phân nhóm hàng để xem kịch bản trong / ngoài hạn ngạch.": [
+    "This product has a tariff-rate quota. Choose a product subtype to see in-quota and out-of-quota scenarios.",
+    "Ce produit est soumis à un contingent tarifaire. Choisissez une sous-catégorie pour voir les scénarios dans / hors contingent.",
+    "この品目には関税割当があります。製品区分を選ぶと割当内／割当外のシナリオを確認できます。"
+  ],
+  "Phân nhóm này không thuộc danh sách đủ điều kiện hạn ngạch đã duyệt (ví dụ giống gạo chưa có trong danh sách). Trường hợp này cần chuyên gia xem xét.": [
+    "This subtype is not on the reviewed list eligible for the quota (for example a rice variety not yet listed). An expert needs to review this case.",
+    "Cette sous-catégorie ne figure pas sur la liste validée éligible au contingent (ex. une variété de riz non listée). Un expert doit examiner ce cas.",
+    "この区分は確認済みの割当対象リストにありません（例：未掲載の米の品種）。専門家の確認が必要です。"
+  ],
+  "Thuế ngoài hạn ngạch là thuế tuyệt đối theo khối lượng. Nhập khối lượng lô hàng để tính.": [
+    "The out-of-quota duty is a specific duty by weight. Enter the shipment quantity to calculate it.",
+    "Le droit hors contingent est un droit spécifique au poids. Saisissez la quantité de l'envoi.",
+    "割当外の関税は重量による従量税です。貨物数量を入力してください。"
+  ],
+  "Mặt hàng áp thuế hỗn hợp, cần chuyên gia xem xét.": [
+    "This product has a mixed duty; an expert needs to review it.",
+    "Ce produit est soumis à un droit mixte ; un expert doit l'examiner.",
+    "この品目は混合税のため、専門家の確認が必要です。"
+  ],
+  "Dữ liệu hạn ngạch bất thường, cần chuyên gia kiểm tra lại.": [
+    "The quota data looks abnormal; an expert needs to check it.",
+    "Les données de contingent semblent anormales ; un expert doit les vérifier.",
+    "割当データに異常があるため、専門家の再確認が必要です。"
+  ],
+  "Hàng đạt quy tắc xuất xứ của hiệp định và có chứng từ chứng nhận xuất xứ hợp lệ.": [
+    "The goods meet the agreement's rules of origin and have valid proof of origin.",
+    "Les marchandises respectent les règles d'origine de l'accord et disposent d'une preuve d'origine valide.",
+    "協定の原産地規則を満たし、有効な原産地証明書類があること。"
+  ],
+  "Thuế trong hạn ngạch chỉ áp dụng khi lô hàng được phân bổ hạn ngạch (còn hạn ngạch tại thời điểm nhập khẩu); nếu không, áp thuế ngoài hạn ngạch.": [
+    "The in-quota duty applies only if the shipment is allocated quota (quota still available at import); otherwise the out-of-quota duty applies.",
+    "Le droit contingentaire ne s'applique que si l'envoi obtient une part du contingent (encore disponible à l'importation) ; sinon, le droit hors contingent s'applique.",
+    "割当内税率は貨物が割当を受けた場合（輸入時に割当枠が残っている場合）のみ適用され、そうでなければ割当外税率が適用されます。"
+  ],
+  "Hàng đúng phân nhóm đủ điều kiện đã chọn.": [
+    "The goods match the selected eligible subtype.",
+    "Les marchandises correspondent à la sous-catégorie éligible choisie.",
+    "貨物が選択した対象区分に該当すること。"
+  ],
+  "Có giấy phép / chứng nhận theo yêu cầu của hạn ngạch (xem ghi chú bên dưới).": [
+    "Licences / certificates required by the quota are in place (see note below).",
+    "Licences / certificats exigés par le contingent disponibles (voir la note ci-dessous).",
+    "割当で求められる許可・証明書があること（下記の注記参照）。"
+  ],
+  "Phân nhóm sản phẩm": [
+    "Product subtypes",
+    "Sous-catégories de produits",
+    "製品区分"
+  ],
+  "Hạn ngạch thuế quan": [
+    "Tariff-rate quotas",
+    "Contingents tarifaires",
+    "関税割当"
+  ],
+  "Tiền tố HS": [
+    "HS prefix",
+    "Préfixe SH",
+    "HS接頭辞"
+  ],
+  "Chữ thường, số, gạch dưới.": [
+    "Lowercase letters, digits, underscore.",
+    "Minuscules, chiffres, tiret bas.",
+    "小文字・数字・アンダースコア。"
+  ],
+  "4–8 chữ số, vd 1006 hoặc 100630.": [
+    "4–8 digits, e.g. 1006 or 100630.",
+    "4 à 8 chiffres, ex. 1006 ou 100630.",
+    "4〜8桁、例：1006、100630。"
+  ],
+  "Vd danh sách giống đủ điều kiện.": [
+    "e.g. the list of eligible varieties.",
+    "ex. liste des variétés éligibles.",
+    "例：対象品種のリスト。"
+  ],
+  "Số hạn ngạch": [
+    "Quota number",
+    "Numéro de contingent",
+    "割当番号"
+  ],
+  "Số thứ tự hạn ngạch (order number) nếu có.": [
+    "Quota order number, if any.",
+    "Numéro d'ordre du contingent, le cas échéant.",
+    "割当の整理番号（ある場合）。"
+  ],
+  "Năm": [
+    "Year",
+    "Année",
+    "年"
+  ],
+  "Khối lượng hạn ngạch": [
+    "Quota volume",
+    "Volume du contingent",
+    "割当数量"
+  ],
+  "Loại thuế trong hạn ngạch": [
+    "In-quota duty type",
+    "Type de droit contingentaire",
+    "割当内の税の種類"
+  ],
+  "Thuế trong hạn ngạch (%)": [
+    "In-quota duty (%)",
+    "Droit contingentaire (%)",
+    "割当内税率（%）"
+  ],
+  "Thuế tuyệt đối trong hạn ngạch (EUR/đơn vị)": [
+    "In-quota specific duty (EUR/unit)",
+    "Droit spécifique contingentaire (EUR/unité)",
+    "割当内の従量税（EUR/単位）"
+  ],
+  "Loại thuế ngoài hạn ngạch": [
+    "Out-of-quota duty type",
+    "Type de droit hors contingent",
+    "割当外の税の種類"
+  ],
+  "Thuế ngoài hạn ngạch (%)": [
+    "Out-of-quota duty (%)",
+    "Droit hors contingent (%)",
+    "割当外税率（%）"
+  ],
+  "Thuế tuyệt đối ngoài hạn ngạch (EUR/đơn vị)": [
+    "Out-of-quota specific duty (EUR/unit)",
+    "Droit spécifique hors contingent (EUR/unité)",
+    "割当外の従量税（EUR/単位）"
+  ],
+  "Đơn vị thuế tuyệt đối": [
+    "Specific duty unit",
+    "Unité du droit spécifique",
+    "従量税の単位"
+  ],
+  "Bắt buộc khi có thuế tuyệt đối.": [
+    "Required when there is a specific duty.",
+    "Obligatoire en cas de droit spécifique.",
+    "従量税がある場合は必須。"
+  ],
+  "Phân nhóm đủ điều kiện": [
+    "Eligible subtypes",
+    "Sous-catégories éligibles",
+    "対象区分"
+  ],
+  "Mã phân nhóm cách nhau bằng dấu phẩy.": [
+    "Subtype codes separated by commas.",
+    "Codes de sous-catégorie séparés par des virgules.",
+    "カンマ区切りの区分コード。"
+  ],
+  "Giấy phép / chứng nhận (tiếng Việt)": [
+    "Licences / certificates (Vietnamese)",
+    "Licences / certificats (vietnamien)",
+    "許可・証明書（ベトナム語）"
+  ],
+  "Giấy phép / chứng nhận (tiếng Anh)": [
+    "Licences / certificates (English)",
+    "Licences / certificats (anglais)",
+    "許可・証明書（英語）"
+  ],
+  "Cách phân bổ (tiếng Việt)": [
+    "Allocation method (Vietnamese)",
+    "Méthode d'attribution (vietnamien)",
+    "割当方法（ベトナム語）"
+  ],
+  "Cách phân bổ (tiếng Anh)": [
+    "Allocation method (English)",
+    "Méthode d'attribution (anglais)",
+    "割当方法（英語）"
+  ],
+  "Chữ thường, số, gạch dưới (vd rice_fragrant_listed). Không đổi được sau khi tạo.": [
+    "Lowercase letters, digits, underscore (e.g. rice_fragrant_listed). Cannot be changed after creation.",
+    "Minuscules, chiffres, tiret bas (ex. rice_fragrant_listed). Non modifiable après création.",
+    "小文字・数字・アンダースコア（例：rice_fragrant_listed）。作成後は変更不可。"
+  ],
+  "4–8 chữ số; phân nhóm áp cho mọi mã HS bắt đầu bằng tiền tố này (vd 1006).": [
+    "4–8 digits; the subtype applies to every HS code starting with this prefix (e.g. 1006).",
+    "4 à 8 chiffres ; la sous-catégorie s'applique à tout code SH commençant par ce préfixe (ex. 1006).",
+    "4〜8桁。この接頭辞で始まるすべてのHSコードに適用（例：1006）。"
+  ],
+  "Đủ điều kiện": [
+    "Eligible",
+    "Éligible",
+    "対象"
+  ],
+  "Phân nhóm chỉ đủ điều kiện khi được liệt kê trong dòng Hạn ngạch đã duyệt. Giống ngoài danh sách (vd ST25 khi chưa được xác nhận) → \"cần xem xét\".": [
+    "A subtype is eligible only when listed on a reviewed quota line. Varieties not on the list (e.g. ST25 until confirmed) → \"needs review\".",
+    "Une sous-catégorie n'est éligible que si elle figure sur une ligne de contingent validée. Variétés hors liste (ex. ST25 tant que non confirmée) → « à examiner ».",
+    "区分は確認済みの割当行に記載されている場合のみ対象。リスト外の品種（例：確認前のST25）→「要確認」。"
+  ],
+  "Thuế trong / ngoài hạn ngạch": [
+    "In-quota / out-of-quota duty",
+    "Droit dans / hors contingent",
+    "割当内／割当外の関税"
+  ],
+  "ad_valorem: nhập % ; specific: nhập số tiền EUR trên một đơn vị (Đơn vị thuế tuyệt đối). mixed → công cụ trả \"cần xem xét\".": [
+    "ad_valorem: enter %; specific: enter EUR per unit (Specific duty unit). mixed → the tool returns \"needs review\".",
+    "ad_valorem : saisir % ; specific : saisir EUR par unité (Unité du droit spécifique). mixed → l'outil renvoie « à examiner ».",
+    "ad_valorem：%を入力、specific：単位あたりEURを入力（従量税の単位）。mixed→ツールは「要確認」を返します。"
+  ],
+  "Mã phân nhóm cách nhau bằng dấu phẩy. Chỉ phân nhóm đã duyệt trong danh sách này mới có kịch bản.": [
+    "Subtype codes separated by commas. Only reviewed subtypes on this list get scenarios.",
+    "Codes de sous-catégorie séparés par des virgules. Seules les sous-catégories validées de cette liste ont des scénarios.",
+    "カンマ区切りの区分コード。このリストにある確認済み区分のみシナリオが表示されます。"
+  ],
+  "Sửa đổi §6.4": [
+    "§6.4 amendment",
+    "Amendement §6.4",
+    "§6.4の改正"
+  ],
+  "Kịch bản hạn ngạch cần luật TM ký sửa đổi AGENTS.md §6.4 trước khi dùng dữ liệu thật ở production.": [
+    "Quota scenarios require the trade lawyer to sign the AGENTS.md §6.4 amendment before real data is used in production.",
+    "Les scénarios de contingent exigent que le juriste signe l'amendement AGENTS.md §6.4 avant d'utiliser des données réelles en production.",
+    "割当シナリオは、本番で実データを使う前に通商弁護士がAGENTS.md §6.4の改正に署名する必要があります。"
+  ],
+  "Có = hàng chịu hạn ngạch thuế quan. Công cụ chỉ tính kịch bản trong / ngoài hạn ngạch khi có dòng Hạn ngạch và phân nhóm đủ điều kiện đã duyệt; còn lại trả \"cần xem xét\", không trả 0%.": [
+    "Yes = the goods are subject to a tariff-rate quota. The tool only calculates in/out-of-quota scenarios when a reviewed quota line and eligible subtype exist; otherwise it returns \"needs review\", never 0%.",
+    "Oui = marchandises soumises à un contingent tarifaire. L'outil ne calcule les scénarios que si une ligne de contingent et une sous-catégorie éligible validées existent ; sinon « à examiner », jamais 0 %.",
+    "はい＝関税割当の対象。確認済みの割当行と対象区分がある場合のみ割当内／外のシナリオを計算し、それ以外は「要確認」を返し、0%は返しません。"
+  ],
+  "Dữ liệu minh hoạ — chưa được chuyên gia pháp lý duyệt": [
+    "Illustrative data — not yet reviewed by a legal expert",
+    "Données d'illustration — pas encore validées par un juriste",
+    "例示データ — 法務専門家による確認前"
+  ],
+  "Cảnh báo ngành": [
+    "Sector alerts",
+    "Alertes sectorielles",
+    "業界アラート"
+  ],
+  "Minh hoạ": [
+    "Illustrative",
+    "Illustration",
+    "例示"
+  ],
+  "Tiêu đề": [
+    "Title",
+    "Titre",
+    "タイトル"
+  ],
+  "Tiêu đề (tiếng Việt)": [
+    "Title (Vietnamese)",
+    "Titre (vietnamien)",
+    "タイトル（ベトナム語）"
+  ],
+  "Tiêu đề (tiếng Anh)": [
+    "Title (English)",
+    "Titre (anglais)",
+    "タイトル（英語）"
+  ],
+  "Nội dung (tiếng Việt)": [
+    "Content (Vietnamese)",
+    "Contenu (vietnamien)",
+    "内容（ベトナム語）"
+  ],
+  "Nội dung (tiếng Anh)": [
+    "Content (English)",
+    "Contenu (anglais)",
+    "内容（英語）"
+  ],
+  "Cách nhau bằng dấu phẩy, vd 03, 1604.": [
+    "Separated by commas, e.g. 03, 1604.",
+    "Séparés par des virgules, ex. 03, 1604.",
+    "カンマ区切り、例：03、1604。"
+  ],
+  "Một hoặc nhiều tiền tố 2–8 chữ số, cách nhau bằng dấu phẩy (vd 03, 1604). Cảnh báo hiện trong kết quả thuế, form sản phẩm và báo cáo.": [
+    "One or more 2–8 digit prefixes separated by commas (e.g. 03, 1604). Alerts appear in tariff results, the product form and reports.",
+    "Un ou plusieurs préfixes de 2 à 8 chiffres séparés par des virgules (ex. 03, 1604). Les alertes s'affichent dans les résultats, le formulaire produit et les rapports.",
+    "2〜8桁の接頭辞をカンマ区切りで1つ以上（例：03、1604）。関税結果・製品フォーム・レポートに表示されます。"
+  ],
+  "info = thông tin; warning = cần lưu ý; critical = rủi ro cao.": [
+    "info = information; warning = needs attention; critical = high risk.",
+    "info = information ; warning = attention ; critical = risque élevé.",
+    "info＝情報、warning＝注意、critical＝高リスク。"
+  ],
+  "Dòng minh hoạ chỉ hiện khi cờ DEMO_COMPLIANCE_DATA bật ngoài production, kèm banner; không duyệt được thành dữ liệu thật.": [
+    "Illustrative rows only appear when DEMO_COMPLIANCE_DATA is on outside production, with a banner; they cannot be approved as real data.",
+    "Les lignes d'illustration n'apparaissent que si DEMO_COMPLIANCE_DATA est actif hors production, avec un bandeau ; elles ne peuvent pas être validées comme données réelles.",
+    "例示行は本番以外でDEMO_COMPLIANCE_DATAが有効な場合のみバナー付きで表示され、実データとして承認できません。"
+  ],
+  "Dòng minh hoạ không duyệt được — hãy tạo dòng thật có nguồn pháp lý.": [
+    "Illustrative rows cannot be approved — create a real row with a legal source.",
+    "Les lignes d'illustration ne peuvent pas être validées — créez une ligne réelle avec une source juridique.",
+    "例示行は承認できません。法的出典のある実データ行を作成してください。"
+  ],
+  "Thống kê thương mại": [
+    "Trade statistics",
+    "Statistiques commerciales",
+    "貿易統計"
+  ],
+  "Nguồn: Eurostat Comext (DS-045409). Job nền nạp nhập khẩu của 27 nước EU từ thế giới, ngoài EU và Việt Nam, cùng cơ cấu đối tác của EU để tính thị phần đối thủ.": [
+    "Source: Eurostat Comext (DS-045409). A background job loads imports of the 27 EU countries from the world, from outside the EU and from Vietnam, plus the EU's partner breakdown to compute competitor shares.",
+    "Source : Eurostat Comext (DS-045409). Une tâche de fond charge les importations des 27 pays de l'UE depuis le monde, hors UE et le Vietnam, ainsi que la répartition des partenaires de l'UE pour calculer les parts des concurrents.",
+    "出典：Eurostat Comext（DS-045409）。バックグラウンドジョブがEU27か国の世界・EU域外・ベトナムからの輸入と、競合シェア算出用のEUの相手国内訳を取り込みます。"
+  ],
+  "Mã HS ưu tiên": [
+    "Priority HS codes",
+    "Codes SH prioritaires",
+    "優先HSコード"
+  ],
+  "Nạp dữ liệu Eurostat cho mã ưu tiên": [
+    "Load Eurostat data for priority codes",
+    "Charger les données Eurostat des codes prioritaires",
+    "優先コードのEurostatデータを取り込む"
+  ],
+  "Nạp file CSV đã tuyển chọn": [
+    "Load a curated CSV file",
+    "Charger un fichier CSV sélectionné",
+    "精選したCSVファイルを取り込む"
+  ],
+  "Nguồn dữ liệu": [
+    "Data source",
+    "Source des données",
+    "データソース"
+  ],
+  "Nguồn khác (đã tuyển chọn)": [
+    "Other source (curated)",
+    "Autre source (sélectionnée)",
+    "その他の出典（精選）"
+  ],
+  "File CSV thống kê": [
+    "Statistics CSV file",
+    "Fichier CSV de statistiques",
+    "統計CSVファイル"
+  ],
+  "Số dòng": [
+    "Rows",
+    "Lignes",
+    "行数"
+  ],
+  "Chưa có lần nạp nào.": [
+    "No imports yet.",
+    "Aucun chargement pour l'instant.",
+    "取り込みはまだありません。"
+  ],
+  "Thị trường": [
+    "Markets",
+    "Marchés",
+    "市場"
+  ],
+  "Đang chờ": [
+    "Queued",
+    "En attente",
+    "待機中"
+  ],
+  "Đang nạp": [
+    "Loading",
+    "Chargement",
+    "取り込み中"
+  ],
+  "Xong": [
+    "Done",
+    "Terminé",
+    "完了"
+  ],
+  "Lỗi": [
+    "Error",
+    "Erreur",
+    "エラー"
+  ],
+  "Đã xếp hàng nạp dữ liệu Eurostat. Làm mới sau vài phút để xem kết quả.": [
+    "Eurostat import queued. Refresh in a few minutes to see the result.",
+    "Chargement Eurostat en file d'attente. Actualisez dans quelques minutes.",
+    "Eurostatの取り込みを予約しました。数分後に更新して結果を確認してください。"
+  ],
+  "Đã nạp file thống kê.": [
+    "Statistics file loaded.",
+    "Fichier de statistiques chargé.",
+    "統計ファイルを取り込みました。"
+  ],
+  "File quá lớn (tối đa 2 MB).": [
+    "File too large (max 2 MB).",
+    "Fichier trop volumineux (2 Mo max).",
+    "ファイルが大きすぎます（最大2MB）。"
+  ],
+  "File không hợp lệ: cần CSV với các cột reporter, partner, product, year, flow, value_eur, quantity_kg.": [
+    "Invalid file: a CSV with columns reporter, partner, product, year, flow, value_eur, quantity_kg is required.",
+    "Fichier invalide : CSV avec les colonnes reporter, partner, product, year, flow, value_eur, quantity_kg requis.",
+    "無効なファイル：reporter、partner、product、year、flow、value_eur、quantity_kg列のCSVが必要です。"
+  ],
+  "Gợi ý thị trường EU": [
+    "EU market recommendations",
+    "Recommandations de marchés UE",
+    "EU市場の提案"
+  ],
+  "Nhập tên sản phẩm để xem nước EU nhập khẩu nhiều, tăng trưởng tốt và nơi hàng Việt Nam còn dư địa — tính từ thống kê hải quan EU (Eurostat).": [
+    "Enter a product to see which EU countries import the most, grow fastest and where Vietnamese goods still have room — computed from EU customs statistics (Eurostat).",
+    "Saisissez un produit pour voir les pays de l'UE qui importent le plus, croissent le plus et où les produits vietnamiens ont encore de la marge — d'après les statistiques douanières de l'UE (Eurostat).",
+    "製品を入力すると、EUで輸入が多く成長している国と、ベトナム産品に余地がある国をEU税関統計（Eurostat）から表示します。"
+  ],
+  "Đang phân tích…": [
+    "Analysing…",
+    "Analyse…",
+    "分析中…"
+  ],
+  "Xem gợi ý": [
+    "Show recommendations",
+    "Voir les recommandations",
+    "提案を見る"
+  ],
+  "cá tra": [
+    "pangasius",
+    "pangasius",
+    "パンガシウス"
+  ],
+  "tôm": [
+    "shrimp",
+    "crevettes",
+    "エビ"
+  ],
+  "hạt điều": [
+    "cashew",
+    "noix de cajou",
+    "カシューナッツ"
+  ],
+  "gạo": [
+    "rice",
+    "riz",
+    "米"
+  ],
+  "hạt tiêu": [
+    "pepper",
+    "poivre",
+    "胡椒"
+  ],
+  "cà phê": [
+    "coffee",
+    "café",
+    "コーヒー"
+  ],
+  "sầu riêng": [
+    "durian",
+    "durian",
+    "ドリアン"
+  ],
+  "mật ong": [
+    "honey",
+    "miel",
+    "はちみつ"
+  ],
+  "Vui lòng nhập tên sản phẩm.": [
+    "Please enter a product name.",
+    "Veuillez saisir un nom de produit.",
+    "製品名を入力してください。"
+  ],
+  "Chưa có thống kê đã nạp cho nhóm sản phẩm này.": [
+    "No statistics have been loaded for this product group yet.",
+    "Aucune statistique chargée pour ce groupe de produits.",
+    "この製品群の統計はまだ取り込まれていません。"
+  ],
+  "Chưa nhận ra sản phẩm này. Thử một nhóm có sẵn:": [
+    "We don't recognise this product yet. Try an available group:",
+    "Produit non reconnu. Essayez un groupe disponible :",
+    "この製品はまだ認識できません。次のグループをお試しください："
+  ],
+  "Thị trường tiêu thụ chính": [
+    "Main consumer markets",
+    "Principaux marchés de consommation",
+    "主要消費市場"
+  ],
+  "Thị trường tiềm năng": [
+    "Potential markets",
+    "Marchés potentiels",
+    "潜在市場"
+  ],
+  "Đối thủ cạnh tranh": [
+    "Competitors",
+    "Concurrents",
+    "競合"
+  ],
+  "Nguồn cung ngoài EU vào EU": [
+    "Extra-EU suppliers to the EU",
+    "Fournisseurs hors UE vers l'UE",
+    "EU域外からEUへの供給国"
+  ],
+  "Việt Nam đứng thứ {0}": [
+    "Vietnam ranks #{0}",
+    "Le Vietnam est n°{0}",
+    "ベトナムは{0}位"
+  ],
+  "Việt Nam chưa có trong nhóm nguồn cung": [
+    "Vietnam is not among the suppliers yet",
+    "Le Vietnam ne figure pas encore parmi les fournisseurs",
+    "ベトナムはまだ供給国に入っていません"
+  ],
+  "Nước cung cấp": [
+    "Supplier country",
+    "Pays fournisseur",
+    "供給国"
+  ],
+  "Trị giá": [
+    "Value",
+    "Valeur",
+    "金額"
+  ],
+  "Thị phần": [
+    "Share",
+    "Part",
+    "シェア"
+  ],
+  "Đơn giá (EUR/kg)": [
+    "Unit price (EUR/kg)",
+    "Prix unitaire (EUR/kg)",
+    "単価（EUR/kg）"
+  ],
+  "So sánh các nước": [
+    "Country comparison",
+    "Comparaison des pays",
+    "国別比較"
+  ],
+  "Nhập khẩu": [
+    "Imports",
+    "Importations",
+    "輸入"
+  ],
+  "Tăng trưởng/năm": [
+    "Growth/year",
+    "Croissance/an",
+    "年成長率"
+  ],
+  "Thị phần Việt Nam": [
+    "Vietnam's share",
+    "Part du Vietnam",
+    "ベトナムのシェア"
+  ],
+  "Đơn giá hàng VN (EUR/kg)": [
+    "Vietnamese unit price (EUR/kg)",
+    "Prix unitaire vietnamien (EUR/kg)",
+    "ベトナム産単価（EUR/kg）"
+  ],
+  "Điểm": [
+    "Score",
+    "Score",
+    "スコア"
+  ],
+  "cập nhật": [
+    "updated",
+    "mis à jour",
+    "更新"
+  ],
+  "Điểm tổng hợp quy mô, tăng trưởng, thị phần và tăng trưởng của hàng Việt Nam; nhóm xét là 10 nước nhập khẩu nhiều nhất. Gợi ý mang tính tham khảo, không thay thế nghiên cứu thị trường.": [
+    "The score combines size, growth, Vietnam's share and the growth of Vietnamese goods; the 10 largest importers are considered. Recommendations are indicative and do not replace market research.",
+    "Le score combine taille, croissance, part du Vietnam et croissance des produits vietnamiens ; les 10 plus grands importateurs sont pris en compte. Recommandations indicatives, ne remplacent pas une étude de marché.",
+    "スコアは規模・成長率・ベトナムのシェア・ベトナム産品の成長率を合成し、輸入上位10か国を対象とします。提案は参考情報であり、市場調査に代わるものではありません。"
+  ],
+  "Tính thuế nhập khẩu cho sản phẩm này": [
+    "Calculate import duty for this product",
+    "Calculer les droits d'importation de ce produit",
+    "この製品の輸入関税を計算"
+  ],
+  "Nhập khẩu năm {0}: {1}": [
+    "Imports in {0}: {1}",
+    "Importations en {0} : {1}",
+    "{0}年の輸入：{1}"
+  ],
+  "Hàng Việt Nam chiếm {0} nhập khẩu": [
+    "Vietnamese goods are {0} of imports",
+    "Les produits vietnamiens représentent {0} des importations",
+    "輸入の{0}がベトナム産"
+  ],
+  "Nhập khẩu tăng bình quân {0}/năm": [
+    "Imports grow {0}/year on average",
+    "Importations en hausse de {0}/an en moyenne",
+    "輸入は年平均{0}増加"
+  ],
+  "Hàng Việt Nam tăng bình quân {0}/năm": [
+    "Vietnamese goods grow {0}/year on average",
+    "Produits vietnamiens en hausse de {0}/an en moyenne",
+    "ベトナム産品は年平均{0}増加"
+  ],
+  "Đơn giá hàng Việt Nam cao hơn mặt bằng {0} lần": [
+    "Vietnamese unit price is {0}× the market average",
+    "Prix unitaire vietnamien {0} fois la moyenne",
+    "ベトナム産単価は平均の{0}倍"
+  ],
+  "Hàng Việt Nam mới chiếm {0} — còn dư địa": [
+    "Vietnamese goods hold only {0} — room to grow",
+    "Les produits vietnamiens ne détiennent que {0} — marge de progression",
+    "ベトナム産品のシェアは{0}のみ — 伸びしろあり"
+  ],
+  "Giá tham khảo nhập khẩu EU năm {0}": [
+    "EU import reference prices, {0}",
+    "Prix de référence à l'importation UE, {0}",
+    "{0}年のEU輸入参考価格"
+  ],
+  "Từ Việt Nam": [
+    "From Vietnam",
+    "Depuis le Vietnam",
+    "ベトナムから"
+  ],
+  "Trung bình hàng ngoài EU": [
+    "Extra-EU average",
+    "Moyenne hors UE",
+    "EU域外平均"
+  ],
+  "Chỉ để tham khảo khi định giá, không phải giá sàn.": [
+    "For pricing reference only, not a floor price.",
+    "À titre indicatif uniquement, pas un prix plancher.",
+    "価格設定の参考のみで、最低価格ではありません。"
+  ],
+  "Yêu cầu tư vấn": [
+    "Consulting requests",
+    "Demandes de conseil",
+    "コンサルティング依頼"
+  ],
+  "Không tải được danh sách yêu cầu.": [
+    "Could not load the requests.",
+    "Impossible de charger les demandes.",
+    "依頼一覧を読み込めませんでした。"
+  ],
+  "Không có yêu cầu nào.": [
+    "No requests.",
+    "Aucune demande.",
+    "依頼はありません。"
+  ],
+  "Từ báo cáo": [
+    "From report",
+    "Depuis le rapport",
+    "レポートから"
+  ],
+  "Đã gửi yêu cầu. Mạng lưới VBA sẽ liên hệ với bạn qua email hoặc điện thoại.": [
+    "Request sent. The VBA network will contact you by email or phone.",
+    "Demande envoyée. Le réseau VBA vous contactera par e-mail ou téléphone.",
+    "依頼を送信しました。VBAネットワークからメールまたは電話でご連絡します。"
+  ],
+  "Cần người đồng hành khi vào thị trường này?": [
+    "Need a partner to enter this market?",
+    "Besoin d'un accompagnement pour entrer sur ce marché ?",
+    "この市場への参入に伴走者が必要ですか？"
+  ],
+  "Tư vấn triển khai qua mạng lưới VBA": [
+    "Implementation advice via the VBA network",
+    "Conseil de mise en œuvre via le réseau VBA",
+    "VBAネットワークによる展開コンサルティング"
+  ],
+  "Số điện thoại (không bắt buộc)": [
+    "Phone (optional)",
+    "Téléphone (facultatif)",
+    "電話番号（任意）"
+  ],
+  "Bạn cần hỗ trợ gì? (không bắt buộc)": [
+    "What do you need help with? (optional)",
+    "De quelle aide avez-vous besoin ? (facultatif)",
+    "どのような支援が必要ですか？（任意）"
+  ],
+  "Đang dựng báo cáo, thường mất dưới một phút…": [
+    "Building the report, usually under a minute…",
+    "Création du rapport, généralement moins d'une minute…",
+    "レポートを作成中です（通常1分以内）…"
+  ],
+  "Không dựng được báo cáo này. Vui lòng tạo lại hoặc thử sản phẩm khác.": [
+    "This report could not be built. Please create it again or try another product.",
+    "Impossible de créer ce rapport. Réessayez ou essayez un autre produit.",
+    "このレポートを作成できませんでした。再作成するか別の製品をお試しください。"
+  ],
+  "Báo cáo go-to-market": [
+    "Go-to-market report",
+    "Rapport go-to-market",
+    "市場参入レポート"
+  ],
+  "Tải PDF": [
+    "Download PDF",
+    "Télécharger le PDF",
+    "PDFをダウンロード"
+  ],
+  "Dữ liệu thuế minh hoạ, chưa được luật TM duyệt.": [
+    "Illustrative tariff data, not yet reviewed by trade lawyers.",
+    "Données tarifaires illustratives, non encore validées par les juristes.",
+    "例示用の関税データで、通商法務の確認前です。"
+  ],
+  "Phần này có trong bản đầy đủ.": [
+    "This section is in the full report.",
+    "Cette section figure dans le rapport complet.",
+    "このセクションは完全版に含まれます。"
+  ],
+  "Bạn đang xem bản tóm tắt miễn phí.": [
+    "You are viewing the free summary.",
+    "Vous consultez le résumé gratuit.",
+    "無料の要約を表示しています。"
+  ],
+  "Bản đầy đủ có phân tích đối thủ, định vị giá, thuế và hạn ngạch, OEM hay thương hiệu riêng, rủi ro, bước tiếp theo và file PDF.": [
+    "The full report adds competitor analysis, price positioning, tariffs and quotas, OEM vs own brand, risks, next steps and a PDF file.",
+    "Le rapport complet ajoute l'analyse des concurrents, le positionnement prix, droits et contingents, OEM ou marque propre, risques, prochaines étapes et un PDF.",
+    "完全版には競合分析、価格ポジション、関税・割当、OEMか自社ブランドか、リスク、次のステップ、PDFが含まれます。"
+  ],
+  "Xem gói báo cáo đầy đủ": [
+    "See the full report plan",
+    "Voir l'offre rapport complet",
+    "完全版レポートのプランを見る"
+  ],
+  "Báo cáo tham khảo, không phải tư vấn pháp lý hay cam kết kết quả.": [
+    "For reference only; not legal advice or a guarantee of results.",
+    "À titre indicatif ; ni conseil juridique ni garantie de résultat.",
+    "参考情報であり、法的助言や成果の保証ではありません。"
+  ],
+  "Thị trường EU nên ưu tiên, đối thủ, định vị giá, thuế và cảnh báo ngành, OEM hay thương hiệu riêng — tính từ thống kê hải quan EU (Eurostat) và hồ sơ công ty của bạn.": [
+    "Priority EU markets, competitors, price positioning, tariffs and sector alerts, OEM vs own brand — computed from EU customs statistics (Eurostat) and your company profile.",
+    "Marchés UE prioritaires, concurrents, positionnement prix, droits et alertes sectorielles, OEM ou marque propre — d'après les statistiques douanières de l'UE (Eurostat) et votre profil.",
+    "優先すべきEU市場、競合、価格ポジション、関税と業界警告、OEMか自社ブランドか — EU税関統計（Eurostat）と貴社プロフィールから算出。"
+  ],
+  "Tạo báo cáo": [
+    "Create report",
+    "Créer le rapport",
+    "レポートを作成"
+  ],
+  "Sản phẩm của bạn": [
+    "Your product",
+    "Votre produit",
+    "貴社の製品"
+  ],
+  "— Nhập tên sản phẩm bên cạnh —": [
+    "— Enter a product name alongside —",
+    "— Saisissez un nom de produit à côté —",
+    "— 横に製品名を入力 —"
+  ],
+  "Hoặc tên sản phẩm": [
+    "Or product name",
+    "Ou nom du produit",
+    "または製品名"
+  ],
+  "Ngân sách marketing dự kiến (EUR/năm, không bắt buộc)": [
+    "Planned marketing budget (EUR/year, optional)",
+    "Budget marketing prévu (EUR/an, facultatif)",
+    "予定マーケティング予算（EUR/年、任意）"
+  ],
+  "Doanh thu xuất khẩu dự kiến (EUR/năm, không bắt buộc)": [
+    "Expected export revenue (EUR/year, optional)",
+    "Chiffre d'affaires export prévu (EUR/an, facultatif)",
+    "予定輸出売上（EUR/年、任意）"
+  ],
+  "Theo sản phẩm / chưa rõ": [
+    "From product / not sure",
+    "Selon le produit / incertain",
+    "製品に従う／未定"
+  ],
+  "OEM (sản xuất cho nhãn khác)": [
+    "OEM (manufacturing for other brands)",
+    "OEM (fabrication pour d'autres marques)",
+    "OEM（他社ブランド向け製造）"
+  ],
+  "Thương hiệu riêng": [
+    "Own brand",
+    "Marque propre",
+    "自社ブランド"
+  ],
+  "Ngôn ngữ báo cáo": [
+    "Report language",
+    "Langue du rapport",
+    "レポートの言語"
+  ],
+  "Báo cáo đã tạo": [
+    "Your reports",
+    "Vos rapports",
+    "作成済みレポート"
+  ],
+  "Không tải được danh sách báo cáo.": [
+    "Could not load your reports.",
+    "Impossible de charger vos rapports.",
+    "レポート一覧を読み込めませんでした。"
+  ],
+  "Chưa có báo cáo nào.": [
+    "No reports yet.",
+    "Aucun rapport pour l'instant.",
+    "レポートはまだありません。"
+  ],
+  "Đang gửi…": [
+    "Sending…",
+    "Envoi…",
+    "送信中…"
+  ],
+  "Thị trường nên ưu tiên": [
+    "Priority markets",
+    "Marchés prioritaires",
+    "優先市場"
+  ],
+  "Đã liên hệ": [
+    "Contacted",
+    "Contacté",
+    "連絡済み"
+  ],
+  "Đã đóng": [
+    "Closed",
+    "Clôturé",
+    "完了"
+  ],
+  "Đã xong": [
+    "Ready",
+    "Prêt",
+    "完了"
+  ],
+  "Đang chờ xử lý": [
+    "Queued",
+    "En attente",
+    "処理待ち"
+  ],
+  "Đang dựng báo cáo": [
+    "Building report",
+    "Création en cours",
+    "作成中"
+  ],
+  "Không dựng được": [
+    "Failed",
+    "Échec",
+    "作成失敗"
+  ],
+  "Vui lòng nhập tên và email liên hệ.": [
+    "Please enter a contact name and email.",
+    "Veuillez saisir un nom et un e-mail de contact.",
+    "連絡先の氏名とメールを入力してください。"
+  ],
+  "Email hoặc số điện thoại chưa hợp lệ.": [
+    "Invalid email or phone number.",
+    "E-mail ou téléphone invalide.",
+    "メールまたは電話番号が無効です。"
+  ],
+  "Bạn đã gửi nhiều yêu cầu hôm nay; chúng tôi sẽ liên hệ sớm.": [
+    "You have sent several requests today; we will contact you soon.",
+    "Vous avez envoyé plusieurs demandes aujourd'hui ; nous vous contacterons bientôt.",
+    "本日は多数の依頼を受け付けました。まもなくご連絡します。"
+  ],
+  "Lời văn do AI viết, số liệu do hệ thống điền": [
+    "Text written by AI, figures filled in by the system",
+    "Texte rédigé par l'IA, chiffres renseignés par le système",
+    "文章はAI作成、数値はシステムが記入"
+  ],
+  "Lời văn theo mẫu, số liệu do hệ thống điền": [
+    "Template text, figures filled in by the system",
+    "Texte type, chiffres renseignés par le système",
+    "文章はテンプレート、数値はシステムが記入"
+  ],
+  "Đánh dấu đã liên hệ": [
+    "Mark as contacted",
+    "Marquer comme contacté",
+    "連絡済みにする"
+  ],
+  "Đóng yêu cầu": [
+    "Close request",
+    "Clôturer la demande",
+    "依頼を完了にする"
+  ],
+  "Không cập nhật được trạng thái. Vui lòng thử lại.": [
+    "Could not update the status. Please try again.",
+    "Impossible de mettre à jour le statut. Réessayez.",
+    "ステータスを更新できませんでした。もう一度お試しください。"
+  ],
+  "Đang gửi yêu cầu…": [
+    "Sending request…",
+    "Envoi de la demande…",
+    "依頼を送信中…"
+  ],
+  "Chọn một sản phẩm hoặc nhập tên sản phẩm.": [
+    "Choose a product or enter a product name.",
+    "Choisissez un produit ou saisissez un nom de produit.",
+    "製品を選ぶか製品名を入力してください。"
+  ],
+  "Số tiền chỉ gồm chữ số (EUR, không có phần lẻ).": [
+    "Amounts must be whole numbers (EUR, no decimals).",
+    "Les montants doivent être des nombres entiers (EUR, sans décimales).",
+    "金額は整数で入力してください（EUR、小数なし）。"
+  ],
+  "Chưa có thống kê thương mại cho sản phẩm này. Thử sản phẩm khác (cá tra, tôm, cà phê…).": [
+    "No trade statistics for this product yet. Try another product (pangasius, shrimp, coffee…).",
+    "Pas encore de statistiques pour ce produit. Essayez un autre produit (pangasius, crevettes, café…).",
+    "この製品の貿易統計はまだありません。別の製品（パンガシウス、エビ、コーヒー…）をお試しください。"
+  ],
+  "Bạn đã tạo đủ số báo cáo cho hôm nay. Vui lòng thử lại vào ngày mai.": [
+    "You have reached today's report limit. Please try again tomorrow.",
+    "Vous avez atteint la limite de rapports du jour. Réessayez demain.",
+    "本日のレポート作成上限に達しました。明日もう一度お試しください。"
+  ],
+  "Thông tin chưa hợp lệ. Hãy chọn sản phẩm và kiểm tra các ô số tiền.": [
+    "Invalid input. Choose a product and check the amount fields.",
+    "Saisie invalide. Choisissez un produit et vérifiez les montants.",
+    "入力が無効です。製品を選び金額欄を確認してください。"
+  ],
+  "Ghi chú đối soát (không bắt buộc)": [
+    "Reconciliation note (optional)",
+    "Note de rapprochement (facultatif)",
+    "照合メモ（任意）"
+  ],
+  "Hiển thị": [
+    "Visibility",
+    "Visibilité",
+    "表示"
+  ],
+  "Huỷ đơn": [
+    "Cancel order",
+    "Annuler la commande",
+    "注文を取り消す"
+  ],
+  "Không có đơn nào.": [
+    "No orders.",
+    "Aucune commande.",
+    "注文はありません。"
+  ],
+  "Không tải được danh sách đơn.": [
+    "Could not load orders.",
+    "Impossible de charger les commandes.",
+    "注文一覧を読み込めませんでした。"
+  ],
+  "Lưu giá đã chốt": [
+    "Save as final price",
+    "Enregistrer le prix définitif",
+    "確定価格として保存"
+  ],
+  "Mục thu phí": [
+    "Billing items",
+    "Éléments facturables",
+    "課金項目"
+  ],
+  "Mục": [
+    "Item",
+    "Élément",
+    "項目"
+  ],
+  "Thanh toán": [
+    "Payments",
+    "Paiements",
+    "支払い"
+  ],
+  "Thôi": [
+    "Back",
+    "Retour",
+    "戻る"
+  ],
+  "Trạng thái giá": [
+    "Price status",
+    "Statut du prix",
+    "価格の状態"
+  ],
+  "Tạm tính": [
+    "Provisional",
+    "Provisoire",
+    "暫定"
+  ],
+  "Xuất hoá đơn": [
+    "Invoice to",
+    "Facturer à",
+    "請求書宛先"
+  ],
+  "Xác nhận": [
+    "Confirm",
+    "Confirmer",
+    "確定"
+  ],
+  "Đã chốt": [
+    "Final",
+    "Définitif",
+    "確定済み"
+  ],
+  "Đã nhận chuyển khoản": [
+    "Transfer received",
+    "Virement reçu",
+    "振込を確認"
+  ],
+  "Đơn chuyển khoản": [
+    "Bank transfer orders",
+    "Commandes par virement",
+    "銀行振込の注文"
+  ],
+  "Buyer và mọi công cụ tuân thủ luôn miễn phí. Doanh nghiệp bán hàng chỉ trả cho dịch vụ thêm, thanh toán bằng chuyển khoản ngân hàng.": [
+    "Buyers and all compliance tools are always free. Sellers only pay for add-on services, by bank transfer.",
+    "Les acheteurs et tous les outils de conformité sont toujours gratuits. Les vendeurs ne paient que les services additionnels, par virement.",
+    "バイヤーとすべてのコンプライアンスツールは常に無料です。セラーは追加サービスのみ銀行振込でお支払いください。"
+  ],
+  "Bảng giá": [
+    "Pricing",
+    "Tarifs",
+    "料金"
+  ],
+  "Chuyển khoản đúng số tiền, ghi mã tham chiếu vào nội dung chuyển khoản.": [
+    "Transfer the exact amount with the reference code in the payment note.",
+    "Virez le montant exact avec le code de référence dans le libellé.",
+    "正確な金額を、参照コードを振込メモに記入して振り込みます。"
+  ],
+  "Cách thanh toán": [
+    "How to pay",
+    "Comment payer",
+    "お支払い方法"
+  ],
+  "Dịch vụ trả phí cho seller": [
+    "Paid services for sellers",
+    "Services payants pour vendeurs",
+    "セラー向け有料サービス"
+  ],
+  "Giá tạm tính — chờ chốt": [
+    "Provisional price — to be confirmed",
+    "Prix provisoire — à confirmer",
+    "暫定価格 — 確定待ち"
+  ],
+  "Hoá đơn VAT xuất theo thông tin bạn cung cấp. Thanh toán qua nền tảng (bảo lãnh, ký quỹ) sẽ có ở giai đoạn sau.": [
+    "VAT invoices are issued from the details you provide. On-platform payments (guarantees, escrow) will come in a later phase.",
+    "Les factures TVA sont émises selon vos informations. Les paiements via la plateforme (garantie, séquestre) viendront plus tard.",
+    "VAT請求書はご提供の情報で発行します。プラットフォーム決済（保証・エスクロー）は後の段階で提供予定です。"
+  ],
+  "Không giới hạn thời gian": [
+    "No time limit",
+    "Sans limite de durée",
+    "期間無制限"
+  ],
+  "Không tải được bảng giá. Vui lòng thử lại.": [
+    "Could not load pricing. Please try again.",
+    "Impossible de charger les tarifs. Réessayez.",
+    "料金を読み込めませんでした。もう一度お試しください。"
+  ],
+  "Miễn phí": [
+    "Free",
+    "Gratuit",
+    "無料"
+  ],
+  "Xem đơn của bạn": [
+    "View your orders",
+    "Voir vos commandes",
+    "注文を見る"
+  ],
+  "Đặt mua: hệ thống tạo đơn với mã tham chiếu riêng.": [
+    "Order: the system creates an order with its own reference code.",
+    "Commandez : le système crée une commande avec son code de référence.",
+    "注文：システムが固有の参照コード付きで注文を作成します。"
+  ],
+  "Đội ngũ VYBE đối soát và xác nhận; dịch vụ mở ngay, bạn nhận thông báo.": [
+    "The VYBE team reconciles and confirms; the service opens immediately and you are notified.",
+    "L'équipe VYBE rapproche et confirme ; le service s'ouvre aussitôt et vous êtes notifié.",
+    "VYBEチームが照合・確認し、サービスがすぐに有効になり通知が届きます。"
+  ],
+  "Mở danh sách đầy đủ": [
+    "Unlock the full list",
+    "Débloquer la liste complète",
+    "全リストを開く"
+  ],
+  "Bạn đang dùng gói miễn phí.": [
+    "You are on the free plan.",
+    "Vous utilisez l'offre gratuite.",
+    "無料プランをご利用中です。"
+  ],
+  "Chưa có đơn nào.": [
+    "No orders yet.",
+    "Aucune commande pour l'instant.",
+    "注文はまだありません。"
+  ],
+  "Dịch vụ đang dùng": [
+    "Active services",
+    "Services actifs",
+    "利用中のサービス"
+  ],
+  "Ghi đúng nội dung chuyển khoản để được xác nhận nhanh. Dịch vụ mở ngay khi đội ngũ VYBE xác nhận đã nhận tiền.": [
+    "Use the exact payment note for fast confirmation. The service opens as soon as the VYBE team confirms receipt.",
+    "Utilisez le libellé exact pour une confirmation rapide. Le service s'ouvre dès que l'équipe VYBE confirme la réception.",
+    "迅速な確認のため振込メモを正確に記入してください。VYBEチームが入金を確認次第サービスが有効になります。"
+  ],
+  "Gói dịch vụ & thanh toán": [
+    "Plans & payments",
+    "Offres et paiements",
+    "プランと支払い"
+  ],
+  "Hướng dẫn chuyển khoản": [
+    "Bank transfer instructions",
+    "Instructions de virement",
+    "振込方法"
+  ],
+  "Tài khoản minh hoạ cho bản demo — không chuyển tiền thật.": [
+    "Demo account for illustration — do not transfer real money.",
+    "Compte de démonstration — ne virez pas d'argent réel.",
+    "デモ用の口座です — 実際の送金はしないでください。"
+  ],
+  "Xem bảng giá": [
+    "See pricing",
+    "Voir les tarifs",
+    "料金を見る"
+  ],
+  "không giới hạn thời gian": [
+    "no time limit",
+    "sans limite de durée",
+    "期間無制限"
+  ],
+  "Đơn của bạn": [
+    "Your orders",
+    "Vos commandes",
+    "あなたの注文"
+  ],
+  "Đặt mua": [
+    "Order",
+    "Commander",
+    "注文する"
+  ],
+  "Đang tạo đơn…": [
+    "Creating order…",
+    "Création de la commande…",
+    "注文を作成中…"
+  ],
+  "Ngân hàng": [
+    "Bank",
+    "Banque",
+    "銀行"
+  ],
+  "Chủ tài khoản": [
+    "Account holder",
+    "Titulaire du compte",
+    "口座名義"
+  ],
+  "Số tài khoản": [
+    "Account number",
+    "Numéro de compte",
+    "口座番号"
+  ],
+  "Số tiền": [
+    "Amount",
+    "Montant",
+    "金額"
+  ],
+  "Nội dung chuyển khoản": [
+    "Payment note",
+    "Libellé du virement",
+    "振込メモ"
+  ],
+  "Đang bán": [
+    "On sale",
+    "En vente",
+    "販売中"
+  ],
+  "Ẩn": [
+    "Hide",
+    "Masquer",
+    "非表示にする"
+  ],
+  "Bán lại": [
+    "Resume sale",
+    "Remettre en vente",
+    "販売を再開"
+  ],
+  "Chờ chuyển khoản": [
+    "Awaiting transfer",
+    "En attente de virement",
+    "振込待ち"
+  ],
+  "Đã thanh toán": [
+    "Paid",
+    "Payée",
+    "支払い済み"
+  ],
+  "Đã huỷ": [
+    "Cancelled",
+    "Annulée",
+    "取消済み"
+  ],
+  "Hồ sơ doanh nghiệp và xác minh Cơ bản": [
+    "Company profile and Basic verification",
+    "Profil d'entreprise et vérification de base",
+    "企業プロフィールと基本認証"
+  ],
+  "Niêm yết sản phẩm, nhận yêu cầu báo giá và nhắn tin với buyer": [
+    "Product listings, quote requests and messaging with buyers",
+    "Fiches produits, demandes de devis et messagerie avec les acheteurs",
+    "製品掲載、見積依頼の受信、バイヤーとのメッセージ"
+  ],
+  "Công cụ tính thuế, quy tắc xuất xứ": [
+    "Tariff tool, rules of origin",
+    "Outil tarifaire, règles d'origine",
+    "関税ツール、原産地規則"
+  ],
+  "Gợi ý thị trường EU và bản tóm tắt báo cáo go-to-market": [
+    "EU market recommendations and the go-to-market report summary",
+    "Recommandations de marchés UE et résumé du rapport go-to-market",
+    "EU市場の提案と市場参入レポートの要約"
+  ],
+  "Buyer: tìm nhà cung cấp, nhắn tin, gửi yêu cầu báo giá — miễn phí": [
+    "Buyers: find suppliers, message and send quote requests — free",
+    "Acheteurs : trouver des fournisseurs, échanger, demander des devis — gratuit",
+    "バイヤー：サプライヤー検索、メッセージ、見積依頼 — 無料"
+  ],
+  "Mục này dành cho doanh nghiệp bán hàng (seller).": [
+    "This item is for selling companies (sellers).",
+    "Cet élément est destiné aux vendeurs.",
+    "この項目は販売企業（セラー）向けです。"
+  ],
+  "Hãy hoàn thành hồ sơ doanh nghiệp trước khi đặt mua.": [
+    "Please complete your company profile before ordering.",
+    "Complétez votre profil d'entreprise avant de commander.",
+    "注文の前に企業プロフィールを完成させてください。"
+  ],
+  "Duyệt xác minh Nâng cao": [
+    "Enhanced verification review",
+    "Vérification avancée",
+    "上位認証の審査"
+  ],
+  "Báo cáo go-to-market đầy đủ": [
+    "Full go-to-market report",
+    "Rapport go-to-market complet",
+    "完全版市場参入レポート"
+  ],
+  "Danh sách đầy đủ ai đã xem hồ sơ": [
+    "Full profile viewers list",
+    "Liste complète des visiteurs du profil",
+    "プロフィール閲覧者の全リスト"
+  ],
+  "Xác nhận đã nhận đúng số tiền với nội dung là mã đơn?": [
+    "Confirm the exact amount was received with the order code as payment note?",
+    "Confirmer la réception du montant exact avec le code de commande en libellé ?",
+    "注文コードを振込メモとして正確な金額を受領したことを確認しますか？"
+  ],
+  "Huỷ đơn này?": [
+    "Cancel this order?",
+    "Annuler cette commande ?",
+    "この注文を取り消しますか？"
+  ],
+  "Đã cập nhật.": [
+    "Updated.",
+    "Mis à jour.",
+    "更新しました。"
+  ],
+  "Không cập nhật được. Vui lòng thử lại.": [
+    "Could not update. Please try again.",
+    "Mise à jour impossible. Réessayez.",
+    "更新できませんでした。もう一度お試しください。"
+  ],
+  "Không huỷ được đơn. Vui lòng thử lại.": [
+    "Could not cancel the order. Please try again.",
+    "Impossible d'annuler la commande. Réessayez.",
+    "注文を取り消せませんでした。もう一度お試しください。"
+  ],
+  "Dùng trong {0} ngày": [
+    "Valid for {0} days",
+    "Valable {0} jours",
+    "{0}日間有効"
+  ],
+  "hết hạn {0}": [
+    "expires {0}",
+    "expire le {0}",
+    "{0}に期限切れ"
+  ],
+  "Còn {0} buyer đã xác minh khác đã xem hồ sơ.": [
+    "{0} more verified buyers viewed your profile.",
+    "{0} autres acheteurs vérifiés ont consulté votre profil.",
+    "他に{0}社の認証済みバイヤーがプロフィールを閲覧しました。"
+  ],
+  "Đã xác nhận thanh toán đơn {0}. Dịch vụ đã được mở.": [
+    "Payment confirmed for order {0}. The service is now active.",
+    "Paiement confirmé pour la commande {0}. Le service est actif.",
+    "注文{0}の支払いを確認しました。サービスが有効になりました。"
+  ],
+  "Danh sách chỉ để đối chiếu; cấp chỉ đổi khi bạn bấm quyết định.": [
+    "For reference only; the tier changes only when you click a decision.",
+    "Pour référence uniquement ; le niveau ne change que sur votre décision.",
+    "参照用です。レベルは決定ボタンを押したときだけ変わります。"
+  ],
+  "Yêu cầu theo cấp": [
+    "Tier requirements",
+    "Exigences par niveau",
+    "レベル別の要件"
+  ],
+  "không bắt buộc": [
+    "optional",
+    "facultatif",
+    "任意"
+  ],
+  "nháp chưa duyệt": [
+    "unreviewed draft",
+    "brouillon non validé",
+    "未承認の下書き"
+  ],
+  "Chưa đủ bằng chứng xuất xứ bắt buộc còn hạn cho nhóm hàng của bạn.": [
+    "Mandatory origin evidence for your product group is not yet complete and valid.",
+    "Les preuves d'origine obligatoires pour votre groupe de produits ne sont pas encore complètes et valides.",
+    "貴社の製品群に必要な原産地証拠がまだ揃っていないか期限切れです。"
+  ],
+  "Đủ bằng chứng xuất xứ bắt buộc còn hạn cho nhóm hàng của bạn.": [
+    "Mandatory origin evidence for your product group is complete and valid.",
+    "Les preuves d'origine obligatoires pour votre groupe de produits sont complètes et valides.",
+    "貴社の製品群に必要な原産地証拠がすべて有効です。"
+  ],
+  "Cấp xác minh": [
+    "Verification tier",
+    "Niveau de vérification",
+    "認証レベル"
+  ],
+  "Danh sách yêu cầu đang là bản nháp, chờ bộ phận pháp lý duyệt.": [
+    "The requirement list is a draft pending legal review.",
+    "La liste des exigences est un brouillon en attente de validation juridique.",
+    "要件リストは下書きで、法務の承認待ちです。"
+  ],
+  "Ngày duyệt": [
+    "Reviewed on",
+    "Vérifié le",
+    "承認日"
+  ],
+  "Đặt mua gói duyệt Nâng cao": [
+    "Order the Enhanced review",
+    "Commander la vérification avancée",
+    "上位認証の審査を注文"
+  ],
+  "đã đạt": [
+    "achieved",
+    "atteint",
+    "達成済み"
+  ],
+  "Cơ bản": [
+    "Basic",
+    "Base",
+    "基本"
+  ],
+  "Nâng cao": [
+    "Enhanced",
+    "Avancé",
+    "上位"
+  ],
+  "Chuyên sâu": [
+    "Advanced",
+    "Approfondi",
+    "高度"
+  ],
+  "Đã đạt": [
+    "Met",
+    "Satisfait",
+    "達成"
+  ],
+  "Chưa có": [
+    "Missing",
+    "Manquant",
+    "未提出"
+  ],
+  "Quản trị viên kiểm tay": [
+    "Checked manually by an admin",
+    "Vérifié manuellement par un administrateur",
+    "管理者が手動で確認"
+  ],
+  "Kiểm bởi đội ngũ VYBE Trade": [
+    "Checked by the VYBE Trade team",
+    "Vérifié par l'équipe VYBE Trade",
+    "VYBE Tradeチームが確認"
+  ],
+  "Phạm vi: pháp lý doanh nghiệp (đăng ký kinh doanh, người đại diện).": [
+    "Scope: company legal status (business registration, legal representative).",
+    "Portée : statut juridique (immatriculation, représentant légal).",
+    "範囲：企業の法的地位（事業登録、法定代表者）。"
+  ],
+  "Phạm vi: năng lực (chứng nhận đối chiếu tổ chức cấp, bằng chứng xuất khẩu).": [
+    "Scope: capability (certificates checked with issuers, export evidence).",
+    "Portée : capacités (certificats vérifiés auprès des émetteurs, preuves d'export).",
+    "範囲：能力（発行機関で照合した認証、輸出の証拠）。"
+  ],
+  "Phạm vi: đánh giá nhà máy của bên thứ ba.": [
+    "Scope: third-party factory audit.",
+    "Portée : audit d'usine par un tiers.",
+    "範囲：第三者による工場監査。"
+  ],
+  "Xin lên cấp {0}": [
+    "Requests {0} tier",
+    "Demande le niveau {0}",
+    "{0}レベルを申請"
+  ],
+  "Cấp {0}": [
+    "{0} tier",
+    "Niveau {0}",
+    "{0}レベル"
+  ],
+  "Nâng lên cấp {0}": [
+    "Raise to {0} tier",
+    "Passer au niveau {0}",
+    "{0}レベルに引き上げ"
+  ],
+  "Yêu cầu duyệt cấp {0}": [
+    "Request {0} tier review",
+    "Demander la vérification de niveau {0}",
+    "{0}レベルの審査を申請"
+  ],
+  "Duyệt cấp Nâng cao là dịch vụ trả phí. Hãy đặt mua gói \"Duyệt xác minh Nâng cao\" trước.": [
+    "The Enhanced review is a paid service. Please order \"Enhanced verification review\" first.",
+    "La vérification avancée est payante. Commandez d'abord « Vérification avancée ».",
+    "上位認証の審査は有料です。先に「上位認証の審査」を注文してください。"
+  ],
+  "Bạn đã có yêu cầu lên cấp đang chờ duyệt.": [
+    "You already have a tier request awaiting review.",
+    "Vous avez déjà une demande de niveau en attente.",
+    "審査待ちのレベル申請がすでにあります。"
+  ],
+  "Cần được xác minh cấp Cơ bản trước.": [
+    "Basic verification is needed first.",
+    "La vérification de base est d'abord nécessaire.",
+    "まず基本認証が必要です。"
+  ],
+  "Cấp này chưa áp dụng cho doanh nghiệp của bạn.": [
+    "This tier does not apply to your company yet.",
+    "Ce niveau ne s'applique pas encore à votre entreprise.",
+    "このレベルは貴社にはまだ適用されません。"
+  ],
+  "Đã gửi yêu cầu lên cấp. Quản trị viên sẽ đối chiếu hồ sơ của bạn.": [
+    "Tier request sent. An admin will review your file.",
+    "Demande envoyée. Un administrateur examinera votre dossier.",
+    "レベル申請を送信しました。管理者が書類を確認します。"
+  ],
+  "Đánh giá nhà máy của bên thứ ba đã được VYBE Trade kiểm (cấp Chuyên sâu)": [
+    "Third-party factory audit checked by VYBE Trade (Advanced tier)",
+    "Audit d'usine tiers vérifié par VYBE Trade (niveau approfondi)",
+    "第三者工場監査をVYBE Tradeが確認（高度レベル）"
+  ],
+  "Năng lực đã được VYBE Trade kiểm (cấp Nâng cao)": [
+    "Capability checked by VYBE Trade (Enhanced tier)",
+    "Capacités vérifiées par VYBE Trade (niveau avancé)",
+    "能力をVYBE Tradeが確認（上位レベル）"
+  ],
+  "Hệ thống tự kiểm email, website, mã VAT và địa chỉ để quản trị viên tham khảo. Mục \"Cần xem thêm\" là gợi ý để bạn hoàn thiện hồ sơ.": [
+    "The system checks your email, website, VAT number and address for admins to consider. Items marked \"Needs a closer look\" are hints to improve your profile.",
+    "Le système vérifie e-mail, site web, numéro de TVA et adresse pour les administrateurs. Les éléments « À examiner » sont des pistes pour compléter votre profil.",
+    "システムがメール・ウェブサイト・VAT番号・住所を自動確認し、管理者の参考にします。「要確認」はプロフィール改善のヒントです。"
+  ],
+  "Kiểm tự động hồ sơ": [
+    "Automatic profile checks",
+    "Vérifications automatiques du profil",
+    "プロフィールの自動確認"
+  ],
+  "Chưa có kết quả kiểm tra.": [
+    "No check results yet.",
+    "Pas encore de résultats de vérification.",
+    "確認結果はまだありません。"
+  ],
+  "Chạy lại kiểm tra": [
+    "Run checks again",
+    "Relancer les vérifications",
+    "確認を再実行"
+  ],
+  "Cần xem thêm": [
+    "Needs a closer look",
+    "À examiner",
+    "要確認"
+  ],
+  "Ghi chú đối chiếu": [
+    "Verification note",
+    "Note de vérification",
+    "照合メモ"
+  ],
+  "Ghi kết quả kiểm tay": [
+    "Record a manual check",
+    "Enregistrer une vérification manuelle",
+    "手動確認を記録"
+  ],
+  "Kiểm tự động và kiểm tay": [
+    "Automatic and manual checks",
+    "Vérifications automatiques et manuelles",
+    "自動確認と手動確認"
+  ],
+  "Kết quả kiểm chỉ là tín hiệu tham khảo; quyết định xác minh do bạn đưa ra.": [
+    "Check results are signals only; you make the verification decision.",
+    "Les résultats ne sont que des indices ; la décision vous appartient.",
+    "確認結果は参考情報です。認証の判断はあなたが行います。"
+  ],
+  "Lưu kết quả kiểm tay": [
+    "Save manual check",
+    "Enregistrer la vérification",
+    "手動確認を保存"
+  ],
+  "Mở Cổng đăng ký doanh nghiệp": [
+    "Open the business registration portal",
+    "Ouvrir le portail d'immatriculation",
+    "企業登録ポータルを開く"
+  ],
+  "Chưa xác định": [
+    "Unknown",
+    "Indéterminé",
+    "不明"
+  ],
+  "kiểm tay": [
+    "manual",
+    "manuel",
+    "手動"
+  ],
+  "tự động": [
+    "automatic",
+    "automatique",
+    "自動"
+  ],
+  "Vui lòng ghi chú kết quả đối chiếu.": [
+    "Please add a note on what you checked.",
+    "Veuillez noter ce que vous avez vérifié.",
+    "確認内容をメモしてください。"
+  ],
+  "Đã ghi kết quả kiểm tay.": [
+    "Manual check recorded.",
+    "Vérification manuelle enregistrée.",
+    "手動確認を記録しました。"
+  ],
+  "Không ghi được. Vui lòng thử lại.": [
+    "Could not save. Please try again.",
+    "Enregistrement impossible. Réessayez.",
+    "保存できませんでした。もう一度お試しください。"
+  ],
+  "Đã xếp lịch kiểm lại; kết quả cập nhật sau ít phút.": [
+    "Checks scheduled; results update in a few minutes.",
+    "Vérifications planifiées ; résultats dans quelques minutes.",
+    "確認を予約しました。数分後に結果が更新されます。"
+  ],
+  "Email theo tên miền công ty (không phải mail miễn phí)": [
+    "Email on the company domain (not free webmail)",
+    "E-mail sur le domaine de l'entreprise (pas un webmail gratuit)",
+    "会社ドメインのメール（無料メールではない）"
+  ],
+  "Tên miền email nhận được thư (MX)": [
+    "Email domain can receive mail (MX)",
+    "Le domaine e-mail reçoit du courrier (MX)",
+    "メールドメインが受信可能（MX）"
+  ],
+  "Tên miền đã đăng ký trên 1 năm": [
+    "Domain registered for over a year",
+    "Domaine enregistré depuis plus d'un an",
+    "ドメイン登録から1年以上"
+  ],
+  "Website truy cập được": [
+    "Website reachable",
+    "Site web accessible",
+    "ウェブサイトにアクセス可能"
+  ],
+  "Website có tên công ty": [
+    "Website shows the company name",
+    "Le site affiche le nom de l'entreprise",
+    "ウェブサイトに社名がある"
+  ],
+  "Website cùng tên miền với email": [
+    "Website on the same domain as the email",
+    "Site sur le même domaine que l'e-mail",
+    "ウェブサイトとメールが同じドメイン"
+  ],
+  "Mã VAT hợp lệ trên VIES": [
+    "VAT number valid on VIES",
+    "Numéro de TVA valide sur VIES",
+    "VIESでVAT番号が有効"
+  ],
+  "Tên trên VIES khớp tên công ty": [
+    "VIES name matches the company name",
+    "Le nom VIES correspond à l'entreprise",
+    "VIESの名称が社名と一致"
+  ],
+  "Mã LEI trên GLEIF": [
+    "LEI listed on GLEIF",
+    "LEI enregistré sur GLEIF",
+    "GLEIFにLEIが登録"
+  ],
+  "Địa chỉ định vị được trên bản đồ": [
+    "Address found on the map",
+    "Adresse localisée sur la carte",
+    "住所を地図上で特定"
+  ],
+  "Mã cơ sở có trong danh sách EU TRACES-NT": [
+    "Facility code listed in EU TRACES-NT",
+    "Code d'établissement répertorié dans TRACES-NT",
+    "施設コードがEU TRACES-NTに掲載"
+  ],
+  "Đối chiếu Cổng thông tin quốc gia về đăng ký doanh nghiệp": [
+    "Checked on the national business registration portal",
+    "Vérifié sur le portail national d'immatriculation",
+    "国の企業登録ポータルで照合"
+  ],
+  "Đối chiếu sổ đăng ký doanh nghiệp nước sở tại": [
+    "Checked against the local company registry",
+    "Vérifié au registre des sociétés local",
+    "現地の企業登記簿で照合"
+  ],
+  "Đối chiếu chứng nhận với tổ chức cấp": [
+    "Certificates checked with the issuer",
+    "Certificats vérifiés auprès de l'émetteur",
+    "発行機関で認証を照合"
+  ],
+  "Xem tour video nhà máy": [
+    "Factory video tour reviewed",
+    "Visite vidéo de l'usine examinée",
+    "工場の動画ツアーを確認"
+  ],
+  "Kiểm tra khác": [
+    "Other check",
+    "Autre vérification",
+    "その他の確認"
+  ],
+  "Cờ kiểm chéo": [
+    "Cross-check flags",
+    "Alertes de cohérence",
+    "照合フラグ"
+  ],
+  "Gợi ý hoàn thiện hồ sơ": [
+    "Profile improvement hints",
+    "Conseils pour compléter le profil",
+    "プロフィール改善のヒント"
+  ],
+  "Chưa tính được": [
+    "Not available yet",
+    "Pas encore disponible",
+    "まだ算出できません"
+  ],
+  "Cần ít nhất 3 hội thoại hoặc yêu cầu báo giá trong 90 ngày để chấm phần này.": [
+    "At least 3 conversations or quote requests in 90 days are needed to score this part.",
+    "Au moins 3 conversations ou demandes de devis sur 90 jours sont nécessaires pour noter cette partie.",
+    "この項目の算出には90日間で3件以上の会話または見積依頼が必要です。"
+  ],
+  "Mới trên nền tảng": [
+    "New on the platform",
+    "Nouveau sur la plateforme",
+    "新規参加"
+  ],
+  "Tiêu chí đang là bản nháp minh hoạ, chờ duyệt.": [
+    "Criteria are an illustrative draft pending review.",
+    "Les critères sont un brouillon illustratif en attente de validation.",
+    "基準は例示用の下書きで、承認待ちです。"
+  ],
+  "Tính lúc": [
+    "Computed at",
+    "Calculé le",
+    "算出日時"
+  ],
+  "Tự khai (không tính điểm)": [
+    "Self-declared (not scored)",
+    "Déclaratif (non noté)",
+    "自己申告（採点対象外）"
+  ],
+  "Xem phương pháp": [
+    "See the method",
+    "Voir la méthode",
+    "算出方法を見る"
+  ],
+  "chưa tính": [
+    "not scored",
+    "non noté",
+    "未算出"
+  ],
+  "Điểm tín nhiệm": [
+    "Trust score",
+    "Score de confiance",
+    "信頼スコア"
+  ],
+  "Danh sách sản phẩm": [
+    "Product list",
+    "Liste des produits",
+    "製品リスト"
+  ],
+  "Phương pháp tính điểm tín nhiệm": [
+    "How the trust score is computed",
+    "Méthode du score de confiance",
+    "信頼スコアの算出方法"
+  ],
+  "Ba thành phần": [
+    "Three components",
+    "Trois composantes",
+    "3つの構成要素"
+  ],
+  "Nguyên tắc": [
+    "Principles",
+    "Principes",
+    "原則"
+  ],
+  "Tiêu chí đang chờ bộ phận pháp lý duyệt.": [
+    "Criteria are pending legal review.",
+    "Les critères sont en attente de validation juridique.",
+    "基準は法務の承認待ちです。"
+  ],
+  "Điểm do hệ thống VYBE Trade tính theo phương pháp công bố tại /trust-score. Không phải chứng nhận hay xếp hạng tín dụng.": [
+    "Score computed by VYBE Trade using the method published at /trust-score. Not a certification or credit rating.",
+    "Score calculé par VYBE Trade selon la méthode publiée sur /trust-score. Ni certification ni notation de crédit.",
+    "VYBE Tradeが/trust-scoreで公開した方法で算出したスコアです。認証や信用格付けではありません。"
+  ],
+  "Điểm tín nhiệm (0–100) giúp buyer đánh giá nhanh một nhà cung cấp. Điểm do hệ thống VYBE Trade tính theo phương pháp dưới đây và luôn đi kèm điểm thành phần, ngày tính.": [
+    "The trust score (0–100) helps buyers assess a supplier quickly. VYBE Trade computes it with the method below and always shows the component scores and the date.",
+    "Le score de confiance (0–100) aide les acheteurs à évaluer rapidement un fournisseur. VYBE Trade le calcule selon la méthode ci-dessous, avec les sous-scores et la date.",
+    "信頼スコア（0〜100）はバイヤーがサプライヤーを素早く評価するためのものです。VYBE Tradeが以下の方法で算出し、構成要素と算出日を常に表示します。"
+  ],
+  "Giấy tờ đã kiểm (khoảng 35%)": [
+    "Checked documents (about 35%)",
+    "Documents vérifiés (environ 35 %)",
+    "確認済み書類（約35%）"
+  ],
+  "Pháp lý doanh nghiệp, cấp xác minh, chứng nhận còn hạn và bằng chứng xuất khẩu đã được đội ngũ VYBE Trade đối chiếu.": [
+    "Legal status, verification tier, valid certificates and export evidence checked by the VYBE Trade team.",
+    "Statut juridique, niveau de vérification, certificats valides et preuves d'export vérifiés par l'équipe VYBE Trade.",
+    "VYBE Tradeチームが照合した法的地位、認証レベル、有効な認証、輸出の証拠。"
+  ],
+  "Kiểm tự động (khoảng 15%)": [
+    "Automated checks (about 15%)",
+    "Vérifications automatiques (environ 15 %)",
+    "自動確認（約15%）"
+  ],
+  "Email theo tên miền công ty, tuổi tên miền, website có tên công ty, đối chiếu sổ đăng ký (VIES, GLEIF, Cổng đăng ký doanh nghiệp) và địa chỉ.": [
+    "Company-domain email, domain age, website showing the company name, registry matches (VIES, GLEIF, business registration portal) and address.",
+    "E-mail au domaine de l'entreprise, ancienneté du domaine, site affichant le nom, registres (VIES, GLEIF, portail d'immatriculation) et adresse.",
+    "会社ドメインのメール、ドメイン年数、社名のあるウェブサイト、登記照合（VIES・GLEIF・企業登録ポータル）、住所。"
+  ],
+  "Hành vi trên nền tảng (khoảng 50%)": [
+    "Platform behaviour (about 50%)",
+    "Comportement sur la plateforme (environ 50 %)",
+    "プラットフォーム上の行動（約50%）"
+  ],
+  "Tỷ lệ và tốc độ trả lời tin nhắn của buyer, tỷ lệ yêu cầu báo giá được báo giá, trong 90 ngày gần nhất.": [
+    "Share and speed of replies to buyers, and share of quote requests answered with a quote, over the last 90 days.",
+    "Part et rapidité des réponses aux acheteurs, part des demandes de devis chiffrées, sur les 90 derniers jours.",
+    "直近90日間のバイヤーへの返信率と速さ、見積依頼への見積提示率。"
+  ],
+  "Chỉ chấm dữ kiện kiểm chứng được; thông tin tự khai được gắn nhãn và không tính điểm.": [
+    "Only verifiable facts are scored; self-declared information is labelled and not scored.",
+    "Seuls les faits vérifiables sont notés ; les informations déclaratives sont signalées et non notées.",
+    "検証可能な事実のみ採点し、自己申告情報は表示のみで採点しません。"
+  ],
+  "Tiêu chí và trọng số là dữ liệu có người duyệt; tiêu chí chưa duyệt không được dùng.": [
+    "Criteria and weights are reviewed data; unreviewed criteria are not used.",
+    "Critères et pondérations sont des données validées ; les critères non validés ne sont pas utilisés.",
+    "基準と重みは承認済みデータで、未承認の基準は使いません。"
+  ],
+  "Doanh nghiệp có dưới 3 hội thoại hoặc yêu cầu báo giá trong 90 ngày được gắn nhãn \"Mới trên nền tảng\" và chưa chấm phần hành vi.": [
+    "Companies with fewer than 3 conversations or quote requests in 90 days are labelled \"New on the platform\" and the behaviour part is not scored.",
+    "Les entreprises ayant moins de 3 conversations ou demandes de devis sur 90 jours sont « Nouvelles sur la plateforme » et la partie comportement n'est pas notée.",
+    "90日間の会話・見積依頼が3件未満の企業は「新規参加」と表示し、行動の項目は採点しません。"
+  ],
+  "Điểm không phải chứng nhận hay xếp hạng tín dụng, không quyết định việc xác minh và không dùng để xếp thứ tự danh bạ.": [
+    "The score is not a certification or credit rating, does not decide verification and is not used to rank the directory.",
+    "Le score n'est ni une certification ni une notation de crédit, ne décide pas de la vérification et ne sert pas à classer l'annuaire.",
+    "スコアは認証や信用格付けではなく、認証判断にもディレクトリの並び順にも使いません。"
+  ],
+  "Doanh nghiệp luôn xem được điểm và từng thành phần của mình trong khu vực quản lý.": [
+    "Companies can always see their own score and each component in their workspace.",
+    "Les entreprises voient toujours leur score et chaque composante dans leur espace.",
+    "企業は自社のスコアと各構成要素をいつでも管理画面で確認できます。"
+  ],
+  "AI đọc được": [
+    "Read by AI",
+    "Lu par l'IA",
+    "AIの読み取り"
+  ],
+  "Chưa có gợi ý từ AI cho giấy tờ này.": [
+    "No AI suggestion for this document yet.",
+    "Pas encore de suggestion de l'IA pour ce document.",
+    "この書類のAI提案はまだありません。"
+  ],
+  "Gợi ý từ AI (kiểm tra lại trước khi áp)": [
+    "AI suggestion (check before applying)",
+    "Suggestion de l'IA (vérifiez avant d'appliquer)",
+    "AIの提案（適用前に確認してください）"
+  ],
+  "Gợi ý từ AI": [
+    "AI suggestion",
+    "Suggestion de l'IA",
+    "AIの提案"
+  ],
+  "So sánh với AI đọc giấy tờ": [
+    "Compare with the AI reading",
+    "Comparer avec la lecture de l'IA",
+    "AIの読み取りと比較"
+  ],
+  "Trường": [
+    "Field",
+    "Champ",
+    "項目"
+  ],
+  "Xem gợi ý từ AI": [
+    "See AI suggestion",
+    "Voir la suggestion de l'IA",
+    "AIの提案を見る"
+  ],
+  "Áp gợi ý đã chọn": [
+    "Apply selected suggestions",
+    "Appliquer les suggestions choisies",
+    "選択した提案を適用"
+  ],
+  "Loại giấy tờ": [
+    "Document type",
+    "Type de document",
+    "書類の種類"
+  ],
+  "Đơn vị được cấp": [
+    "Holder",
+    "Titulaire",
+    "取得者"
+  ],
+  "Địa chỉ đơn vị được cấp": [
+    "Holder address",
+    "Adresse du titulaire",
+    "取得者の住所"
+  ],
+  "AI đang chờ đọc giấy tờ…": [
+    "AI is waiting to read the document…",
+    "L'IA va lire le document…",
+    "AIが書類の読み取りを待っています…"
+  ],
+  "AI đang đọc giấy tờ…": [
+    "AI is reading the document…",
+    "L'IA lit le document…",
+    "AIが書類を読み取り中…"
+  ],
+  "AI chưa đọc được giấy tờ này.": [
+    "AI could not read this document.",
+    "L'IA n'a pas pu lire ce document.",
+    "AIはこの書類を読み取れませんでした。"
+  ],
+  "Bản scan (ảnh) chưa đọc tự động được; vui lòng nhập tay nếu cần.": [
+    "Scanned images cannot be read automatically yet; please enter details by hand if needed.",
+    "Les scans ne sont pas encore lus automatiquement ; saisissez les informations si besoin.",
+    "スキャン画像はまだ自動で読み取れません。必要なら手入力してください。"
+  ],
+  "Đã áp gợi ý. Bằng chứng sẽ được duyệt lại.": [
+    "Suggestions applied. The evidence will be reviewed again.",
+    "Suggestions appliquées. La preuve sera revérifiée.",
+    "提案を適用しました。証拠は再審査されます。"
+  ],
+  "Không áp được gợi ý. Vui lòng thử lại.": [
+    "Could not apply the suggestions. Please try again.",
+    "Impossible d'appliquer les suggestions. Réessayez.",
+    "提案を適用できませんでした。もう一度お試しください。"
+  ],
+  "Seller khai": [
+    "Declared by seller",
+    "Déclaré par le vendeur",
+    "セラーの申告"
+  ],
+  "Khớp": [
+    "Match",
+    "Correspond",
+    "一致"
+  ],
+  "Lệch": [
+    "Mismatch",
+    "Écart",
+    "不一致"
+  ],
+  "Cấp 1": [
+    "Level 1",
+    "Niveau 1",
+    "レベル1"
+  ],
+  "Cấp 2": [
+    "Level 2",
+    "Niveau 2",
+    "レベル2"
+  ],
+  "Cấp 3": [
+    "Level 3",
+    "Niveau 3",
+    "レベル3"
+  ],
+  "Đã đối chiếu chứng nhận": [
+    "Certificates cross-checked",
+    "Certificats recoupés",
+    "認証を照合済み"
+  ],
+  "và bằng chứng xuất khẩu": [
+    "and export evidence",
+    "et preuves d'exportation",
+    "および輸出の証拠"
+  ],
+  "Đã có đánh giá nhà máy": [
+    "Factory assessed",
+    "Usine évaluée",
+    "工場評価済み"
+  ],
+  "của bên thứ ba": [
+    "by a third party",
+    "par un tiers",
+    "第三者による"
+  ],
+  "Cấp 1 - Cơ bản": [
+    "Level 1 - Basic",
+    "Niveau 1 - De base",
+    "レベル1 - 基本"
+  ],
+  "Cấp 2 - Nâng cao": [
+    "Level 2 - Enhanced",
+    "Niveau 2 - Avancé",
+    "レベル2 - 上位"
+  ],
+  "Cấp 3 - Chuyên sâu": [
+    "Level 3 - Advanced",
+    "Niveau 3 - Approfondi",
+    "レベル3 - 高度"
+  ],
+  "Cấp độ chuyên sâu": [
+    "Advanced level",
+    "Niveau approfondi",
+    "高度レベル"
+  ],
+  "Đã đối chiếu pháp lý doanh nghiệp: đăng ký kinh doanh và người đại diện.": [
+    "Company legal status cross-checked: business registration and legal representative.",
+    "Statut juridique de l'entreprise recoupé : immatriculation et représentant légal.",
+    "企業の法的情報を照合済み：事業登録と法定代理人。"
+  ],
+  "Cấp Cơ bản miễn phí.": [
+    "The Basic level is free.",
+    "Le niveau de base est gratuit.",
+    "基本レベルは無料です。"
+  ],
+  "Đã đối chiếu chứng nhận với tổ chức cấp và bằng chứng xuất khẩu.": [
+    "Certificates cross-checked with the issuing body, plus export evidence.",
+    "Certificats recoupés avec l'organisme émetteur, et preuves d'exportation.",
+    "認証を発行機関と照合し、輸出の証拠も確認済み。"
+  ],
+  "Cấp Nâng cao là cấp trả phí; hồ sơ do đội ngũ VYBE Trade kiểm.": [
+    "The Enhanced level is paid; the file is checked by the VYBE Trade team.",
+    "Le niveau avancé est payant ; le dossier est vérifié par l'équipe VYBE Trade.",
+    "上位レベルは有料で、書類はVYBE Tradeチームが確認します。"
+  ],
+  "Đánh giá nhà máy do bên thứ ba thực hiện.": [
+    "Factory assessment carried out by a third party.",
+    "Évaluation de l'usine réalisée par un tiers.",
+    "第三者による工場評価。"
+  ],
+  "Chỉ áp dụng khi có đánh giá thực tế của bên thứ ba.": [
+    "Applies only when a third party has actually assessed the site.",
+    "S'applique uniquement lorsqu'un tiers a réellement évalué le site.",
+    "第三者が実際に評価した場合にのみ適用されます。"
+  ],
+  "Khuyến nghị: Phê duyệt xác minh cấp Nâng cao": [
+    "Recommendation: Approve Enhanced-level verification",
+    "Recommandation : Approuver la vérification de niveau avancé",
+    "推奨事項：上位レベルの認証を承認する"
+  ],
+  "Sản phẩm và năng lực": [
+    "Products and capabilities",
+    "Produits et capacités",
+    "製品と能力"
+  ],
+  "Chính ngạch": [
+    "Official channel",
+    "Voie officielle",
+    "正規ルート"
+  ],
+  "Tiểu ngạch": [
+    "Informal border trade",
+    "Commerce frontalier informel",
+    "小口国境貿易"
+  ],
+  "Kênh xuất khẩu theo thị trường (không bắt buộc)": [
+    "Export channel by market (optional)",
+    "Canal d'exportation par marché (facultatif)",
+    "市場別の輸出チャネル（任意）"
+  ],
+  "Tự khai, chỉ dùng cho hồ sơ của bạn và đội ngũ VYBE Trade; không hiện công khai.": [
+    "Self-declared; visible only to you and the VYBE Trade team, not shown publicly.",
+    "Déclaré par vous ; visible uniquement par vous et l'équipe VYBE Trade, non affiché publiquement.",
+    "自己申告。あなたとVYBE Tradeチームのみ閲覧可能で、公開されません。"
+  ],
+  "Có thông báo chưa đọc đang chờ bạn từ lần truy cập trước.": [
+    "Unread notifications have been waiting for you since your last visit.",
+    "Des notifications non lues vous attendent depuis votre dernière visite.",
+    "前回の訪問以降、未読の通知があります。"
+  ],
+  "Chứng chỉ khác (cách nhau bằng dấu phẩy)": [
+    "Other certificates (comma-separated)",
+    "Autres certificats (séparés par des virgules)",
+    "その他の認証（カンマ区切り）"
+  ],
+  "Ví dụ: SMETA, Kosher": [
+    "e.g. SMETA, Kosher",
+    "Ex. : SMETA, Kosher",
+    "例：SMETA、Kosher"
+  ],
+  "Địa chỉ trên VIES khớp địa chỉ khai báo": [
+    "VIES address matches the declared address",
+    "L'adresse VIES correspond à l'adresse déclarée",
+    "VIESの住所が申告住所と一致"
+  ],
+  "Xác nhận & hoàn tất": [
+    "Confirm & finish",
+    "Confirmer et terminer",
+    "確認して完了"
+  ],
+  "Không bắt buộc. Buyer không cần nộp chứng nhận sản phẩm; chỉ cần mã định danh doanh nghiệp để nhà cung cấp tin tưởng hơn.": [
+    "Optional. Buyers do not need to submit product certificates; only a company identifier so suppliers can trust you more.",
+    "Facultatif. Les acheteurs n'ont pas à fournir de certificats de produit ; seul un identifiant d'entreprise est utile pour inspirer confiance aux fournisseurs.",
+    "任意です。バイヤーは製品の認証を提出する必要はなく、サプライヤーの信頼を得るための企業識別番号のみで構いません。"
+  ],
+  "Cho biết bạn cần mua gì để hệ thống ghép nhà cung cấp phù hợp.": [
+    "Tell us what you need to buy so the system can match suitable suppliers.",
+    "Indiquez ce que vous souhaitez acheter pour que le système trouve des fournisseurs adaptés.",
+    "必要な商品をお知らせください。適切なサプライヤーをご紹介します。"
+  ],
+  "Kiểm tra lại thông tin trước khi hoàn tất. Bạn có thể sửa bất cứ lúc nào ở Hồ sơ công ty.": [
+    "Review your details before finishing. You can edit them any time in Company profile.",
+    "Vérifiez vos informations avant de terminer. Vous pouvez les modifier à tout moment dans le profil de l'entreprise.",
+    "完了する前に内容をご確認ください。会社プロフィールからいつでも修正できます。"
+  ],
+  "Vui lòng chọn ít nhất một nhóm hàng bạn cần để hệ thống ghép nhà cung cấp phù hợp.": [
+    "Please choose at least one product group you need so the system can match suitable suppliers.",
+    "Veuillez choisir au moins un groupe de produits afin que le système trouve des fournisseurs adaptés.",
+    "適切なサプライヤーをご紹介するため、必要な商品グループを1つ以上選択してください。"
+  ],
+  "Ví dụ: HRB 12345": [
+    "e.g. HRB 12345",
+    "Ex. : HRB 12345",
+    "例：HRB 12345"
+  ],
+  "Gửi yêu cầu xác minh doanh nghiệp khi hoàn tất": [
+    "Send a business verification request when finished",
+    "Envoyer une demande de vérification à la fin",
+    "完了時に企業認証のリクエストを送る"
+  ],
+  "Quản trị viên đối chiếu mã VAT hoặc số đăng ký của bạn. Chưa xác minh bạn vẫn xem hồ sơ, nhắn tin và gửi yêu cầu báo giá trong hạn mức.": [
+    "An administrator cross-checks your VAT or registration number. Until verified, you can still view profiles, message and send quote requests within the limit.",
+    "Un administrateur recoupe votre numéro de TVA ou d'immatriculation. Sans vérification, vous pouvez consulter les profils, écrire et envoyer des demandes de devis dans la limite.",
+    "管理者がVAT番号または登録番号を照合します。未認証でも、上限内でプロフィール閲覧、メッセージ、見積依頼が可能です。"
+  ],
+  "Số đăng ký doanh nghiệp": [
+    "Company registration number",
+    "Numéro d'immatriculation",
+    "会社登録番号"
+  ],
+  "Chưa khai": [
+    "Not provided",
+    "Non renseigné",
+    "未入力"
+  ],
+  "Yêu cầu xác minh": [
+    "Verification request",
+    "Demande de vérification",
+    "認証リクエスト"
+  ],
+  "Sẽ gửi khi hoàn tất": [
+    "Will be sent when finished",
+    "Sera envoyée à la fin",
+    "完了時に送信されます"
+  ],
+  "Không gửi bây giờ": [
+    "Not sending now",
+    "Pas d'envoi maintenant",
+    "今は送信しません"
+  ],
+  "Sản phẩm cần mua": [
+    "Products to buy",
+    "Produits à acheter",
+    "購入したい商品"
+  ],
+  "Mã LEI (không bắt buộc)": [
+    "LEI code (optional)",
+    "Code LEI (facultatif)",
+    "LEIコード（任意）"
+  ],
+  "20 ký tự, ví dụ: 5493001KJTIIGC8Y1R12": [
+    "20 characters, e.g. 5493001KJTIIGC8Y1R12",
+    "20 caractères, ex. : 5493001KJTIIGC8Y1R12",
+    "20文字（例：5493001KJTIIGC8Y1R12）"
+  ],
+  "Cơ quan đăng ký (không bắt buộc)": [
+    "Registering authority (optional)",
+    "Autorité d'enregistrement (facultatif)",
+    "登録機関（任意）"
+  ],
+  "Ví dụ: Handelsregister Hamburg": [
+    "e.g. Handelsregister Hamburg",
+    "Ex. : Handelsregister Hamburg",
+    "例：Handelsregister Hamburg"
+  ],
+  "Địa chỉ đăng ký (không bắt buộc)": [
+    "Registered address (optional)",
+    "Adresse d'immatriculation (facultatif)",
+    "登録住所（任意）"
+  ],
+  "Đúng như trên giấy đăng ký doanh nghiệp": [
+    "Exactly as on the company registration",
+    "Exactement comme sur l'immatriculation",
+    "会社登録書類のとおりに"
+  ],
+  "Hệ thống đối chiếu mã VAT với VIES và mã LEI với GLEIF; quản trị viên xem kết quả khi duyệt. Có mã định danh thì yêu cầu xác minh tự gửi khi hoàn tất. Không cần tải file; chưa xác minh bạn vẫn xem hồ sơ, nhắn tin và gửi yêu cầu báo giá trong hạn mức.": [
+    "The system cross-checks the VAT number with VIES and the LEI code with GLEIF; an administrator sees the results when reviewing. With an identifier, the verification request is sent automatically when you finish. No file upload is needed; until verified you can still view profiles, message and send quote requests within the limit.",
+    "Le système recoupe le numéro de TVA avec VIES et le code LEI avec GLEIF ; un administrateur voit les résultats lors de l'examen. Avec un identifiant, la demande de vérification est envoyée automatiquement à la fin. Aucun fichier à téléverser ; sans vérification, vous pouvez consulter les profils, écrire et envoyer des demandes de devis dans la limite.",
+    "VAT番号はVIESと、LEIコードはGLEIFと照合され、管理者が審査時に結果を確認します。識別番号があれば、完了時に認証リクエストが自動送信されます。ファイルのアップロードは不要で、未認証でも上限内でプロフィール閲覧、メッセージ、見積依頼が可能です。"
+  ],
+  "Sẽ gửi tự động khi hoàn tất": [
+    "Will be sent automatically when finished",
+    "Sera envoyée automatiquement à la fin",
+    "完了時に自動送信されます"
+  ],
+  "Mã LEI": [
+    "LEI code",
+    "Code LEI",
+    "LEIコード"
+  ],
+  "Cơ quan đăng ký": [
+    "Registering authority",
+    "Autorité d'enregistrement",
+    "登録機関"
+  ],
+  "Địa chỉ đăng ký": [
+    "Registered address",
+    "Adresse d'immatriculation",
+    "登録住所"
+  ],
+  "Mã LEI gồm 20 ký tự (chữ và số), hai ký tự cuối là số.": [
+    "An LEI code has 20 characters (letters and digits); the last two are digits.",
+    "Un code LEI compte 20 caractères (lettres et chiffres) ; les deux derniers sont des chiffres.",
+    "LEIコードは20文字（英数字）で、末尾2文字は数字です。"
+  ],
+  "Địa chỉ trên GLEIF khớp địa chỉ khai báo": [
+    "GLEIF address matches the declared address",
+    "L'adresse GLEIF correspond à l'adresse déclarée",
+    "GLEIFの住所が申告住所と一致"
+  ],
+  "Số đăng ký trên GLEIF khớp số đã khai": [
+    "GLEIF registration number matches the declared one",
+    "Le numéro d'immatriculation GLEIF correspond à celui déclaré",
+    "GLEIFの登録番号が申告番号と一致"
+  ],
+  "Chưa có danh sách bằng chứng bắt buộc cho nhóm hàng của bạn. Bạn vẫn có thể nộp bằng chứng ở bên dưới; quản trị viên sẽ xem khi duyệt.": [
+    "There is no required-evidence list for your product group yet. You can still submit evidence below; an administrator will review it.",
+    "Il n'y a pas encore de liste de preuves obligatoires pour votre groupe de produits. Vous pouvez quand même soumettre des preuves ci-dessous ; un administrateur les examinera.",
+    "お客様の商品グループには必須の証拠リストがまだありません。以下から証拠を提出でき、管理者が確認します。"
+  ],
+  "PDF, PNG hoặc JPEG, tối đa 10MB. Chọn file thì hệ thống đọc loại giấy tờ, số và ngày để điền sẵn; bạn kiểm tra và sửa trước khi nộp.": [
+    "PDF, PNG or JPEG, up to 10MB. When you pick a file the system reads the document type, number and dates to pre-fill them; check and edit before submitting.",
+    "PDF, PNG ou JPEG, 10 Mo maximum. Dès que vous choisissez un fichier, le système lit le type de document, le numéro et les dates pour les pré-remplir ; vérifiez et modifiez avant de soumettre.",
+    "PDF、PNG、JPEG、最大10MB。ファイルを選ぶと書類の種類・番号・日付を読み取って入力済みにします。提出前に確認・修正してください。"
+  ],
+  "Đang đọc giấy tờ…": [
+    "Reading the document…",
+    "Lecture du document…",
+    "書類を読み取り中…"
+  ],
+  "File là ảnh hoặc bản scan nên chưa đọc tự động được. Hãy chọn loại giấy tờ; quản trị viên sẽ đọc thông tin khi duyệt.": [
+    "The file is an image or a scan, so it cannot be read automatically yet. Choose the document type; an administrator will read the details when reviewing.",
+    "Le fichier est une image ou un scan, il ne peut pas encore être lu automatiquement. Choisissez le type de document ; un administrateur lira les informations lors de l'examen.",
+    "ファイルが画像またはスキャンのため、まだ自動で読み取れません。書類の種類を選択してください。内容は管理者が審査時に確認します。"
+  ],
+  "Chưa đọc được thông tin từ file. Hãy chọn loại giấy tờ; quản trị viên sẽ đọc thông tin khi duyệt.": [
+    "Could not read details from the file. Choose the document type; an administrator will read the details when reviewing.",
+    "Impossible de lire les informations du fichier. Choisissez le type de document ; un administrateur lira les informations lors de l'examen.",
+    "ファイルから情報を読み取れませんでした。書類の種類を選択してください。内容は管理者が審査時に確認します。"
+  ],
+  "Thông tin đọc từ giấy tờ": [
+    "Details read from the document",
+    "Informations lues sur le document",
+    "書類から読み取った情報"
+  ],
+  "Gợi ý từ giấy tờ, hãy kiểm tra trước khi nộp. Bạn có thể sửa hoặc xóa trống.": [
+    "Suggested from the document; please check before submitting. You can edit or clear them.",
+    "Suggestions issues du document ; vérifiez avant de soumettre. Vous pouvez les modifier ou les effacer.",
+    "書類からの提案です。提出前にご確認ください。修正や削除もできます。"
+  ],
+  "Biểu đồ nhập khẩu": [
+    "Import chart",
+    "Graphique des importations",
+    "輸入チャート"
+  ],
+  "Quy mô nhập khẩu theo nước": [
+    "Import size by country",
+    "Taille des importations par pays",
+    "国別の輸入規模"
+  ],
+  "Biểu đồ cột: trị giá nhập khẩu theo nước": [
+    "Bar chart: import value by country",
+    "Graphique en barres : valeur des importations par pays",
+    "棒グラフ：国別の輸入額"
+  ],
+  "Nước khác": [
+    "Other countries",
+    "Autres pays",
+    "その他の国"
+  ],
+  "Thị phần nguồn cung ngoài EU": [
+    "Share of non-EU supply",
+    "Part de l'offre hors UE",
+    "EU域外供給のシェア"
+  ],
+  "Biểu đồ cột: thị phần theo nước cung cấp": [
+    "Bar chart: share by supplying country",
+    "Graphique en barres : part par pays fournisseur",
+    "棒グラフ：供給国別シェア"
+  ],
+  "Đơn giá nhập khẩu (EUR/kg)": [
+    "Import unit price (EUR/kg)",
+    "Prix unitaire à l'importation (EUR/kg)",
+    "輸入単価（EUR/kg）"
+  ],
+  "Biểu đồ cột: đơn giá theo nước cung cấp": [
+    "Bar chart: unit price by supplying country",
+    "Graphique en barres : prix unitaire par pays fournisseur",
+    "棒グラフ：供給国別単価"
+  ],
+  "Chưa có đơn giá": [
+    "No unit price yet",
+    "Pas encore de prix unitaire",
+    "単価なし"
+  ],
+  "Chưa có đơn giá của các nước cung cấp để vẽ biểu đồ.": [
+    "There is no unit price for the supplying countries to draw a chart.",
+    "Aucun prix unitaire des pays fournisseurs pour tracer un graphique.",
+    "グラフを描くための供給国の単価がありません。"
+  ],
+  "Chưa đủ số liệu để vẽ biểu đồ so sánh.": [
+    "Not enough data to draw the comparison chart.",
+    "Pas assez de données pour tracer le graphique de comparaison.",
+    "比較グラフを描くデータが足りません。"
+  ],
+  "Xếp theo": [
+    "Sort by",
+    "Trier par",
+    "並べ替え"
+  ],
+  "Biểu đồ cột": [
+    "Bar chart",
+    "Graphique en barres",
+    "棒グラフ"
+  ],
+  "Chưa có số liệu": [
+    "No data yet",
+    "Pas encore de données",
+    "データなし"
+  ],
+  "Quy mô và tăng trưởng nhập khẩu": [
+    "Import size and growth",
+    "Taille et croissance des importations",
+    "輸入規模と成長"
+  ],
+  "Biểu đồ bong bóng: trị giá nhập khẩu và tăng trưởng/năm, cỡ bong bóng là thị phần Việt Nam": [
+    "Bubble chart: import value and yearly growth, bubble size is Vietnam's share",
+    "Graphique à bulles : valeur des importations et croissance annuelle, la taille de la bulle est la part du Viet Nam",
+    "バブルチャート：輸入額と年間成長率、バブルの大きさはベトナムのシェア"
+  ],
+  "Cỡ bong bóng = thị phần Việt Nam. Nước chưa có số liệu tăng trưởng không hiện.": [
+    "Bubble size = Vietnam's share. Countries without growth data are not shown.",
+    "Taille de la bulle = part du Viet Nam. Les pays sans données de croissance ne sont pas affichés.",
+    "バブルの大きさ＝ベトナムのシェア。成長率データのない国は表示されません。"
+  ],
+  "Trị giá nhập khẩu": [
+    "Import value",
+    "Valeur des importations",
+    "輸入額"
+  ],
+  "Mức tập trung nguồn cung (HHI)": [
+    "Supply concentration (HHI)",
+    "Concentration de l'offre (HHI)",
+    "供給集中度（HHI）"
+  ],
+  "HHI càng cao thì thị trường càng tập trung vào ít nước cung cấp. Thang từ 0 đến 10.000.": [
+    "The higher the HHI, the more the market is concentrated in a few supplying countries. Scale from 0 to 10,000.",
+    "Plus le HHI est élevé, plus le marché est concentré sur peu de pays fournisseurs. Échelle de 0 à 10 000.",
+    "HHIが高いほど、少数の供給国に市場が集中しています。目盛りは0〜10,000です。"
+  ],
+  "Xem bảng số liệu": [
+    "View data table",
+    "Voir le tableau de données",
+    "データ表を見る"
+  ],
+  "Lưu ý: Thông tin này chưa được luật sư thương mại xác nhận. Vui lòng đối chiếu với cơ quan cấp C/O hoặc chuyên gia tư vấn trước khi sử dụng.": [
+    "Note: This information has not yet been confirmed by a trade lawyer. Please check with the issuing authority or a trade compliance advisor before relying on it.",
+    "Remarque : ces informations n'ont pas encore été confirmées par un avocat spécialisé en commerce. Veuillez les vérifier auprès de l'autorité émettrice ou d'un conseiller en conformité commerciale avant de vous y fier.",
+    "注意：この情報は、まだ貿易専門の弁護士による確認を受けていません。ご利用の前に、発給機関または貿易コンプライアンスの専門家にご確認ください。"
+  ],
+  "Dòng luật sư yêu cầu sửa": [
+    "Rows the lawyer asked to fix",
+    "Lignes à corriger demandées par l'avocat",
+    "弁護士が修正を求めた行"
+  ],
+  "Các dòng này chưa được duyệt. Sửa dữ liệu theo ghi chú rồi bấm \"Đã xử lý\".": [
+    "These rows are not approved. Fix the data according to the note, then click \"Resolved\".",
+    "Ces lignes ne sont pas validées. Corrigez les données selon la note, puis cliquez sur « Traité ».",
+    "これらの行は未承認です。メモに従ってデータを修正し、「対応済み」を押してください。"
+  ],
+  "Không có dòng nào đang chờ sửa. Khi luật sư trả \"SUA\" trong file duyệt, dòng đó sẽ hiện ở đây.": [
+    "No rows are waiting for a fix. When the lawyer returns \"SUA\" in the review file, the row appears here.",
+    "Aucune ligne en attente de correction. Lorsque l'avocat renvoie « SUA » dans le fichier de validation, la ligne apparaît ici.",
+    "修正待ちの行はありません。弁護士が確認ファイルで「SUA」を返すと、その行がここに表示されます。"
+  ],
+  "Đã xử lý": [
+    "Resolved",
+    "Traité",
+    "対応済み"
+  ],
+  "Huy hiệu EVFTA-verified theo nhóm hàng": [
+    "EVFTA-verified badge by product group",
+    "Badge EVFTA-verified par groupe de produits",
+    "商品グループ別 EVFTA-verified バッジ"
+  ],
+  "Chọn mã HS để xem bằng chứng cấp công ty cần có và huy hiệu của nhóm hàng đó.": [
+    "Choose an HS code to see the company-level evidence needed and the badge for that product group.",
+    "Choisissez un code SH pour voir les preuves requises au niveau de l'entreprise et le badge de ce groupe de produits.",
+    "HSコードを選ぶと、必要な企業レベルの証拠と、その商品グループのバッジが表示されます。"
+  ],
+  "Đang tải...": [
+    "Loading...",
+    "Chargement...",
+    "読み込み中..."
+  ],
+  "Không tải được checklist. Vui lòng thử lại.": [
+    "Could not load the checklist. Please try again.",
+    "Impossible de charger la liste de contrôle. Veuillez réessayer.",
+    "チェックリストを読み込めませんでした。もう一度お試しください。"
+  ],
+  "Chưa có huy hiệu cho nhóm hàng này": [
+    "No badge for this product group yet",
+    "Pas encore de badge pour ce groupe de produits",
+    "この商品グループのバッジはまだありません"
+  ],
+  "Mã hàng này không có bằng chứng cấp công ty bắt buộc.": [
+    "This code has no mandatory company-level evidence.",
+    "Ce code n'a pas de preuve obligatoire au niveau de l'entreprise.",
+    "このコードには必須の企業レベルの証拠はありません。"
+  ],
+  "Đã duyệt, còn hạn": [
+    "Approved and valid",
+    "Validé et en cours de validité",
+    "承認済み・有効"
+  ],
+  "Đã hết hạn": [
+    "Expired",
+    "Expiré",
+    "期限切れ"
+  ],
+  "Chưa có loại bằng chứng tương ứng để nộp": [
+    "No matching evidence type to submit yet",
+    "Aucun type de preuve correspondant à soumettre pour le moment",
+    "提出できる対応する証拠タイプがまだありません"
+  ],
+  "Công ty chưa được xác minh.": [
+    "The company is not verified yet.",
+    "L'entreprise n'est pas encore vérifiée.",
+    "企業はまだ認証されていません。"
+  ],
+  "Chưa có quy định bằng chứng EUR.1 cho mã hàng này.": [
+    "There is no EUR.1 evidence rule for this code yet.",
+    "Il n'existe pas encore de règle de preuve EUR.1 pour ce code.",
+    "このコードにはEUR.1の証拠規定がまだありません。"
+  ],
+  "Còn thiếu bằng chứng bắt buộc được duyệt và còn hạn.": [
+    "Mandatory evidence that is approved and valid is still missing.",
+    "Il manque encore des preuves obligatoires validées et en cours de validité.",
+    "承認済みで有効な必須の証拠がまだ不足しています。"
+  ],
+  "Chặn nhập khẩu nếu thiếu": [
+    "Blocks import if missing",
+    "Bloque l'importation si absent",
+    "欠けている場合は輸入不可"
+  ],
+  "Cần để hưởng ưu đãi thuế": [
+    "Needed for the tariff preference",
+    "Nécessaire pour la préférence tarifaire",
+    "関税優遇の適用に必要"
+  ],
+  "Hồ sơ lưu": [
+    "Kept on file",
+    "À conserver au dossier",
+    "記録として保管"
+  ],
+  "Đã được cấp C/O EUR.1 cho nhóm hàng này trong 12 tháng gần nhất": [
+    "Issued an EUR.1 movement certificate for this product group in the last 12 months",
+    "A obtenu un certificat de circulation EUR.1 pour ce groupe de produits au cours des 12 derniers mois",
+    "過去12か月以内にこの商品グループのEUR.1が発給されています"
+  ],
+  "Đang tải câu hỏi...": [
+    "Loading questions...",
+    "Chargement des questions...",
+    "質問を読み込み中..."
+  ],
+  "Chưa rõ": [
+    "Not sure",
+    "Je ne sais pas",
+    "不明"
+  ],
+  "Bằng chứng cần chuẩn bị cho lô này": [
+    "Evidence to prepare for this shipment",
+    "Preuves à préparer pour cet envoi",
+    "この貨物のために準備する証拠"
+  ],
+  "Cấp công ty": [
+    "Company level",
+    "Niveau entreprise",
+    "企業レベル"
+  ],
+  "Còn thiếu câu trả lời cho:": [
+    "Answers still missing for:",
+    "Réponses encore manquantes pour :",
+    "未回答の項目："
+  ],
+  "Tiết kiệm thuế của lô nếu được hưởng ưu đãi": [
+    "Tariff saving for the shipment if the preference applies",
+    "Économie de droits pour l'envoi si la préférence s'applique",
+    "優遇が適用された場合の貨物の関税節約額"
+  ],
+  "Quy tắc này cần chuyên gia xác nhận nên hệ thống chỉ có thể trả \"Chưa kết luận\".": [
+    "This rule needs expert confirmation, so the system can only return \"Inconclusive\".",
+    "Cette règle nécessite la confirmation d'un expert ; le système ne peut donc répondre que « Non concluant ».",
+    "このルールは専門家の確認が必要なため、システムは「結論不能」しか返せません。"
+  ],
+  "Thông tin lô hàng (để lập danh sách bằng chứng)": [
+    "Shipment details (to build the evidence list)",
+    "Informations sur l'envoi (pour établir la liste des preuves)",
+    "貨物情報（証拠リスト作成用）"
+  ],
+  "Trị giá lô hàng (EUR)": [
+    "Shipment value (EUR)",
+    "Valeur de l'envoi (EUR)",
+    "貨物の価額 (EUR)"
+  ],
+  "Nguồn nguyên liệu của lô": [
+    "Raw material source of the shipment",
+    "Origine de la matière première de l'envoi",
+    "貨物の原材料の調達元"
+  ],
+  "Nuôi trồng": [
+    "Aquaculture",
+    "Aquaculture",
+    "養殖"
+  ],
+  "Đánh bắt tự nhiên": [
+    "Wild caught",
+    "Pêche sauvage",
+    "天然漁獲"
+  ],
+  "Trồng trọt": [
+    "Grown",
+    "Cultivé",
+    "栽培"
+  ],
+  "Hàng tươi?": [
+    "Fresh goods?",
+    "Marchandises fraîches ?",
+    "生鮮品ですか？"
+  ],
+  "Trị giá lô phải là số dương, tối đa 2 chữ số thập phân (ví dụ 5000 hoặc 5000.50).": [
+    "The shipment value must be a positive number with at most 2 decimals (for example 5000 or 5000.50).",
+    "La valeur de l'envoi doit être un nombre positif avec au plus 2 décimales (par exemple 5000 ou 5000.50).",
+    "貨物の価額は正の数で、小数は2桁までです（例：5000 または 5000.50）。"
+  ],
+  "Tỷ lệ phần trăm phải là số từ 0 đến 100, tối đa 2 chữ số thập phân.": [
+    "Percentages must be numbers from 0 to 100 with at most 2 decimals.",
+    "Les pourcentages doivent être des nombres de 0 à 100 avec au plus 2 décimales.",
+    "パーセンテージは0〜100の数値で、小数は2桁までです。"
+  ],
+  "Dữ liệu chưa hợp lệ. Vui lòng kiểm tra lại các câu trả lời.": [
+    "Invalid data. Please check your answers.",
+    "Données invalides. Veuillez vérifier vos réponses.",
+    "データが無効です。回答をご確認ください。"
+  ],
+  "Hàng có quá cảnh, lưu kho hoặc chia lô ở nước thứ ba không?": [
+    "Do the goods transit, get stored or split in a third country?",
+    "Les marchandises transitent-elles, sont-elles entreposées ou fractionnées dans un pays tiers ?",
+    "貨物は第三国で通過・保管・分割されますか？"
+  ],
+  "Ở nước thứ ba, hàng được xử lý thế nào?": [
+    "How are the goods handled in the third country?",
+    "Comment les marchandises sont-elles traitées dans le pays tiers ?",
+    "第三国で貨物はどのように扱われますか？"
+  ],
+  "Mọi công đoạn tại Việt Nam trên nguyên liệu nhập khẩu chỉ là thao tác đơn giản (đóng gói lại, đông lạnh, phân loại...)?": [
+    "Are all operations in Viet Nam on imported material only simple operations (repacking, freezing, sorting...)?",
+    "Toutes les opérations au Viet Nam sur la matière importée se limitent-elles à des opérations simples (reconditionnement, congélation, tri...) ?",
+    "輸入原材料に対するベトナムでの全工程は、単純な作業（再包装、冷凍、選別など）のみですか？"
+  ],
+  "Nguồn sản phẩm / nguyên liệu": [
+    "Source of the product / material",
+    "Origine du produit / de la matière",
+    "製品・原材料の調達元"
+  ],
+  "Tàu đăng ký tại Việt Nam hoặc EU?": [
+    "Is the vessel registered in Viet Nam or the EU?",
+    "Le navire est-il immatriculé au Viet Nam ou dans l'UE ?",
+    "船舶はベトナムまたはEUで登録されていますか？"
+  ],
+  "Tàu mang cờ Việt Nam hoặc EU?": [
+    "Does the vessel fly the flag of Viet Nam or the EU?",
+    "Le navire bat-il pavillon du Viet Nam ou de l'UE ?",
+    "船舶はベトナムまたはEUの旗を掲げていますか？"
+  ],
+  "Tỷ lệ sở hữu tàu của công dân/pháp nhân Việt Nam hoặc EU (%)": [
+    "Share of the vessel owned by Vietnamese or EU nationals/entities (%)",
+    "Part du navire détenue par des ressortissants/entités du Viet Nam ou de l'UE (%)",
+    "ベトナムまたはEUの国民・法人が所有する船舶の割合 (%)"
+  ],
+  "Nguyên liệu được đánh bắt ngoài lãnh hải Việt Nam?": [
+    "Was the material caught outside Vietnamese territorial waters?",
+    "La matière a-t-elle été pêchée hors des eaux territoriales vietnamiennes ?",
+    "原材料はベトナムの領海外で漁獲されましたか？"
+  ],
+  "Tỷ lệ nguyên liệu nhập khẩu không thuần túy theo trọng lượng (%)": [
+    "Share of imported non-wholly-obtained material by weight (%)",
+    "Part de matière importée non entièrement obtenue en poids (%)",
+    "輸入された完全生産でない原材料の重量比 (%)"
+  ],
+  "Tỷ lệ nguyên liệu nhập khẩu không thuần túy theo giá xuất xưởng (%)": [
+    "Share of imported non-wholly-obtained material by ex-works price (%)",
+    "Part de matière importée non entièrement obtenue en prix départ usine (%)",
+    "輸入された完全生産でない原材料の工場渡し価格比 (%)"
+  ],
+  "Tỷ lệ đường thêm vào (% trọng lượng)": [
+    "Added sugar (% by weight)",
+    "Sucre ajouté (% en poids)",
+    "添加糖（重量%）"
+  ],
+  "Chỉ lưu kho / chia lô dưới giám sát hải quan": [
+    "Storage / splitting under customs supervision only",
+    "Entreposage / fractionnement sous contrôle douanier uniquement",
+    "税関の監督下での保管・分割のみ"
+  ],
+  "Có gia công ngoài bảo quản và dán nhãn": [
+    "Processed beyond preservation and labelling",
+    "Transformé au-delà de la conservation et de l'étiquetage",
+    "保存とラベル貼付以外の加工あり"
+  ],
+  "Nuôi tại Việt Nam (kể cả từ giống nhập khẩu)": [
+    "Farmed in Viet Nam (including from imported seed)",
+    "Élevé au Viet Nam (y compris à partir de juvéniles importés)",
+    "ベトナムで養殖（輸入種苗を含む）"
+  ],
+  "Đánh bắt trong lãnh hải Việt Nam": [
+    "Caught in Vietnamese territorial waters",
+    "Pêché dans les eaux territoriales vietnamiennes",
+    "ベトナムの領海内で漁獲"
+  ],
+  "Đánh bắt bằng tàu ngoài lãnh hải": [
+    "Caught by a vessel outside territorial waters",
+    "Pêché par un navire hors des eaux territoriales",
+    "領海外で船舶により漁獲"
+  ],
+  "Nhập khẩu, chỉ sơ chế": [
+    "Imported, only lightly processed",
+    "Importé, simplement préparé",
+    "輸入品（簡易加工のみ）"
+  ],
+  "Cần thêm thông tin để xác định": [
+    "More information needed to decide",
+    "Informations supplémentaires nécessaires pour décider",
+    "判断には追加情報が必要"
+  ],
+  "Cần kiểm tra thêm (chưa có dữ liệu danh mục)": [
+    "Needs further checking (no catalogue data yet)",
+    "À vérifier (pas encore de données de catalogue)",
+    "要確認（カタログデータがまだありません）"
+  ],
+  "Kiểm tra xuất xứ hàng hóa": [
+    "Check goods origin",
+    "Vérifier l'origine des marchandises",
+    "商品の原産地チェック"
+  ],
+  "Không chắc mã HS? Gõ tên sản phẩm (ví dụ \"cá tra\", \"hạt điều\") vào ô Mã HS rồi chọn gợi ý phù hợp nhất.": [
+    "Not sure about the HS code? Type the product name (for example \"pangasius\", \"cashew\") into the HS code box and pick the best suggestion.",
+    "Pas sûr du code SH ? Saisissez le nom du produit (par exemple « pangasius », « noix de cajou ») dans le champ Code SH et choisissez la meilleure suggestion.",
+    "HSコードが不明な場合は、HSコード欄に商品名（例：「パンガシウス」「カシューナッツ」）を入力し、最も合う候補を選んでください。"
+  ],
+  "Tự điền theo mã HS, bạn có thể sửa lại cho đúng sản phẩm của mình": [
+    "Filled in from the HS code; you can edit it to match your product",
+    "Rempli à partir du code SH ; vous pouvez le modifier pour qu'il corresponde à votre produit",
+    "HSコードから自動入力されます。ご自身の商品に合わせて編集できます"
+  ],
+  "Luôn cần": [
+    "Always needed",
+    "Toujours nécessaire",
+    "常に必要"
+  ],
+  "Nếu hàng quá cảnh, lưu kho hoặc chia lô ở nước thứ ba": [
+    "If the goods transit, are stored or split in a third country",
+    "Si les marchandises transitent, sont entreposées ou fractionnées dans un pays tiers",
+    "貨物が第三国で通過・保管・分割される場合"
+  ],
+  "Nếu nguyên liệu đánh bắt tự nhiên": [
+    "If the raw material is wild caught",
+    "Si la matière première est issue de la pêche sauvage",
+    "原材料が天然漁獲の場合"
+  ],
+  "Nếu nguyên liệu nuôi trồng": [
+    "If the raw material is farmed",
+    "Si la matière première est issue de l'aquaculture",
+    "原材料が養殖の場合"
+  ],
+  "Nếu mã hàng nằm trong phụ lục Quyết định 2019/1793": [
+    "If the code is listed in the annex to Decision 2019/1793",
+    "Si le code figure à l'annexe de la décision 2019/1793",
+    "コードが決定2019/1793の附属書に掲載されている場合"
+  ],
+  "Nếu không thuộc danh mục miễn chứng nhận kiểm dịch thực vật": [
+    "If not on the phytosanitary certificate exemption list",
+    "Si absent de la liste d'exemption du certificat phytosanitaire",
+    "植物検疫証明書の免除リストに載っていない場合"
+  ],
+  "Nếu là hàng tươi và không thuộc danh mục miễn kiểm dịch thực vật": [
+    "If fresh goods not on the phytosanitary exemption list",
+    "Si marchandises fraîches absentes de la liste d'exemption phytosanitaire",
+    "生鮮品で植物検疫の免除リストに載っていない場合"
+  ],
+  "Lô trên {0} EUR": [
+    "Shipments over {0} EUR",
+    "Envois de plus de {0} EUR",
+    "{0} EUR を超える貨物"
+  ],
+  "Lô từ {0} EUR trở xuống": [
+    "Shipments of {0} EUR or less",
+    "Envois de {0} EUR ou moins",
+    "{0} EUR 以下の貨物"
+  ],
+  "Trả lời câu hỏi": [
+    "Answer the questions",
+    "Répondre aux questions",
+    "質問に回答"
+  ],
+  "Kết quả kiểm tra": [
+    "Check result",
+    "Résultat du contrôle",
+    "チェック結果"
+  ],
+  "Trả lời các câu hỏi bên trái rồi bấm \"Kiểm tra xuất xứ\". Kết luận, lý do và danh sách giấy tờ cần chuẩn bị sẽ hiện ở đây.": [
+    "Answer the questions on the left, then click \"Check origin\". The conclusion, reasons and the list of documents to prepare will appear here.",
+    "Répondez aux questions de gauche puis cliquez sur « Vérifier l'origine ». La conclusion, les raisons et la liste des documents à préparer s'afficheront ici.",
+    "左の質問に回答して「原産地を確認」を押すと、結論・理由・準備する書類のリストがここに表示されます。"
+  ],
+  "Giấy tờ cần chuẩn bị cho lô này": [
+    "Documents to prepare for this shipment",
+    "Documents à préparer pour cet envoi",
+    "この貨物のために準備する書類"
+  ],
+  "Chi tiết quy tắc": [
+    "Rule details",
+    "Détails de la règle",
+    "ルールの詳細"
+  ],
+  "Giấy tờ cần chuẩn bị theo sản phẩm của bạn": [
+    "Documents to prepare for your products",
+    "Documents à préparer pour vos produits",
+    "お客様の商品のために準備する書類"
+  ],
+  "Theo mã HS bạn đã khai ở bước trước. Giấy tờ nào áp dụng còn tùy lô hàng cụ thể (trị giá, nguồn nguyên liệu, quá cảnh).": [
+    "Based on the HS codes you declared in the previous step. Which documents apply depends on the specific shipment (value, raw material source, transit).",
+    "D'après les codes SH déclarés à l'étape précédente. Les documents applicables dépendent de l'envoi (valeur, origine de la matière première, transit).",
+    "前のステップで申告したHSコードに基づきます。適用される書類は貨物ごと（価額・原材料の調達元・通過）により異なります。"
+  ],
+  "Theo dữ liệu hiện có, lô hàng đáp ứng quy tắc xuất xứ.": [
+    "Based on the available data, the shipment meets the rule of origin.",
+    "D'après les données disponibles, l'envoi respecte la règle d'origine.",
+    "現在のデータでは、この貨物は原産地規則を満たしています。"
+  ],
+  "Theo dữ liệu hiện có, lô hàng chưa đáp ứng quy tắc xuất xứ.": [
+    "Based on the available data, the shipment does not meet the rule of origin.",
+    "D'après les données disponibles, l'envoi ne respecte pas la règle d'origine.",
+    "現在のデータでは、この貨物は原産地規則を満たしていません。"
+  ],
+  "Chưa đủ căn cứ để kết luận. Xem phần cần bổ sung bên dưới.": [
+    "Not enough basis to conclude. See what is needed below.",
+    "Pas assez d'éléments pour conclure. Voir les compléments nécessaires ci-dessous.",
+    "結論を出すには根拠が不足しています。下の「補足が必要な項目」をご覧ください。"
+  ],
+  "Mã hàng này chưa có quy tắc xuất xứ trong dữ liệu của hệ thống.": [
+    "This code has no rule of origin in the system data yet.",
+    "Ce code n'a pas encore de règle d'origine dans les données du système.",
+    "このコードの原産地規則はシステムのデータにまだありません。"
+  ],
+  "Bắt buộc để nhập khẩu vào EU": [
+    "Required to import into the EU",
+    "Obligatoire pour importer dans l'UE",
+    "EUへの輸入に必須"
+  ],
+  "Hồ sơ lưu trữ": [
+    "Records to keep",
+    "Documents à conserver",
+    "保管する記録"
+  ],
+  "Tùy thông tin lô hàng": [
+    "Depends on shipment details",
+    "Selon les informations de l'envoi",
+    "貨物情報による"
+  ],
+  "Cần kiểm tra thêm": [
+    "Needs further checking",
+    "À vérifier",
+    "要確認"
+  ],
+  "Quy tắc áp dụng": [
+    "Applicable rule",
+    "Règle applicable",
+    "適用される規則"
+  ],
+  "Thao tác chưa đủ để tạo xuất xứ": [
+    "Operations that do not confer origin",
+    "Opérations ne conférant pas l'origine",
+    "原産性を付与しない作業"
+  ],
+  "Dung sai": [
+    "Tolerance",
+    "Tolérance",
+    "許容範囲"
+  ],
+  "Mức rủi ro": [
+    "Risk level",
+    "Niveau de risque",
+    "リスクレベル"
+  ],
+  "Điều kiện giao hàng và chi phí": [
+    "Delivery terms and costs",
+    "Conditions de livraison et coûts",
+    "引渡条件と費用"
+  ],
+  "EU và Anh tính thuế trên trị giá CIF tại cửa khẩu nhập (giá hàng cộng cước và bảo hiểm quốc tế). Chọn đúng điều kiện trong hợp đồng và khai chi phí để trị giá chính xác.": [
+    "The EU and the UK charge duty on the CIF value at the point of entry (goods price plus international freight and insurance). Choose the term in your contract and declare the costs so the value is accurate.",
+    "L'UE et le Royaume-Uni appliquent les droits sur la valeur CIF au point d'entrée (prix des marchandises plus fret et assurance internationaux). Choisissez l'incoterm de votre contrat et déclarez les coûts pour une valeur exacte.",
+    "EUと英国は、輸入地点でのCIF価額（商品価格に国際運賃と保険料を加えたもの）に対して関税を課します。契約上の条件を選び、費用を申告して正確な価額を求めてください。"
+  ],
+  "Điều kiện giao hàng (Incoterm)": [
+    "Delivery term (Incoterm)",
+    "Incoterm (condition de livraison)",
+    "引渡条件（インコタームズ）"
+  ],
+  "Cước vận chuyển quốc tế (đến cửa khẩu nhập)": [
+    "International freight (to the point of entry)",
+    "Fret international (jusqu'au point d'entrée)",
+    "国際運賃（輸入地点まで）"
+  ],
+  "Phí bảo hiểm hàng hóa quốc tế": [
+    "International cargo insurance",
+    "Assurance internationale des marchandises",
+    "国際貨物保険料"
+  ],
+  "Chi phí sau cửa khẩu nhập (vận chuyển nội địa, dỡ hàng...)": [
+    "Costs after the point of entry (inland transport, unloading...)",
+    "Coûts après le point d'entrée (transport intérieur, déchargement...)",
+    "輸入地点以降の費用（国内輸送、荷降ろしなど）"
+  ],
+  "Ngày nhập khẩu dự kiến (không bắt buộc, mặc định hôm nay)": [
+    "Expected import date (optional, defaults to today)",
+    "Date d'importation prévue (facultatif, aujourd'hui par défaut)",
+    "輸入予定日（任意、既定は本日）"
+  ],
+  "Giá trị lô hàng ({0})": [
+    "Shipment value ({0})",
+    "Valeur de l'envoi ({0})",
+    "貨物の価額 ({0})"
+  ],
+  "Cách tính": [
+    "How it is calculated",
+    "Détail du calcul",
+    "計算内訳"
+  ],
+  "Thuế ưu đãi tính tại ngày": [
+    "Preferential duty calculated on",
+    "Droit préférentiel calculé au",
+    "特恵関税の計算日"
+  ],
+  "bậc": [
+    "stage",
+    "étape",
+    "段階"
+  ],
+  "của lộ trình": [
+    "of schedule",
+    "du calendrier",
+    "（スケジュール）"
+  ],
+  "Giá hóa đơn": [
+    "Invoice value",
+    "Valeur de la facture",
+    "インボイス価額"
+  ],
+  "Cước vận chuyển quốc tế": [
+    "International freight",
+    "Fret international",
+    "国際運賃"
+  ],
+  "Chi phí sau cửa khẩu nhập (trừ ra)": [
+    "Costs after the point of entry (deducted)",
+    "Coûts après le point d'entrée (déduits)",
+    "輸入地点以降の費用（控除）"
+  ],
+  "Trị giá tính thuế (CIF tại cửa khẩu nhập)": [
+    "Customs value (CIF at the point of entry)",
+    "Valeur en douane (CIF au point d'entrée)",
+    "課税価額（輸入地点のCIF）"
+  ],
+  "Trị giá tính thuế (FOB)": [
+    "Customs value (FOB)",
+    "Valeur en douane (FOB)",
+    "課税価額（FOB）"
+  ],
+  "Trị giá tính thuế": [
+    "Customs value",
+    "Valeur en douane",
+    "課税価額"
+  ],
+  "EXW — Giao tại xưởng": [
+    "EXW — Ex Works",
+    "EXW — À l'usine",
+    "EXW — 工場渡し"
+  ],
+  "FCA — Giao cho người chuyên chở": [
+    "FCA — Free Carrier",
+    "FCA — Franco transporteur",
+    "FCA — 運送人渡し"
+  ],
+  "FAS — Giao dọc mạn tàu": [
+    "FAS — Free Alongside Ship",
+    "FAS — Franco le long du navire",
+    "FAS — 船側渡し"
+  ],
+  "FOB — Giao lên tàu": [
+    "FOB — Free On Board",
+    "FOB — Franco à bord",
+    "FOB — 本船渡し"
+  ],
+  "CFR — Tiền hàng và cước phí": [
+    "CFR — Cost and Freight",
+    "CFR — Coût et fret",
+    "CFR — 運賃込み"
+  ],
+  "CPT — Cước phí trả tới": [
+    "CPT — Carriage Paid To",
+    "CPT — Port payé jusqu'à",
+    "CPT — 輸送費込み"
+  ],
+  "CIF — Tiền hàng, bảo hiểm và cước phí": [
+    "CIF — Cost, Insurance and Freight",
+    "CIF — Coût, assurance et fret",
+    "CIF — 運賃保険料込み"
+  ],
+  "CIP — Cước phí và bảo hiểm trả tới": [
+    "CIP — Carriage and Insurance Paid To",
+    "CIP — Port payé, assurance comprise, jusqu'à",
+    "CIP — 輸送費保険料込み"
+  ],
+  "DAP — Giao tại nơi đến": [
+    "DAP — Delivered At Place",
+    "DAP — Rendu au lieu de destination",
+    "DAP — 仕向地持込渡し"
+  ],
+  "DPU — Giao tại nơi đến đã dỡ hàng": [
+    "DPU — Delivered at Place Unloaded",
+    "DPU — Rendu au lieu de destination déchargé",
+    "DPU — 荷下ろし持込渡し"
+  ],
+  "DDP — Giao đã nộp thuế": [
+    "DDP — Delivered Duty Paid",
+    "DDP — Rendu droits acquittés",
+    "DDP — 関税込持込渡し"
+  ],
+  "Chưa có quy tắc trị giá hải quan của nước này nên dùng nguyên giá hóa đơn làm trị giá tính thuế.": [
+    "There is no customs valuation rule for this country yet, so the invoice value is used as the customs value.",
+    "Il n'y a pas encore de règle de valeur en douane pour ce pays ; la valeur de la facture est utilisée.",
+    "この国の課税価額の規則はまだないため、インボイス価額を課税価額として使用します。"
+  ],
+  "Chưa chọn điều kiện giao hàng (Incoterm) nên dùng nguyên giá hóa đơn làm trị giá tính thuế.": [
+    "No delivery term (Incoterm) was chosen, so the invoice value is used as the customs value.",
+    "Aucun incoterm n'a été choisi ; la valeur de la facture est utilisée comme valeur en douane.",
+    "引渡条件（インコタームズ）が未選択のため、インボイス価額を課税価額として使用します。"
+  ],
+  "Chưa khai cước vận chuyển quốc tế: thuế có thể thấp hơn thực tế.": [
+    "International freight not declared: the duty may be lower than the real amount.",
+    "Fret international non déclaré : les droits peuvent être inférieurs au montant réel.",
+    "国際運賃が未申告です。関税が実際より低くなる可能性があります。"
+  ],
+  "Chưa khai phí bảo hiểm: thuế có thể thấp hơn thực tế.": [
+    "Insurance not declared: the duty may be lower than the real amount.",
+    "Assurance non déclarée : les droits peuvent être inférieurs au montant réel.",
+    "保険料が未申告です。関税が実際より低くなる可能性があります。"
+  ],
+  "Chưa khai chi phí sau cửa khẩu nhập: thuế có thể cao hơn thực tế.": [
+    "Costs after the point of entry not declared: the duty may be higher than the real amount.",
+    "Coûts après le point d'entrée non déclarés : les droits peuvent être supérieurs au montant réel.",
+    "輸入地点以降の費用が未申告です。関税が実際より高くなる可能性があります。"
+  ],
+  "Điều kiện DDP (giá đã gồm thuế nhập khẩu) cần tính ngược thuế khỏi giá nên chưa được tính tự động. Vui lòng chọn điều kiện khác hoặc liên hệ chuyên gia.": [
+    "DDP (price includes import duty) requires deducting the duty from the price and is not calculated automatically yet. Please choose another term or contact an expert.",
+    "Le DDP (prix incluant les droits d'importation) exige de déduire les droits du prix et n'est pas encore calculé automatiquement. Choisissez un autre incoterm ou contactez un expert.",
+    "DDP（価格に輸入関税を含む）は価格から関税を差し引く必要があり、まだ自動計算できません。別の条件を選ぶか専門家にご相談ください。"
+  ],
+  "Điều kiện giao hàng này chưa được hỗ trợ cho cách tính trị giá của nước đến. Vui lòng liên hệ chuyên gia.": [
+    "This delivery term is not yet supported for the destination's valuation method. Please contact an expert.",
+    "Cet incoterm n'est pas encore pris en charge pour la méthode de valeur du pays de destination. Veuillez contacter un expert.",
+    "この引渡条件は、仕向国の課税価額の算定方法にまだ対応していません。専門家にご相談ください。"
+  ],
+  "Trị giá tính thuế sau điều chỉnh không hợp lệ (bằng hoặc nhỏ hơn 0). Vui lòng kiểm tra lại các khoản chi phí.": [
+    "The customs value after adjustments is not valid (zero or negative). Please check the cost items.",
+    "La valeur en douane après ajustements n'est pas valide (nulle ou négative). Vérifiez les coûts.",
+    "調整後の課税価額が無効です（0以下）。費用の項目をご確認ください。"
+  ],
+  "Chi phí phải là số không âm, tối đa 2 chữ số thập phân (ví dụ 3000 hoặc 3000.50).": [
+    "Costs must be non-negative numbers with at most 2 decimals (for example 3000 or 3000.50).",
+    "Les coûts doivent être des nombres positifs ou nuls avec au plus 2 décimales (par exemple 3000 ou 3000.50).",
+    "費用は0以上の数値で、小数は2桁までです（例：3000 または 3000.50）。"
+  ],
+  "Ngày nhập khẩu phải từ 01/08/2020 đến tối đa 3 năm kể từ hôm nay.": [
+    "The import date must be between 01/08/2020 and at most 3 years from today.",
+    "La date d'importation doit être comprise entre le 01/08/2020 et 3 ans au plus à compter d'aujourd'hui.",
+    "輸入日は2020年8月1日から本日より最長3年先までの範囲で指定してください。"
+  ],
+  "Thông tin lô hàng": [
+    "Shipment details",
+    "Informations sur l'envoi",
+    "貨物情報"
+  ],
+  "Kết quả tính thuế": [
+    "Duty calculation result",
+    "Résultat du calcul des droits",
+    "関税の計算結果"
+  ],
+  "Nhập thông tin lô hàng bên trái rồi bấm \"Tính tiết kiệm thuế\". Trị giá tính thuế, thuế phải nộp và khoản tiết kiệm nhờ FTA sẽ hiện ở đây.": [
+    "Enter the shipment details on the left, then click \"Calculate duty savings\". The customs value, the duty payable and the saving from the FTA will appear here.",
+    "Saisissez les informations de l'envoi à gauche puis cliquez sur « Calculer l'économie de droits ». La valeur en douane, les droits à payer et l'économie liée à l'ALE s'afficheront ici.",
+    "左側に貨物情報を入力して「関税の節約額を計算」を押すと、課税価額・納付する関税・FTAによる節約額がここに表示されます。"
   ]
 }

@@ -4,11 +4,24 @@ from typing import Annotated
 
 from pydantic import BaseModel, ConfigDict, StringConstraints
 
+Body = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=4000)]
+
 
 class MessageIn(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    body: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=4000)]
+    body: Body
+
+
+class DirectConversationIn(BaseModel):
+    """U7: nhắn tin trực tiếp tới nhà cung cấp đang hiển thị công khai (theo slug hồ sơ)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    supplier_slug: Annotated[
+        str, StringConstraints(strip_whitespace=True, min_length=1, max_length=255)
+    ]
+    body: Body
 
 
 class MessageOut(BaseModel):
@@ -27,9 +40,11 @@ class MessageOut(BaseModel):
 
 class ConversationOut(BaseModel):
     id: uuid.UUID
-    rfq_id: uuid.UUID
-    product_name: str
+    rfq_id: uuid.UUID | None  # None = hội thoại trực tiếp (U7)
+    product_name: str  # "" với hội thoại trực tiếp
+    counterpart_company_id: uuid.UUID
     counterpart_name: str
+    counterpart_verified: bool
     last_message: str | None
     last_message_at: dt.datetime
     unread_count: int

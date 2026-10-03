@@ -57,9 +57,10 @@ async def list_products(
     q: Annotated[str | None, Query(max_length=100)] = None,
     limit: Limit = 50,
     offset: Offset = 0,
+    recent_days: Annotated[int | None, Query(ge=1, le=90)] = None,
 ) -> list[AdminProductOut]:
     return await product_service.admin_list_products(
-        session, company_id=company_id, q=q, limit=limit, offset=offset
+        session, company_id=company_id, q=q, limit=limit, offset=offset, recent_days=recent_days
     )
 
 

@@ -218,17 +218,15 @@ export function completeOnboarding(id: string, profile: Record<string, string>):
   if (!user || user.id !== id) throw new Error('Phiên đăng nhập không hợp lệ. Vui lòng đăng nhập lại.');
   if (user.role === 'admin') throw new Error('Admin không có Company Onboarding.');
   if (user.onboardingCompleted && user.onboardingVersion === 2) return user;
+  // U5: buyer chỉ cần thông tin liên hệ cơ bản; nhu cầu mua hàng lưu server và bổ sung sau.
   const required = user.role === 'buyer'
-    ? ['companyName', 'country', 'region', 'companySize', 'contactName', 'contactEmail', 'interest', 'quantity', 'frequency', 'minTrustLevel']
+    ? ['companyName', 'country', 'city', 'contactName', 'contactEmail']
     : ['companyName', 'country', 'interest', 'taxCode', 'contactEmail'];
-  if (required.some((field) => !profile[field]?.trim()) || profile.agreeCommitment !== 'true') {
+  const needsCommitment = user.role !== 'buyer';
+  if (required.some((field) => !profile[field]?.trim()) || (needsCommitment && profile.agreeCommitment !== 'true')) {
     throw new Error('Vui lòng hoàn tất thông tin các bước và xác nhận cam kết trước khi gửi hồ sơ.');
   }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(profile.contactEmail.trim())) throw new Error('Email liên hệ không hợp lệ.');
-  if (user.role === 'buyer' && (!Number.isFinite(Number(profile.quantity)) || Number(profile.quantity) <= 0 ||
-    !['L1', 'L2', 'L3'].includes(profile.minTrustLevel))) {
-    throw new Error('Khối lượng mua phải lớn hơn 0 và cấp độ xác minh phải hợp lệ.');
-  }
   if (user.role === 'seller') {
     let products: unknown;
     try { products = JSON.parse(profile.products || ''); } catch { /* handled below */ }

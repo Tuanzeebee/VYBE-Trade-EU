@@ -192,7 +192,7 @@ async def test_delete_unreviewed_ok_and_reviewed_conflict(
     [
         {"hs_code": "999999"},  # không có trong danh mục
         {"hs_code": "abc"},
-        {"destination": "US"},
+        {"destination": "USA"},
         {"mfn_rate": "101"},
         {"mfn_rate": "-1"},
         {"mfn_rate": 7.5},  # số JSON không được nhận (float)

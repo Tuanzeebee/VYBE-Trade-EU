@@ -7,6 +7,8 @@ export type SupplierCardData = components['schemas']['SupplierCardOut'];
 export type SupplierPage = components['schemas']['SupplierPage'];
 export type FilterOptions = components['schemas']['FilterOptions'];
 export type PublicProfile = components['schemas']['PublicCompanyOut'];
+export type SupplierCredentials = components['schemas']['SupplierCredentialsOut'];
+export type SupplierKind = 'products' | 'services';
 
 export interface SupplierQuery {
   q?: string;
@@ -15,7 +17,23 @@ export interface SupplierQuery {
   category?: string;
   cert?: string;
   page?: number;
+  // U10: danh bạ sản phẩm (mặc định) hoặc nhà cung cấp dịch vụ
+  kind?: SupplierKind;
+  service_category?: string;
 }
+
+// Nhóm dịch vụ (trùng dữ liệu bảng service_categories, 0030) — nhãn tiếng Việt, dịch qua catalog.
+export const SERVICE_CATEGORY_LABELS: Record<string, string> = {
+  logistics_freight: 'Vận tải & giao nhận',
+  customs_brokerage: 'Đại lý hải quan',
+  warehousing: 'Kho bãi & kho lạnh',
+  accounting_tax: 'Kế toán & thuế',
+  legal: 'Pháp lý & luật',
+  certification_testing: 'Chứng nhận & kiểm nghiệm',
+  insurance: 'Bảo hiểm hàng hóa',
+  other: 'Khác',
+};
+export const serviceCategoryLabel = (code: string) => SERVICE_CATEGORY_LABELS[code] ?? code;
 
 type RawParams = Record<string, string | string[] | undefined>;
 const first = (value: string | string[] | undefined) => (Array.isArray(value) ? value[0] : value)?.trim() || undefined;
@@ -25,7 +43,10 @@ export function readQuery(params: RawParams): SupplierQuery {
   const hs = first(params.hs);
   const country = first(params.country);
   const page = Number(first(params.page));
+  const kind = first(params.kind);
   return {
+    kind: kind === 'services' ? 'services' : undefined,
+    service_category: first(params.service_category)?.slice(0, 32),
     q: first(params.q)?.slice(0, 100),
     hs: hs && /^[0-9. ]{2,12}$/.test(hs) ? hs : undefined,
     country: country && /^[A-Za-z]{2}$/.test(country) ? country.toUpperCase() : undefined,
@@ -58,6 +79,16 @@ export async function fetchSuppliers(query: SupplierQuery): Promise<SupplierPage
 export async function fetchFilterOptions(): Promise<FilterOptions | null> {
   try {
     const { data, response } = await createApiClient().GET('/api/public/suppliers/filters');
+    return response.ok && data ? data : null;
+  } catch {
+    return null;
+  }
+}
+
+/** U10: "Dữ liệu đã kiểm" — chứng nhận còn hạn, ngày xác minh. null khi lỗi hoặc công ty không công khai. */
+export async function fetchCredentials(slug: string): Promise<SupplierCredentials | null> {
+  try {
+    const { data, response } = await createApiClient().GET('/api/public/suppliers/{slug}/credentials', { params: { path: { slug } } });
     return response.ok && data ? data : null;
   } catch {
     return null;

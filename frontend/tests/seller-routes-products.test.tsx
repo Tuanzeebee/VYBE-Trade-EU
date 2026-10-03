@@ -76,6 +76,7 @@ function serve(opts: { products: ReturnType<typeof product>[]; failProduct?: num
           : json(status, { error: { code: 'invalid_transition' } });
       }
       if (path === '/api/me/company') return req.method === 'GET' ? json(200, COMPANY) : json(200, COMPANY);
+      if (path === '/api/exporter/services' && req.method === 'GET') return json(200, []);
       if (path === '/api/exporter/products' && req.method === 'GET') return json(200, opts.products);
       if (path.startsWith('/api/exporter/products')) {
         if (opts.failProduct) return json(opts.failProduct, { error: { code: 'invalid_hs_code' } });

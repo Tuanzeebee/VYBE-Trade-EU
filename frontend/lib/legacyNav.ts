@@ -1,8 +1,7 @@
 // Ánh xạ các "trang" của app/page.tsx cũ (điều hướng bằng state) sang route thật dưới app/[locale]/.
 // Đường dẫn trả về chưa gắn locale — router của next-intl (i18n/navigation.ts) tự thêm.
-import { DEFAULT_SELLER_DETAIL, type SupplierData } from '../components/BuyerSellerDetail';
+import { DEFAULT_SELLER_DETAIL } from '../components/BuyerSellerDetail';
 import { getUserPage, type DemoUser } from './demoAuth';
-import { DIRECTORY_SUPPLIERS } from './suppliers';
 
 export type LegacyPage =
   | 'home'
@@ -42,6 +41,9 @@ const WORKSPACE_PATHS: Record<string, string> = {
   rfq: '/exporter/rfqs',
   messages: '/exporter/messages',
   notifications: '/exporter/notifications',
+  viewers: '/exporter/profile-views',
+  report: '/exporter/market-report',
+  billing: '/exporter/billing',
 };
 
 export const PROTECTED_PAGES: LegacyPage[] = ['workspace', 'onboarding', 'seller-profile', 'admin'];
@@ -148,30 +150,6 @@ export function pageForPath(pathname: string): LegacyPage {
     default:
       return 'home';
   }
-}
-
-const SELECTED_SUPPLIER_KEY = 'vybe_selected_supplier_v1';
-
-/** Trang chủ truyền cả object nhà cung cấp (có thể không nằm trong danh bạ) — nhớ lại để trang chi tiết đọc. */
-export function rememberSupplier(supplier: SupplierData): void {
-  try {
-    sessionStorage.setItem(SELECTED_SUPPLIER_KEY, JSON.stringify(supplier));
-  } catch {
-    // Trình duyệt chặn storage: trang chi tiết dùng hồ sơ mặc định như cũ.
-  }
-}
-
-export function findSupplier(id: string): SupplierData {
-  const listed = DIRECTORY_SUPPLIERS.find((s) => s.id === id);
-  if (listed) return listed;
-  try {
-    const raw = sessionStorage.getItem(SELECTED_SUPPLIER_KEY);
-    const remembered = raw ? (JSON.parse(raw) as SupplierData) : null;
-    if (remembered?.id === id) return remembered;
-  } catch {
-    // bỏ qua, dùng mặc định
-  }
-  return DEFAULT_SELLER_DETAIL;
 }
 
 /** /register?type=buyer|exporter chọn sẵn vai trò; giá trị khác (kể cả admin) bỏ qua. */

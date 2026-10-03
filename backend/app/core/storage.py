@@ -16,6 +16,7 @@ class Storage(Protocol):
     async def presign_get(self, key: str) -> str: ...
     async def presign_put(self, key: str, content_type: str) -> str: ...
     async def put(self, key: str, data: bytes, content_type: str) -> None: ...
+    async def get(self, key: str) -> bytes: ...
 
 
 class S3Storage:
@@ -51,6 +52,12 @@ class S3Storage:
             Body=data,
             ContentType=content_type,
         )
+
+    async def get(self, key: str) -> bytes:
+        """Đọc file từ phía server (job AI đọc chứng nhận, U24) — không phát cho trình duyệt."""
+        response = await run_in_threadpool(self._client.get_object, Bucket=self._bucket, Key=key)
+        body: bytes = await run_in_threadpool(response["Body"].read)
+        return body
 
     async def presign_put(self, key: str, content_type: str) -> str:
         url: str = await run_in_threadpool(

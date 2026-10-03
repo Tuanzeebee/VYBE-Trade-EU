@@ -32,6 +32,8 @@ jobs:
       - run: uv run ruff format --check .
       - run: uv run mypy app
       - run: uv run alembic upgrade head
+      # Migration của nâng cấp sau demo (0029+) phải hạ cấp được: đi xuống mốc trước PR rồi lên lại.
+      - run: uv run alembic downgrade 0028 && uv run alembic upgrade head
       - run: uv run pytest
 
   frontend:

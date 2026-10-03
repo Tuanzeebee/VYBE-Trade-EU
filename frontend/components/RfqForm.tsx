@@ -1,12 +1,12 @@
 'use client';
 
 // Form yêu cầu báo giá (F1) trên hồ sơ nhà cung cấp. Khách và exporter được hướng dẫn thay vì thấy form vô dụng.
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { Link } from '../i18n/navigation';
 import { useDemoSession } from './app-shell/useDemoSession';
 import { COUNTRIES } from '../lib/companyApi';
-import { CURRENCIES, INCOTERMS, createRfq, type Incoterm, type RfqError } from '../lib/rfqApi';
+import { CURRENCIES, INCOTERMS, createRfq, getRfqQuota, type Incoterm, type RfqError, type RfqQuota } from '../lib/rfqApi';
 import { parseAmount } from '../lib/tariffApi';
 
 export interface RfqProduct {
@@ -45,6 +45,20 @@ export default function RfqForm({ products, supplierName }: { products: RfqProdu
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [sent, setSent] = useState(false);
+  const [quota, setQuota] = useState<RfqQuota | null>(null);
+  const isBuyer = user?.role === 'buyer';
+
+  // U6: buyer chưa xác minh vẫn gửi được, chỉ có hạn mức thấp hơn — báo trước thay vì chỉ báo lỗi 429.
+  useEffect(() => {
+    if (!isBuyer) return;
+    let active = true;
+    void getRfqQuota().then((q) => {
+      if (active) setQuota(q);
+    });
+    return () => {
+      active = false;
+    };
+  }, [isBuyer]);
 
   if (!ready) return null;
   if (products.length === 0) return null;
@@ -186,6 +200,20 @@ export default function RfqForm({ products, supplierName }: { products: RfqProdu
           <label htmlFor="rfq-message" className={label}>{tr('Lời nhắn (không bắt buộc)')}</label>
           <textarea id="rfq-message" rows={3} maxLength={2000} value={message} onChange={(e) => setMessage(e.target.value)} className={field} />
         </div>
+        {quota && (
+          <p data-testid="rfq-quota" className="rounded-xl bg-slate-50 p-3 text-xs text-slate-700 sm:col-span-2">
+            {tr(`Còn ${quota.remaining}/${quota.limit} yêu cầu báo giá trong 24 giờ.`)}
+            {!quota.verified && (
+              <>
+                {' '}
+                {tr('Doanh nghiệp chưa xác minh vẫn gửi được; xác minh (không bắt buộc) để có hạn mức cao hơn.')}{' '}
+                <Link href="/buyer/profile" className="font-semibold text-teal-800 underline">
+                  {tr('Xác minh doanh nghiệp')}
+                </Link>
+              </>
+            )}
+          </p>
+        )}
         {error && (
           <p role="alert" className="rounded-xl bg-rose-50 p-3 text-sm text-rose-700 sm:col-span-2">{tr(error)}</p>
         )}

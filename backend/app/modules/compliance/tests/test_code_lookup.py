@@ -113,7 +113,7 @@ async def test_roo_uses_eight_digit_rule_over_heading_rule(
     assert d["status"] == "pass"
 
 
-async def test_unreviewed_eight_digit_line_is_skipped_for_the_reviewed_heading_line(
+async def test_unreviewed_eight_digit_line_wins_over_the_reviewed_heading_line_with_disclaimer(
     api_client: AsyncClient, db_session: AsyncSession, reviewer_id: uuid.UUID
 ) -> None:
     await add_hs(db_session, SHRIMP_A)
@@ -130,4 +130,7 @@ async def test_unreviewed_eight_digit_line_is_skipped_for_the_reviewed_heading_l
     )
     await db_session.flush()
     d = (await api_client.post("/api/public/tariff", json=tariff_body(SHRIMP_A))).json()
-    assert (d["status"], d["mfn_duty"], d["evfta_duty"]) == ("ok", "20000.00", "10000.00")
+    # Mã cụ thể nhất thắng (SPEC §2.2): dòng 8 số chưa duyệt được dùng, kèm lưu ý; dòng 6 số đã duyệt
+    # chỉ là dự phòng khi mã 8 số không có dòng nào.
+    assert (d["status"], d["mfn_duty"], d["evfta_duty"]) == ("ok", "12000.00", "0.00")
+    assert d["review_state"] == "UNREVIEWED" and d["disclaimer"] is not None

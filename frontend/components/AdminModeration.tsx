@@ -29,6 +29,12 @@ export default function AdminModeration() {
   const [appliedQ, setAppliedQ] = useState('');
   const [status, setStatus] = useState('');
   const [products, setProducts] = useState<Record<string, AdminProduct[]>>({});
+  // U3: hậu kiểm sản phẩm mới đăng (không duyệt trước) + cờ lệch ngành.
+  const [recent, setRecent] = useState<AdminProduct[] | null>(null);
+  const loadRecent = useCallback(async () => setRecent((await listProducts({ recent_days: 7 })) ?? []), []);
+  useEffect(() => {
+    void loadRecent();
+  }, [loadRecent]);
 
   const load = useCallback(async () => {
     const rows = await listCompanies({
@@ -89,6 +95,29 @@ export default function AdminModeration() {
         </div>
       </form>
       {error && <p role="alert" className="rounded-xl bg-rose-50 p-3 text-sm text-rose-700">{tr(error)}</p>}
+      <section aria-labelledby="recent-products" className="rounded-2xl border border-amber-200 bg-amber-50/50 p-4">
+        <h3 id="recent-products" className="text-sm font-bold text-slate-900">{tr('Sản phẩm mới đăng (7 ngày)')}</h3>
+        <p className="mt-0.5 text-xs text-slate-600">{tr('Sản phẩm hiện ngay khi đăng; xem lại ở đây và ẩn nếu không phù hợp. Cờ "Lệch ngành" = nhóm hàng của mã HS khác ngành công ty khai.')}</p>
+        {recent !== null && recent.length === 0 && <p className="mt-2 text-xs text-slate-500">{tr('Không có sản phẩm mới.')}</p>}
+        <ul className="mt-3 space-y-2">
+          {(recent ?? []).map((p) => (
+            <li key={p.id} className="flex flex-wrap items-center justify-between gap-2 text-sm">
+              <span>
+                <strong>{p.name}</strong> <span className="text-xs text-slate-500">HS {p.hs_code} · {p.company_name}</span>
+                {p.industry_mismatch && <span className="ml-2 rounded bg-amber-200 px-1.5 py-0.5 text-[10px] font-bold text-amber-900">{tr('Lệch ngành')}</span>}
+                {p.approval_status === 'hidden' && <span className="ml-2 text-xs font-bold text-rose-700">{tr('Đã ẩn')}</span>}
+              </span>
+              <button
+                type="button"
+                onClick={() => void run(() => setProductHidden(p.id, p.approval_status !== 'hidden'), loadRecent)}
+                className="rounded-lg border border-slate-300 bg-white px-3 py-1 text-xs font-semibold text-slate-800"
+              >
+                {tr(p.approval_status === 'hidden' ? 'Hiện sản phẩm' : 'Ẩn sản phẩm')}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </section>
       {failed ? (
         <p role="alert" className="rounded-xl bg-rose-50 p-3 text-sm text-rose-700">{tr('Không tải được danh sách. Vui lòng thử lại.')}</p>
       ) : (
@@ -123,6 +152,7 @@ export default function AdminModeration() {
                     <li key={p.id} className="flex flex-wrap items-center justify-between gap-2 text-sm">
                       <span>
                         <strong>{p.name}</strong> <span className="text-xs text-slate-500">HS {p.hs_code}</span>
+                        {p.industry_mismatch && <span className="ml-2 rounded bg-amber-200 px-1.5 py-0.5 text-[10px] font-bold text-amber-900">{tr('Lệch ngành')}</span>}
                         {p.approval_status === 'hidden' && <span className="ml-2 text-xs font-bold text-rose-700">{tr('Đã ẩn')}</span>}
                       </span>
                       <button

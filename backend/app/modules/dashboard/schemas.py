@@ -27,6 +27,29 @@ class ProfileViewsData(BaseModel):
     previous_week: int
 
 
+class ProfileViewerOut(BaseModel):
+    """Một buyer đã xác minh (không ẩn danh) đã xem hồ sơ trong khoảng thời gian."""
+
+    legal_name: str
+    country: str
+    business_type: str | None
+    views: int
+    last_viewed_at: dt.datetime
+
+
+class ProfileViewersOut(BaseModel):
+    """U9 "ai đã xem hồ sơ": tên chỉ hiện với buyer đã xác minh, không bật ẩn danh; còn lại đếm."""
+
+    days: int
+    total_views: int
+    guest_views: int  # khách chưa đăng nhập
+    anonymous_company_views: int  # công ty chưa xác minh, seller khác, hoặc buyer bật ẩn danh
+    viewers: list[ProfileViewerOut]
+    # U19: chưa có quyền "danh sách đầy đủ" → chỉ hiện FREE_VIEWERS buyer gần nhất, còn lại đếm.
+    full: bool = True
+    hidden_viewers: int = 0
+
+
 class ProfileViewsTile(BaseModel):
     data: ProfileViewsData | None
     empty_hint_key: str | None = None

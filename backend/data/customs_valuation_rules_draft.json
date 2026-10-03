@@ -1,0 +1,229 @@
+{
+  "_note": "BẢN NHÁP cơ sở trị giá hải quan theo nước đến. CHƯA duyệt: luật TM duyệt qua import-review (sheet 'Tri gia hai quan') trước khi coi là căn cứ pháp lý. Nước không có dòng ở đây thì máy tính dùng nguyên giá hóa đơn kèm cảnh báo.",
+  "rules": [
+    {
+      "country": "AT",
+      "basis": "CIF",
+      "valid_from": "2020-01-01",
+      "note_vi": "Trị giá hải quan gồm cước vận chuyển và bảo hiểm đến điểm nhập vào lãnh thổ hải quan của EU.",
+      "note_en": "The customs value includes transport and insurance costs up to the point of entry into the EU customs territory.",
+      "source": "Quy định trị giá hải quan của Liên minh châu Âu (Union Customs Code) — CHƯA duyệt, luật TM xác nhận."
+    },
+    {
+      "country": "BE",
+      "basis": "CIF",
+      "valid_from": "2020-01-01",
+      "note_vi": "Trị giá hải quan gồm cước vận chuyển và bảo hiểm đến điểm nhập vào lãnh thổ hải quan của EU.",
+      "note_en": "The customs value includes transport and insurance costs up to the point of entry into the EU customs territory.",
+      "source": "Quy định trị giá hải quan của Liên minh châu Âu (Union Customs Code) — CHƯA duyệt, luật TM xác nhận."
+    },
+    {
+      "country": "BG",
+      "basis": "CIF",
+      "valid_from": "2020-01-01",
+      "note_vi": "Trị giá hải quan gồm cước vận chuyển và bảo hiểm đến điểm nhập vào lãnh thổ hải quan của EU.",
+      "note_en": "The customs value includes transport and insurance costs up to the point of entry into the EU customs territory.",
+      "source": "Quy định trị giá hải quan của Liên minh châu Âu (Union Customs Code) — CHƯA duyệt, luật TM xác nhận."
+    },
+    {
+      "country": "HR",
+      "basis": "CIF",
+      "valid_from": "2020-01-01",
+      "note_vi": "Trị giá hải quan gồm cước vận chuyển và bảo hiểm đến điểm nhập vào lãnh thổ hải quan của EU.",
+      "note_en": "The customs value includes transport and insurance costs up to the point of entry into the EU customs territory.",
+      "source": "Quy định trị giá hải quan của Liên minh châu Âu (Union Customs Code) — CHƯA duyệt, luật TM xác nhận."
+    },
+    {
+      "country": "CY",
+      "basis": "CIF",
+      "valid_from": "2020-01-01",
+      "note_vi": "Trị giá hải quan gồm cước vận chuyển và bảo hiểm đến điểm nhập vào lãnh thổ hải quan của EU.",
+      "note_en": "The customs value includes transport and insurance costs up to the point of entry into the EU customs territory.",
+      "source": "Quy định trị giá hải quan của Liên minh châu Âu (Union Customs Code) — CHƯA duyệt, luật TM xác nhận."
+    },
+    {
+      "country": "CZ",
+      "basis": "CIF",
+      "valid_from": "2020-01-01",
+      "note_vi": "Trị giá hải quan gồm cước vận chuyển và bảo hiểm đến điểm nhập vào lãnh thổ hải quan của EU.",
+      "note_en": "The customs value includes transport and insurance costs up to the point of entry into the EU customs territory.",
+      "source": "Quy định trị giá hải quan của Liên minh châu Âu (Union Customs Code) — CHƯA duyệt, luật TM xác nhận."
+    },
+    {
+      "country": "DK",
+      "basis": "CIF",
+      "valid_from": "2020-01-01",
+      "note_vi": "Trị giá hải quan gồm cước vận chuyển và bảo hiểm đến điểm nhập vào lãnh thổ hải quan của EU.",
+      "note_en": "The customs value includes transport and insurance costs up to the point of entry into the EU customs territory.",
+      "source": "Quy định trị giá hải quan của Liên minh châu Âu (Union Customs Code) — CHƯA duyệt, luật TM xác nhận."
+    },
+    {
+      "country": "EE",
+      "basis": "CIF",
+      "valid_from": "2020-01-01",
+      "note_vi": "Trị giá hải quan gồm cước vận chuyển và bảo hiểm đến điểm nhập vào lãnh thổ hải quan của EU.",
+      "note_en": "The customs value includes transport and insurance costs up to the point of entry into the EU customs territory.",
+      "source": "Quy định trị giá hải quan của Liên minh châu Âu (Union Customs Code) — CHƯA duyệt, luật TM xác nhận."
+    },
+    {
+      "country": "FI",
+      "basis": "CIF",
+      "valid_from": "2020-01-01",
+      "note_vi": "Trị giá hải quan gồm cước vận chuyển và bảo hiểm đến điểm nhập vào lãnh thổ hải quan của EU.",
+      "note_en": "The customs value includes transport and insurance costs up to the point of entry into the EU customs territory.",
+      "source": "Quy định trị giá hải quan của Liên minh châu Âu (Union Customs Code) — CHƯA duyệt, luật TM xác nhận."
+    },
+    {
+      "country": "FR",
+      "basis": "CIF",
+      "valid_from": "2020-01-01",
+      "note_vi": "Trị giá hải quan gồm cước vận chuyển và bảo hiểm đến điểm nhập vào lãnh thổ hải quan của EU.",
+      "note_en": "The customs value includes transport and insurance costs up to the point of entry into the EU customs territory.",
+      "source": "Quy định trị giá hải quan của Liên minh châu Âu (Union Customs Code) — CHƯA duyệt, luật TM xác nhận."
+    },
+    {
+      "country": "DE",
+      "basis": "CIF",
+      "valid_from": "2020-01-01",
+      "note_vi": "Trị giá hải quan gồm cước vận chuyển và bảo hiểm đến điểm nhập vào lãnh thổ hải quan của EU.",
+      "note_en": "The customs value includes transport and insurance costs up to the point of entry into the EU customs territory.",
+      "source": "Quy định trị giá hải quan của Liên minh châu Âu (Union Customs Code) — CHƯA duyệt, luật TM xác nhận."
+    },
+    {
+      "country": "GR",
+      "basis": "CIF",
+      "valid_from": "2020-01-01",
+      "note_vi": "Trị giá hải quan gồm cước vận chuyển và bảo hiểm đến điểm nhập vào lãnh thổ hải quan của EU.",
+      "note_en": "The customs value includes transport and insurance costs up to the point of entry into the EU customs territory.",
+      "source": "Quy định trị giá hải quan của Liên minh châu Âu (Union Customs Code) — CHƯA duyệt, luật TM xác nhận."
+    },
+    {
+      "country": "HU",
+      "basis": "CIF",
+      "valid_from": "2020-01-01",
+      "note_vi": "Trị giá hải quan gồm cước vận chuyển và bảo hiểm đến điểm nhập vào lãnh thổ hải quan của EU.",
+      "note_en": "The customs value includes transport and insurance costs up to the point of entry into the EU customs territory.",
+      "source": "Quy định trị giá hải quan của Liên minh châu Âu (Union Customs Code) — CHƯA duyệt, luật TM xác nhận."
+    },
+    {
+      "country": "IE",
+      "basis": "CIF",
+      "valid_from": "2020-01-01",
+      "note_vi": "Trị giá hải quan gồm cước vận chuyển và bảo hiểm đến điểm nhập vào lãnh thổ hải quan của EU.",
+      "note_en": "The customs value includes transport and insurance costs up to the point of entry into the EU customs territory.",
+      "source": "Quy định trị giá hải quan của Liên minh châu Âu (Union Customs Code) — CHƯA duyệt, luật TM xác nhận."
+    },
+    {
+      "country": "IT",
+      "basis": "CIF",
+      "valid_from": "2020-01-01",
+      "note_vi": "Trị giá hải quan gồm cước vận chuyển và bảo hiểm đến điểm nhập vào lãnh thổ hải quan của EU.",
+      "note_en": "The customs value includes transport and insurance costs up to the point of entry into the EU customs territory.",
+      "source": "Quy định trị giá hải quan của Liên minh châu Âu (Union Customs Code) — CHƯA duyệt, luật TM xác nhận."
+    },
+    {
+      "country": "LV",
+      "basis": "CIF",
+      "valid_from": "2020-01-01",
+      "note_vi": "Trị giá hải quan gồm cước vận chuyển và bảo hiểm đến điểm nhập vào lãnh thổ hải quan của EU.",
+      "note_en": "The customs value includes transport and insurance costs up to the point of entry into the EU customs territory.",
+      "source": "Quy định trị giá hải quan của Liên minh châu Âu (Union Customs Code) — CHƯA duyệt, luật TM xác nhận."
+    },
+    {
+      "country": "LT",
+      "basis": "CIF",
+      "valid_from": "2020-01-01",
+      "note_vi": "Trị giá hải quan gồm cước vận chuyển và bảo hiểm đến điểm nhập vào lãnh thổ hải quan của EU.",
+      "note_en": "The customs value includes transport and insurance costs up to the point of entry into the EU customs territory.",
+      "source": "Quy định trị giá hải quan của Liên minh châu Âu (Union Customs Code) — CHƯA duyệt, luật TM xác nhận."
+    },
+    {
+      "country": "LU",
+      "basis": "CIF",
+      "valid_from": "2020-01-01",
+      "note_vi": "Trị giá hải quan gồm cước vận chuyển và bảo hiểm đến điểm nhập vào lãnh thổ hải quan của EU.",
+      "note_en": "The customs value includes transport and insurance costs up to the point of entry into the EU customs territory.",
+      "source": "Quy định trị giá hải quan của Liên minh châu Âu (Union Customs Code) — CHƯA duyệt, luật TM xác nhận."
+    },
+    {
+      "country": "MT",
+      "basis": "CIF",
+      "valid_from": "2020-01-01",
+      "note_vi": "Trị giá hải quan gồm cước vận chuyển và bảo hiểm đến điểm nhập vào lãnh thổ hải quan của EU.",
+      "note_en": "The customs value includes transport and insurance costs up to the point of entry into the EU customs territory.",
+      "source": "Quy định trị giá hải quan của Liên minh châu Âu (Union Customs Code) — CHƯA duyệt, luật TM xác nhận."
+    },
+    {
+      "country": "NL",
+      "basis": "CIF",
+      "valid_from": "2020-01-01",
+      "note_vi": "Trị giá hải quan gồm cước vận chuyển và bảo hiểm đến điểm nhập vào lãnh thổ hải quan của EU.",
+      "note_en": "The customs value includes transport and insurance costs up to the point of entry into the EU customs territory.",
+      "source": "Quy định trị giá hải quan của Liên minh châu Âu (Union Customs Code) — CHƯA duyệt, luật TM xác nhận."
+    },
+    {
+      "country": "PL",
+      "basis": "CIF",
+      "valid_from": "2020-01-01",
+      "note_vi": "Trị giá hải quan gồm cước vận chuyển và bảo hiểm đến điểm nhập vào lãnh thổ hải quan của EU.",
+      "note_en": "The customs value includes transport and insurance costs up to the point of entry into the EU customs territory.",
+      "source": "Quy định trị giá hải quan của Liên minh châu Âu (Union Customs Code) — CHƯA duyệt, luật TM xác nhận."
+    },
+    {
+      "country": "PT",
+      "basis": "CIF",
+      "valid_from": "2020-01-01",
+      "note_vi": "Trị giá hải quan gồm cước vận chuyển và bảo hiểm đến điểm nhập vào lãnh thổ hải quan của EU.",
+      "note_en": "The customs value includes transport and insurance costs up to the point of entry into the EU customs territory.",
+      "source": "Quy định trị giá hải quan của Liên minh châu Âu (Union Customs Code) — CHƯA duyệt, luật TM xác nhận."
+    },
+    {
+      "country": "RO",
+      "basis": "CIF",
+      "valid_from": "2020-01-01",
+      "note_vi": "Trị giá hải quan gồm cước vận chuyển và bảo hiểm đến điểm nhập vào lãnh thổ hải quan của EU.",
+      "note_en": "The customs value includes transport and insurance costs up to the point of entry into the EU customs territory.",
+      "source": "Quy định trị giá hải quan của Liên minh châu Âu (Union Customs Code) — CHƯA duyệt, luật TM xác nhận."
+    },
+    {
+      "country": "SK",
+      "basis": "CIF",
+      "valid_from": "2020-01-01",
+      "note_vi": "Trị giá hải quan gồm cước vận chuyển và bảo hiểm đến điểm nhập vào lãnh thổ hải quan của EU.",
+      "note_en": "The customs value includes transport and insurance costs up to the point of entry into the EU customs territory.",
+      "source": "Quy định trị giá hải quan của Liên minh châu Âu (Union Customs Code) — CHƯA duyệt, luật TM xác nhận."
+    },
+    {
+      "country": "SI",
+      "basis": "CIF",
+      "valid_from": "2020-01-01",
+      "note_vi": "Trị giá hải quan gồm cước vận chuyển và bảo hiểm đến điểm nhập vào lãnh thổ hải quan của EU.",
+      "note_en": "The customs value includes transport and insurance costs up to the point of entry into the EU customs territory.",
+      "source": "Quy định trị giá hải quan của Liên minh châu Âu (Union Customs Code) — CHƯA duyệt, luật TM xác nhận."
+    },
+    {
+      "country": "ES",
+      "basis": "CIF",
+      "valid_from": "2020-01-01",
+      "note_vi": "Trị giá hải quan gồm cước vận chuyển và bảo hiểm đến điểm nhập vào lãnh thổ hải quan của EU.",
+      "note_en": "The customs value includes transport and insurance costs up to the point of entry into the EU customs territory.",
+      "source": "Quy định trị giá hải quan của Liên minh châu Âu (Union Customs Code) — CHƯA duyệt, luật TM xác nhận."
+    },
+    {
+      "country": "SE",
+      "basis": "CIF",
+      "valid_from": "2020-01-01",
+      "note_vi": "Trị giá hải quan gồm cước vận chuyển và bảo hiểm đến điểm nhập vào lãnh thổ hải quan của EU.",
+      "note_en": "The customs value includes transport and insurance costs up to the point of entry into the EU customs territory.",
+      "source": "Quy định trị giá hải quan của Liên minh châu Âu (Union Customs Code) — CHƯA duyệt, luật TM xác nhận."
+    },
+    {
+      "country": "GB",
+      "basis": "CIF",
+      "valid_from": "2020-01-01",
+      "note_vi": "Trị giá hải quan gồm cước vận chuyển và bảo hiểm đến điểm nhập vào Anh.",
+      "note_en": "The customs value includes transport and insurance costs up to the point of entry into the UK.",
+      "source": "Quy định trị giá hải quan của Anh — CHƯA duyệt, luật TM xác nhận."
+    }
+  ]
+}

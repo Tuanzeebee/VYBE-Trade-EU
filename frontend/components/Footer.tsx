@@ -1,4 +1,5 @@
 'use client';
+import { BrandMark } from './BrandMark';
 import React from 'react';
 import { useLanguage } from '../context/LanguageContext.tsx';
 import { Mail, MapPin } from 'lucide-react';
@@ -17,7 +18,7 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-10">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 pb-10 border-b border-slate-800/80">
           <div className="space-y-3 sm:col-span-2 lg:col-span-1">
-            <span className="text-white font-bold text-base tracking-wide uppercase">VYBE TRADE</span>
+            <span className="flex items-center gap-2 text-white font-bold text-base tracking-wide uppercase"><span className="rounded bg-white p-0.5"><BrandMark className="h-5 w-5" /></span>VYBE TRADE</span>
             <p className="text-slate-400 leading-relaxed max-w-sm">
               {tr('Nền tảng B2B kết nối nhà xuất khẩu Việt Nam với người mua tại EU: máy tính EVFTA, xác minh doanh nghiệp và trợ lý tuân thủ có trích nguồn.')}
             </p>
@@ -27,8 +28,9 @@ export default function Footer() {
             <h4 className={COLUMN_TITLE}>{tr('Khám phá')}</h4>
             <ul className="space-y-2">
               <li><Link href="/suppliers" className={LINK}>{tr('Nhà cung cấp đã xác minh')}</Link></li>
-              <li><Link href="/tools/tariff" className={LINK}>{tr('Máy tính tiết kiệm thuế')}</Link></li>
-              <li><Link href="/tools/origin" className={LINK}>{tr('Máy tính quy tắc xuất xứ')}</Link></li>
+              <li><Link href="/tools/tariff" className={LINK}>{tr('Công cụ tính thuế')}</Link></li>
+              <li><Link href="/tools/market-insights" className={LINK}>{tr('Gợi ý thị trường EU')}</Link></li>
+              <li><Link href="/tools/origin" className={LINK}>{tr('Kiểm tra xuất xứ hàng hóa')}</Link></li>
               <li><Link href="/copilot" className={LINK}>{tr('Trợ lý tuân thủ EVFTA')}</Link></li>
             </ul>
           </nav>

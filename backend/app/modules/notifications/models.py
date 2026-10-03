@@ -11,13 +11,18 @@ from app.core.db import Base
 
 
 class NotificationType(StrEnum):
-    """Năm loại của spec §4.9. RFQ và tin nhắn do F1/F2 tạo."""
+    """Năm loại của spec §4.9 (RFQ và tin nhắn do F1/F2 tạo; báo giá U8 dùng loại rfq) cùng ba loại
+    của bản nâng cấp: ai đã xem hồ sơ (U9), cảnh báo ngành (U14), đơn hàng (U19)."""
 
     message = "message"
     rfq = "rfq"
     verification_status = "verification_status"
     new_match = "new_match"
     expiry_alert = "expiry_alert"
+    profile_viewed = "profile_viewed"
+    sector_alert = "sector_alert"
+    order = "order"
+    reengagement = "reengagement"
 
 
 class Notification(Base):

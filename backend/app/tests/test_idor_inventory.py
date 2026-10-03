@@ -12,6 +12,16 @@ COVERED = {
         "get",
     ): "compliance: test_other_exporter_cannot_see_or_open_my_documents",
     (
+        "/api/companies/{company_id}/evidence-checklist",
+        "get",
+    ): "compliance: test_checklist_is_owner_or_admin_only",
+    (
+        "/api/exporter/market-reports/{report_id}",
+        "get",
+    ): "markets: test_auth_and_idor",
+    ("/api/me/orders/{order_id}", "get"): "billing: test_roles_and_ownership",
+    ("/api/me/orders/{order_id}/cancel", "post"): "billing: test_roles_and_ownership",
+    (
         "/api/exporter/evidences/{evidence_id}",
         "get",
     ): "verification: test_other_exporter_cannot_touch_my_evidence",
@@ -24,6 +34,14 @@ COVERED = {
         "delete",
     ): "verification: test_other_exporter_cannot_touch_my_evidence",
     (
+        "/api/exporter/evidences/{evidence_id}/extraction",
+        "get",
+    ): "verification: test_extraction_is_owner_only_and_never_changes_status",
+    (
+        "/api/exporter/evidences/{evidence_id}/extraction/apply",
+        "post",
+    ): "verification: test_extraction_is_owner_only_and_never_changes_status",
+    (
         "/api/exporter/products/{product_id}",
         "get",
     ): "companies: test_products_api (sản phẩm của người khác 404)",
@@ -35,11 +53,32 @@ COVERED = {
         "/api/exporter/products/{product_id}",
         "delete",
     ): "companies: test_products_api (sản phẩm của người khác 404)",
+    (
+        "/api/exporter/services/{service_id}",
+        "patch",
+    ): "companies: test_other_seller_cannot_touch_my_service",
+    (
+        "/api/exporter/services/{service_id}",
+        "delete",
+    ): "companies: test_other_seller_cannot_touch_my_service",
     (
         "/api/exporter/rfqs/{rfq_id}/status",
         "patch",
     ): "messaging: test_only_recipient_exporter_changes_status",
     ("/api/me/rfqs/{rfq_id}", "get"): "messaging: test_lists_are_scoped_to_the_callers_company",
+    (
+        "/api/exporter/rfqs/{rfq_id}/quotes",
+        "post",
+    ): "messaging: test_outsiders_and_wrong_side_get_404",
+    ("/api/me/rfqs/{rfq_id}/quotes", "get"): "messaging: test_outsiders_and_wrong_side_get_404",
+    (
+        "/api/buyer/quotes/{quote_id}/decision",
+        "post",
+    ): "messaging: test_outsiders_and_wrong_side_get_404",
+    (
+        "/api/exporter/quotes/{quote_id}/withdraw",
+        "post",
+    ): "messaging: test_outsiders_and_wrong_side_get_404",
     (
         "/api/me/conversations/{conversation_id}/messages",
         "get",

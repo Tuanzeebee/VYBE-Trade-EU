@@ -1,0 +1,25 @@
+# BẢN NHÁP yêu cầu của từng cấp xác minh (U20, ADR-0004) — CHƯA duyệt. Luật TM duyệt từng dòng.
+# Nạp: uv run python -m scripts.seed_tier_requirements (mọi dòng vào DB ở trạng thái chưa duyệt).
+# kind: evidence = mã loại bằng chứng (evidence_types); check = kiểm tự động (U21); manual = admin kiểm tay.
+# Nháp chỉ hiện làm hướng dẫn cho seller và admin; job chỉ hạ cấp theo dòng evidence ĐÃ duyệt.
+company_kind,tier,kind,code,label_vi,label_en,is_required,sort_order,source
+product_seller,1,evidence,business_registration,Giấy chứng nhận đăng ký doanh nghiệp,Business registration certificate,true,1,ADR-0004
+product_seller,1,manual,national_registry_check,Đối chiếu ĐKKD/MST trên Cổng thông tin quốc gia về đăng ký doanh nghiệp,Registration / tax code checked on the national business registration portal,true,2,dangkykinhdoanh.gov.vn
+product_seller,1,manual,legal_representative,Người đại diện theo pháp luật khớp ĐKKD,Legal representative matches the registration,true,3,ADR-0004
+product_seller,1,manual,authorized_contact,Người liên hệ được công ty ủy quyền,Contact person authorised by the company,true,4,ADR-0004
+product_seller,2,manual,certificate_issuer_check,Chứng nhận được đối chiếu với tổ chức cấp,Certificates checked with the issuing body,true,1,ADR-0004
+product_seller,2,check,traces_facility,Mã cơ sở có trong danh sách EU TRACES-NT (thủy sản / thực phẩm),Facility code listed in EU TRACES-NT (seafood / food),false,2,EU TRACES-NT
+product_seller,2,evidence,export_contract,Hợp đồng xuất khẩu (che giá),Export sales contract (prices masked),true,3,ADR-0004
+product_seller,2,evidence,bill_of_lading,Vận đơn (B/L),Bill of lading,true,4,ADR-0004
+product_seller,2,evidence,customs_declaration,Tờ khai hải quan xuất khẩu,Export customs declaration,false,5,ADR-0004
+product_seller,2,manual,factory_video,Tour video nhà máy,Factory video tour,false,6,ADR-0004
+product_seller,3,evidence,third_party_audit,Báo cáo đánh giá nhà máy của bên thứ ba (SGS / BV / TÜV / Intertek),Third-party factory audit report (SGS / BV / TÜV / Intertek),true,1,ADR-0004
+product_seller,3,manual,social_audit_import,SMETA / BSCI / EcoVadis: nhập nguyên hạng và ngày hết hạn,SMETA / BSCI / EcoVadis: record the rating and expiry as issued,false,2,ADR-0004
+service_provider,1,evidence,business_registration,Giấy chứng nhận đăng ký doanh nghiệp,Business registration certificate,true,1,ADR-0004
+service_provider,1,manual,national_registry_check,Đối chiếu ĐKKD/MST trên Cổng thông tin quốc gia về đăng ký doanh nghiệp,Registration / tax code checked on the national business registration portal,true,2,dangkykinhdoanh.gov.vn
+service_provider,1,manual,legal_representative,Người đại diện theo pháp luật khớp ĐKKD,Legal representative matches the registration,true,3,ADR-0004
+service_provider,2,manual,service_licence,Giấy phép hành nghề theo loại dịch vụ (đại lý hải quan / vận tải đa phương thức / kế toán / đại lý thuế),Licence for the service type (customs broker / multimodal transport / accounting / tax agent),true,1,ADR-0004
+buyer,1,check,vies_vat,Mã VAT hợp lệ trên VIES,VAT number valid on VIES,false,1,ec.europa.eu/taxation_customs/vies
+buyer,1,check,gleif_lei,Mã LEI trên GLEIF,LEI listed on GLEIF,false,2,gleif.org
+buyer,1,check,email_domain,Email theo tên miền công ty,Email on the company domain,false,3,ADR-0003
+buyer,1,manual,company_registry,Đối chiếu sổ đăng ký doanh nghiệp của nước sở tại,Checked against the national company registry,true,4,ADR-0004

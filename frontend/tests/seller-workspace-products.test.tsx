@@ -46,11 +46,24 @@ const product = (over: Record<string, unknown> = {}) => ({
   ...over,
 });
 
-function serve(products: unknown[] | 'error', tariff: unknown = null) {
+const COMPANY = {
+  id: 'c1', slug: 'cong-ty-a', type: 'exporter', legal_name: 'Công ty A', registration_number: null, tax_id: '0312345678',
+  business_type: 'manufacturer', country: 'VN', industry_sector: 'agriculture', founded_year: 2015, address: null,
+  website: null, contact_email: 'a@congtya.vn', description_vi: null, description_en: null, logo_key: null, export_markets: [],
+  industry_other: null, phone: null, legal_rep_name: null, legal_rep_title: null, issuing_authority: null, offering_type: 'products',
+  factory_address: null, capacity_value: null, capacity_unit: null, capacity_period: null, main_customers: null, location_public: false, facility_codes: [],
+  languages_spoken: [], company_size: null, procurement_estimate: null, vat_number: null, eori_number: null, hide_profile_views: false, sourcing_categories: [],
+  verification_status: 'unverified', verification_level: 'basic', verified_at: null, expires_at: null,
+  profile_completeness_score: '40.00', created_at: '2026-09-29T00:00:00Z', updated_at: '2026-09-29T00:00:00Z',
+};
+
+function serve(products: unknown[] | 'error', tariff: unknown = null, company: unknown = null) {
   vi.stubGlobal(
     'fetch',
     vi.fn(async (req: Request) => {
       const path = new URL(req.url).pathname;
+      if (path === '/api/me/company' && company) return json(200, company);
+      if (path === '/api/exporter/evidences') return json(200, []);
       if (path === '/api/exporter/products') {
         return products === 'error' ? json(500, {}) : json(200, products);
       }
@@ -127,16 +140,16 @@ describe('SellerWorkspace — sản phẩm lấy từ server (B5)', () => {
   it('nút Sản phẩm trong menu hiện đúng số lượng thật', async () => {
     serve([product(), product({ id: 'p2', name: 'Cà phê' })]);
     renderWorkspace('overview');
-    const [nav] = await screen.findAllByRole('button', { name: /Sản phẩm xuất khẩu/ }); // menu bên + menu mobile
+    const [nav] = await screen.findAllByRole('button', { name: /Sản phẩm cung cấp/ }); // menu bên + menu mobile
     expect(nav).toHaveTextContent('2');
   });
 
-  it('tab Hồ sơ (mặc định) có danh sách sản phẩm rút gọn từ server, bấm Quản lý sang tab Sản phẩm', async () => {
-    serve([product()]);
+  it('tab Hồ sơ có danh sách sản phẩm rút gọn từ server, bấm Quản lý sang tab Sản phẩm', async () => {
+    serve([product()], null, COMPANY);
     renderWorkspace('profile');
-    expect(await screen.findByText('Gạo thơm Jasmine')).toBeInTheDocument();
-    const block = screen.getByText('4. Sản phẩm xuất khẩu').closest('div.rounded-3xl') as HTMLElement;
-    fireEvent.click(within(block).getByRole('button', { name: /Quản lý \(1\)/ }));
+    const section = (await screen.findByRole('heading', { name: 'Sản phẩm cung cấp' })).closest('section') as HTMLElement;
+    expect(await within(section).findByText('Gạo thơm Jasmine')).toBeInTheDocument();
+    fireEvent.click(within(section).getByRole('button', { name: /Quản lý/ }));
     expect(await screen.findByRole('heading', { name: 'Gạo thơm Jasmine' })).toBeInTheDocument();
   });
 

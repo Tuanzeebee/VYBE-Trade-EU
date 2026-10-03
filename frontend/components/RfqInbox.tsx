@@ -5,7 +5,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { Link } from '../i18n/navigation';
-import { changeRfqStatus, listRfqs, NEXT_STATUSES, openRfq, STATUS_LABELS, type Rfq, type RfqStatus } from '../lib/rfqApi';
+import QuotePanel from './QuotePanel';
+import { changeRfqStatus, listRfqs, NEXT_STATUSES, openRfq, SAFE_TERMS_ADVICE, STATUS_LABELS, type Rfq, type RfqStatus } from '../lib/rfqApi';
 
 const BADGE: Record<RfqStatus, string> = {
   new: 'bg-teal-100 text-teal-900',
@@ -85,7 +86,17 @@ export default function RfqInbox({ role }: { role: 'buyer' | 'exporter' }) {
             <li key={r.id} aria-label={`${counterpart} — ${r.product_name}`} className="rounded-2xl border border-slate-200 bg-white p-5">
               <button type="button" onClick={() => void toggle(r)} aria-expanded={expanded} className="flex w-full items-start justify-between gap-3 text-left">
                 <span>
-                  <span className="block text-sm font-bold text-slate-900">{counterpart}</span>
+                  <span className="flex flex-wrap items-center gap-2 text-sm font-bold text-slate-900">
+                    {counterpart}
+                    {role === 'exporter' && (
+                      <span
+                        data-testid="buyer-verification"
+                        className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${r.buyer_verified ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-900'}`}
+                      >
+                        {tr(r.buyer_verified ? 'Doanh nghiệp đã xác minh' : 'Buyer chưa xác minh')}
+                      </span>
+                    )}
+                  </span>
                   <span className="mt-0.5 block text-sm text-slate-700">{r.product_name}</span>
                   <span className="mt-0.5 block text-xs text-slate-500">
                     {r.quantity} {r.unit} · {date(r.created_at)}
@@ -116,6 +127,18 @@ export default function RfqInbox({ role }: { role: 'buyer' | 'exporter' }) {
                     </div>
                   </dl>
                   {r.message && <p className="whitespace-pre-line rounded-xl bg-slate-50 p-3">{r.message}</p>}
+                  {role === 'exporter' && !r.buyer_verified && (
+                    <div role="note" className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs text-amber-950">
+                      <p className="font-semibold">{tr('Buyer chưa xác minh doanh nghiệp. Khuyến nghị điều khoản thanh toán an toàn:')}</p>
+                      <ul className="mt-1 list-disc space-y-0.5 pl-5">
+                        {SAFE_TERMS_ADVICE.map((line) => (
+                          <li key={line}>{tr(line)}</li>
+                        ))}
+                      </ul>
+                      <p className="mt-1 text-amber-900/80">{tr('Đây là khuyến nghị chung, không phải tư vấn pháp lý.')}</p>
+                    </div>
+                  )}
+                  <QuotePanel rfq={r} role={role} onChanged={() => void load()} />
                   <Link href={`${role === 'buyer' ? '/buyer/messages' : '/exporter/messages'}?rfq=${r.id}`} className="inline-block text-sm font-semibold text-teal-800 underline">
                     {tr('Mở hội thoại')}
                   </Link>

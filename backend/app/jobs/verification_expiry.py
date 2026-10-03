@@ -1,4 +1,4 @@
-"""Job hằng ngày: hạ xác minh của công ty đã hết hạn (I7)."""
+"""Job hằng ngày: hạ xác minh của công ty đã hết hạn (I7) và hạ cấp xác minh quá hạn (U20)."""
 
 import datetime as dt
 import logging
@@ -9,6 +9,7 @@ from app.core.db import get_sessionmaker
 from app.jobs.app import app
 from app.modules.verification.evidence_service import daily_refresh
 from app.modules.verification.service import expire_due
+from app.modules.verification.tier_service import sync_tiers
 
 log = logging.getLogger(__name__)
 
@@ -16,9 +17,11 @@ log = logging.getLogger(__name__)
 async def run_verification_expiry(session: AsyncSession, now: dt.datetime) -> int:
     """Thân job (nhận session và giờ để test được). Trả số công ty hết hạn bị hạ về unverified.
 
-    Sau đó đồng bộ mức EVFTA-verified theo bằng chứng và tính lại điểm hoàn thiện (C6)."""
+    Sau đó đồng bộ mức EVFTA-verified theo bằng chứng và tính lại điểm hoàn thiện (C6), rồi hạ cấp
+    xác minh 2–3 đã quá hạn hoặc thiếu bằng chứng bắt buộc đã duyệt (U20)."""
     expired = await expire_due(session, now)
     await daily_refresh(session, now)
+    await sync_tiers(session, now)
     return expired
 
 

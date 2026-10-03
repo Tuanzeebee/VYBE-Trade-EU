@@ -9,11 +9,19 @@ from dataclasses import dataclass
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.errors import AppError
 from app.core.storage import Storage
 from app.modules.catalog import service as catalog
-from app.modules.companies import product_service
+from app.modules.companies import offering_service, product_service
+from app.modules.companies import service as companies
 from app.modules.companies.product_service import SearchTerm
-from app.modules.directory.schemas import FilterOptions, SupplierCardOut, SupplierPage
+from app.modules.directory.schemas import (
+    FilterOptions,
+    SupplierCardOut,
+    SupplierCredentialsOut,
+    SupplierPage,
+    VerifiedCertificateOut,
+)
 from app.modules.verification import evidence_service as certificates
 
 MAX_TERMS = 6
@@ -29,6 +37,8 @@ class SupplierFilters:
     cert: str | None = None
     page: int = 1
     page_size: int = 12
+    kind: str = "products"  # products | services (U10)
+    service_category: str | None = None
 
 
 async def search_verified(
@@ -63,6 +73,8 @@ async def search_verified(
         page=filters.page,
         page_size=filters.page_size,
         now=moment,
+        kind=filters.kind,
+        service_category=filters.service_category,
     )
     codes = sorted({code for card in result.items for code in card.hs_codes})
     category_of = await catalog.categories_for_codes(session, codes)
@@ -84,4 +96,28 @@ async def filter_options(session: AsyncSession) -> FilterOptions:
     return FilterOptions(
         categories=sorted(await catalog.list_categories(session)),
         certificates=await certificates.public_certificate_types(session),
+        service_categories=[
+            c.code for c in await offering_service.list_service_categories(session)
+        ],
+    )
+
+
+async def credentials(
+    session: AsyncSession, slug: str, now: dt.datetime | None = None
+) -> SupplierCredentialsOut:
+    """Chỉ công ty đang hiển thị công khai (cùng điều kiện với danh bạ); còn lại 404."""
+    moment = now or dt.datetime.now(dt.UTC)
+    company_id = await product_service.resolve_visible_company(session, slug, moment)
+    if company_id is None:
+        raise AppError("company_not_found", "Company not found", 404)
+    state = await companies.get_verification_state(session, company_id)
+    rows = await certificates.public_certificates_for(session, company_id, moment.date())
+    return SupplierCredentialsOut(
+        verified_at=state.verified_at,
+        expires_at=state.expires_at,
+        origin_evidence_complete=state.level == "evfta_verified",
+        certificates=[VerifiedCertificateOut(**row) for row in rows],
+        verification_tier=max(state.tier, 1),
+        tier_reviewed_at=state.tier_reviewed_at or state.verified_at,
+        tier_expires_at=state.tier_expires_at or state.expires_at,
     )

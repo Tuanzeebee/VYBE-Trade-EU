@@ -49,6 +49,21 @@ async def test_buyer_sends_all_fields(api_client: AsyncClient, db_session: Async
     assert body["status"] == "new"
 
 
+async def test_exporter_delete_of_product_with_rfq_deactivates_it(
+    api_client: AsyncClient, db_session: AsyncSession
+) -> None:
+    """Sản phẩm đã có RFQ không xóa cứng được (FK) — chỉ ẩn, RFQ vẫn còn, không lỗi 500."""
+    _, product_id = await make_exporter(api_client, db_session)
+    await make_buyer(api_client)
+    rfq_id = (await send(api_client, product_id)).json()["id"]
+    await as_user(api_client, "exporter", "exp@x.vn")
+    assert (await api_client.delete(f"/api/exporter/products/{product_id}")).status_code == 204
+    assert (await api_client.get(f"/api/exporter/products/{product_id}")).json()[
+        "is_active"
+    ] is False
+    assert (await api_client.get(f"/api/me/rfqs/{rfq_id}")).status_code == 200
+
+
 async def test_optional_fields_can_be_omitted(
     api_client: AsyncClient, db_session: AsyncSession
 ) -> None:
@@ -339,15 +354,30 @@ async def test_buyer_is_notified_when_the_exporter_changes_status(
     assert [e["type"] for e in notifications_on] == ["rfq"]
 
 
-async def test_po_policy_defaults_and_unverified_buyers_cannot_send(
+async def test_default_policy_lets_unverified_buyers_send_within_a_lower_limit(
     api_client: AsyncClient, db_session: AsyncSession, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    """PO chốt: đã xác minh 5 RFQ/24h, chưa xác minh 0."""
+    """U6/ADR-0004: buyer không bị chặn sau xác minh — chưa xác minh 3 RFQ/24h, đã xác minh 5."""
     settings = get_settings()
     from app.core.config import Settings
 
     fresh = Settings(_env_file=None)
-    assert (fresh.rfq_daily_limit_verified, fresh.rfq_daily_limit_unverified) == (5, 0)
+    assert (fresh.rfq_daily_limit_verified, fresh.rfq_daily_limit_unverified) == (5, 3)
+    monkeypatch.setattr(settings, "rfq_daily_limit_verified", 5)
+    monkeypatch.setattr(settings, "rfq_daily_limit_unverified", 3)
+    _, product_id = await make_exporter(api_client, db_session)
+    await make_buyer(api_client)
+    for _ in range(3):
+        assert (await send(api_client, product_id)).status_code == 201
+    r = await send(api_client, product_id)
+    assert r.status_code == 429 and r.json()["error"]["code"] == "rfq_daily_limit"
+
+
+async def test_po_can_still_block_unverified_buyers_with_a_zero_limit(
+    api_client: AsyncClient, db_session: AsyncSession, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Hạn mức 0 chỉ khi PO yêu cầu: buyer chưa xác minh nhận 403 rõ lý do."""
+    settings = get_settings()
     monkeypatch.setattr(settings, "rfq_daily_limit_verified", 5)
     monkeypatch.setattr(settings, "rfq_daily_limit_unverified", 0)
     _, product_id = await make_exporter(api_client, db_session)
@@ -365,3 +395,43 @@ async def test_po_policy_defaults_and_unverified_buyers_cannot_send(
         assert (await send(api_client, product_id)).status_code == 201
     r = await send(api_client, product_id)
     assert r.status_code == 429 and r.json()["error"]["code"] == "rfq_daily_limit"
+
+
+# ── U6: seller thấy trạng thái buyer, buyer thấy hạn mức còn lại ─────────────
+async def test_seller_sees_whether_the_buyer_is_verified(
+    api_client: AsyncClient, db_session: AsyncSession
+) -> None:
+    _, product_id = await make_exporter(api_client, db_session)
+    buyer_id = await make_buyer(api_client)
+    rfq_id = (await send(api_client, product_id)).json()["id"]
+    await as_user(api_client, "exporter", "exp@x.vn")
+    assert (await api_client.get(f"/api/me/rfqs/{rfq_id}")).json()["buyer_verified"] is False
+    await db_session.execute(
+        text("UPDATE companies SET verification_status = 'verified' WHERE id = CAST(:id AS uuid)"),
+        {"id": buyer_id},
+    )
+    db_session.expire_all()  # UPDATE thô: bỏ bản Company cũ trong phiên dùng chung của test
+    assert (await api_client.get("/api/me/rfqs")).json()[0]["buyer_verified"] is True
+
+
+async def test_buyer_sees_remaining_quota(
+    api_client: AsyncClient, db_session: AsyncSession, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(get_settings(), "rfq_daily_limit_unverified", 3)
+    _, product_id = await make_exporter(api_client, db_session)
+    await make_buyer(api_client)
+    await login_as(api_client, "buyer", "buyer@x.de")
+    quota = (await api_client.get("/api/buyer/rfq-quota")).json()
+    assert quota == {"limit": 3, "used": 0, "remaining": 3, "verified": False}
+    await send(api_client, product_id)
+    quota = (await api_client.get("/api/buyer/rfq-quota")).json()
+    assert (quota["used"], quota["remaining"]) == (1, 2)
+
+
+async def test_rfq_quota_is_buyer_only(api_client: AsyncClient, db_session: AsyncSession) -> None:
+    assert (await api_client.get("/api/buyer/rfq-quota")).status_code == 401
+    await login_as(api_client, "exporter", "exp9@x.vn")
+    assert (await api_client.get("/api/buyer/rfq-quota")).status_code == 403
+    await as_user(api_client, "buyer", "nocompany@x.de")
+    r = await api_client.get("/api/buyer/rfq-quota")
+    assert r.status_code == 409 and r.json()["error"]["code"] == "company_required"

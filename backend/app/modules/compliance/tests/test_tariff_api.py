@@ -109,10 +109,17 @@ async def test_unsupported_hs_has_no_numbers_and_is_logged(
     assert await checks(db_session) == 1
 
 
-async def test_supported_hs_without_reviewed_line_is_unsupported(
+async def test_unreviewed_line_is_used_with_disclaimer(
     api_client: AsyncClient, db_session: AsyncSession
 ) -> None:
-    await add_line(db_session, None)  # chưa duyệt → không bao giờ ra ngoài
+    await add_line(db_session, None)  # chưa duyệt → vẫn tính, kèm lưu ý (SPEC §2.2)
+    out = (await api_client.post(URL, json=body())).json()
+    assert out["status"] == "ok"
+    assert out["review_state"] == "UNREVIEWED" and out["unreviewed_components"] == ["tariff_line"]
+    assert out["disclaimer"] is not None
+
+
+async def test_supported_hs_without_any_line_is_unsupported(api_client: AsyncClient) -> None:
     r = await api_client.post(URL, json=body())
     assert r.json()["status"] == "unsupported"
     assert_no_numbers(r.json())
@@ -223,9 +230,21 @@ async def test_tariff_accepts_boundary_amounts(
     assert (await api_client.post(URL, json=body(product_value=value))).status_code == 200
 
 
-@pytest.mark.parametrize("dest", ["US", "VN", "XX", "DEU", "", "EU"])
-async def test_destination_must_be_eu_member_state(api_client: AsyncClient, dest: str) -> None:
+@pytest.mark.parametrize("dest", ["VN", "DEU", "", "EU", "1A"])
+async def test_destination_must_be_an_import_country(api_client: AsyncClient, dest: str) -> None:
+    """U12: mọi nước ISO-2 trừ VN; 'EU' không phải một nước (chọn nước thành viên)."""
     assert (await api_client.post(URL, json=body(destination=dest))).status_code == 422
+
+
+@pytest.mark.parametrize("dest", ["US", "GB", "JP"])
+async def test_market_without_reviewed_data_is_unsupported_without_numbers(
+    api_client: AsyncClient, db_session: AsyncSession, reviewer_id: uuid.UUID, dest: str
+) -> None:
+    await add_line(db_session, reviewer_id)  # chỉ có dòng EVFTA cho EU
+    r = await api_client.post(URL, json=body(destination=dest))
+    assert r.status_code == 200, r.text
+    assert (r.json()["status"], r.json()["agreement"]) == ("unsupported", None)
+    assert_no_numbers(r.json())
 
 
 async def test_destination_case_insensitive_and_maps_to_eu_line(

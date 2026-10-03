@@ -75,50 +75,82 @@ describe('ProductsEditor', () => {
     expect(screen.getByRole('button', { name: /Thêm sản phẩm/ })).toBeInTheDocument();
   });
 
-  it('thêm sản phẩm → thẻ trống có đủ ô theo backlog, mã HS bắt buộc', () => {
+  it('thêm sản phẩm → thẻ trống có đủ ô (U3: bậc giá, quy cách, OEM, một ô mô tả), mã HS bắt buộc', () => {
     render(<Harness />);
     add();
     expect(screen.queryByRole('status')).not.toBeInTheDocument();
     const c = within(card());
     expect(c.getByLabelText(/Tên sản phẩm/)).toBeRequired();
     expect(c.getByRole('combobox', { name: /Mã HS/ })).toBeRequired();
-    for (const label of [/Giá thấp nhất/, /Giá cao nhất/, /Tiền tệ/, /Đơn vị giá/, /^MOQ/, /Đơn vị MOQ/, /Mô tả \(tiếng Việt\)/, /Mô tả \(tiếng Anh\)/]) {
+    expect(c.getByRole('radio', { name: 'Giá theo số lượng đặt' })).toHaveAttribute('aria-checked', 'true');
+    for (const label of [/Từ số lượng/, /^Đơn giá/, /Tiền tệ/, /Đơn vị giá/, /^MOQ/, /Đơn vị MOQ/, /Mô tả sản phẩm/, /Hình thức kinh doanh sản phẩm/]) {
       expect(c.getByLabelText(label)).toBeInTheDocument();
     }
     expect((c.getByLabelText(/Tiền tệ/) as HTMLSelectElement).value).toBe('USD');
     expect(c.getByRole('checkbox', { name: /Hiển thị công khai/ })).toBeChecked();
+    // Không còn giá thấp nhất / cao nhất bắt buộc.
+    expect(c.queryByLabelText(/Giá thấp nhất/)).not.toBeInTheDocument();
   });
 
-  it('không còn các trường của form cũ: sản phẩm chính, quy cách đóng gói, năng lực cung ứng, thị trường', () => {
+  it('bỏ các trường cũ không cần; quy cách đóng gói có lại theo yêu cầu khách (U3)', () => {
     render(<Harness initial={[emptyDraft()]} />);
-    for (const gone of [/Sản phẩm chính/, /Quy cách đóng gói/, /Năng lực cung ứng/, /Thị trường xuất khẩu/, /Danh mục/]) {
+    for (const gone of [/Sản phẩm chính/, /Năng lực cung ứng/, /Thị trường xuất khẩu/, /Danh mục/]) {
       expect(screen.queryByText(gone)).not.toBeInTheDocument();
     }
+    expect(screen.getByText('Quy cách đóng gói')).toBeInTheDocument();
   });
 
-  it('sửa các ô cập nhật đúng bản nháp', () => {
+  it('sửa các ô cập nhật đúng bản nháp: bậc giá, quy cách, OEM, mô tả', () => {
     render(<Harness initial={[emptyDraft()]} />);
     const c = within(card());
     fireEvent.change(c.getByLabelText(/Tên sản phẩm/), { target: { value: 'Gạo ST25' } });
-    fireEvent.change(c.getByLabelText(/Giá thấp nhất/), { target: { value: '480' } });
-    fireEvent.change(c.getByLabelText(/Giá cao nhất/), { target: { value: '560.5' } });
+    fireEvent.change(c.getByLabelText(/Từ số lượng/), { target: { value: '25' } });
+    fireEvent.change(c.getByLabelText(/^Đơn giá/), { target: { value: '560' } });
+    fireEvent.click(c.getByRole('button', { name: '+ Thêm bậc giá' }));
+    fireEvent.change(c.getAllByLabelText(/Từ số lượng/)[1], { target: { value: '100' } });
+    fireEvent.change(c.getAllByLabelText(/^Đơn giá/)[1], { target: { value: '520' } });
     fireEvent.change(c.getByLabelText(/Tiền tệ/), { target: { value: 'EUR' } });
     fireEvent.change(c.getByLabelText(/Đơn vị giá/), { target: { value: 'tonne' } });
-    fireEvent.change(c.getByLabelText(/^MOQ/), { target: { value: '25' } });
-    fireEvent.change(c.getByLabelText(/Đơn vị MOQ/), { target: { value: 'container_20ft' } });
-    fireEvent.change(c.getByLabelText(/Mô tả \(tiếng Anh\)/), { target: { value: 'Rice' } });
+    fireEvent.change(c.getByLabelText(/Đơn vị MOQ/), { target: { value: 'tonne' } });
+    fireEvent.click(c.getByRole('button', { name: '+ Thêm quy cách' }));
+    fireEvent.change(c.getByLabelText(/Khối lượng/), { target: { value: '25' } });
+    fireEvent.change(c.getByLabelText(/Phù hợp kênh/), { target: { value: 'horeca' } });
+    fireEvent.change(c.getByLabelText(/Hình thức kinh doanh sản phẩm/), { target: { value: 'oem' } });
+    fireEvent.change(c.getByLabelText(/Mô tả sản phẩm/), { target: { value: 'Gạo thơm' } });
     fireEvent.click(c.getByRole('checkbox', { name: /Hiển thị công khai/ }));
     expect(latest[0]).toMatchObject({
       name: 'Gạo ST25',
-      priceMin: '480',
-      priceMax: '560.5',
+      pricingMode: 'tiers',
+      tiers: [
+        { minQuantity: '25', unitPrice: '560' },
+        { minQuantity: '100', unitPrice: '520' },
+      ],
       currency: 'EUR',
       unit: 'tonne',
-      moq: '25',
-      moqUnit: 'container_20ft',
-      descriptionEn: 'Rice',
+      moqUnit: 'tonne',
+      packagings: [{ packSize: '25', packUnit: 'kg', packType: 'bag', channel: 'horeca' }],
+      brandModel: 'oem',
+      descriptionLang: 'vi',
+      descriptionVi: 'Gạo thơm',
       isActive: false,
     });
+  });
+
+  it('chuyển sang giá ước tính: nhập giá và khoảng giá', () => {
+    render(<Harness initial={[emptyDraft()]} />);
+    const c = within(card());
+    fireEvent.click(c.getByRole('radio', { name: 'Giá ước tính' }));
+    fireEvent.change(c.getByLabelText(/^Giá ước tính/), { target: { value: '480' } });
+    fireEvent.change(c.getByLabelText(/Đến \(nếu là khoảng giá\)/), { target: { value: '560.5' } });
+    expect(latest[0]).toMatchObject({ pricingMode: 'estimate', priceMin: '480', priceMax: '560.5' });
+  });
+
+  it('viết mô tả bằng tiếng Anh: ô chính ghi vào bản tiếng Anh', () => {
+    render(<Harness initial={[emptyDraft()]} />);
+    const c = within(card());
+    fireEvent.click(c.getByRole('radio', { name: 'Viết bằng tiếng Anh' }));
+    fireEvent.change(c.getByLabelText(/Mô tả sản phẩm/), { target: { value: 'Fragrant rice' } });
+    expect(latest[0]).toMatchObject({ descriptionLang: 'en', descriptionEn: 'Fragrant rice', descriptionVi: '' });
   });
 
   it('chọn mã HS từ gợi ý ghi vào bản nháp', async () => {

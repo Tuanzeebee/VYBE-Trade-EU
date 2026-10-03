@@ -125,6 +125,7 @@ function serve(world: World = {}) {
       if (pathname === '/api/admin/evidence-types') return json(200, world.types ?? []);
       if (pathname === '/api/admin/evidence-rules') return json(200, world.evRules ?? []);
       if (pathname === '/api/admin/country-terms') return json(200, world.terms ?? []);
+      if (pathname === '/api/admin/compliance-review-issues') return json(200, []); // hàng đợi luật sư (panel riêng)
       throw new Error(`unexpected ${pathname}`);
     }),
   );
@@ -156,6 +157,10 @@ describe('Dữ liệu tuân thủ (admin)', () => {
       'VAT theo nước',
       'Loại bằng chứng',
       'Luật bằng chứng theo nhóm hàng',
+      'Hiệp định thương mại',
+      'Phân nhóm sản phẩm',
+      'Hạn ngạch thuế quan',
+      'Cảnh báo ngành',
     ]);
   });
 

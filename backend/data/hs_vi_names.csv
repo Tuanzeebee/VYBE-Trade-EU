@@ -1,0 +1,155 @@
+# Tên tiếng Việt cho mã HS 2022 hay gặp ở hàng xuất khẩu Việt Nam (U3: gõ tên sản phẩm → gợi ý mã HS).
+# Tên mô tả thông dụng kèm cách gọi đời thường (cá tra/cá basa, tiêu, điều…) để tìm được — KHÔNG phải câu
+# chữ pháp lý của Biểu thuế, không chứa thuế suất. Mã không có ở đây dùng tên tiếng Anh của HS 2022.
+# Mã có trong data/hs_codes.csv giữ tên của file đó (đã được PO duyệt), không bị ghi đè.
+code,name_vi
+# Thủy sản (chương 03, 16)
+030231,Cá ngừ vây dài tươi/ướp lạnh
+030232,Cá ngừ vây vàng tươi/ướp lạnh
+030233,Cá ngừ vằn (cá ngừ sọc dưa) tươi/ướp lạnh
+030272,"Cá tra, cá basa, cá da trơn tươi/ướp lạnh nguyên con"
+030324,"Cá tra, cá basa, cá da trơn đông lạnh nguyên con"
+030342,Cá ngừ vây vàng đông lạnh
+030343,Cá ngừ vằn (cá ngừ sọc dưa) đông lạnh
+030344,Cá ngừ mắt to đông lạnh
+030389,Cá đông lạnh loại khác
+030432,"Phi lê cá tra, cá basa tươi/ướp lạnh"
+030451,"Thịt cá tra, cá basa, cá rô phi tươi/ướp lạnh (không phải phi lê)"
+030461,Phi lê cá rô phi đông lạnh
+030471,Phi lê cá tuyết đông lạnh
+030487,"Phi lê cá ngừ đông lạnh, cá ngừ sashimi"
+030489,Phi lê cá đông lạnh loại khác
+030499,Thịt cá đông lạnh loại khác (chả cá sống)
+030559,"Cá khô, cá sấy (không hun khói)"
+030616,Tôm nước lạnh đông lạnh
+030617,"Tôm đông lạnh (tôm thẻ, tôm sú), còn vỏ hoặc đã bóc vỏ"
+030635,Tôm nước lạnh sống/tươi/ướp lạnh
+030636,"Tôm sống, tươi, ướp lạnh (tôm thẻ, tôm sú)"
+030614,Cua ghẹ đông lạnh
+030633,Cua ghẹ sống/tươi/ướp lạnh
+030742,"Mực, mực ống, mực nang sống/tươi/ướp lạnh"
+030743,"Mực, mực ống, mực nang đông lạnh"
+030749,"Mực khô, mực sấy, mực muối"
+030751,Bạch tuộc sống/tươi/ướp lạnh
+030752,Bạch tuộc đông lạnh
+030771,"Nghêu, sò, hến sống/tươi/ướp lạnh"
+030772,"Nghêu, sò, hến đông lạnh"
+160411,Cá hồi chế biến/đóng hộp
+160414,"Cá ngừ chế biến, cá ngừ đóng hộp"
+160419,"Cá chế biến loại khác (cá tra tẩm bột, cá kho)"
+160420,"Cá chế biến khác, chả cá, surimi"
+160521,"Tôm chế biến (tôm hấp, tôm tẩm bột), không đóng hộp kín khí"
+160529,"Tôm chế biến, tôm đóng hộp"
+160554,"Mực, bạch tuộc chế biến"
+160556,"Nghêu, sò chế biến"
+# Rau quả, trái cây, hạt (chương 07, 08, 20)
+070200,"Cà chua tươi"
+070960,"Ớt tươi, ớt chuông"
+071010,Khoai tây đông lạnh
+071080,Rau đông lạnh loại khác
+071290,"Rau sấy khô loại khác, rau củ sấy"
+071410,"Sắn, khoai mì tươi hoặc sấy khô (sắn lát)"
+071420,Khoai lang tươi hoặc sấy khô
+080111,"Dừa sấy khô, cơm dừa sấy"
+080112,"Dừa tươi còn gáo, dừa xiêm"
+080119,Dừa tươi loại khác
+080131,"Hạt điều chưa bóc vỏ, điều thô"
+080132,"Hạt điều nhân, điều đã bóc vỏ"
+080390,Chuối tươi hoặc khô
+080430,Dứa (thơm) tươi hoặc khô
+080450,"Xoài, ổi, măng cụt tươi hoặc sấy"
+080510,Cam tươi hoặc khô
+080540,"Bưởi, bưởi da xanh"
+080550,"Chanh, chanh không hạt, chanh dây (loại chanh)"
+080711,Dưa hấu tươi
+080719,Dưa lưới và các loại dưa khác
+081060,Sầu riêng tươi
+081090,"Thanh long, chanh leo (chanh dây), vải, nhãn, chôm chôm, mít tươi"
+081190,"Trái cây đông lạnh (thanh long, xoài, sầu riêng, mít đông lạnh)"
+081340,"Trái cây sấy khô khác (mít sấy, xoài sấy, chuối sấy)"
+200819,"Hạt, điều rang muối và các loại hạt chế biến khác"
+200899,"Trái cây chế biến khác (trái cây sấy dẻo, ngâm)"
+200989,"Nước ép trái cây, nước ép rau khác"
+# Cà phê, chè, gia vị (chương 09, 21)
+090111,"Cà phê nhân, cà phê hạt chưa rang (robusta, arabica)"
+090112,Cà phê chưa rang đã khử caffeine
+090121,"Cà phê rang xay, cà phê hạt rang"
+090122,Cà phê rang đã khử caffeine
+090210,"Chè xanh, trà xanh đóng gói ≤ 3 kg"
+090220,"Chè xanh, trà xanh loại khác"
+090230,"Chè đen, trà đen đóng gói ≤ 3 kg"
+090240,"Chè đen, trà đen loại khác, trà ô long"
+090411,"Hạt tiêu, tiêu đen, tiêu trắng nguyên hạt"
+090412,"Tiêu xay, tiêu nghiền"
+090421,"Ớt khô, ớt sấy chưa xay"
+090422,"Ớt bột, ớt xay"
+090611,Quế Sri Lanka
+090619,"Quế, quế thanh, quế ống (quế Trà Bồng, quế Yên Bái)"
+090620,"Quế xay, bột quế"
+090831,Bạch đậu khấu
+090961,"Hoa hồi, hạt hồi, tiểu hồi chưa xay"
+091011,Gừng tươi hoặc khô chưa xay
+091012,Gừng xay
+091030,"Nghệ, nghệ khô"
+210111,"Cà phê hòa tan, chiết xuất cà phê"
+210112,"Sản phẩm từ cà phê (cà phê 3 trong 1)"
+210390,"Nước mắm, nước chấm, tương ớt, nước sốt"
+210690,"Thực phẩm chế biến khác, thực phẩm chức năng"
+# Ngũ cốc, tinh bột (chương 10, 11, 19)
+100610,"Thóc, lúa gạo chưa xát"
+100620,Gạo lứt
+100630,"Gạo trắng, gạo xát, gạo thơm (Jasmine, ST25)"
+100640,Gạo tấm
+110290,"Bột gạo, bột ngũ cốc khác (trừ bột mì, bột ngô)"
+110814,"Tinh bột sắn, tinh bột khoai mì"
+190219,"Bún, phở, miến, mì khô không trứng"
+190230,"Mì ăn liền, mì đã chế biến"
+190590,"Bánh tráng, bánh phồng tôm, bánh quy, bánh các loại"
+# Nông sản khác (chương 04, 12, 15, 17, 18, 20, 22)
+040900,Mật ong tự nhiên
+120242,"Lạc nhân, đậu phộng đã bóc vỏ"
+120740,"Hạt vừng, hạt mè"
+151311,Dầu dừa thô
+170199,"Đường tinh luyện, đường trắng"
+180100,Hạt ca cao
+180400,Bơ ca cao
+220299,Nước giải khát không cồn khác (nước dừa đóng hộp)
+# Cao su, gỗ, thủ công mỹ nghệ, nội thất (chương 40, 44, 46, 69, 94)
+400110,Mủ cao su tự nhiên
+400121,Cao su tờ xông khói (RSS)
+400122,"Cao su định chuẩn kỹ thuật (SVR, TSNR)"
+440122,"Dăm gỗ, gỗ vụn không thuộc loài lá kim"
+440131,Viên nén gỗ
+442199,"Sản phẩm gỗ khác, đồ gỗ gia dụng"
+460121,"Chiếu, thảm tre"
+460122,"Chiếu, thảm mây"
+460129,"Chiếu, thảm cói, lục bình"
+460211,"Giỏ, rổ, sản phẩm đan bằng tre"
+460212,"Giỏ, sản phẩm đan bằng mây"
+460219,"Sản phẩm đan bằng cói, lục bình, lá buông"
+691110,Bộ đồ ăn bằng sứ
+691200,"Đồ gốm sứ gia dụng (không phải sứ), gốm Bát Tràng"
+940161,"Ghế khung gỗ có đệm"
+940169,Ghế khung gỗ loại khác
+940330,Nội thất văn phòng bằng gỗ
+940340,Nội thất nhà bếp bằng gỗ
+940350,Nội thất phòng ngủ bằng gỗ
+940360,"Đồ nội thất gỗ khác (bàn, tủ, kệ)"
+# Dệt may, giày dép, túi xách (chương 42, 61, 62, 63, 64)
+420221,Túi xách mặt ngoài bằng da
+420222,Túi xách mặt ngoài bằng nhựa hoặc vải
+420292,"Túi, hộp đựng mặt ngoài bằng nhựa hoặc vải (ba lô, túi du lịch)"
+610910,"Áo thun, áo phông cotton dệt kim"
+610990,"Áo thun, áo phông sợi khác dệt kim"
+611020,"Áo len, áo nỉ cotton dệt kim"
+611030,"Áo len, áo nỉ sợi nhân tạo dệt kim"
+620140,Áo khoác nam sợi nhân tạo
+620342,"Quần nam cotton dệt thoi, quần kaki, quần jeans nam"
+620462,"Quần nữ cotton dệt thoi, quần jeans nữ"
+620520,Áo sơ mi nam cotton
+620630,Áo sơ mi nữ cotton
+630231,"Khăn trải giường, ga gối cotton"
+640299,"Giày dép đế và mũ bằng cao su hoặc nhựa"
+640399,"Giày mũ da, giày da khác"
+640411,"Giày thể thao, giày vải mũ bằng vật liệu dệt"
+640419,"Giày dép mũ vải loại khác"

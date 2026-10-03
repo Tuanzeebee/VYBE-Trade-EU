@@ -50,6 +50,8 @@ The Buyer may describe its needs, receive matched results with explanations, vie
 
 RFQs and communications must be truthful and for genuine commercial purposes; the Buyer is responsible for the content it sends and for keeping Supplier-provided information confidential.
 
+When a verified Buyer views a Supplier's profile, the Supplier may see the Buyer's business name under "Who viewed your profile". The Buyer can turn on anonymous viewing in its Company profile, in which case the Supplier only sees a view count.
+
 VYBE does not guarantee that any Supplier will respond, or any connection/transaction outcome.
 
 ## Article 7. Representations and Prohibited Conduct

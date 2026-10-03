@@ -27,12 +27,25 @@ const BUYER = {
   description_vi: null,
   description_en: null,
   logo_key: null,
+  industry_other: null,
+  phone: null,
+  legal_rep_name: null,
+  legal_rep_title: null,
+  issuing_authority: null,
+  offering_type: null,
+  factory_address: null,
+  capacity_value: null,
+  capacity_unit: null,
+  capacity_period: null,
+  main_customers: null,
+  location_public: false,
+  facility_codes: [],
   export_markets: [],
   languages_spoken: [],
   company_size: '51_200',
   procurement_estimate: '500k_2m',
   vat_number: 'DE123456789',
-  eori_number: 'DE123456789012',
+  eori_number: 'DE123456789012', hide_profile_views: false,
   sourcing_categories: ['agriculture', 'spices'],
   verification_status: 'unverified',
   verification_level: 'basic',
@@ -100,11 +113,23 @@ describe('buyerProfileToCompany — form buyer cũ → CompanyIn', () => {
       business_type: 'Nhà nhập khẩu',
       website: 'https://globalfoods.example.de',
       contact_email: 'sourcing@globalfoods.example.de',
+      contact_name: null,
+      city: null,
+      phone: null,
+      registration_number: null,
+      lei_code: null,
+      issuing_authority: null,
+      address: null,
       vat_number: 'DE123456789',
-      eori_number: 'DE123456789012',
+      eori_number: 'DE123456789012', hide_profile_views: false,
       procurement_estimate: '500k_2m',
       sourcing_categories: ['agriculture', 'spices'],
     });
+  });
+
+  it('U5: người liên hệ, thành phố, điện thoại được gửi lên server', () => {
+    const body = buyerProfileToCompany({ companyName: 'A', country: 'Germany', contactName: ' Anna ', city: 'Hamburg', phone: '+49 40 123' });
+    expect([body.contact_name, body.city, body.phone]).toEqual(['Anna', 'Hamburg', '+49 40 123']);
   });
 
   it('bỏ ô trống, nhóm hàng lạ và trùng; không gửi trường của exporter', () => {

@@ -9,6 +9,15 @@ export type EvidenceTypeRow = components['schemas']['EvidenceTypeOut'];
 export type EvidenceRuleRow = components['schemas']['RuleOut'];
 export type TariffLineInput = components['schemas']['TariffLineIn'];
 export type TariffLinePatch = components['schemas']['TariffLinePatch'];
+export type TradeAgreement = components['schemas']['TradeAgreementOut'];
+export type TradeAgreementInput = components['schemas']['TradeAgreementIn'];
+export type TradeAgreementPatch = components['schemas']['TradeAgreementPatch'];
+export type ProductSubtypeInput = components['schemas']['ProductSubtypeIn'];
+export type ProductSubtypePatch = components['schemas']['ProductSubtypePatch'];
+export type TariffQuotaInput = components['schemas']['TariffQuotaIn'];
+export type TariffQuotaPatch = components['schemas']['TariffQuotaPatch'];
+export type SectorAlertInput = components['schemas']['SectorAlertIn'];
+export type SectorAlertPatch = components['schemas']['SectorAlertPatch'];
 export type RooRuleInput = components['schemas']['RooRuleIn'];
 export type RooRulePatch = components['schemas']['RooRulePatch'];
 export type EvidenceTypeInput = components['schemas']['EvidenceTypeIn'];
@@ -61,14 +70,28 @@ export function decideRequest(requestId: string, decision: Decision, reason: str
   );
 }
 
-export function reviewEvidence(evidenceId: string, decision: 'approve' | 'reject', reason: string): Promise<void> {
+/** U4: admin nhập ngày đọc trên giấy tờ khi duyệt (seller không bắt buộc nhập). */
+export function reviewEvidence(
+  evidenceId: string,
+  decision: 'approve' | 'reject',
+  reason: string,
+  dates: { issuedAt?: string; expiresAt?: string } = {},
+): Promise<void> {
   return act(
     () =>
       createApiClient().POST('/api/admin/evidences/{evidence_id}/review', {
         params: { path: { evidence_id: evidenceId } },
-        body: { decision, reason: reason.trim() || null },
+        body: {
+          decision,
+          reason: reason.trim() || null,
+          issued_at: dates.issuedAt || null,
+          expires_at: dates.expiresAt || null,
+        },
       }),
-    { 422: 'Cần nhập lý do khi từ chối bằng chứng.', 404: 'Không tìm thấy bằng chứng.' },
+    {
+      422: 'Từ chối cần lý do; duyệt loại giấy tờ có hạn dùng cần ngày cấp (không ở tương lai, trước ngày hết hạn).',
+      404: 'Không tìm thấy bằng chứng.',
+    },
   );
 }
 
@@ -79,7 +102,7 @@ export const listRooRules = () => read(() => createApiClient().GET('/api/admin/r
 export const listEvidenceTypes = () => read(() => createApiClient().GET('/api/admin/evidence-types'));
 export const listEvidenceRules = () => read(() => createApiClient().GET('/api/admin/evidence-rules'));
 
-const REVIEW_ERRORS = { 404: 'Không tìm thấy dòng dữ liệu.' };
+const REVIEW_ERRORS = { 404: 'Không tìm thấy dòng dữ liệu.', 409: 'Dòng minh hoạ không duyệt được — hãy tạo dòng thật có nguồn pháp lý.' };
 const DELETE_ERRORS = { 404: 'Không tìm thấy dòng dữ liệu.', 409: 'Dòng đã duyệt không xóa được.' };
 
 export const reviewTariffLine = (id: string) =>
@@ -204,7 +227,7 @@ export const getStats = () => read(() => createApiClient().GET('/api/admin/stats
 export const listCompanies = (query: { q?: string; status?: AdminCompany['verification_status']; hidden?: boolean; limit?: number; offset?: number } = {}) =>
   read(() => createApiClient().GET('/api/admin/companies', { params: { query } }));
 
-export const listProducts = (query: { company_id?: string; q?: string; limit?: number; offset?: number } = {}) =>
+export const listProducts = (query: { company_id?: string; q?: string; limit?: number; offset?: number; recent_days?: number } = {}) =>
   read(() => createApiClient().GET('/api/admin/products', { params: { query } }));
 
 export const listAuditLogs = (query: { entity_type?: string; entity_id?: string; action_type?: string; limit?: number; offset?: number } = {}) =>
@@ -247,3 +270,74 @@ export const reviewCorpusDocument = (id: string) =>
     () => createApiClient().POST('/api/admin/corpus-documents/{document_id}/review', { params: { path: { document_id: id } } }),
     { 404: 'Không tìm thấy tài liệu.' },
   );
+
+// ── Hiệp định thương mại (U12) ──────────────────────────────────────────────
+export const listTradeAgreements = () => read(() => createApiClient().GET('/api/admin/trade-agreements'));
+export const createTradeAgreement = (body: TradeAgreementInput) => save(() => createApiClient().POST('/api/admin/trade-agreements', { body }));
+export const updateTradeAgreement = (id: string, body: TradeAgreementPatch) =>
+  save(() => createApiClient().PATCH('/api/admin/trade-agreements/{agreement_id}', { params: { path: { agreement_id: id } }, body }));
+export const reviewTradeAgreement = (id: string) =>
+  act(() => createApiClient().POST('/api/admin/trade-agreements/{agreement_id}/review', { params: { path: { agreement_id: id } } }), REVIEW_ERRORS);
+export const deleteTradeAgreement = (id: string) =>
+  act(
+    () => createApiClient().DELETE('/api/admin/trade-agreements/{agreement_id}', { params: { path: { agreement_id: id } } }),
+    { 404: 'Không tìm thấy dòng dữ liệu.', 409: 'Hiệp định đã duyệt hoặc còn dòng thuế dùng thì không xóa được.' },
+  );
+
+// ── Phân nhóm sản phẩm và hạn ngạch (U13) ────────────────────────────────────
+export const listProductSubtypes = () => read(() => createApiClient().GET('/api/admin/product-subtypes'));
+export const createProductSubtype = (body: ProductSubtypeInput) => save(() => createApiClient().POST('/api/admin/product-subtypes', { body }));
+export const updateProductSubtype = (id: string, body: ProductSubtypePatch) =>
+  save(() => createApiClient().PATCH('/api/admin/product-subtypes/{subtype_id}', { params: { path: { subtype_id: id } }, body }));
+export const reviewProductSubtype = (id: string) =>
+  act(() => createApiClient().POST('/api/admin/product-subtypes/{subtype_id}/review', { params: { path: { subtype_id: id } } }), REVIEW_ERRORS);
+export const deleteProductSubtype = (id: string) =>
+  act(
+    () => createApiClient().DELETE('/api/admin/product-subtypes/{subtype_id}', { params: { path: { subtype_id: id } } }),
+    { 404: 'Không tìm thấy dòng dữ liệu.', 409: 'Phân nhóm đã duyệt hoặc còn trong danh sách đủ điều kiện của hạn ngạch thì không xóa được.' },
+  );
+export const listTariffQuotas = () => read(() => createApiClient().GET('/api/admin/tariff-quotas'));
+export const createTariffQuota = (body: TariffQuotaInput) => save(() => createApiClient().POST('/api/admin/tariff-quotas', { body }));
+export const updateTariffQuota = (id: string, body: TariffQuotaPatch) =>
+  save(() => createApiClient().PATCH('/api/admin/tariff-quotas/{quota_id}', { params: { path: { quota_id: id } }, body }));
+export const reviewTariffQuota = (id: string) =>
+  act(() => createApiClient().POST('/api/admin/tariff-quotas/{quota_id}/review', { params: { path: { quota_id: id } } }), REVIEW_ERRORS);
+export const deleteTariffQuota = (id: string) =>
+  act(() => createApiClient().DELETE('/api/admin/tariff-quotas/{quota_id}', { params: { path: { quota_id: id } } }), DELETE_ERRORS);
+
+// ── Cảnh báo ngành (U14) ─────────────────────────────────────────────────────
+const DEMO_REVIEW_ERRORS = { 404: 'Không tìm thấy dòng dữ liệu.', 409: 'Dòng minh hoạ không duyệt được — hãy tạo dòng thật có nguồn pháp lý.' };
+export const listSectorAlerts = () => read(() => createApiClient().GET('/api/admin/sector-alerts'));
+export const createSectorAlert = (body: SectorAlertInput) => save(() => createApiClient().POST('/api/admin/sector-alerts', { body }));
+export const updateSectorAlert = (id: string, body: SectorAlertPatch) =>
+  save(() => createApiClient().PATCH('/api/admin/sector-alerts/{alert_id}', { params: { path: { alert_id: id } }, body }));
+export const reviewSectorAlert = (id: string) =>
+  act(() => createApiClient().POST('/api/admin/sector-alerts/{alert_id}/review', { params: { path: { alert_id: id } } }), DEMO_REVIEW_ERRORS);
+export const deleteSectorAlert = (id: string) =>
+  act(() => createApiClient().DELETE('/api/admin/sector-alerts/{alert_id}', { params: { path: { alert_id: id } } }), DELETE_ERRORS);
+
+// ── Thống kê thương mại (U15) ────────────────────────────────────────────────
+export type TradeImportBatch = components['schemas']['TradeImportBatchOut'];
+export type PriorityProduct = components['schemas']['PriorityProductOut'];
+export const listTradeImports = () => read(() => createApiClient().GET('/api/admin/trade-imports'));
+export const listPriorityProducts = () => read(() => createApiClient().GET('/api/admin/trade-imports/priority-products'));
+export const startTradeImport = (body: { products?: string[]; year_from?: number; year_to?: number }) =>
+  save(() => createApiClient().POST('/api/admin/trade-imports', { body }));
+
+const TRADE_FILE_ERRORS: Record<number, string> = {
+  413: 'File quá lớn (tối đa 2 MB).',
+  422: 'File không hợp lệ: cần CSV với các cột reporter, partner, product, year, flow, value_eur, quantity_kg.',
+};
+
+export async function uploadTradeFile(file: File, source: 'eurostat_comext' | 'curated'): Promise<TradeImportBatch> {
+  const form = new FormData();
+  form.append('file', file);
+  let response: Response;
+  try {
+    response = await fetch(new Request(apiUrl(`/api/admin/trade-imports/file?source=${source}`), { method: 'POST', body: form, credentials: 'include' }));
+  } catch {
+    throw new Error(NETWORK);
+  }
+  if (!response.ok) throw new Error(TRADE_FILE_ERRORS[response.status] ?? NETWORK);
+  return (await response.json()) as TradeImportBatch;
+}

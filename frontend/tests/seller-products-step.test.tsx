@@ -22,7 +22,7 @@ const ACCOUNT: DemoUser = {
 };
 
 const RICE = { code: '100630', formatted: '1006.30', name_vi: 'Gạo xát', name_en: 'Semi-milled or wholly milled rice' };
-const valid = (name = 'Gạo thơm'): ProductDraft => ({ ...emptyDraft(), name, hs: RICE, priceMin: '480', priceMax: '560', unit: 'tonne', moq: '25', moqUnit: 'tonne' });
+const valid = (name = 'Gạo thơm'): ProductDraft => ({ ...emptyDraft(), name, hs: RICE, pricingMode: 'estimate', priceMin: '480', priceMax: '560', unit: 'tonne', moq: '25', moqUnit: 'tonne' });
 
 interface Options {
   initialStep?: number;
@@ -62,7 +62,7 @@ describe('SellerOnboarding bước 2 — sản phẩm (B5)', () => {
 
   it('bỏ các thành phần của form cũ: sản phẩm chính, quy cách, năng lực, thị trường theo sản phẩm, gợi ý mẫu', () => {
     renderOnboarding({ initialProducts: [valid()] });
-    for (const gone of [/Sản phẩm chính/, /Quy cách đóng gói/, /Năng lực cung ứng/, /Gạo ST25 Hữu Cơ/, /Thêm thị trường/]) {
+    for (const gone of [/Sản phẩm chính/, /Năng lực cung ứng/, /Gạo ST25 Hữu Cơ/, /Thêm thị trường/]) {
       expect(screen.queryByText(gone)).not.toBeInTheDocument();
     }
     expect(screen.queryByTitle(/Thêm thị trường/)).not.toBeInTheDocument();
@@ -103,21 +103,59 @@ describe('SellerOnboarding bước 2 — sản phẩm (B5)', () => {
   });
 });
 
-describe('SellerOnboarding bước 1 — thị trường xuất khẩu cấp công ty (B5)', () => {
-  it('có ô chọn thị trường xuất khẩu; nạp sẵn từ hồ sơ đã lưu', () => {
-    renderOnboarding({ initialStep: 1, initialCompany: { markets: 'EU,DE' } });
+describe('SellerOnboarding bước 2 — năng lực và thị trường xuất khẩu cấp công ty (U2)', () => {
+  it('có ô chọn thị trường xuất khẩu (không giới hạn ở EU); nạp sẵn từ hồ sơ đã lưu', () => {
+    renderOnboarding({ initialStep: 2, initialCompany: { markets: 'EU,DE,US' } });
+    fireEvent.click(screen.getByRole('tab', { name: 'Năng lực đáp ứng' }));
     expect(screen.getByRole('checkbox', { name: 'Châu Âu (EU)' })).toBeChecked();
     expect(screen.getByRole('checkbox', { name: 'Germany' })).toBeChecked();
+    expect(screen.getByRole('checkbox', { name: 'United States' })).toBeChecked();
     expect(screen.getByRole('checkbox', { name: 'France' })).not.toBeChecked();
   });
 
   it('tick / bỏ tick cập nhật lựa chọn', () => {
+    renderOnboarding({ initialStep: 2 });
+    fireEvent.click(screen.getByRole('tab', { name: 'Năng lực đáp ứng' }));
+    const fr = screen.getByRole('checkbox', { name: 'France' });
+    fireEvent.click(fr);
+    expect(fr).toBeChecked();
+    fireEvent.click(fr);
+    expect(fr).not.toBeChecked();
+  });
+
+  it('có khu năng lực đáp ứng: sản lượng, quy mô nhân sự, mã vùng trồng', () => {
+    renderOnboarding({ initialStep: 2, initialCompany: { growingAreaCodes: 'VN-DL-1' } });
+    fireEvent.click(screen.getByRole('tab', { name: 'Năng lực đáp ứng' }));
+    expect(screen.getByRole('heading', { name: 'Năng lực đáp ứng' })).toBeInTheDocument();
+    expect(screen.getByLabelText('Sản lượng có thể cung cấp')).toBeInTheDocument();
+    expect(screen.getByLabelText('Quy mô nhân sự')).toBeInTheDocument();
+    expect(screen.getByLabelText('Mã số vùng trồng')).toHaveValue('VN-DL-1');
+  });
+});
+
+describe('SellerOnboarding — sản phẩm hay dịch vụ (U2)', () => {
+  it('bước 1 hỏi doanh nghiệp cung cấp gì, mặc định là sản phẩm', () => {
     renderOnboarding({ initialStep: 1 });
-    const us = screen.getByRole('checkbox', { name: 'France' });
-    fireEvent.click(us);
-    expect(us).toBeChecked();
-    fireEvent.click(us);
-    expect(us).not.toBeChecked();
+    expect(screen.getByRole('radio', { name: /^Sản phẩm/ })).toBeChecked();
+    expect(screen.getByRole('radio', { name: /^Dịch vụ/ })).not.toBeChecked();
+  });
+
+  it('chỉ làm dịch vụ: bước 2 hỏi dịch vụ, không hỏi sản phẩm hay năng lực nhà máy', () => {
+    renderOnboarding({ initialStep: 2, initialCompany: { offeringType: 'services' } });
+    expect(screen.getByRole('heading', { name: 'Dịch vụ cung cấp' })).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: 'Sản phẩm cung cấp' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: 'Năng lực đáp ứng' })).not.toBeInTheDocument();
+  });
+
+  it('chỉ làm dịch vụ mà chưa thêm dịch vụ nào thì không qua được bước 2', () => {
+    renderOnboarding({ initialStep: 2, initialCompany: { offeringType: 'services' } });
+    nextFromStepTwo();
+    expect(screen.getByRole('alert')).toHaveTextContent('Vui lòng thêm ít nhất một dịch vụ.');
+  });
+
+  it('cơ quan cấp cũ "Sở Kế hoạch và Đầu tư" được báo tên hiện hành', () => {
+    renderOnboarding({ initialStep: 1, initialCompany: { issuingAuthority: 'Sở Kế hoạch và Đầu tư TP. Hồ Chí Minh' } });
+    expect(screen.getByText('Sở Tài chính TP. Hồ Chí Minh')).toBeInTheDocument();
   });
 });
 
