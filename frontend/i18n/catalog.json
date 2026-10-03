@@ -16168,5 +16168,305 @@
     "Enter the shipment details on the left, then click \"Calculate duty savings\". The customs value, the duty payable and the saving from the FTA will appear here.",
     "Saisissez les informations de l'envoi à gauche puis cliquez sur « Calculer l'économie de droits ». La valeur en douane, les droits à payer et l'économie liée à l'ALE s'afficheront ici.",
     "左側に貨物情報を入力して「関税の節約額を計算」を押すと、課税価額・納付する関税・FTAによる節約額がここに表示されます。"
+  ],
+  "Tình trạng hạn ngạch": [
+    "Quota status",
+    "État du contingent",
+    "割当の状況"
+  ],
+  "Chu kỳ": [
+    "Period",
+    "Période",
+    "期間"
+  ],
+  "còn": [
+    "left:",
+    "reste :",
+    "残り"
+  ],
+  "Ngày nhập khẩu nằm ngoài chu kỳ của hạn ngạch này.": [
+    "The import date is outside this quota's period.",
+    "La date d'importation est en dehors de la période de ce contingent.",
+    "輸入日はこの割当の期間外です。"
+  ],
+  "Chưa có thông tin chu kỳ của hạn ngạch.": [
+    "The quota period is not available.",
+    "La période du contingent n'est pas disponible.",
+    "割当の期間情報がありません。"
+  ],
+  "Số dư": [
+    "Balance",
+    "Solde",
+    "残量"
+  ],
+  "Còn hạn ngạch": [
+    "Quota available",
+    "Contingent disponible",
+    "割当あり"
+  ],
+  "Sắp hết": [
+    "Running low",
+    "Bientôt épuisé",
+    "残りわずか"
+  ],
+  "Đã hết": [
+    "Exhausted",
+    "Épuisé",
+    "枯渇"
+  ],
+  "Chưa biết số dư": [
+    "Balance unknown",
+    "Solde inconnu",
+    "残量不明"
+  ],
+  "tại ngày": [
+    "as of",
+    "au",
+    "時点"
+  ],
+  "nguồn": [
+    "source",
+    "source",
+    "出典"
+  ],
+  "Số liệu đã cũ, số dư thực tế có thể đã thay đổi.": [
+    "The data is out of date; the actual balance may have changed.",
+    "Les données sont anciennes ; le solde réel a pu changer.",
+    "データが古く、実際の残量は変わっている可能性があります。"
+  ],
+  "Chưa có số liệu số dư nên không thể khẳng định hạn ngạch còn hay đã hết. Hãy xác nhận với nhà nhập khẩu trước khi chốt giá.": [
+    "There is no balance data, so we cannot say whether the quota is still available. Confirm with the importer before fixing the price.",
+    "Aucune donnée de solde : impossible d'affirmer que le contingent est disponible. Confirmez avec l'importateur avant de fixer le prix.",
+    "残量データがないため、割当が残っているか判断できません。価格を確定する前に輸入者へ確認してください。"
+  ],
+  "Lô hàng này chiếm": [
+    "This shipment takes up",
+    "Cet envoi représente",
+    "この貨物が占める割合"
+  ],
+  "tổng hạn ngạch": [
+    "of the total quota",
+    "du contingent total",
+    "（割当全体に対して）"
+  ],
+  "Cần giấy phép / chứng nhận": [
+    "Licence / certificate required",
+    "Licence / certificat requis",
+    "許可証・証明書が必要"
+  ],
+  "Giá trị của hạn ngạch": [
+    "Value of the quota",
+    "Valeur du contingent",
+    "割当の価値"
+  ],
+  "cho lô này": [
+    "for this shipment",
+    "pour cet envoi",
+    "この貨物の場合"
+  ],
+  "trị giá tính thuế": [
+    "of the customs value",
+    "de la valeur en douane",
+    "（課税価額に対して）"
+  ],
+  "Sau chi phí để có hạn ngạch": [
+    "After the cost of obtaining the quota",
+    "Après le coût d'obtention du contingent",
+    "割当取得費用を差し引くと"
+  ],
+  "lợi ích ròng": [
+    "net benefit",
+    "bénéfice net",
+    "純利益"
+  ],
+  "Đáng để xin hạn ngạch": [
+    "Worth applying for the quota",
+    "Il vaut la peine de demander le contingent",
+    "割当を申請する価値あり"
+  ],
+  "Chưa đáng để xin hạn ngạch": [
+    "Not worth applying for the quota",
+    "Cela ne vaut pas la peine de demander le contingent",
+    "割当を申請する価値は低い"
+  ],
+  "Nước nhập khẩu cấp theo thứ tự nộp hồ sơ": [
+    "Granted by the importing country in order of applications",
+    "Attribué par le pays importateur selon l'ordre des demandes",
+    "輸入国が申請順に付与"
+  ],
+  "Cơ quan nước xuất khẩu cấp giấy phép": [
+    "Licence issued by the exporting country's authority",
+    "Licence délivrée par l'autorité du pays exportateur",
+    "輸出国の当局が許可証を発給"
+  ],
+  "Phân bổ theo hạn mức cho từng doanh nghiệp": [
+    "Allocated per company",
+    "Alloué par entreprise",
+    "企業ごとに割当"
+  ],
+  "Cách phân bổ khác (xem ghi chú)": [
+    "Other allocation method (see notes)",
+    "Autre méthode d'allocation (voir notes)",
+    "その他の配分方法（備考参照）"
+  ],
+  "Tấn (mặc định)": [
+    "Tonne (default)",
+    "Tonne (par défaut)",
+    "トン（既定）"
+  ],
+  "Kilôgam (kg)": [
+    "Kilogram (kg)",
+    "Kilogramme (kg)",
+    "キログラム (kg)"
+  ],
+  "Khối lượng lô hàng (kg)": [
+    "Shipment weight (kg)",
+    "Poids de l'envoi (kg)",
+    "貨物の重量 (kg)"
+  ],
+  "Chi phí để có hạn ngạch (không bắt buộc)": [
+    "Cost of obtaining the quota (optional)",
+    "Coût d'obtention du contingent (facultatif)",
+    "割当の取得費用（任意）"
+  ],
+  "Phí giấy phép, chi phí chờ đợi... Nhập để xem lợi ích ròng và điểm hòa vốn của hạn ngạch.": [
+    "Licence fees, waiting costs... Enter it to see the net benefit and the break-even point of the quota.",
+    "Frais de licence, coûts d'attente... Saisissez-le pour voir le bénéfice net et le seuil de rentabilité du contingent.",
+    "許可証費用や待機コストなど。入力すると割当の純利益と損益分岐点を確認できます。"
+  ],
+  "Đơn vị khối lượng đã chọn không quy đổi được sang đơn vị của hạn ngạch. Vui lòng chọn lại đơn vị.": [
+    "The chosen weight unit cannot be converted into the quota's unit. Please choose another unit.",
+    "L'unité de poids choisie ne peut pas être convertie dans l'unité du contingent. Veuillez en choisir une autre.",
+    "選択した重量単位は割当の単位に換算できません。別の単位を選んでください。"
+  ],
+  "Số dư hạn ngạch": [
+    "Quota balance",
+    "Solde du contingent",
+    "割当の残量"
+  ],
+  "Nhập khối lượng đã dùng tại một ngày từ nguồn chính thức. Số liệu cũ hơn 14 ngày được gắn nhãn \"số liệu cũ\"; chưa có số liệu thì máy tính hiện \"chưa biết số dư\".": [
+    "Enter the volume used on a given date from an official source. Data older than 14 days is marked \"out of date\"; with no data the calculator shows \"balance unknown\".",
+    "Saisissez le volume utilisé à une date donnée depuis une source officielle. Les données de plus de 14 jours sont marquées « anciennes » ; sans données, le calculateur affiche « solde inconnu ».",
+    "公的な情報源から、ある日付の使用量を入力してください。14日より古いデータは「古いデータ」と表示され、データがない場合は「残量不明」と表示されます。"
+  ],
+  "Chưa có hạn ngạch nào. Thêm hạn ngạch ở bảng bên trên trước khi nhập số dư.": [
+    "There is no quota yet. Add a quota in the table above before entering a balance.",
+    "Aucun contingent pour le moment. Ajoutez un contingent dans le tableau ci-dessus avant de saisir un solde.",
+    "割当がまだありません。残量を入力する前に、上の表で割当を追加してください。"
+  ],
+  "Chọn hạn ngạch": [
+    "Choose a quota",
+    "Choisir un contingent",
+    "割当を選択"
+  ],
+  "Số liệu tại ngày": [
+    "Data as of",
+    "Données au",
+    "データの日付"
+  ],
+  "Khối lượng đã dùng": [
+    "Volume used",
+    "Volume utilisé",
+    "使用量"
+  ],
+  "Nguồn số liệu": [
+    "Data source",
+    "Source des données",
+    "データの出典"
+  ],
+  "Lưu số dư": [
+    "Save balance",
+    "Enregistrer le solde",
+    "残量を保存"
+  ],
+  "Đang lưu...": [
+    "Saving...",
+    "Enregistrement...",
+    "保存中..."
+  ],
+  "Đã lưu số dư.": [
+    "Balance saved.",
+    "Solde enregistré.",
+    "残量を保存しました。"
+  ],
+  "Vui lòng chọn hạn ngạch.": [
+    "Please choose a quota.",
+    "Veuillez choisir un contingent.",
+    "割当を選択してください。"
+  ],
+  "Khối lượng đã dùng phải là số không âm, tối đa 3 chữ số thập phân.": [
+    "The volume used must be a non-negative number with at most 3 decimals.",
+    "Le volume utilisé doit être un nombre positif ou nul avec au plus 3 décimales.",
+    "使用量は0以上の数値で、小数は3桁までです。"
+  ],
+  "Vui lòng ghi nguồn số liệu (tối thiểu 3 ký tự).": [
+    "Please state the data source (at least 3 characters).",
+    "Veuillez indiquer la source des données (3 caractères minimum).",
+    "データの出典を入力してください（3文字以上）。"
+  ],
+  "Dữ liệu chưa hợp lệ: ngày không ở tương lai, khối lượng là số không âm, nguồn tối thiểu 3 ký tự.": [
+    "Invalid data: the date cannot be in the future, the volume must be non-negative, the source needs at least 3 characters.",
+    "Données invalides : la date ne peut pas être dans le futur, le volume doit être positif ou nul, la source doit comporter au moins 3 caractères.",
+    "データが無効です。日付は未来不可、使用量は0以上、出典は3文字以上にしてください。"
+  ],
+  "Không tìm thấy hạn ngạch này.": [
+    "This quota was not found.",
+    "Ce contingent est introuvable.",
+    "この割当が見つかりません。"
+  ],
+  "Không tải được số dư. Vui lòng thử lại.": [
+    "Could not load the balances. Please try again.",
+    "Impossible de charger les soldes. Veuillez réessayer.",
+    "残量を読み込めませんでした。もう一度お試しください。"
+  ],
+  "Hạn ngạch này chưa có số liệu số dư: máy tính sẽ hiện \"chưa biết số dư\".": [
+    "This quota has no balance data yet: the calculator will show \"balance unknown\".",
+    "Ce contingent n'a pas encore de données de solde : le calculateur affichera « solde inconnu ».",
+    "この割当には残量データがまだありません。計算機は「残量不明」と表示します。"
+  ],
+  "Ngày": [
+    "Date",
+    "Date",
+    "日付"
+  ],
+  "Đã dùng": [
+    "Used",
+    "Utilisé",
+    "使用済み"
+  ],
+  "Chu kỳ hạn ngạch: từ ngày": [
+    "Quota period: from",
+    "Période du contingent : du",
+    "割当期間：開始日"
+  ],
+  "Chu kỳ hạn ngạch: đến ngày": [
+    "Quota period: to",
+    "Période du contingent : au",
+    "割当期間：終了日"
+  ],
+  "Cách phân bổ": [
+    "Allocation method",
+    "Méthode d'allocation",
+    "配分方法"
+  ],
+  "Cần giấy phép / chứng nhận (có/không)": [
+    "Licence / certificate required",
+    "Licence / certificat requis",
+    "許可証・証明書が必要"
+  ],
+  "Cơ quan cấp giấy phép": [
+    "Licence issuing authority",
+    "Autorité délivrant la licence",
+    "許可証の発給機関"
+  ],
+  "Các dòng cùng số hiệu và chu kỳ dùng chung một số dư: nhập ở dòng nào thì mọi dòng cùng nhóm đều thấy.": [
+    "Rows with the same quota number and period share one balance: entering it on any row shows it on every row of the group.",
+    "Les lignes ayant le même numéro de contingent et la même période partagent un solde : le saisir sur une ligne le rend visible sur toutes celles du groupe.",
+    "同じ割当番号と期間の行は残量を共有します。どの行で入力しても、同じグループの全行に反映されます。"
+  ],
+  "Nhà nhập khẩu cần có giấy phép nhập khẩu do cơ quan nước nhập cấp": [
+    "The importer needs an import licence issued by the importing country's authority",
+    "L'importateur doit détenir une licence d'importation délivrée par l'autorité du pays importateur",
+    "輸入者は輸入国の当局が発給する輸入許可証が必要です"
   ]
 }

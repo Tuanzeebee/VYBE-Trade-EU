@@ -11,6 +11,11 @@ cùng phần hạn ngạch ghi trong đó:
   trong buổi demo (40.000 / 40.000) KHÁC bản nháp → luật TM phải đối chiếu Phụ lục 2-A.
 - Cá ngừ chế biến 160414: TRQ 11.500 t/năm, 0% trong hạn ngạch, 24% ngoài hạn ngạch; dòng CN8 nào
   thuộc hạn ngạch (đồ hộp hay loins) còn phải xác định.
+- Chu kỳ, cách phân bổ và số dư (C2-C) là số liệu MINH HOẠ để chạy thử bộ máy hạn ngạch, KHÔNG phải
+  dữ liệu pháp lý: chu kỳ lấy theo năm dương lịch 2026; chỉ gạo thơm có căn cứ trong bản nháp (giấy
+  chứng nhận NĐ 103/2020 và giấy phép nhập khẩu EU theo Quy định (EU) 2020/761) nên mới gắn
+  IMPORT_LICENCE; gạo xay xát và cá ngừ để OTHER vì chưa xác định. Số dư gắn nguồn "DEMO ..." và
+  luôn được làm mới về 2 ngày trước để không bị coi là số liệu cũ.
 - ST24/ST25: bản nháp ghi được bổ sung vào danh sách gạo thơm cuối 2023 nhưng CHƯA được xác nhận →
   để ở phân nhóm "giống khác" (không đủ điều kiện), đúng ca kiểm của AGENTS.md §6.4.
 
@@ -37,6 +42,7 @@ from app.modules.compliance.models import (
     SectorAlert,
     TariffLine,
     TariffQuota,
+    TariffQuotaBalance,
 )
 from scripts._console import use_utf8
 from scripts.import_compliance_data import parse_tariff
@@ -46,6 +52,23 @@ DRAFT_CSV = Path(__file__).resolve().parents[2] / "docs" / "roadmap" / "tariff_2
 DRAFT_SOURCE = "docs/roadmap/tariff_20_draft.csv — bản nháp chuyên môn, CHƯA KÝ"
 QUOTA_FROM = dt.date(2026, 1, 1)
 QUOTA_UNTIL = dt.date(2027, 1, 1)
+# Chu kỳ vận hành (minh hoạ): năm dương lịch 2026, tính cả ngày cuối.
+PERIOD_START = dt.date(2026, 1, 1)
+PERIOD_END = dt.date(2026, 12, 31)
+DEMO_BALANCE_SOURCE = "DEMO — số liệu minh hoạ, không phải số dư thực tế"
+# Số dư minh hoạ cho đủ trạng thái: gạo thơm "còn", gạo xay xát "sắp hết", cá ngừ "chưa biết".
+DEMO_BALANCES: dict[str, Decimal] = {
+    "DEMO-RICE-FRAGRANT": Decimal("12000"),
+    "DEMO-RICE-MILLED": Decimal("27600"),
+}
+# Trường mới của hạn ngạch (C2-C) được bổ sung cho dòng minh hoạ đã nạp từ trước.
+_QUOTA_BACKFILL = (
+    "period_start",
+    "period_end",
+    "allocation_method",
+    "licence_required",
+    "licence_issuer_vi",
+)
 RICE_LICENCE_VI = (
     "Cần giấy chứng nhận chủng loại gạo thơm (Nghị định 103/2020/NĐ-CP) và giấy phép nhập khẩu "
     "phía EU theo Quy định (EU) 2020/761 — theo bản nháp chuyên môn."
@@ -112,6 +135,8 @@ def _quota(**over: Any) -> dict[str, Any]:
         "in_quota_rate": Decimal("0"),
         "valid_from": QUOTA_FROM,
         "valid_until": QUOTA_UNTIL,
+        "period_start": PERIOD_START,
+        "period_end": PERIOD_END,
         "source_url": None,
     }
     base.update(over)
@@ -129,6 +154,7 @@ QUOTAS: list[tuple[dict[str, Any], list[str]]] = [
             specific_unit="tonne",
             allocation_note_vi=RICE_ALLOCATION_VI,
             allocation_note_en=RICE_ALLOCATION_EN,
+            allocation_method="OTHER",
         ),
         ["rice_milled"],
     ),
@@ -144,6 +170,12 @@ QUOTAS: list[tuple[dict[str, Any], list[str]]] = [
             licence_note_en=RICE_LICENCE_EN,
             allocation_note_vi=RICE_ALLOCATION_VI,
             allocation_note_en=RICE_ALLOCATION_EN,
+            allocation_method="IMPORT_LICENCE",
+            licence_required=True,
+            licence_issuer_vi=(
+                "Bộ Công Thương (chứng nhận gạo thơm, NĐ 103/2020) và cơ quan EU cấp "
+                "giấy phép nhập khẩu"
+            ),
         ),
         ["rice_fragrant_listed"],
     ),
@@ -154,6 +186,7 @@ QUOTAS: list[tuple[dict[str, Any], list[str]]] = [
             volume=Decimal("11500"),
             out_quota_duty_type=DutyType.ad_valorem,
             out_quota_rate=Decimal("24"),
+            allocation_method="OTHER",
         ),
         ["tuna_prepared"],
     ),
@@ -220,14 +253,45 @@ async def seed(session: AsyncSession, draft_csv: Path = DRAFT_CSV) -> dict[str, 
     await session.flush()
 
     for spec, eligible in QUOTAS:
-        exists = await session.scalar(
-            select(TariffQuota.id).where(TariffQuota.quota_code == spec["quota_code"])
+        quota = await session.scalar(
+            select(TariffQuota).where(TariffQuota.quota_code == spec["quota_code"])
         )
-        if exists is None:
+        if quota is None:
             quota = TariffQuota(**spec, is_demo=True)
             quota.eligible_subtypes = [subtypes[code] for code in eligible]
             session.add(quota)
             added["quotas"] += 1
+        elif (
+            quota.is_demo
+        ):  # bổ sung trường mới cho dòng minh hoạ nạp từ trước, không đụng dòng thật
+            for key in _QUOTA_BACKFILL:
+                if getattr(quota, key) in (None, False) and spec.get(key) not in (None, False):
+                    setattr(quota, key, spec[key])
+    await session.flush()
+
+    fresh = dt.datetime.now(dt.UTC).date() - dt.timedelta(days=2)
+    for code, used in DEMO_BALANCES.items():
+        quota_id = await session.scalar(
+            select(TariffQuota.id).where(
+                TariffQuota.quota_code == code, TariffQuota.is_demo.is_(True)
+            )
+        )
+        if quota_id is None:
+            continue
+        balance = await session.scalar(
+            select(TariffQuotaBalance).where(
+                TariffQuotaBalance.quota_id == quota_id,
+                TariffQuotaBalance.source == DEMO_BALANCE_SOURCE,
+            )
+        )
+        if balance is None:
+            session.add(
+                TariffQuotaBalance(
+                    quota_id=quota_id, as_of=fresh, used_volume=used, source=DEMO_BALANCE_SOURCE
+                )
+            )
+        else:
+            balance.as_of, balance.used_volume = fresh, used  # luôn làm mới để demo không bị "cũ"
 
     for spec in ALERTS:
         exists = await session.scalar(

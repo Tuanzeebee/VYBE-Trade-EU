@@ -73,6 +73,10 @@ class Settings(BaseSettings):
     # Ngưỡng trị giá lô để chọn EUR.1 hay tự chứng nhận xuất xứ trên hoá đơn (SPEC compliance
     # §5.3, NĐT1 Điều 15.2). Cấu hình, không viết cứng trong logic.
     eur1_consignment_threshold_eur: Decimal = Decimal("6000")
+    # Hạn ngạch thuế quan (C2-C): "sắp hết" khi số dư còn lại <= ngưỡng này (% tổng hạn ngạch);
+    # số dư có ngày cũ hơn số ngày này thì cảnh báo "số liệu cũ".
+    quota_low_balance_pct: Decimal = Decimal("10")
+    quota_balance_stale_days: int = 14
     # Điểm tín nhiệm seller (ADR-0004): công khai trên hồ sơ khi bật; tắt thì chỉ owner và admin
     # thấy. Production giữ tắt cho tới khi pháp lý/GDPR duyệt.
     trust_score_public: bool = False

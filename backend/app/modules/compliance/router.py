@@ -26,6 +26,8 @@ from app.modules.compliance.admin_schemas import (
     ProductSubtypeIn,
     ProductSubtypeOut,
     ProductSubtypePatch,
+    QuotaBalanceIn,
+    QuotaBalanceOut,
     RooRuleIn,
     RooRuleOut,
     RooRulePatch,
@@ -418,6 +420,22 @@ async def review_tariff_quota(
     quota_id: uuid.UUID, admin: AdminUser, session: DBSession
 ) -> TariffQuotaOut:
     return admin_service.quota_out(await admin_service.review_quota(session, admin, quota_id))
+
+
+@router.get("/api/admin/tariff-quotas/{quota_id}/balances")
+async def list_quota_balances(
+    quota_id: uuid.UUID, _: AdminUser, session: DBSession
+) -> list[QuotaBalanceOut]:
+    rows = await admin_service.list_quota_balances(session, quota_id)
+    return [QuotaBalanceOut.model_validate(r, from_attributes=True) for r in rows]
+
+
+@router.post("/api/admin/tariff-quotas/{quota_id}/balances", status_code=201)
+async def add_quota_balance(
+    quota_id: uuid.UUID, data: QuotaBalanceIn, admin: AdminUser, session: DBSession
+) -> QuotaBalanceOut:
+    row = await admin_service.add_quota_balance(session, admin, quota_id, data)
+    return QuotaBalanceOut.model_validate(row, from_attributes=True)
 
 
 @router.delete("/api/admin/tariff-quotas/{quota_id}", status_code=204)

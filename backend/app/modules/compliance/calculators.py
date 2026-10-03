@@ -473,6 +473,7 @@ QuotaReviewReason = Literal[
     "quantity_required",  # thuế tuyệt đối cần khối lượng người dùng nhập
     "mixed_duty",  # thuế hỗn hợp: không tính
     "data_anomaly",  # thuế trong hạn ngạch cao hơn ngoài hạn ngạch
+    "unit_mismatch",  # đơn vị khối lượng đã chọn không quy đổi được sang đơn vị hạn ngạch
 ]
 
 
