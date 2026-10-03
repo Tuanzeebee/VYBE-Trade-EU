@@ -2,7 +2,7 @@
 
 import asyncio
 import os
-from collections.abc import AsyncIterator
+from collections.abc import AsyncIterator, Iterator
 from typing import ClassVar
 
 import asyncpg
@@ -69,6 +69,17 @@ async def _reset_rate_limit() -> None:
     from app.core.ratelimit import reset
 
     await reset()
+
+
+@pytest.fixture(autouse=True)
+def _no_product_limit_by_default() -> Iterator[None]:
+    """Nhiều test dựng nhiều sản phẩm cho một công ty nên giới hạn gói Basic (N8) mặc định tắt.
+    Test của N8 tự đăng ký lại bộ giới hạn thật (billing.service.limit_for)."""
+    from app.core import entitlements
+
+    previous = entitlements.register_limit(entitlements._no_limit)
+    yield
+    entitlements.register_limit(previous)
 
 
 @pytest.fixture

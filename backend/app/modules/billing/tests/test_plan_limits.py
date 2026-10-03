@@ -1,6 +1,7 @@
 """N8: giới hạn gói Basic 3 sản phẩm — hook limit_for, bảng plan_limits, chặn tạo sản phẩm thứ 4."""
 
 import uuid
+from collections.abc import Iterator
 from typing import Any
 
 import pytest
@@ -21,6 +22,14 @@ PRODUCTS = "/api/exporter/products"
 @pytest.fixture(autouse=True)
 async def _hs(db_session: AsyncSession) -> None:
     await upsert_hs_codes(db_session, load_csv(DEFAULT_CSV))
+
+
+@pytest.fixture(autouse=True)
+def _real_limits() -> Iterator[None]:
+    """conftest tắt giới hạn mặc định; test N8 dùng nguồn giới hạn thật của billing."""
+    previous = entitlements.register_limit(service.limit_for)
+    yield
+    entitlements.register_limit(previous)
 
 
 # ── Hook ──────────────────────────────────────────────────────────────────────
