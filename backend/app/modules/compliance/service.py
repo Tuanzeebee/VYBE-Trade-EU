@@ -1424,6 +1424,20 @@ async def calculate_origin(
     )
 
 
+async def count_check_runs(
+    session: AsyncSession, company_id: uuid.UUID, check_type: CheckType
+) -> int:
+    """Số lần công ty đã chạy một công cụ (mọi trạng thái kết quả). Dùng cho hành trình seller."""
+    return int(
+        await session.scalar(
+            select(func.count()).where(
+                ComplianceCheck.company_id == company_id, ComplianceCheck.check_type == check_type
+            )
+        )
+        or 0
+    )
+
+
 async def sum_tariff_savings(session: AsyncSession, company_id: uuid.UUID) -> tuple[Decimal, int]:
     """(tổng tiền tiết kiệm EUR, số lần chạy) từ các lần chạy máy tính thuế THÀNH CÔNG của công ty.
     needs_review/unsupported không có con số nên không góp vào tổng (G1)."""

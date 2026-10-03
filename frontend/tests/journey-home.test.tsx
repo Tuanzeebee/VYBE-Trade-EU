@@ -11,7 +11,7 @@ vi.mock('next/navigation', async (importOriginal) => ({
   useRouter: () => ({ push: vi.fn(), replace: vi.fn(), prefetch: vi.fn(), back: vi.fn(), forward: vi.fn(), refresh: vi.fn() }),
 }));
 
-const STEPS = ['company', 'products', 'evidence', 'verification', 'market', 'tariff', 'requests', 'services'];
+const STEPS = ['company', 'products', 'evidence', 'verification', 'market', 'tariff', 'origin', 'requests', 'services'];
 
 function data(nextStep: string | null, over: Partial<ExporterDashboardData> = {}): ExporterDashboardData {
   return {
@@ -27,7 +27,7 @@ function data(nextStep: string | null, over: Partial<ExporterDashboardData> = {}
       product_done: 1,
       product_total: 4,
       sales_done: 0,
-      sales_total: 4,
+      sales_total: 5,
     },
     ...over,
   } as ExporterDashboardData;
@@ -55,9 +55,15 @@ describe('Trang Hành trình (N1, N3)', () => {
     expect(screen.getByRole('link', { name: 'Bắt đầu' })).toHaveAttribute('href', expect.stringContaining('/tools/tariff'));
   });
 
+  it('bước xuất xứ là link riêng tới công cụ xuất xứ', () => {
+    wrap(<JourneyHome data={data('origin')} onGoTab={vi.fn()} />);
+    expect(screen.getByRole('heading', { name: 'Xuất xứ và EUR.1' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Bắt đầu' })).toHaveAttribute('href', expect.stringContaining('/tools/origin'));
+  });
+
   it('hai thanh tiến độ hiện số bước đã xong', () => {
     wrap(<JourneyHome data={data('products')} onGoTab={vi.fn()} />);
-    expect(screen.getByRole('progressbar', { name: 'Hoàn thiện sản phẩm' })).toHaveAttribute('aria-valuenow', '25');
+    expect(screen.getByRole('progressbar', { name: 'Hoàn thiện hồ sơ' })).toHaveAttribute('aria-valuenow', '25');
     expect(screen.getByRole('progressbar', { name: 'Bán hàng' })).toHaveAttribute('aria-valuenow', '0');
   });
 

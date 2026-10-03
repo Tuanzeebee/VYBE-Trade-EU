@@ -62,7 +62,7 @@ export default function JourneyHome({ data, onGoTab }: { data: ExporterDashboard
           <p className="mt-1 text-sm text-slate-700">{tr('Bạn đã hoàn thành các bước chính. Theo dõi Request mới ở mục Bán hàng.')}</p>
         )}
         <div className="mt-5 grid gap-4 sm:grid-cols-2">
-          <Bar label={tr('Hoàn thiện sản phẩm')} done={j.product_done} total={j.product_total} />
+          <Bar label={tr('Hoàn thiện hồ sơ')} done={j.product_done} total={j.product_total} />
           <Bar label={tr('Bán hàng')} done={j.sales_done} total={j.sales_total} />
         </div>
       </section>

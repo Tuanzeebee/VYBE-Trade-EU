@@ -20,6 +20,7 @@ def state(**kw: object) -> JourneyState:
         "verification_status": "verified",
         "gtm_report_count": 1,
         "tariff_runs": 1,
+        "origin_runs": 1,
         "rfq_total": 1,
     }
     base.update(kw)
@@ -37,6 +38,7 @@ def state(**kw: object) -> JourneyState:
         ({"verification_status": "pending"}, "verification"),
         ({"gtm_report_count": 0}, "market"),
         ({"tariff_runs": 0}, "tariff"),
+        ({"origin_runs": 0}, "origin"),
         ({"rfq_total": 0}, "requests"),
         ({}, None),
     ],
@@ -58,11 +60,11 @@ def test_services_step_is_never_the_next_step_and_never_done() -> None:
 def test_track_progress_counts_per_track() -> None:
     steps = build_steps(state(product_count=0, tariff_runs=0))
     assert track_progress(steps, "product") == (3, 4)
-    assert track_progress(steps, "sales") == (2, 4)
+    assert track_progress(steps, "sales") == (3, 5)
 
 
 def test_steps_keep_a_fixed_order() -> None:
     assert [s.key for s in build_steps(state())] == [
         "company", "products", "evidence", "verification",
-        "market", "tariff", "requests", "services",
+        "market", "tariff", "origin", "requests", "services",
     ]  # fmt: skip

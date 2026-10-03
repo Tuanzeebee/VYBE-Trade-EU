@@ -17188,5 +17188,50 @@
     "Your current plan limits the number of products. Upgrade to add more.",
     "Votre forfait actuel limite le nombre de produits. Passez à une offre supérieure pour en ajouter.",
     "現在のプランでは製品数に上限があります。追加するにはプランをアップグレードしてください。"
+  ],
+  "Báo cáo thị trường": [
+    "Market report",
+    "Rapport de marché",
+    "市場レポート"
+  ],
+  "Xem thị trường phù hợp và cách vào thị trường cho sản phẩm của bạn.": [
+    "See which markets suit your products and how to enter them.",
+    "Découvrez les marchés adaptés à vos produits et comment y entrer.",
+    "製品に合う市場と参入方法を確認しましょう。"
+  ],
+  "Tính thuế": [
+    "Tariff calculator",
+    "Calcul des droits",
+    "関税計算"
+  ],
+  "Biết trước thuế nhập khẩu và số tiền tiết kiệm nhờ hiệp định.": [
+    "Know the import duty and the savings from the trade agreement in advance.",
+    "Connaissez à l'avance les droits d'importation et les économies liées à l'accord.",
+    "輸入関税と協定による節約額を事前に把握しましょう。"
+  ],
+  "Xuất xứ và EUR.1": [
+    "Origin and EUR.1",
+    "Origine et EUR.1",
+    "原産地とEUR.1"
+  ],
+  "Kiểm tra hàng có đạt quy tắc xuất xứ không và soạn EUR.1 nháp.": [
+    "Check whether your goods meet the origin rules and draft an EUR.1.",
+    "Vérifiez si vos produits respectent les règles d'origine et préparez un EUR.1.",
+    "製品が原産地規則を満たすか確認し、EUR.1の下書きを作成します。"
+  ],
+  "Báo cáo gồm 3 bước: chọn định hướng, nhập mục tiêu, rồi xác nhận. Mất khoảng 2 phút.": [
+    "The report has 3 steps: choose your approach, enter your goals, then confirm. It takes about 2 minutes.",
+    "Le rapport comporte 3 étapes : choisir l'approche, saisir les objectifs, puis confirmer. Environ 2 minutes.",
+    "レポートは3ステップ：方針を選び、目標を入力し、確認します。所要時間は約2分です。"
+  ],
+  "Các bước tạo báo cáo": [
+    "Report steps",
+    "Étapes du rapport",
+    "レポート作成のステップ"
+  ],
+  "Định hướng": [
+    "Approach",
+    "Approche",
+    "方針"
   ]
 }

@@ -21,6 +21,7 @@ from app.modules.auth.schemas import CurrentUser
 from app.modules.companies import product_service
 from app.modules.companies import service as companies
 from app.modules.compliance import service as compliance
+from app.modules.compliance.models import CheckType
 from app.modules.copilot import service as copilot
 from app.modules.dashboard.events import ProfileViewed
 from app.modules.dashboard.journey import JourneyState, build_steps, next_step, track_progress
@@ -347,6 +348,11 @@ async def _journey(
         verification_status=verification.data.status if verification.data else "unverified",
         gtm_report_count=await markets.count_reports(session, company_id) if company_id else 0,
         tariff_runs=savings.data.runs if savings.data else 0,
+        origin_runs=(
+            await compliance.count_check_runs(session, company_id, CheckType.roo)
+            if company_id
+            else 0
+        ),
         rfq_total=rfqs.data.total if rfqs.data else 0,
     )
     steps = build_steps(state)

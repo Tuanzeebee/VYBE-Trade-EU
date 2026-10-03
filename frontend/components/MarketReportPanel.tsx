@@ -331,9 +331,29 @@ export default function MarketReportPanel({ products }: { products: ProductOut[]
         </p>
       ) : (
         <form onSubmit={submit} className="grid gap-3 rounded-2xl border border-slate-200 bg-white p-4 sm:grid-cols-2" aria-label={tr('Tạo báo cáo')}>
-          <p className="text-xs font-bold uppercase tracking-wider text-slate-500 sm:col-span-2">
-            {tr('Bước')} {step}/3
+          <p className="text-sm text-slate-700 sm:col-span-2">
+            {tr('Báo cáo gồm 3 bước: chọn định hướng, nhập mục tiêu, rồi xác nhận. Mất khoảng 2 phút.')}
           </p>
+          <ol aria-label={tr('Các bước tạo báo cáo')} className="grid grid-cols-3 gap-2 sm:col-span-2">
+            {(
+              [
+                [1, 'Định hướng'],
+                [2, 'Mục tiêu'],
+                [3, 'Xác nhận'],
+              ] as const
+            ).map(([n, name]) => (
+              <li
+                key={n}
+                aria-current={n === step ? 'step' : undefined}
+                className={`flex items-center gap-2 rounded-xl border px-3 py-2 text-xs font-semibold ${
+                  n === step ? 'border-[#083832] bg-[#e6f4f2] text-[#083832]' : n < step ? 'border-teal-200 bg-teal-50 text-teal-800' : 'border-slate-200 text-slate-500'
+                }`}
+              >
+                <span aria-hidden="true" className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] ${n <= step ? 'bg-[#083832] text-white' : 'bg-slate-200 text-slate-600'}`}>{n}</span>
+                <span>{tr(name)}</span>
+              </li>
+            ))}
+          </ol>
           {step === 1 && (
             <>
               <label className="text-xs font-semibold text-slate-700">

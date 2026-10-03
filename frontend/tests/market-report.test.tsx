@@ -155,6 +155,20 @@ describe('Báo cáo go-to-market (U18)', () => {
     });
   });
 
+  it('ngay khi mở form đã thấy báo cáo gồm 3 bước và đang ở bước nào', async () => {
+    serve(() => json(200, []));
+    wrap(<MarketReportPanel products={products} />);
+    expect(await screen.findByText(/Báo cáo gồm 3 bước/)).toBeInTheDocument();
+    const steps = screen.getByRole('list', { name: 'Các bước tạo báo cáo' });
+    const items = within(steps).getAllByRole('listitem');
+    expect(items.map((li) => li.textContent)).toEqual(['1Định hướng', '2Mục tiêu', '3Xác nhận']);
+    expect(items[0]).toHaveAttribute('aria-current', 'step');
+    expect(items[1]).not.toHaveAttribute('aria-current');
+    fillStep1('bulk');
+    fireEvent.click(screen.getByRole('button', { name: 'Tiếp' }));
+    expect(within(steps).getAllByRole('listitem')[1]).toHaveAttribute('aria-current', 'step');
+  });
+
   it('chưa có sản phẩm: hướng dẫn thêm sản phẩm, không có nút tạo báo cáo', async () => {
     serve(() => json(200, []));
     wrap(<MarketReportPanel products={[]} />);

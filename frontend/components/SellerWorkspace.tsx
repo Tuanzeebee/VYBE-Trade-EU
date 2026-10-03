@@ -27,6 +27,7 @@ import {
   Eye,
   MessageSquare,
   CreditCard,
+  LifeBuoy,
 } from 'lucide-react';
 import EvidenceManager from './EvidenceManager';
 import CompanyEvidenceChecklist from './CompanyEvidenceChecklist';
@@ -553,6 +554,15 @@ export default function SellerWorkspace({
           {activeTab === 'report' && <MarketReportPanel products={productsList} />}
 
           {activeTab === 'billing' && <SellerBilling />}
+
+          {/* Trợ lý: nút nổi ở mọi tab (khách: người dùng ít rành công nghệ, cần hỏi bất cứ lúc nào) */}
+          <Link
+            href="/copilot"
+            className="fixed bottom-5 right-5 z-40 inline-flex items-center gap-2 rounded-full bg-[#083832] px-5 py-3 text-sm font-semibold text-white shadow-lg hover:bg-[#062924]"
+          >
+            <LifeBuoy className="h-5 w-5" aria-hidden="true" />
+            <span>{tr('Trợ lý')}</span>
+          </Link>
 
           {(() => {
             const step = stepForTab(activeTab);

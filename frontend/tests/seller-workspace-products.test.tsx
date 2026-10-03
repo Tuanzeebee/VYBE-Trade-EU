@@ -137,6 +137,14 @@ describe('SellerWorkspace — sản phẩm lấy từ server (B5)', () => {
     expect(screen.queryByText(/Chưa có sản phẩm/)).not.toBeInTheDocument();
   });
 
+  it('có nút Trợ lý nổi ở mọi tab, dẫn tới trợ lý, không có chữ AI hay tuân thủ', async () => {
+    serve([product()]);
+    renderWorkspace('products');
+    const assistant = await screen.findByRole('link', { name: 'Trợ lý' });
+    expect(assistant).toHaveAttribute('href', expect.stringContaining('/copilot'));
+    expect(assistant.textContent).not.toMatch(/\bAI\b|tuân thủ/i);
+  });
+
   it('hành trình có bước Sản phẩm (rail bên + rail mobile) mở tab sản phẩm thật', async () => {
     serve([product(), product({ id: 'p2', name: 'Cà phê' })]);
     renderWorkspace('overview');

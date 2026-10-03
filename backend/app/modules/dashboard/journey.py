@@ -21,6 +21,7 @@ class JourneyState:
     verification_status: str  # unverified | pending | verified | rejected
     gtm_report_count: int
     tariff_runs: int
+    origin_runs: int  # số lần chạy công cụ xuất xứ (RoO), tách khỏi máy tính thuế
     rfq_total: int
 
 
@@ -41,6 +42,7 @@ def build_steps(s: JourneyState) -> list[JourneyStep]:
         JourneyStep("verification", "product", s.verification_status == "verified"),
         JourneyStep("market", "sales", s.gtm_report_count >= 1),
         JourneyStep("tariff", "sales", s.tariff_runs >= 1),
+        JourneyStep("origin", "sales", s.origin_runs >= 1),
         JourneyStep("requests", "sales", s.rfq_total >= 1),
         JourneyStep("services", "sales", False),  # bước thông tin: chưa có dữ liệu để "xong"
     ]

@@ -18,7 +18,7 @@ type Props = {
 };
 
 const TRACKS: { id: 'product' | 'sales'; title: string }[] = [
-  { id: 'product', title: 'Hoàn thiện sản phẩm' },
+  { id: 'product', title: 'Hoàn thiện hồ sơ' },
   { id: 'sales', title: 'Bán hàng' },
 ];
 
@@ -29,6 +29,7 @@ const TRACK_OF: Record<StepKey, 'product' | 'sales'> = {
   verification: 'product',
   market: 'sales',
   tariff: 'sales',
+  origin: 'sales',
   requests: 'sales',
   services: 'sales',
 };

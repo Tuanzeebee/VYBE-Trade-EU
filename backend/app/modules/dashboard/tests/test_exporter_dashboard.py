@@ -253,7 +253,7 @@ async def test_journey_without_company_points_at_company(api_client: AsyncClient
     assert journey["next_step"] == "company"
     assert journey["steps"][0]["key"] == "company"
     assert journey["product_total"] == 4
-    assert journey["sales_total"] == 4
+    assert journey["sales_total"] == 5
 
 
 async def test_journey_with_company_but_no_product_never_skips_to_sales(
@@ -264,3 +264,34 @@ async def test_journey_with_company_but_no_product_never_skips_to_sales(
     journey = (await dashboard(api_client))["journey"]
     assert journey["next_step"] in ("company", "products")
     assert journey["sales_done"] == 0
+
+
+async def test_journey_origin_and_tariff_steps_track_the_two_tools_separately(
+    api_client: AsyncClient, db_session: AsyncSession
+) -> None:
+    """Tính thuế và xuất xứ là hai công cụ riêng, mỗi công cụ một bước của hành trình."""
+    from app.modules.compliance import service as compliance
+    from app.modules.compliance.models import CheckType
+
+    await login_as(api_client, "exporter", "exp@x.vn")
+    created = await api_client.post("/api/me/company", json=company_body())
+    company_id = uuid.UUID(created.json()["id"])
+
+    def done(journey: dict[str, Any]) -> dict[str, bool]:
+        return {s["key"]: s["done"] for s in journey["steps"]}
+
+    before = done((await dashboard(api_client))["journey"])
+    assert (before["tariff"], before["origin"]) == (False, False)
+
+    await compliance.log_check(
+        db_session,
+        check_type=CheckType.roo,
+        hs_code="100630",
+        destination_country="DE",
+        status="pass",
+        company_id=company_id,
+        originating_status="pass",
+    )
+    await db_session.flush()
+    after_roo = done((await dashboard(api_client))["journey"])
+    assert (after_roo["tariff"], after_roo["origin"]) == (False, True)
