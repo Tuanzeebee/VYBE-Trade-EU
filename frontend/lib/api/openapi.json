@@ -23748,6 +23748,10 @@
             "format": "uuid",
             "title": "Product Id"
           },
+          "kind": {
+            "$ref": "#/components/schemas/RfqKind",
+            "default": "quote"
+          },
           "quantity": {
             "anyOf": [
               {
@@ -23756,14 +23760,24 @@
               {
                 "type": "string",
                 "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
               }
             ],
             "title": "Quantity"
           },
           "unit": {
-            "type": "string",
-            "maxLength": 32,
-            "minLength": 1,
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 32,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Unit"
           },
           "target_price": {
@@ -23788,11 +23802,25 @@
             "default": "EUR"
           },
           "incoterms": {
-            "$ref": "#/components/schemas/Incoterm"
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Incoterm"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "destination_country": {
-            "type": "string",
-            "pattern": "^[A-Z]{2}$",
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Z]{2}$"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Destination Country"
           },
           "destination_port": {
@@ -23808,8 +23836,15 @@
             "title": "Destination Port"
           },
           "required_date": {
-            "type": "string",
-            "format": "date",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Required Date"
           },
           "message": {
@@ -23828,14 +23863,21 @@
         "additionalProperties": false,
         "type": "object",
         "required": [
-          "product_id",
-          "quantity",
-          "unit",
-          "incoterms",
-          "destination_country",
-          "required_date"
+          "product_id"
         ],
         "title": "RfqIn"
+      },
+      "RfqKind": {
+        "type": "string",
+        "enum": [
+          "quote",
+          "meeting",
+          "packaging",
+          "quality",
+          "other"
+        ],
+        "title": "RfqKind",
+        "description": "Loại Request (N4): chỉ `quote` đi vào luồng báo giá."
       },
       "RfqOut": {
         "properties": {
@@ -23934,6 +23976,10 @@
           },
           "status": {
             "$ref": "#/components/schemas/RfqStatus"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/RfqKind",
+            "default": "quote"
           },
           "created_at": {
             "type": "string",

@@ -6,7 +6,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { Link } from '../i18n/navigation';
 import QuotePanel from './QuotePanel';
-import { changeRfqStatus, listRfqs, NEXT_STATUSES, openRfq, SAFE_TERMS_ADVICE, STATUS_LABELS, type Rfq, type RfqStatus } from '../lib/rfqApi';
+import { changeRfqStatus, KIND_LABELS, listRfqs, NEXT_STATUSES, openRfq, SAFE_TERMS_ADVICE, STATUS_LABELS, type Rfq, type RfqStatus } from '../lib/rfqApi';
 
 const BADGE: Record<RfqStatus, string> = {
   new: 'bg-teal-100 text-teal-900',
@@ -82,6 +82,7 @@ export default function RfqInbox({ role }: { role: 'buyer' | 'exporter' }) {
         {rows.map((r) => {
           const expanded = openId === r.id;
           const counterpart = role === 'buyer' ? r.exporter_name : r.buyer_name;
+          const isQuote = (r.kind ?? 'quote') === 'quote'; // N4: chỉ loại báo giá có số lượng/giá và khung báo giá
           return (
             <li key={r.id} aria-label={`${counterpart} — ${r.product_name}`} className="rounded-2xl border border-slate-200 bg-white p-5">
               <button type="button" onClick={() => void toggle(r)} aria-expanded={expanded} className="flex w-full items-start justify-between gap-3 text-left">
@@ -97,9 +98,15 @@ export default function RfqInbox({ role }: { role: 'buyer' | 'exporter' }) {
                       </span>
                     )}
                   </span>
-                  <span className="mt-0.5 block text-sm text-slate-700">{r.product_name}</span>
+                  <span className="mt-0.5 block text-sm text-slate-700">
+                    {r.product_name}
+                    {!isQuote && (
+                      <span className="ml-2 rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-700">{tr(KIND_LABELS[r.kind ?? 'quote'])}</span>
+                    )}
+                  </span>
                   <span className="mt-0.5 block text-xs text-slate-500">
-                    {r.quantity} {r.unit} · {date(r.created_at)}
+                    {isQuote ? `${r.quantity} ${r.unit} · ` : ''}
+                    {date(r.created_at)}
                   </span>
                 </span>
                 <span data-testid="rfq-status" className={`shrink-0 rounded-full px-3 py-1 text-xs font-bold ${BADGE[r.status]}`}>
@@ -108,6 +115,7 @@ export default function RfqInbox({ role }: { role: 'buyer' | 'exporter' }) {
               </button>
               {expanded && (
                 <div className="mt-4 space-y-3 border-t border-slate-100 pt-4 text-sm text-slate-800">
+                  {isQuote && (
                   <dl className="grid gap-2 sm:grid-cols-2">
                     <div>
                       <dt className="text-xs font-semibold text-slate-500">{tr('Giá mục tiêu')}</dt>
@@ -126,6 +134,7 @@ export default function RfqInbox({ role }: { role: 'buyer' | 'exporter' }) {
                       <dd>{date(r.required_date)}</dd>
                     </div>
                   </dl>
+                  )}
                   {r.message && <p className="whitespace-pre-line rounded-xl bg-slate-50 p-3">{r.message}</p>}
                   {role === 'exporter' && !r.buyer_verified && (
                     <div role="note" className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs text-amber-950">
@@ -138,7 +147,7 @@ export default function RfqInbox({ role }: { role: 'buyer' | 'exporter' }) {
                       <p className="mt-1 text-amber-900/80">{tr('Đây là khuyến nghị chung, không phải tư vấn pháp lý.')}</p>
                     </div>
                   )}
-                  <QuotePanel rfq={r} role={role} onChanged={() => void load()} />
+                  {isQuote && <QuotePanel rfq={r} role={role} onChanged={() => void load()} />}
                   <Link href={`${role === 'buyer' ? '/buyer/messages' : '/exporter/messages'}?rfq=${r.id}`} className="inline-block text-sm font-semibold text-teal-800 underline">
                     {tr('Mở hội thoại')}
                   </Link>

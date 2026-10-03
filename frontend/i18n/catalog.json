@@ -17013,5 +17013,35 @@
     "Add optional details",
     "Ajouter des informations facultatives",
     "任意の情報を追加"
+  ],
+  "Loại Request": [
+    "Request type",
+    "Type de demande",
+    "リクエストの種類"
+  ],
+  "Hẹn meeting": [
+    "Book a meeting",
+    "Planifier une réunion",
+    "ミーティングの依頼"
+  ],
+  "Hỏi đóng gói": [
+    "Ask about packaging",
+    "Question sur l'emballage",
+    "梱包についての質問"
+  ],
+  "Hỏi chất lượng": [
+    "Ask about quality",
+    "Question sur la qualité",
+    "品質についての質問"
+  ],
+  "Nội dung": [
+    "Message",
+    "Contenu",
+    "内容"
+  ],
+  "Vui lòng nhập nội dung Request.": [
+    "Please enter the content of your request.",
+    "Veuillez saisir le contenu de votre demande.",
+    "リクエストの内容を入力してください。"
   ]
 }

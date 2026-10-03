@@ -6,7 +6,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { Link } from '../i18n/navigation';
 import { useDemoSession } from './app-shell/useDemoSession';
 import { COUNTRIES } from '../lib/companyApi';
-import { CURRENCIES, INCOTERMS, createRfq, getRfqQuota, type Incoterm, type RfqError, type RfqQuota } from '../lib/rfqApi';
+import { CURRENCIES, INCOTERMS, KIND_LABELS, KINDS, createRfq, getRfqQuota, type Incoterm, type RfqError, type RfqKind, type RfqQuota } from '../lib/rfqApi';
 import { parseAmount } from '../lib/tariffApi';
 
 export interface RfqProduct {
@@ -33,6 +33,7 @@ export default function RfqForm({ products, supplierName }: { products: RfqProdu
   const { tr } = useLanguage();
   const { user, ready } = useDemoSession();
   const [productId, setProductId] = useState(products[0]?.id ?? '');
+  const [kind, setKind] = useState<RfqKind>('quote');
   const [quantity, setQuantity] = useState('');
   const [unit, setUnit] = useState(products[0]?.unit ?? 'kg');
   const [targetPrice, setTargetPrice] = useState('');
@@ -101,6 +102,15 @@ export default function RfqForm({ products, supplierName }: { products: RfqProdu
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();
     setError('');
+    if (kind !== 'quote') {
+      if (!message.trim()) return setError('Vui lòng nhập nội dung Request.');
+      setBusy(true);
+      const outcome = await createRfq({ product_id: productId, kind, message: message.trim() });
+      setBusy(false);
+      if (outcome.ok) setSent(true);
+      else setError(ERRORS[outcome.error]);
+      return;
+    }
     const amount = parseAmount(quantity);
     if (!amount) return setError('Số lượng phải là số dương, tối đa 2 chữ số thập phân.');
     const price = targetPrice.trim() === '' ? null : parseAmount(targetPrice);
@@ -145,6 +155,16 @@ export default function RfqForm({ products, supplierName }: { products: RfqProdu
             ))}
           </select>
         </div>
+        <div className="sm:col-span-2">
+          <label htmlFor="rfq-kind" className={label}>{tr('Loại Request')}</label>
+          <select id="rfq-kind" value={kind} onChange={(e) => setKind(e.target.value as RfqKind)} className={field}>
+            {KINDS.map((k) => (
+              <option key={k} value={k}>{tr(KIND_LABELS[k])}</option>
+            ))}
+          </select>
+        </div>
+        {kind === 'quote' && (
+        <>
         <div>
           <label htmlFor="rfq-quantity" className={label}>{tr('Số lượng')}</label>
           <input id="rfq-quantity" inputMode="decimal" value={quantity} onChange={(e) => setQuantity(e.target.value)} className={field} />
@@ -196,8 +216,10 @@ export default function RfqForm({ products, supplierName }: { products: RfqProdu
           <label htmlFor="rfq-port" className={label}>{tr('Cảng nhận hàng (không bắt buộc)')}</label>
           <input id="rfq-port" value={port} maxLength={100} onChange={(e) => setPort(e.target.value)} className={field} />
         </div>
+        </>
+        )}
         <div className="sm:col-span-2">
-          <label htmlFor="rfq-message" className={label}>{tr('Lời nhắn (không bắt buộc)')}</label>
+          <label htmlFor="rfq-message" className={label}>{kind === 'quote' ? tr('Lời nhắn (không bắt buộc)') : tr('Nội dung')}</label>
           <textarea id="rfq-message" rows={3} maxLength={2000} value={message} onChange={(e) => setMessage(e.target.value)} className={field} />
         </div>
         {quota && (
@@ -219,7 +241,7 @@ export default function RfqForm({ products, supplierName }: { products: RfqProdu
         )}
         <div className="sm:col-span-2">
           <button type="submit" disabled={busy} className="w-full rounded-xl bg-[#083832] px-5 py-3 text-sm font-semibold text-white hover:bg-[#062924] disabled:opacity-60 sm:w-auto">
-            {tr(busy ? 'Đang gửi...' : 'Gửi yêu cầu báo giá')}
+            {tr(busy ? 'Đang gửi...' : kind === 'quote' ? 'Gửi yêu cầu báo giá' : 'Gửi Request')}
           </button>
         </div>
       </form>

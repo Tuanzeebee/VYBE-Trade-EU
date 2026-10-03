@@ -6,7 +6,18 @@ export type Rfq = components['schemas']['RfqOut'];
 export type RfqQuota = components['schemas']['RfqQuotaOut'];
 export type RfqInput = components['schemas']['RfqIn'];
 export type RfqStatus = Rfq['status'];
-export type Incoterm = Rfq['incoterms'];
+export type Incoterm = NonNullable<Rfq['incoterms']>;
+export type RfqKind = NonNullable<Rfq['kind']>;
+
+// N4: loại Request. Chỉ 'quote' đi vào luồng báo giá.
+export const KIND_LABELS: Record<RfqKind, string> = {
+  quote: 'Báo giá',
+  meeting: 'Hẹn meeting',
+  packaging: 'Hỏi đóng gói',
+  quality: 'Hỏi chất lượng',
+  other: 'Khác',
+};
+export const KINDS = Object.keys(KIND_LABELS) as RfqKind[];
 
 // Incoterms 2020; danh sách áp dụng do PO chốt (backend là nơi ràng buộc).
 export const INCOTERMS: Incoterm[] = ['EXW', 'FCA', 'FAS', 'FOB', 'CFR', 'CIF', 'CPT', 'CIP', 'DAP', 'DPU', 'DDP'];

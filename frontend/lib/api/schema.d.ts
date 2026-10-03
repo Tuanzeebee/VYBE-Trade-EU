@@ -6334,10 +6334,12 @@ export interface components {
              * Format: uuid
              */
             product_id: string;
+            /** @default quote */
+            kind?: components["schemas"]["RfqKind"];
             /** Quantity */
-            quantity: number | string;
+            quantity?: number | string | null;
             /** Unit */
-            unit: string;
+            unit?: string | null;
             /** Target Price */
             target_price?: number | string | null;
             /**
@@ -6345,19 +6347,22 @@ export interface components {
              * @default EUR
              */
             currency?: string;
-            incoterms: components["schemas"]["Incoterm"];
+            incoterms?: components["schemas"]["Incoterm"] | null;
             /** Destination Country */
-            destination_country: string;
+            destination_country?: string | null;
             /** Destination Port */
             destination_port?: string | null;
-            /**
-             * Required Date
-             * Format: date
-             */
-            required_date: string;
+            /** Required Date */
+            required_date?: string | null;
             /** Message */
             message?: string | null;
         };
+        /**
+         * RfqKind
+         * @description Loại Request (N4): chỉ `quote` đi vào luồng báo giá.
+         * @enum {string}
+         */
+        RfqKind: "quote" | "meeting" | "packaging" | "quality" | "other";
         /** RfqOut */
         RfqOut: {
             /**
@@ -6409,6 +6414,8 @@ export interface components {
             /** Message */
             message: string | null;
             status: components["schemas"]["RfqStatus"];
+            /** @default quote */
+            kind?: components["schemas"]["RfqKind"];
             /**
              * Created At
              * Format: date-time
