@@ -53,6 +53,17 @@ describe('Gợi ý cước và bảo hiểm (N6a)', () => {
     expect(screen.getByLabelText(/Cước vận chuyển quốc tế/)).toHaveValue('3000.00');
   });
 
+  it('giá tham khảo khác tiền tệ lô hàng: giải thích cách dùng, không điền sai tiền tệ', async () => {
+    serve({ ...HINTS, freight: [{ ...HINTS.freight[0], currency: 'USD' }] });
+    renderCalc();
+    fireEvent.change(screen.getByLabelText(/Điều kiện giao hàng/), { target: { value: 'FOB' } });
+    expect(await screen.findByText(/Đổi tiền tệ lô hàng sang USD để dùng giá này/)).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Dùng giá này/ })).not.toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText(/Tiền tệ/), { target: { value: 'USD' } });
+    fireEvent.click(await screen.findByRole('button', { name: /Dùng giá này/ }));
+    expect(screen.getByLabelText(/Cước vận chuyển quốc tế/)).toHaveValue('3000.00');
+  });
+
   it('không có giá tham khảo: nói rõ là chưa có, không tự điền số nào', async () => {
     serve({ freight: [], insurance: null });
     renderCalc();

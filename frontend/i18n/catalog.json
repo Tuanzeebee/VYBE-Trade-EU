@@ -17233,5 +17233,20 @@
     "Approach",
     "Approche",
     "方針"
+  ],
+  "Giá tính bằng": [
+    "Price in",
+    "Prix en",
+    "価格の通貨："
+  ],
+  "Đổi tiền tệ lô hàng sang": [
+    "Change the shipment currency to",
+    "Passez la devise de l'envoi en",
+    "貨物の通貨を次に変更："
+  ],
+  "để dùng giá này.": [
+    "to use this price.",
+    "pour utiliser ce prix.",
+    "この価格を使用します。"
   ]
 }

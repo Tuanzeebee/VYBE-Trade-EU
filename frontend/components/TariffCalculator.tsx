@@ -563,10 +563,14 @@ export default function TariffCalculator({ initialRoo }: { initialRoo?: RooStatu
               {hints?.freight.map((f) => (
                 <p key={f.container_type} className="mt-1 text-xs text-slate-700">
                   {tr('Giá tham khảo')}: {f.price_low}–{f.price_high} {f.currency} / {f.container_type} ({tr('nguồn')}: {f.source}).{' '}
-                  {f.currency === currency && (
+                  {f.currency === currency ? (
                     <button type="button" onClick={() => setFreight(f.price_typical)} className="font-semibold text-teal-800 underline">
                       {tr('Dùng giá này')}
                     </button>
+                  ) : (
+                    <span className="text-slate-600">
+                      {tr('Giá tính bằng')} {f.currency}. {tr('Đổi tiền tệ lô hàng sang')} {f.currency} {tr('để dùng giá này.')}
+                    </span>
                   )}
                 </p>
               ))}
