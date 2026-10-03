@@ -123,6 +123,12 @@ async def create_report(
     if await _count_since(session, MarketReport, company_id) >= REPORTS_PER_DAY:
         raise AppError("report_limit", "Daily report limit reached, try again tomorrow", 429)
     query, hs, brand_model = data.q.strip(), data.hs, data.brand_model
+    marketing_budget = data.marketing_budget
+    if data.sales_orientation == "own_brand":
+        # N5: ngân sách thương hiệu nuôi logic OEM/nhãn riêng cũ; hướng OEM suy ra mô hình cũ.
+        brand_model, marketing_budget = "own_brand", data.budget
+    elif data.sales_orientation == "oem":
+        brand_model = "oem"
     if data.product_id is not None:
         product = await product_service.get_product(session, user, storage, data.product_id)
         query, hs = query or product.name, hs or product.hs_code[:6]
@@ -144,8 +150,13 @@ async def create_report(
             "hs": hs,
             "family": rec.family.family,
             "brand_model": brand_model,
-            "marketing_budget": _str(data.marketing_budget),
+            "marketing_budget": _str(marketing_budget),
             "expected_revenue": _str(data.expected_revenue),
+            "target_market": data.target_market,
+            "sales_orientation": data.sales_orientation,
+            "other_text": (data.other_text or "").strip() or None,
+            "annual_volume": _str(data.annual_volume),
+            "budget": _str(data.budget),
         },
     )
     session.add(row)

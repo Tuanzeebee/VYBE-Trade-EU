@@ -5,6 +5,8 @@ from typing import Annotated, Any, Literal
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator, model_validator
 
+from app.modules.markets.orientation import SalesOrientation, budget_required
+
 HsCode = Annotated[str, Field(pattern=r"^[0-9]{2,8}$")]
 
 
@@ -134,11 +136,29 @@ class ReportIn(BaseModel):
     marketing_budget: Money | None = None
     expected_revenue: Money | None = None
     brand_model: Literal["oem", "own_brand", "both"] | None = None
+    # N5: hỏi theo bước. Không gửi sales_orientation thì hành xử như cũ.
+    target_market: Annotated[str | None, Field(pattern=r"^([A-Z]{2}|EU)$")] = None
+    sales_orientation: SalesOrientation | None = None
+    other_text: Annotated[str | None, Field(max_length=200)] = None
+    annual_volume: Money | None = None
+    budget: Money | None = None
 
     @model_validator(mode="after")
     def _has_subject(self) -> "ReportIn":
         if self.product_id is None and not self.q.strip() and self.hs is None:
             raise ValueError("Choose a product or enter a product name / HS code")
+        return self
+
+    @model_validator(mode="after")
+    def _orientation_rules(self) -> "ReportIn":
+        if self.sales_orientation is None:
+            return self
+        if not self.expected_revenue or self.expected_revenue <= 0:
+            raise ValueError("expected_revenue is required and must be greater than 0")
+        if budget_required(self.sales_orientation) and (not self.budget or self.budget <= 0):
+            raise ValueError("budget is required for own brand")
+        if self.sales_orientation == "other" and not (self.other_text or "").strip():
+            raise ValueError("other_text is required when orientation is other")
         return self
 
 

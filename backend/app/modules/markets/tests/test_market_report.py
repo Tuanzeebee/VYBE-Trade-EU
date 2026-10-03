@@ -329,3 +329,32 @@ async def test_metrics_from_real_statistics(db_session: AsyncSession) -> None:
     assert "OEM" in metrics["branding_advice"]
     assert metrics["price_position"] in {"cao hơn", "thấp hơn", "tương đương"}
     assert {"top1_country", "top3_vn_share", "comp1_country"} <= set(metrics)
+
+
+@api
+async def test_orientation_is_validated_and_stored(
+    api_client: AsyncClient, db_session: AsyncSession, queued: list[uuid.UUID]
+) -> None:
+    """N5: thương hiệu riêng thiếu ngân sách → 422; đủ trường → 202 và input lưu hướng bán."""
+    await exporter(api_client)
+    base = {"q": "cá tra", "sales_orientation": "own_brand", "expected_revenue": "1000000"}
+    assert (await api_client.post(URL, json=base)).status_code == 422
+    r = await api_client.post(
+        URL, json={**base, "budget": "50000", "target_market": "DE", "annual_volume": "300000"}
+    )
+    assert r.status_code == 202, r.text
+    row = await db_session.get_one(MarketReport, uuid.UUID(r.json()["id"]))
+    assert row.input["sales_orientation"] == "own_brand"
+    assert row.input["target_market"] == "DE"
+    assert Decimal(row.input["budget"]) == Decimal("50000")
+    assert row.input["brand_model"] == "own_brand"
+    assert Decimal(row.input["marketing_budget"]) == Decimal("50000")  # nuôi logic cũ
+
+
+@api
+async def test_bulk_orientation_needs_no_budget(
+    api_client: AsyncClient, queued: list[uuid.UUID]
+) -> None:
+    await exporter(api_client)
+    body = {"q": "cá tra", "sales_orientation": "bulk", "expected_revenue": "1000000"}
+    assert (await api_client.post(URL, json=body)).status_code == 202
