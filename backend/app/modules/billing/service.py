@@ -11,6 +11,7 @@ import uuid
 from sqlalchemy import ColumnElement, and_, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core import entitlements
 from app.core.audit import record
 from app.core.config import DEMO_BANK_ACCOUNT, get_settings
 from app.core.errors import AppError
@@ -18,7 +19,7 @@ from app.core.events import publish
 from app.modules.auth.schemas import CurrentUser
 from app.modules.billing.events import OrderPaid
 from app.modules.billing.logic import entitlement_window, new_reference, next_status
-from app.modules.billing.models import BillingItem, Entitlement, Order
+from app.modules.billing.models import BillingItem, Entitlement, Order, PlanLimit
 from app.modules.billing.schemas import (
     AdminBillingItemOut,
     AdminOrderOut,
@@ -252,6 +253,16 @@ async def has_entitlement(session: AsyncSession, company_id: uuid.UUID, feature:
         select(Entitlement.id).where(_active(company_id, _now()), Entitlement.feature == feature)
     )
     return found is not None
+
+
+async def limit_for(session: AsyncSession, company_id: uuid.UUID, key: str) -> int | None:
+    """None = không giới hạn: công ty có quyền `more_products` hoặc `key` chưa được cấu hình."""
+    if key == entitlements.MAX_PRODUCTS and await has_entitlement(
+        session, company_id, entitlements.MORE_PRODUCTS
+    ):
+        return None
+    row = await session.get(PlanLimit, key)
+    return row.free_limit if row else None
 
 
 async def my_entitlements(session: AsyncSession, user: CurrentUser) -> list[EntitlementOut]:

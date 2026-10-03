@@ -12,6 +12,7 @@ from sqlalchemy import Select, and_, exists, func, literal, or_, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core import entitlements
 from app.core.audit import record
 from app.core.errors import AppError
 from app.core.storage import Storage
@@ -332,6 +333,13 @@ async def create_product(
     session: AsyncSession, user: CurrentUser, storage: Storage, data: ProductIn
 ) -> ProductOut:
     company = await _owned_exporter(session, user)
+    limit = await entitlements.limit_for(session, company.id, entitlements.MAX_PRODUCTS)
+    if limit is not None and await count_company_products(session, company.id) >= limit:
+        raise AppError(
+            "product_limit_reached",
+            f"Your plan allows up to {limit} products. Upgrade to add more.",
+            409,
+        )
     hs = await _resolve_hs(session, data.hs_code)
     _check_image_keys(company.id, data.image_keys)
     values: dict[str, Any] = data.model_dump(exclude={"hs_code", *_LIST_FIELDS})

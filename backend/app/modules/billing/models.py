@@ -54,6 +54,16 @@ class BillingItem(Base):
     updated_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
 
 
+class PlanLimit(Base):
+    """Giới hạn số lượng của gói miễn phí (N8), ví dụ max_products = 3. Là dữ liệu cấu hình."""
+
+    __tablename__ = "plan_limits"
+    __table_args__ = (CheckConstraint("free_limit >= 0", name="free_limit_non_negative"),)
+
+    key: Mapped[str] = mapped_column(String(32), primary_key=True)
+    free_limit: Mapped[int] = mapped_column(Integer)
+
+
 class Order(Base):
     __tablename__ = "orders"
     __table_args__ = (

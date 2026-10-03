@@ -301,6 +301,8 @@ export async function getMyProducts(): Promise<ProductOut[] | null> {
 function saveError(status: number, name: string): Error {
   if (status === 422) return new Error(`Sản phẩm "${name}" chưa hợp lệ. Vui lòng kiểm tra mã HS, giá và ảnh.`);
   if (status === 404) return new Error('Chưa có hồ sơ doanh nghiệp. Hãy lưu thông tin doanh nghiệp trước.');
+  // N8: backend trả 409 product_limit_reached khi gói hiện tại hết chỗ đăng sản phẩm.
+  if (status === 409) return new Error('Gói hiện tại cho phép số sản phẩm có hạn. Nâng cấp gói để thêm sản phẩm.');
   return new Error(`Không lưu được sản phẩm "${name}". Vui lòng thử lại.`);
 }
 

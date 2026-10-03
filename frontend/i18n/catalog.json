@@ -17183,5 +17183,10 @@
     "Export experience",
     "Expérience à l'export",
     "輸出経験"
+  ],
+  "Gói hiện tại cho phép số sản phẩm có hạn. Nâng cấp gói để thêm sản phẩm.": [
+    "Your current plan limits the number of products. Upgrade to add more.",
+    "Votre forfait actuel limite le nombre de produits. Passez à une offre supérieure pour en ajouter.",
+    "現在のプランでは製品数に上限があります。追加するにはプランをアップグレードしてください。"
   ]
 }

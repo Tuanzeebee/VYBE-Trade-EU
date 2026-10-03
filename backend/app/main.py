@@ -47,6 +47,7 @@ auth_service.register_anonymize_hook(notification_center.delete_for_user)
 auth_service.register_anonymize_hook(copilot_service.redact_user_contacts)
 # Tính năng trả phí (U19): module dùng tính năng hỏi core.entitlements, billing trả lời.
 entitlements.register(billing_service.has_entitlement)
+entitlements.register_limit(billing_service.limit_for)
 
 
 @asynccontextmanager

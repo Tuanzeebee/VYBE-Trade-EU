@@ -89,6 +89,7 @@ async def test_pricing_is_public_and_marked_placeholder(api_client: AsyncClient)
         "verification_enhanced",
         "gtm_report_full",
         "profile_viewers_full",
+        "products_plus",
     ]
     assert all(i["price_is_placeholder"] and i["audience"] == "exporter" for i in items)
     assert items[1]["price"] == "1500000.00" and items[1]["duration_days"] == 90
