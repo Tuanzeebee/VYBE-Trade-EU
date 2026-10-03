@@ -9,6 +9,7 @@ import MarketRanking from './MarketRanking';
 import SectorAlerts, { DemoDataBanner } from './SectorAlerts';
 import { isRooStatus, rankMarkets, type MarketsResult, type RooStatus } from '../lib/marketsApi';
 import UnreviewedNotice from './UnreviewedNotice';
+import QuotaInsights from './QuotaInsights';
 import ValuationBreakdown from './ValuationBreakdown';
 import {
   calculateTariff,
@@ -23,6 +24,7 @@ import {
   QUOTA_REVIEW_MESSAGES,
   type Agreement,
   type Incoterm,
+  type QuantityUnit,
   type QuotaAllocated,
   type Subtype,
   type TariffOutcome,
@@ -101,6 +103,7 @@ function QuotaScenarios({ data }: { data: TariffResult }) {
           {tr('Chênh lệch nếu được phân bổ hạn ngạch')}: <strong>{money(data.savings)}</strong>
         </p>
       )}
+      {data.quota && <QuotaInsights quota={data.quota} money={money} unit={unit} />}
       {data.quota_allocated === 'no' && (
         <p className="mt-2 rounded-lg bg-amber-50 p-2 text-xs text-amber-900">{tr('Bạn cho biết chưa được phân bổ hạn ngạch: lô hàng sẽ chịu thuế ngoài hạn ngạch.')}</p>
       )}
@@ -227,6 +230,9 @@ export default function TariffCalculator({ initialRoo }: { initialRoo?: RooStatu
   // C2-A: trị giá tính thuế. Một đơn vị tiền tệ cho cả form, không quy đổi.
   const [currency, setCurrency] = useState('EUR');
   const [incoterm, setIncoterm] = useState<Incoterm | ''>('');
+  // C2-C: đơn vị khối lượng ('' = theo đơn vị của hạn ngạch, thường là tấn) và chi phí để có hạn ngạch
+  const [quantityUnit, setQuantityUnit] = useState<QuantityUnit | ''>('');
+  const [accessCost, setAccessCost] = useState('');
   const [freight, setFreight] = useState('');
   const [insurance, setInsurance] = useState('');
   const [postBorder, setPostBorder] = useState('');
@@ -300,6 +306,10 @@ export default function TariffCalculator({ initialRoo }: { initialRoo?: RooStatu
       insurance: cost(insurance, Boolean(incotermInfo?.costs.includes('insurance'))),
       postBorder: cost(postBorder, Boolean(incotermInfo?.costs.includes('postBorder'))),
     };
+    const quotaCost = hasQuota && accessCost.trim() !== '' ? parseCost(accessCost) : undefined;
+    if (quotaCost === null) {
+      return setError('Chi phí phải là số không âm, tối đa 2 chữ số thập phân (ví dụ 3000 hoặc 3000.50).');
+    }
     if (Object.values(costs).some((c) => c === null)) {
       return setError('Chi phí phải là số không âm, tối đa 2 chữ số thập phân (ví dụ 3000 hoặc 3000.50).');
     }
@@ -316,6 +326,8 @@ export default function TariffCalculator({ initialRoo }: { initialRoo?: RooStatu
       subtypeCode: hasQuota ? subtype || undefined : undefined,
       quantity: hasQuota ? qty : undefined,
       quotaAllocated: hasQuota ? allocated || undefined : undefined,
+      quantityUnit: hasQuota && qty !== undefined ? quantityUnit || undefined : undefined,
+      quotaAccessCost: quotaCost ?? undefined,
       incoterm: incoterm || undefined,
       currency: currency !== 'EUR' ? currency : undefined,
       freight: costs.freight ?? undefined,
@@ -434,12 +446,37 @@ export default function TariffCalculator({ initialRoo }: { initialRoo?: RooStatu
                 ))}
               </div>
             </fieldset>
+            <div className="grid gap-3 sm:grid-cols-[1fr_10rem]">
+              <div>
+                <label htmlFor="tariff-quantity" className={label}>
+                  {tr(quantityUnit === 'kg' ? 'Khối lượng lô hàng (kg)' : 'Khối lượng lô hàng (tấn)')}
+                </label>
+                <input id="tariff-quantity" inputMode="decimal" value={quantity} onChange={(e) => setQuantity(e.target.value)} className={field} />
+              </div>
+              <div>
+                <label htmlFor="tariff-quantity-unit" className={label}>
+                  {tr('Đơn vị khối lượng')}
+                </label>
+                <select
+                  id="tariff-quantity-unit"
+                  value={quantityUnit}
+                  onChange={(e) => setQuantityUnit(e.target.value as QuantityUnit | '')}
+                  className={field}
+                >
+                  <option value="">{tr('Tấn (mặc định)')}</option>
+                  <option value="kg">{tr('Kilôgam (kg)')}</option>
+                </select>
+              </div>
+            </div>
+            <p className="-mt-2 text-xs text-slate-600">{tr('Cần khi thuế tính theo khối lượng (thuế tuyệt đối).')}</p>
             <div>
-              <label htmlFor="tariff-quantity" className={label}>
-                {tr('Khối lượng lô hàng (tấn)')}
+              <label htmlFor="tariff-access-cost" className={label}>
+                {tr('Chi phí để có hạn ngạch (không bắt buộc)')}
               </label>
-              <input id="tariff-quantity" inputMode="decimal" value={quantity} onChange={(e) => setQuantity(e.target.value)} className={field} />
-              <p className="mt-1 text-xs text-slate-600">{tr('Cần khi thuế tính theo khối lượng (thuế tuyệt đối).')}</p>
+              <input id="tariff-access-cost" inputMode="decimal" value={accessCost} onChange={(e) => setAccessCost(e.target.value)} className={field} />
+              <p className="mt-1 text-xs text-slate-600">
+                {tr('Phí giấy phép, chi phí chờ đợi... Nhập để xem lợi ích ròng và điểm hòa vốn của hạn ngạch.')}
+              </p>
             </div>
           </fieldset>
         )}

@@ -412,6 +412,43 @@ class ProductSubtypeOut(BaseModel):
     reviewed_at: dt.datetime | None
 
 
+AllocationMethod = Literal[
+    "IMPORTER_FIRST_COME", "IMPORT_LICENCE", "EXPORT_LICENCE", "ALLOCATION", "OTHER"
+]
+
+
+class QuotaBalanceIn(BaseModel):
+    """Khối lượng đã dùng tại một ngày; ngày và nguồn bắt buộc (số liệu thực tế)."""
+
+    as_of: dt.date
+    used_volume: Decimal
+    source: Annotated[str, Field(min_length=3, max_length=1024)]
+
+    @field_validator("as_of")
+    @classmethod
+    def _as_of(cls, value: dt.date) -> dt.date:
+        if value > dt.datetime.now(dt.UTC).date():
+            raise ValueError("as_of cannot be in the future")
+        return value
+
+    @field_validator("used_volume", mode="before")
+    @classmethod
+    def _used(cls, value: Any) -> Decimal:
+        number = _decimal(value, _VOLUME, "used_volume")
+        if number is None:
+            raise ValueError("used_volume is required")
+        return number
+
+
+class QuotaBalanceOut(BaseModel):
+    id: uuid.UUID
+    quota_id: uuid.UUID
+    as_of: dt.date
+    used_volume: Decimal
+    source: str
+    entered_by: uuid.UUID | None
+
+
 class _QuotaFields(BaseModel):
     in_quota_rate: Decimal | None = None
     in_quota_specific: Decimal | None = None
@@ -444,6 +481,11 @@ class TariffQuotaIn(_QuotaFields):
     licence_note_en: Text = None
     allocation_note_vi: Text = None
     allocation_note_en: Text = None
+    period_start: dt.date | None = None
+    period_end: dt.date | None = None
+    allocation_method: AllocationMethod | None = None
+    licence_required: bool = False
+    licence_issuer_vi: Text = None
     source_url: Url = None
     valid_from: dt.date
     valid_until: dt.date | None = None
@@ -482,6 +524,11 @@ class TariffQuotaPatch(_QuotaFields):
     licence_note_en: Text = None
     allocation_note_vi: Text = None
     allocation_note_en: Text = None
+    period_start: dt.date | None = None
+    period_end: dt.date | None = None
+    allocation_method: AllocationMethod | None = None
+    licence_required: bool | None = None
+    licence_issuer_vi: Text = None
     source_url: Url = None
     valid_from: dt.date | None = None
     valid_until: dt.date | None = None
@@ -536,6 +583,11 @@ class TariffQuotaOut(BaseModel):
     licence_note_en: str | None
     allocation_note_vi: str | None
     allocation_note_en: str | None
+    period_start: dt.date | None
+    period_end: dt.date | None
+    allocation_method: str | None
+    licence_required: bool
+    licence_issuer_vi: str | None
     source_url: str | None
     valid_from: dt.date
     valid_until: dt.date | None

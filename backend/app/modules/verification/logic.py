@@ -45,13 +45,19 @@ def is_valid(evidence: EvidenceFact, today: dt.date) -> bool:
 
 
 def is_evfta_verified(
-    status: str, evidence: Iterable[EvidenceFact], required: set[str], today: dt.date
+    status: str,
+    evidence: Iterable[EvidenceFact],
+    required: set[str],
+    today: dt.date,
+    *,
+    ownership_proven: bool,
 ) -> bool:
-    """EVFTA-verified = công ty verified VÀ có bằng chứng còn hạn cho MỌI loại bắt buộc.
+    """EVFTA-verified = công ty verified VÀ đã chứng minh quyền sở hữu (I11) VÀ có bằng chứng còn
+    hạn cho MỌI loại bắt buộc.
 
     Không có loại bắt buộc nào (thiếu dữ liệu luật TM) → False: không tự nâng mức khi thiếu căn cứ.
     """
-    if status != "verified" or not required:
+    if status != "verified" or not required or not ownership_proven:
         return False
     valid_types = {e.type_code for e in evidence if is_valid(e, today)}
     return required <= valid_types

@@ -9,6 +9,7 @@ import { listMyRequests, submitRequest, type VerificationRequest } from '../lib/
 import VerificationTier from './VerificationTier';
 import OwnerChecks from './OwnerChecks';
 import TrustScorePanel from './TrustScorePanel';
+import { PageLoader } from './PageLoader';
 
 const STATUS: Record<string, { label: string; tone: string }> = {
   unverified: { label: 'Chưa xác minh', tone: 'bg-slate-100 text-slate-700' },
@@ -50,7 +51,7 @@ export default function VerificationPanel() {
     }
   };
 
-  if (company === undefined) return null;
+  if (company === undefined) return <PageLoader />;
   if (company === null) {
     return (
       <p role="status" className="rounded-2xl bg-white p-5 text-sm text-slate-700">

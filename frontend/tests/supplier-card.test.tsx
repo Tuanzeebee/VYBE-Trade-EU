@@ -3,7 +3,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import SupplierCard from '@/components/SupplierCard';
 import SupplierDirectory from '@/components/SupplierDirectory';
-import { readQuery, toSearch, type SupplierCardData } from '@/lib/suppliersApi';
+import { readQuery, SUPPLIER_COUNTRIES, toSearch, type SupplierCardData } from '@/lib/suppliersApi';
 
 vi.mock('next/navigation', async (importOriginal) => ({
   ...(await importOriginal<typeof import('next/navigation')>()),
@@ -186,5 +186,13 @@ describe('readQuery / toSearch', () => {
     expect(toSearch({ q: 'gạo', page: 1, hs: '' })).toBe('?q=g%E1%BA%A1o');
     expect(toSearch({}, { page: 2 })).toBe('?page=2');
     expect(toSearch({})).toBe('');
+  });
+});
+
+describe('SUPPLIER_COUNTRIES — bộ lọc quốc gia', () => {
+  it('mỗi mã một lần (React key của <option> không trùng), Việt Nam đứng đầu', () => {
+    const codes = SUPPLIER_COUNTRIES.map((c) => c.code);
+    expect(new Set(codes).size).toBe(codes.length);
+    expect(codes[0]).toBe('VN');
   });
 });

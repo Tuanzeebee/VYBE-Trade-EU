@@ -1,6 +1,6 @@
 import { setRequestLocale } from 'next-intl/server';
 import { use } from 'react';
-import { AdminRoute } from '@/components/routes/AccountRoutes';
+import { AdminRoute } from '@/components/routes/AdminRoute';
 
 export default function Page({ params }: { params: Promise<{ locale: string }> }) {
   setRequestLocale(use(params).locale);

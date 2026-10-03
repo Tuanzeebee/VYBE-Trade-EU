@@ -158,6 +158,13 @@ class TierDownIn(BaseModel):
     reason: Annotated[str, Field(min_length=1, max_length=2000)]
 
 
+class SignalOut(BaseModel):
+    """Tín hiệu rủi ro danh tính (I11) — chỉ để xếp ưu tiên, không phải quyết định."""
+
+    code: str
+    severity: Literal["high", "medium", "low"]
+
+
 class QueueItem(BaseModel):
     request_id: uuid.UUID
     company_id: uuid.UUID
@@ -173,6 +180,8 @@ class QueueItem(BaseModel):
     tier_requirements: list[TierRequirementOut] = Field(default_factory=list)
     checks: list[CheckOut] = Field(default_factory=list)  # U21
     findings: list[FindingOut] = Field(default_factory=list)  # U22
+    signals: list[SignalOut] = []  # I11: có cờ cao thì lên đầu hàng đợi
+    ownership_proven: bool = False  # I11: đã gọi lại số chính thức và khớp
 
 
 class DecisionIn(BaseModel):

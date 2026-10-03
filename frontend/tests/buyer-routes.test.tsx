@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { NextIntlClientProvider } from 'next-intl';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { OnboardingRoute } from '@/components/routes/AccountRoutes';
+import { OnboardingRoute } from '@/components/routes/OnboardingRoute';
 import { LanguageProvider } from '@/context/LanguageContext';
 
 const replace = vi.fn();

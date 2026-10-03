@@ -390,6 +390,15 @@ class TariffQuota(Base):
         CheckConstraint("volume_unit IN ('tonne', 'kg', 'piece', 'liter')", name="volume_unit"),
         CheckConstraint("valid_until IS NULL OR valid_until > valid_from", name="valid_window"),
         CheckConstraint(
+            "period_start IS NULL OR period_end IS NULL OR period_end > period_start",
+            name="period_window",
+        ),
+        CheckConstraint(
+            "allocation_method IS NULL OR allocation_method IN "
+            "('IMPORTER_FIRST_COME', 'IMPORT_LICENCE', 'EXPORT_LICENCE', 'ALLOCATION', 'OTHER')",
+            name="allocation_method_values",
+        ),
+        CheckConstraint(
             "(reviewed_by IS NULL) = (reviewed_at IS NULL)", name="reviewed_by_and_at_together"
         ),
     )
@@ -415,6 +424,14 @@ class TariffQuota(Base):
     licence_note_en: Mapped[str | None] = mapped_column(Text)
     allocation_note_vi: Mapped[str | None] = mapped_column(Text)
     allocation_note_en: Mapped[str | None] = mapped_column(Text)
+    # C2-C: chu kỳ hạn ngạch (khác hiệu lực pháp lý valid_from/valid_until), cách phân bổ
+    period_start: Mapped[dt.date | None] = mapped_column(Date)
+    period_end: Mapped[dt.date | None] = mapped_column(Date)
+    allocation_method: Mapped[str | None] = mapped_column(String(24))
+    licence_required: Mapped[bool] = mapped_column(
+        Boolean, default=False, server_default=text("false")
+    )
+    licence_issuer_vi: Mapped[str | None] = mapped_column(Text)
     source_url: Mapped[str | None] = mapped_column(String(1024))
     valid_from: Mapped[dt.date] = mapped_column(Date)
     valid_until: Mapped[dt.date | None] = mapped_column(Date)
@@ -735,6 +752,33 @@ class CustomsValuationRule(Base):
     valid_from: Mapped[dt.date] = mapped_column(Date)
     valid_until: Mapped[dt.date | None] = mapped_column(Date)
     data_version: Mapped[str | None] = mapped_column(String(32))
+    created_at: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=text("clock_timestamp()")
+    )
+
+
+class TariffQuotaBalance(Base):
+    """Khối lượng hạn ngạch đã dùng tại một ngày (số liệu thực tế từ nguồn chính thức, admin nhập).
+
+    Không cần luật sư duyệt từng lần (số liệu biến động hằng ngày) nhưng BẮT BUỘC có ngày và nguồn;
+    cũ hơn ngưỡng thì hiển thị kèm cảnh báo. Chưa có dòng nào → trạng thái "chưa biết số dư"."""
+
+    __tablename__ = "tariff_quota_balances"
+    __table_args__ = (
+        UniqueConstraint("quota_id", "as_of", name="quota_as_of"),
+        CheckConstraint("used_volume >= 0", name="non_negative_used"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, primary_key=True, default=uuid.uuid4, server_default=text("gen_random_uuid()")
+    )
+    quota_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("tariff_quotas.id", ondelete="CASCADE"), index=True
+    )
+    as_of: Mapped[dt.date] = mapped_column(Date)
+    used_volume: Mapped[Decimal] = mapped_column(Numeric(14, 3))
+    source: Mapped[str] = mapped_column(String(1024))
+    entered_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id"))
     created_at: Mapped[dt.datetime] = mapped_column(
         DateTime(timezone=True), server_default=text("clock_timestamp()")
     )

@@ -529,6 +529,19 @@ class ViewerIdentity(BaseModel):
     identifiable: bool
 
 
+class CompanyIdentityFacts(BaseModel):
+    """Định danh của một công ty cho việc gom cụm chống mạo danh (I11, module verification)."""
+
+    id: uuid.UUID
+    legal_name: str
+    type: str
+    tax_id: str | None
+    website: str | None
+    contact_email: str | None
+    founded_year: int | None
+    owner_user_id: uuid.UUID
+
+
 class VerificationState(BaseModel):
     """Trạng thái xác minh hiện tại của công ty — module verification đọc/ghi qua service."""
 

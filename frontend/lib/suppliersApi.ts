@@ -107,5 +107,5 @@ export async function fetchProfile(slug: string): Promise<PublicProfile | null> 
 export const industryLabel = (code: string | null | undefined) =>
   code ? (INDUSTRIES.find((i) => i.code === code)?.label ?? code) : null;
 // Nhà xuất khẩu chủ yếu ở Việt Nam, nhưng danh sách quốc gia dùng chung chưa có nước này.
-export const SUPPLIER_COUNTRIES = [{ code: 'VN', name: 'Vietnam' }, ...COUNTRIES];
+export const SUPPLIER_COUNTRIES = [{ code: 'VN', name: 'Vietnam' }, ...COUNTRIES.filter((c) => c.code !== 'VN')];
 export const countryName = (code: string) => SUPPLIER_COUNTRIES.find((c) => c.code === code)?.name ?? code;

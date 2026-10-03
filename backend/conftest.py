@@ -51,11 +51,13 @@ class FakeStorage:
     async def put(self, key: str, data: bytes, content_type: str) -> None:
         FakeStorage.objects[key] = data
 
+    async def get(self, key: str) -> bytes:
+        # File "tải lên" qua presign_put giả không có nội dung thật: trả nội dung riêng theo key
+        # để mỗi bằng chứng có hash khác nhau. Test cần file trùng thì ghi objects trước.
+        return FakeStorage.objects.get(key, b"fake:" + key.encode())
+
     async def presign_get(self, key: str) -> str:
         return f"https://fake/{key}"
-
-    async def get(self, key: str) -> bytes:
-        return FakeStorage.objects.get(key, b"")
 
     async def presign_put(self, key: str, content_type: str) -> str:
         return f"https://fake/{key}"

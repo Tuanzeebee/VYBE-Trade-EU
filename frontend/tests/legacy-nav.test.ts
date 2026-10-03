@@ -7,6 +7,7 @@ import {
   resolvePage,
   roleFromType,
   type LegacyPage,
+  workspaceTabForPath,
 } from '@/lib/legacyNav';
 
 const user = (role: DemoUser['role'], onboarded = true): DemoUser => ({
@@ -165,4 +166,20 @@ describe('roleFromType — /register?type= chọn sẵn vai trò', () => {
     ['admin', undefined],
     [null, undefined],
   ] as const)('%s → %s', (type, role) => expect(roleFromType(type)).toBe(role));
+});
+
+describe('workspaceTabForPath — layout workspace mở đúng mục theo URL', () => {
+  it.each([
+    ['/exporter/products', 'products'],
+    ['/exporter/certificates', 'licenses'],
+    ['/exporter/profile-views', 'viewers'],
+    ['/exporter', undefined],
+    ['/exporter/profile', undefined],
+  ] as const)('%s → %s', (path, tab) => expect(workspaceTabForPath(path)).toBe(tab));
+
+  it('ngược đúng với hrefFor cho mọi mục', () => {
+    for (const tab of ['profile', 'products', 'licenses', 'verification', 'rfq', 'messages', 'notifications', 'viewers', 'report', 'billing']) {
+      expect(workspaceTabForPath(hrefFor('workspace', { user: user('seller'), tab }))).toBe(tab);
+    }
+  });
 });

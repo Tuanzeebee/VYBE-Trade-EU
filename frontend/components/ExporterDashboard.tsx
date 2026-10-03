@@ -7,6 +7,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { Link } from '../i18n/navigation';
 import { fetchExporterDashboard, type ExporterDashboardData } from '../lib/dashboardApi';
 import { STATUS_LABELS, type RfqStatus } from '../lib/rfqApi';
+import { PageLoader } from './PageLoader';
 
 const VERIFICATION_LABELS: Record<string, string> = {
   unverified: 'Chưa xác minh',
@@ -27,7 +28,7 @@ export default function ExporterDashboard() {
     };
   }, []);
 
-  if (data === undefined) return null;
+  if (data === undefined) return <PageLoader />;
   if (data === null) {
     return (
       <p role="alert" className="rounded-xl bg-rose-50 p-4 text-sm text-rose-700">

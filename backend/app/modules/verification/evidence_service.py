@@ -5,11 +5,13 @@ Loại bằng chứng và quy tắc bắt buộc là DỮ LIỆU do luật TM du
 """
 
 import datetime as dt
+import hashlib
 import logging
 import uuid
 from collections.abc import Awaitable, Callable
 from typing import Any
 
+from botocore.exceptions import ClientError
 from sqlalchemy import Select, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -20,7 +22,9 @@ from app.modules.auth.schemas import CurrentUser
 from app.modules.catalog import service as catalog
 from app.modules.companies import product_service
 from app.modules.companies import service as companies
+from app.modules.verification import blocklist
 from app.modules.verification import service as verification
+from app.modules.verification.identity import CheckFact, ownership_proven
 from app.modules.verification.logic import (
     EvidenceFact,
     checklist_state,
@@ -29,8 +33,10 @@ from app.modules.verification.logic import (
 )
 from app.modules.verification.models import (
     ApprovalStatus,
+    CheckType,
     Decision,
     Evidence,
+    EvidenceCheck,
     EvidenceType,
     RequiredEvidenceRule,
 )
@@ -109,6 +115,18 @@ async def _usable_type(session: AsyncSession, code: str) -> EvidenceType:
 def _check_file_key(company_id: uuid.UUID, key: str) -> None:
     if not key.startswith(f"evidence/{company_id}/"):
         raise AppError("invalid_file_key", "File was not uploaded for this company", 422)
+
+
+async def _file_hash(session: AsyncSession, storage: Storage, key: str) -> str:
+    """SHA-256 của file đã tải lên (I11): file phải có thật và không nằm trong danh sách chặn."""
+    try:
+        data = await storage.get(key)
+    except ClientError:
+        raise AppError("file_not_uploaded", "File has not been uploaded", 422) from None
+    digest = hashlib.sha256(data).hexdigest()
+    if await blocklist.is_blocked(session, {"file_sha256": digest}):
+        raise AppError("identifier_blocked", "This submission cannot be accepted", 403)
+    return digest
 
 
 async def owned_upload_key(session: AsyncSession, user: CurrentUser, key: str) -> uuid.UUID:
@@ -198,6 +216,7 @@ async def create_evidence(
         company_id=company_id,
         type_code=data.type_code,
         file_key=data.file_key,
+        file_sha256=await _file_hash(session, storage, data.file_key),
         certificate_number=data.certificate_number,
         issuer=data.issuer,
         issued_at=data.issued_at,
@@ -246,6 +265,8 @@ async def update_evidence(
     check_dates(issued_at, expires_at)
     custom = patch.custom_type_name if "custom_type_name" in fields else row.custom_type_name
     row.custom_type_name = _custom_name(type_code, custom)
+    if file_key != row.file_key:
+        row.file_sha256 = await _file_hash(session, storage, file_key)
 
     row.type_code, row.file_key, row.issued_at, row.expires_at = (
         type_code,
@@ -368,11 +389,23 @@ async def checklist(session: AsyncSession, user: CurrentUser) -> list[ChecklistI
     return sorted(items, key=lambda i: (not i.required, i.type_code))
 
 
+async def ownership_proven_for(session: AsyncSession, company_id: uuid.UUID) -> bool:
+    """Đã chứng minh quyền sở hữu (I11): lần gọi lại số chính thức mới nhất khớp."""
+    rows = await session.execute(
+        select(EvidenceCheck.check_type, EvidenceCheck.result, EvidenceCheck.checked_at).where(
+            EvidenceCheck.company_id == company_id,
+            EvidenceCheck.check_type == CheckType.phone_callback,
+        )
+    )
+    return ownership_proven(CheckFact(t.value, r.value, at) for t, r, at in rows)
+
+
 async def sync_level(
     session: AsyncSession, company_id: uuid.UUID, today: dt.date | None = None, commit: bool = True
 ) -> str | None:
     """Đưa mức xác minh khớp bằng chứng: đủ bằng chứng bắt buộc còn hạn → evfta_verified, ngược lại
-    basic. Chỉ áp cho công ty đã verified. Đi qua decide() (level_up/level_down, hệ thống).
+    basic (cần thêm quyền sở hữu đã chứng minh — I11). Chỉ áp cho công ty đã verified.
+    Đi qua decide() (level_up/level_down, hệ thống).
 
     Trả 'level_up' / 'level_down' nếu có đổi, None nếu không.
     """
@@ -382,7 +415,11 @@ async def sync_level(
     rules = await _rules(session, await _categories(session, company_id))
     required = {code for code, (_, is_required, _) in rules.items() if is_required}
     target = is_evfta_verified(
-        state.status, await _facts(session, company_id), required, today or _today()
+        state.status,
+        await _facts(session, company_id),
+        required,
+        today or _today(),
+        ownership_proven=await ownership_proven_for(session, company_id),
     )
     if target and state.level == verification.BASIC:
         decision = Decision.level_up

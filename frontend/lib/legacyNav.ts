@@ -46,7 +46,12 @@ const WORKSPACE_PATHS: Record<string, string> = {
   billing: '/exporter/billing',
 };
 
-export const PROTECTED_PAGES: LegacyPage[] = ['workspace', 'onboarding', 'seller-profile', 'admin'];
+/** Ngược của WORKSPACE_PATHS; gốc /exporter trả undefined để ?tab= cũ vẫn chọn được mục. */
+export function workspaceTabForPath(pathname: string): string | undefined {
+  return Object.entries(WORKSPACE_PATHS).find(([tab, path]) => tab !== 'overview' && path === pathname)?.[0];
+}
+
+export const PROTECTED_PAGES: LegacyPage[] =['workspace', 'onboarding', 'seller-profile', 'admin'];
 
 /** Giữ nguyên quy tắc setCurrentPage của app/page.tsx cũ: trang được phép hiển thị cho user này. */
 export function resolvePage(page: LegacyPage, user: DemoUser | null): LegacyPage {

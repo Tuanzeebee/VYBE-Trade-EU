@@ -11,6 +11,7 @@ export type EvidenceItem = components['schemas']['EvidenceItemOut'];
 export type CompanyChecklist = components['schemas']['CompanyChecklistOut'];
 export type ReviewIssue = components['schemas']['ReviewIssueOut'];
 export type ExporterRequirements = components['schemas']['ExporterRequirementsOut'];
+export type QuotaBalance = components['schemas']['QuotaBalanceOut'];
 
 /** Giá trị người dùng nhập cho từng câu trả lời: 'yes' / 'no' (boolean), chuỗi số (%), mã enum, '' = chưa trả lời. */
 export type Answers = Record<string, string>;
@@ -124,5 +125,37 @@ export async function fetchExporterRequirements(): Promise<ExporterRequirements 
     return response.ok && data ? data : null;
   } catch {
     return null;
+  }
+}
+
+/** Số dư (khối lượng đã dùng) của một hạn ngạch, mới nhất trước. null = lỗi tải. */
+export async function listQuotaBalances(quotaId: string): Promise<QuotaBalance[] | null> {
+  try {
+    const { data, response } = await createApiClient().GET('/api/admin/tariff-quotas/{quota_id}/balances', {
+      params: { path: { quota_id: quotaId } },
+    });
+    return response.ok && data ? data : null;
+  } catch {
+    return null;
+  }
+}
+
+export type SaveBalanceOutcome = { ok: true } | { ok: false; error: 'invalid' | 'not_found' | 'network' };
+
+/** Ghi số dư tại một ngày (cùng ngày thì cập nhật). Ngày và nguồn là bắt buộc. */
+export async function saveQuotaBalance(
+  quotaId: string,
+  input: { asOf: string; usedVolume: string; source: string },
+): Promise<SaveBalanceOutcome> {
+  try {
+    const { response } = await createApiClient().POST('/api/admin/tariff-quotas/{quota_id}/balances', {
+      params: { path: { quota_id: quotaId } },
+      body: { as_of: input.asOf, used_volume: input.usedVolume, source: input.source },
+    });
+    if (response.status === 422) return { ok: false, error: 'invalid' };
+    if (response.status === 404) return { ok: false, error: 'not_found' };
+    return response.ok ? { ok: true } : { ok: false, error: 'network' };
+  } catch {
+    return { ok: false, error: 'network' };
   }
 }

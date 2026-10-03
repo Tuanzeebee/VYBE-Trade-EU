@@ -13,7 +13,7 @@ from app.modules.companies import service as companies
 from app.modules.companies.tests.helpers import product_body
 from app.modules.verification import evidence_service
 from app.modules.verification.models import ApprovalStatus, Evidence
-from app.modules.verification.tests.helpers import TODAY, add_rule, add_type
+from app.modules.verification.tests.helpers import TODAY, add_rule, add_type, prove_ownership
 
 pytestmark = pytest.mark.usefixtures("hs_seeded")
 
@@ -98,6 +98,7 @@ async def test_daily_job_downgrades_level_when_evidence_expires(
     await api_client.post("/api/exporter/products", json=product_body(hs_code="090121"))
     expiry = TODAY + dt.timedelta(days=10)
     await add_evidence(db_session, company_id, ApprovalStatus.approved, expiry)
+    await prove_ownership(db_session, company_id)
     now = dt.datetime.combine(TODAY, dt.time(2, 15), tzinfo=dt.UTC)
     await companies.set_verification_state(
         db_session,

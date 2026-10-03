@@ -20,7 +20,13 @@ from app.modules.verification.models import (
     VerificationDecision,
 )
 from app.modules.verification.service import decide
-from app.modules.verification.tests.helpers import TODAY, add_rule, add_type, body
+from app.modules.verification.tests.helpers import (
+    TODAY,
+    add_rule,
+    add_type,
+    body,
+    prove_ownership,
+)
 
 pytestmark = pytest.mark.usefixtures("hs_seeded")
 NOW = dt.datetime(2026, 10, 1, 9, 0, tzinfo=dt.UTC)
@@ -63,11 +69,13 @@ async def add_approved_evidence(
 async def setup(
     api_client: AsyncClient, db_session: AsyncSession, company_id: uuid.UUID, reviewer_id: uuid.UUID
 ) -> uuid.UUID:
-    """Exporter có sản phẩm cà phê (agriculture) và luật bắt buộc iso_9001 (đã duyệt)."""
+    """Exporter có sản phẩm cà phê (agriculture), luật bắt buộc iso_9001 (đã duyệt) và đã chứng
+    minh quyền sở hữu (I11)."""
     await add_type(db_session, reviewer_id, code="iso_9001")
     await add_rule(db_session, reviewer_id, "iso_9001")
     r = await api_client.post("/api/exporter/products", json=product_body(hs_code="090121"))
     assert r.status_code == 201, r.text
+    await prove_ownership(db_session, company_id)
     return company_id
 
 
@@ -135,6 +143,32 @@ async def test_expired_evidence_downgrades_level(
     )
     assert await sync_level(db_session, setup, TODAY) is None  # còn hạn → giữ mức
     assert await sync_level(db_session, setup, TODAY + dt.timedelta(days=1)) == "level_down"
+    assert await state(db_session, setup) == ("verified", "basic")
+
+
+async def test_no_proven_ownership_never_upgrades(
+    api_client: AsyncClient, db_session: AsyncSession, company_id: uuid.UUID, reviewer_id: uuid.UUID
+) -> None:
+    """I11: đủ bằng chứng bắt buộc nhưng chưa gọi lại số chính thức → không lên evfta_verified."""
+    await add_type(db_session, reviewer_id, code="iso_9001")
+    await add_rule(db_session, reviewer_id, "iso_9001")
+    await api_client.post("/api/exporter/products", json=product_body(hs_code="090121"))
+    await make_verified(db_session, company_id)
+    await add_approved_evidence(db_session, company_id, reviewer_id)
+    assert await sync_level(db_session, company_id, TODAY) is None
+    await prove_ownership(db_session, company_id, result="mismatch")
+    assert await sync_level(db_session, company_id, TODAY) is None
+    assert await state(db_session, company_id) == ("verified", "basic")
+
+
+async def test_later_ownership_mismatch_downgrades_level(
+    db_session: AsyncSession, setup: uuid.UUID, reviewer_id: uuid.UUID
+) -> None:
+    await make_verified(db_session, setup)
+    await add_approved_evidence(db_session, setup, reviewer_id)
+    assert await sync_level(db_session, setup, TODAY) == "level_up"
+    await prove_ownership(db_session, setup, result="mismatch")  # lần gọi lại sau không khớp
+    assert await sync_level(db_session, setup, TODAY) == "level_down"
     assert await state(db_session, setup) == ("verified", "basic")
 
 
