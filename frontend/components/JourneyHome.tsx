@@ -68,7 +68,14 @@ export default function JourneyHome({ data, onGoTab }: { data: ExporterDashboard
       </section>
       <div className="grid gap-4 md:grid-cols-3">
         <DashboardTile title="Lượt xem hồ sơ tuần này" hint={data.profile_views.empty_hint_key}>
-          {data.profile_views.data && <p className={big}>{data.profile_views.data.this_week}</p>}
+          {data.profile_views.data && (
+            <>
+              <p className={big}>{data.profile_views.data.this_week}</p>
+              <Link href="/exporter/profile-views" className="mt-2 inline-block text-xs font-semibold text-teal-800 underline">
+                {tr('Xem ai đã xem hồ sơ')}
+              </Link>
+            </>
+          )}
         </DashboardTile>
         <DashboardTile title="Request mới" hint={data.rfqs.empty_hint_key}>
           {data.rfqs.data && data.rfqs.data.total > 0 && <p className={big}>{data.rfqs.data.counts.new ?? 0}</p>}
