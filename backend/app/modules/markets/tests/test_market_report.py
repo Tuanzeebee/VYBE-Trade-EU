@@ -58,20 +58,20 @@ def valid_narrative(**over: str) -> str:
 def test_validator_fills_numbers_only_from_metrics() -> None:
     out = validate_narrative(valid_narrative(), METRICS)
     assert out is not None
-    assert out["summary"] == "Thị trường Tây Ban Nha nhập 42,7 triệu EUR Phi lê cá tra."
+    assert out["market"] == "Thị trường Tây Ban Nha nhập 42,7 triệu EUR Phi lê cá tra."
 
 
 @pytest.mark.parametrize(
     "raw",
     [
-        valid_narrative(summary="Nhập khẩu tăng 12% mỗi năm."),  # model tự viết số
-        valid_narrative(summary="Thị phần {vn_share_fake} rất cao."),  # khoá không có
-        json.dumps({"summary": "Chỉ một phần."}),  # thiếu phần
+        valid_narrative(market="Nhập khẩu tăng 12% mỗi năm."),  # model tự viết số
+        valid_narrative(market="Thị phần {vn_share_fake} rất cao."),  # khoá không có
+        json.dumps({"market": "Chỉ một phần."}),  # thiếu phần
         valid_narrative(extra="thừa"),  # thừa phần
-        valid_narrative(summary=""),
-        valid_narrative(summary="x" * 2001),
+        valid_narrative(market=""),
+        valid_narrative(market="x" * 2001),
         "không phải JSON",
-        json.dumps(["summary"]),
+        json.dumps(["market"]),
     ],
 )
 def test_validator_rejects_digits_unknown_keys_and_bad_shape(raw: str) -> None:
@@ -188,9 +188,9 @@ async def test_summary_is_free_full_report_needs_entitlement(
     got = (await api_client.get(f"{URL}/{report['id']}")).json()
     assert (got["status"], got["narrative_source"], got["full"]) == ("ready", "model", False)
     unlocked = [s["key"] for s in got["sections"] if not s["locked"]]
-    assert unlocked == ["positioning", "summary", "recommendations"]
+    assert unlocked == ["positioning", "market", "why_market"]
     assert all(s["text"] == "" for s in got["sections"] if s["locked"])
-    summary = next(s for s in got["sections"] if s["key"] == "summary")
+    summary = next(s for s in got["sections"] if s["key"] == "why_market")
     assert "Tây Ban Nha" in summary["text"] or "Đức" in summary["text"]
     assert len(got["top_markets"]) == 3
     assert got["competitors"] == [] and got["pdf_url"] is None  # bản đầy đủ bị khoá
@@ -212,7 +212,7 @@ async def test_model_breaking_rules_falls_back_to_template(
     got = (await api_client.get(f"{URL}/{r.json()['id']}")).json()
     assert (got["narrative_source"], got["full"]) == ("template", True)
     assert all(not s["locked"] for s in got["sections"])
-    assert got["sections"][1]["title"] == "Summary"
+    assert got["sections"][1]["title"] == "EU market overview"
     assert got["competitors"][0]["country"] == "VN"
     assert got["pdf_url"].startswith("https://fake/market-reports/")
 
@@ -338,7 +338,12 @@ async def test_orientation_is_validated_and_stored(
 ) -> None:
     """N5: thương hiệu riêng thiếu ngân sách → 422; đủ trường → 202 và input lưu hướng bán."""
     await exporter(api_client)
-    base = {"q": "cá tra", "sales_orientation": "own_brand", "expected_revenue": "1000000"}
+    base = {
+        "q": "cá tra",
+        "target_market": "DE",
+        "sales_orientation": "own_brand",
+        "expected_revenue": "1000000",
+    }
     assert (await api_client.post(URL, json=base)).status_code == 422
     r = await api_client.post(
         URL, json={**base, "budget": "50000", "target_market": "DE", "annual_volume": "300000"}
@@ -357,7 +362,12 @@ async def test_bulk_orientation_needs_no_budget(
     api_client: AsyncClient, queued: list[uuid.UUID]
 ) -> None:
     await exporter(api_client)
-    body = {"q": "cá tra", "sales_orientation": "bulk", "expected_revenue": "1000000"}
+    body = {
+        "q": "cá tra",
+        "target_market": "DE",
+        "sales_orientation": "bulk",
+        "expected_revenue": "1000000",
+    }
     assert (await api_client.post(URL, json=body)).status_code == 202
 
 
@@ -374,7 +384,7 @@ async def test_report_starts_with_positioning_and_has_segments_slot(
     got = (await api_client.get(f"{URL}/{r.json()['id']}")).json()
     keys = [s["key"] for s in got["sections"]]
     assert keys[0] == "positioning"
-    assert keys.index("segments") == keys.index("recommendations") + 1
+    assert keys.index("segments") == keys.index("why_market") + 1
     assert set(got["positioning"]["axes"]) == {"volume", "certification", "trust", "experience"}
     assert Decimal(got["positioning"]["score"]) >= 0
     segments = next(s for s in got["sections"] if s["key"] == "segments")
@@ -419,3 +429,25 @@ async def test_segments_show_only_reviewed_insight(
     text = next(s for s in got["sections"] if s["key"] == "segments")["text"]
     assert "Nhà hàng chuộng phi lê." in text
     assert "KHÔNG ĐƯỢC LỘ" not in text
+
+
+def test_target_market_metrics_and_orientation() -> None:
+    from app.modules.markets.report import CompanyFacts
+
+    de = {"country": "DE", "import_value": "1000000", "vn_share": "0.05", "import_cagr": "0.04"}
+    rec = {"countries": [de], "top_markets": [de], "potential_markets": []}
+    facts = CompanyFacts(
+        name="X",
+        target_market="DE",
+        orientation="bulk",
+        production_region="Cần Thơ",
+        export_markets=("EU", "US"),
+    )
+    m = build_metrics(rec, None, None, [], facts, {}, "vi")
+    assert m["target_country"] == "Đức"
+    assert m["target_status"] == "thuộc nhóm thị trường nên ưu tiên"
+    assert m["orientation"] == "xuất thô từ nhà máy"
+    assert m["production_region"] == "Cần Thơ"
+    assert m["export_markets_text"] == "EU, Hoa Kỳ"
+    eu = build_metrics(rec, None, None, [], CompanyFacts(name="X", target_market="EU"), {}, "en")
+    assert eu["target_country"] == "the whole EU" and "target_status" not in eu

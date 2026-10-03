@@ -185,3 +185,26 @@ async def test_pending_and_verified_demo_coexist_and_purge_clears_requests(
     assert await one(db_session, "SELECT count(*) FROM companies") == 8
     assert await purge(db_session) == 8
     assert await one(db_session, "SELECT count(*) FROM verification_requests") == 0
+
+
+def test_demo_data_is_mostly_vietnam_with_southeast_asian_minority() -> None:
+    rows = demo_companies(40)
+    countries = [c.country for c in rows]
+    assert countries.count("VN") > len(rows) / 2  # giữ thế mạnh Việt Nam
+    assert {"TH", "ID", "MY", "PH"} <= set(countries)  # mở sang Đông Nam Á
+    sea = next(c for c in rows if c.country != "VN")
+    assert sea.country_en in sea.description_en
+
+
+async def test_seeded_companies_are_flagged_demo_and_cards_expose_it(
+    api_client: AsyncClient, db_session: AsyncSession
+) -> None:
+    await seed(db_session, 12)
+    assert await one(db_session, "SELECT count(*) FROM companies WHERE NOT is_demo") == 0
+    body = (await api_client.get("/api/public/suppliers", params={"page_size": 50})).json()
+    assert body["items"] and all(card["is_demo"] for card in body["items"])
+    assert {card["country"] for card in body["items"]} > {"VN"}
+    featured = body["items"][0]["featured_product"]
+    assert featured["name"].startswith(DEMO_PREFIX)
+    assert featured["price_min"] is not None and featured["moq"] is not None
+    assert featured["image_url"] is None  # seed không có ảnh sản phẩm

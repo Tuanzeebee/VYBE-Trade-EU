@@ -18017,6 +18017,100 @@
         ],
         "title": "FamilyOut"
       },
+      "FeaturedProductOut": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "price_min": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price Min"
+          },
+          "price_max": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price Max"
+          },
+          "currency": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Currency"
+          },
+          "unit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit"
+          },
+          "moq": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Moq"
+          },
+          "moq_unit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Moq Unit"
+          },
+          "image_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Image Url"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "title": "FeaturedProductOut",
+        "description": "Một sản phẩm tiêu biểu trên thẻ danh bạ: giá tham khảo, MOQ và ảnh (nếu có)."
+      },
       "FeedbackIn": {
         "properties": {
           "was_helpful": {
@@ -23203,6 +23297,18 @@
               }
             ],
             "title": "Budget"
+          },
+          "production_region": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Production Region"
           }
         },
         "type": "object",
@@ -26257,6 +26363,21 @@
             },
             "type": "array",
             "title": "Service Categories"
+          },
+          "is_demo": {
+            "type": "boolean",
+            "title": "Is Demo",
+            "default": false
+          },
+          "featured_product": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/FeaturedProductOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "type": "object",
@@ -26415,6 +26536,31 @@
           "page_size"
         ],
         "title": "SupplierPage"
+      },
+      "TariffCitationOut": {
+        "properties": {
+          "legal_article": {
+            "type": "string",
+            "title": "Legal Article"
+          },
+          "signed_on": {
+            "type": "string",
+            "format": "date",
+            "title": "Signed On"
+          },
+          "annex_ref": {
+            "type": "string",
+            "title": "Annex Ref"
+          }
+        },
+        "type": "object",
+        "required": [
+          "legal_article",
+          "signed_on",
+          "annex_ref"
+        ],
+        "title": "TariffCitationOut",
+        "description": "Nguồn của mức thuế ưu đãi: điều khoản hiệp định, ngày ký, danh mục/phụ lục."
       },
       "TariffIn": {
         "properties": {
@@ -26791,6 +26937,42 @@
             ],
             "title": "Source Url"
           },
+          "legal_article": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Legal Article"
+          },
+          "signed_on": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Signed On"
+          },
+          "annex_ref": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Annex Ref"
+          },
           "valid_from": {
             "type": "string",
             "format": "date",
@@ -26945,6 +27127,40 @@
               }
             ],
             "title": "Condition Note En"
+          },
+          "legal_article": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Legal Article"
+          },
+          "signed_on": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Signed On"
+          },
+          "annex_ref": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Annex Ref"
           },
           "source_url": {
             "anyOf": [
@@ -27211,6 +27427,42 @@
             ],
             "title": "Source Url"
           },
+          "legal_article": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Legal Article"
+          },
+          "signed_on": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Signed On"
+          },
+          "annex_ref": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Annex Ref"
+          },
           "valid_from": {
             "anyOf": [
               {
@@ -27434,6 +27686,16 @@
             "type": "boolean",
             "title": "Citation Missing",
             "default": true
+          },
+          "citation": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TariffCitationOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "agreement": {
             "anyOf": [

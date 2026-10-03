@@ -1,6 +1,7 @@
 """Hàm thuần tariff_savings. Dữ liệu ở đây là SYNTHETIC — chỉ kiểm phép tính và quy tắc,
 không phải thuế suất thật (golden test dữ liệu thật nạp từ CSV luật TM đã ký)."""
 
+import datetime as dt
 from decimal import Decimal
 
 import pytest
@@ -142,3 +143,10 @@ def test_quota_line_still_needs_review_not_zero() -> None:
     r = tariff_savings(line(quota_required=True), 1, D("50000.00"), None)
     assert r.status == "needs_review"
     assert r.evfta_rate is None
+
+
+def test_citation_needs_article_signing_date_and_annex() -> None:
+    full = line(legal_article="A", signed_on=dt.date(2019, 6, 30), annex_ref="B")
+    assert tariff_savings(full, 1, D("100.00"), None).citation_missing is False
+    partial = line(legal_article="A", signed_on=None, annex_ref="B")
+    assert tariff_savings(partial, 1, D("100.00"), None).citation_missing is True

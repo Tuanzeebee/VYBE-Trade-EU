@@ -120,7 +120,6 @@ export async function calculateTariff(input: {
   freight?: string;
   insurance?: string;
   postBorderCosts?: string;
-  importDate?: string;
 }): Promise<TariffOutcome> {
   try {
     const { data, error, response } = await createApiClient().POST('/api/public/tariff', {
@@ -140,7 +139,6 @@ export async function calculateTariff(input: {
         ...(input.freight !== undefined ? { freight: input.freight } : {}),
         ...(input.insurance !== undefined ? { insurance: input.insurance } : {}),
         ...(input.postBorderCosts !== undefined ? { post_border_costs: input.postBorderCosts } : {}),
-        ...(input.importDate ? { import_date: input.importDate } : {}),
       },
     });
     if (response.status === 429) return { ok: false, error: 'rate_limited' };

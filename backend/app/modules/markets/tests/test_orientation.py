@@ -29,7 +29,12 @@ def test_legacy_payload_still_valid() -> None:
 
 def test_orientation_requires_revenue() -> None:
     with pytest.raises(ValidationError):
-        ReportIn(q="gạo", sales_orientation="bulk")
+        ReportIn(q="gạo", target_market="DE", sales_orientation="bulk")
+
+
+def test_orientation_requires_target_market() -> None:
+    with pytest.raises(ValidationError):
+        ReportIn(q="gạo", sales_orientation="bulk", expected_revenue=Decimal("1000"))
 
 
 def test_own_brand_requires_budget() -> None:
@@ -37,6 +42,7 @@ def test_own_brand_requires_budget() -> None:
         ReportIn(q="gạo", sales_orientation="own_brand", expected_revenue=Decimal("100000"))
     ok = ReportIn(
         q="gạo",
+        target_market="DE",
         sales_orientation="own_brand",
         expected_revenue=Decimal("100000"),
         budget=Decimal("5000"),
@@ -49,6 +55,7 @@ def test_other_orientation_requires_text() -> None:
         ReportIn(q="gạo", sales_orientation="other", expected_revenue=Decimal("1"))
     ok = ReportIn(
         q="gạo",
+        target_market="DE",
         sales_orientation="other",
         other_text="Bán cho nhà máy",
         expected_revenue=Decimal("1"),
@@ -58,7 +65,9 @@ def test_other_orientation_requires_text() -> None:
 
 def test_zero_revenue_is_rejected_when_orientation_given() -> None:
     with pytest.raises(ValidationError):
-        ReportIn(q="gạo", sales_orientation="bulk", expected_revenue=Decimal("0"))
+        ReportIn(
+            q="gạo", target_market="DE", sales_orientation="bulk", expected_revenue=Decimal("0")
+        )
 
 
 @pytest.mark.parametrize("market", ["DE", "EU"])

@@ -145,3 +145,24 @@ async def test_list_companies_filters_by_sourcing_category(
     rice = await list_companies(db_session, CompanyFilters(sourcing="agriculture"))
     assert _names(rice) == ["Rice Buyer"]
     assert await list_companies(db_session, CompanyFilters(sourcing="textiles")) == []
+
+
+async def test_count_buyers_by_country_filters_category_and_hidden(
+    api_client: AsyncClient, db_session: AsyncSession
+) -> None:
+    """Mục "Đối tác tiềm năng" của báo cáo chỉ nhận số đếm, không lộ buyer ẩn hồ sơ."""
+    from app.modules.companies.service import count_buyers_by_country
+
+    await login_as(api_client, "buyer", "buy@x.de")
+    assert (await api_client.post("/api/me/company", json=buyer_body())).status_code == 201
+    await login_as(api_client, "buyer", "hidden@x.de")
+    body = buyer_body(legal_name="Hidden GmbH", sourcing_categories=["seafood"])
+    assert (await api_client.post("/api/me/company", json=body)).status_code == 201
+    assert (
+        await api_client.patch("/api/me/company", json={"hide_profile_views": True})
+    ).status_code == 200
+
+    assert await count_buyers_by_country(db_session, ["DE", "FR"]) == {"DE": 1}
+    assert await count_buyers_by_country(db_session, ["DE"], "spices") == {"DE": 1}
+    assert await count_buyers_by_country(db_session, ["DE"], "seafood") == {}
+    assert await count_buyers_by_country(db_session, []) == {}

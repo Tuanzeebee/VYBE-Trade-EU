@@ -281,3 +281,28 @@ async def test_tariff_result_exposes_citation_missing(
     assert d["status"] == "ok"
     assert d["evfta_rate"] is not None and Decimal(d["evfta_rate"]) == 0
     assert d["citation_missing"] is True
+    assert d["citation"] is None
+
+
+async def test_tariff_result_returns_citation_when_all_three_fields_present(
+    api_client: AsyncClient, db_session: AsyncSession, reviewer_id: uuid.UUID
+) -> None:
+    """Mức ưu đãi có đủ điều khoản, ngày ký, danh mục thì trả trích dẫn; thiếu một thì vẫn cờ."""
+    line = await add_line(
+        db_session,
+        reviewer_id,
+        legal_article="TEST-ARTICLE",
+        signed_on=dt.date(2019, 6, 30),
+        annex_ref="TEST-ANNEX",
+    )
+    d = (await api_client.post(URL, json=body())).json()
+    assert d["citation_missing"] is False
+    assert d["citation"] == {
+        "legal_article": "TEST-ARTICLE",
+        "signed_on": "2019-06-30",
+        "annex_ref": "TEST-ANNEX",
+    }
+    line.annex_ref = None
+    await db_session.flush()
+    d = (await api_client.post(URL, json=body())).json()
+    assert d["citation_missing"] is True and d["citation"] is None

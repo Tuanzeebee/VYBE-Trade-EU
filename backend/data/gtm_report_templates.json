@@ -1,30 +1,39 @@
 {
   "vi": {
-    "summary": [
-      "Báo cáo này phân tích thị trường EU cho {product_name} dựa trên thống kê {source} năm {year}.",
-      "Ba thị trường nên ưu tiên là {top1_country}, {top2_country} và {top3_country}.",
-      "Việt Nam đang là nguồn cung ngoài EU đứng thứ {vn_rank} với thị phần {vn_extra_eu_share}."
+    "positioning": [
+      "Điểm năng lực tổng hợp của doanh nghiệp bạn là {positioning_score}/100, tính từ sản lượng, chứng nhận đã duyệt, xác minh doanh nghiệp và kinh nghiệm xuất khẩu.",
+      "Vùng sản xuất: {production_region}.",
+      "Công ty có thể cung cấp {company_capacity}; nên chọn nhà nhập khẩu có quy mô đơn hàng phù hợp.",
+      "Thị trường đang xuất khẩu: {export_markets_text}.",
+      "Đơn giá nhập khẩu EU của hàng Việt Nam là {vn_unit_price}, {price_position} mặt bằng hàng ngoài EU ({extra_eu_unit_price})."
     ],
     "market": [
-      "Tổng nhập khẩu {product_name} của các nước EU năm {year} là {eu_import_total}.",
+      "Năm {year}, các nước EU nhập khẩu {product_name} trị giá {eu_import_total} (nguồn {source}).",
+      "Việt Nam là nguồn cung ngoài EU đứng thứ {vn_rank} với thị phần {vn_extra_eu_share}.",
       "Mức độ tập trung nguồn cung ngoài EU ở mức {concentration}."
     ],
-    "recommendations": [
+    "why_market": [
+      "Bạn hướng tới {target_country}: thị trường này {target_status}.",
+      "{target_country} nhập khẩu {target_import}, hàng Việt Nam chiếm {target_vn_share}.",
+      "{target_country} tăng trưởng nhập khẩu bình quân {target_growth} mỗi năm.",
+      "Theo thống kê, thị trường nên ưu tiên đầu tiên là {top1_country} (nhập khẩu {top1_import}).",
+      "Ba thị trường nên ưu tiên theo thống kê là {top1_country}, {top2_country} và {top3_country}.",
       "{top1_country} nhập khẩu {top1_import}, hàng Việt Nam chiếm {top1_vn_share}.",
-      "{top1_country} tăng trưởng nhập khẩu bình quân {top1_growth} mỗi năm.",
       "{top2_country} nhập khẩu {top2_import}, hàng Việt Nam chiếm {top2_vn_share}.",
-      "{top3_country} nhập khẩu {top3_import}, hàng Việt Nam chiếm {top3_vn_share}.",
-      "Thị trường tiềm năng: {pot1_country} nhập khẩu {pot1_import} nhưng hàng Việt Nam mới chiếm {pot1_vn_share}.",
-      "{pot2_country} cũng đáng cân nhắc khi mở rộng."
+      "Thị trường tiềm năng: {pot1_country} nhập khẩu {pot1_import} nhưng hàng Việt Nam mới chiếm {pot1_vn_share}."
     ],
     "competition": [
       "Đối thủ lớn nhất của hàng Việt Nam trong nguồn cung ngoài EU là {comp1_country} ({comp1_share}), tiếp theo là {comp2_country} ({comp2_share}).",
       "Việt Nam đứng thứ {vn_rank} với thị phần {vn_extra_eu_share}."
     ],
-    "positioning": [
-      "Điểm năng lực tổng hợp của doanh nghiệp bạn là {positioning_score}/100, tính từ sản lượng, chứng nhận đã duyệt, xác minh doanh nghiệp và kinh nghiệm xuất khẩu.",
-      "Đơn giá nhập khẩu EU của hàng Việt Nam là {vn_unit_price}, {price_position} mặt bằng hàng ngoài EU ({extra_eu_unit_price}).",
-      "Công ty có thể cung cấp {company_capacity}; nên chọn nhà nhập khẩu có quy mô đơn hàng phù hợp."
+    "opportunities": [
+      "{pot1_country} còn dư địa: nhập khẩu lớn nhưng hàng Việt Nam chiếm tỷ trọng thấp.",
+      "Hàng Việt Nam đang có đơn giá {price_position} mặt bằng hàng ngoài EU, tạo chỗ đứng khi chào giá."
+    ],
+    "risks": [
+      "Rủi ro chính gồm biến động giá và yêu cầu an toàn thực phẩm, truy xuất nguồn gốc của EU.",
+      "Đối thủ đáng chú ý: {main_competitor}, chiếm {main_competitor_share} nguồn cung ngoài EU.",
+      "Số liệu là thống kê nhập khẩu, chưa phản ánh giá bán lẻ hay kênh phân phối cụ thể."
     ],
     "compliance": [
       "Thuế nhập khẩu EU: {tariff_text}.",
@@ -32,45 +41,50 @@
       "Hãy kiểm tra quy tắc xuất xứ và chứng từ trước khi chào giá."
     ],
     "branding": [
-      "Công ty khai mô hình {brand_model}.",
-      "Ngân sách marketing dự kiến bằng {budget_ratio} doanh thu, so với mốc khoảng {benchmark_pct} để xây thương hiệu ở EU: {branding_advice}."
-    ],
-    "risks": [
-      "Rủi ro chính gồm biến động giá và yêu cầu an toàn thực phẩm, truy xuất nguồn gốc của EU.",
-      "Đối thủ đáng chú ý: {main_competitor}, chiếm {main_competitor_share} nguồn cung ngoài EU.",
-      "Số liệu là thống kê nhập khẩu, chưa phản ánh giá bán lẻ hay kênh phân phối cụ thể."
+      "Định hướng bán hàng của công ty: {orientation}.",
+      "Mô tả của doanh nghiệp: {orientation_text}.",
+      "Ngân sách dự kiến bằng {budget_ratio} doanh thu, so với mốc khoảng {benchmark_pct} để xây thương hiệu ở EU: {branding_advice}."
     ],
     "next_steps": [
-      "Chọn một thị trường ưu tiên ({top1_country}), chuẩn bị hồ sơ chứng nhận và tìm nhà nhập khẩu trong danh bạ.",
+      "Chọn một thị trường ưu tiên ({target_country}), chuẩn bị hồ sơ chứng nhận và tìm nhà nhập khẩu trong danh bạ.",
       "Liên hệ mạng lưới VBA để được tư vấn triển khai tại thị trường đích."
     ]
   },
   "en": {
-    "summary": [
-      "This report analyses the EU market for {product_name} using {source} statistics for {year}.",
-      "The three priority markets are {top1_country}, {top2_country} and {top3_country}.",
-      "Vietnam ranks #{vn_rank} among extra-EU suppliers with a {vn_extra_eu_share} share."
+    "positioning": [
+      "Your overall capacity score is {positioning_score}/100, based on volume, approved certificates, company verification and export experience.",
+      "Production region: {production_region}.",
+      "The company can supply {company_capacity}; target importers with matching order sizes.",
+      "Current export markets: {export_markets_text}.",
+      "The EU import unit price of Vietnamese goods is {vn_unit_price}, {price_position} the extra-EU average ({extra_eu_unit_price})."
     ],
     "market": [
-      "EU countries imported {eu_import_total} of {product_name} in {year}.",
+      "In {year}, EU countries imported {eu_import_total} of {product_name} ({source}).",
+      "Vietnam ranks #{vn_rank} among extra-EU suppliers with a {vn_extra_eu_share} share.",
       "Concentration of extra-EU supply is {concentration}."
     ],
-    "recommendations": [
+    "why_market": [
+      "You are targeting {target_country}: this market is {target_status}.",
+      "{target_country} imports {target_import}; Vietnamese goods hold {target_vn_share}.",
+      "{target_country} imports grow {target_growth} a year on average.",
+      "By the statistics, the first priority market is {top1_country} (imports {top1_import}).",
+      "The three priority markets by the statistics are {top1_country}, {top2_country} and {top3_country}.",
       "{top1_country} imports {top1_import}; Vietnamese goods hold {top1_vn_share}.",
-      "{top1_country} imports grow {top1_growth} a year on average.",
       "{top2_country} imports {top2_import}; Vietnamese goods hold {top2_vn_share}.",
-      "{top3_country} imports {top3_import}; Vietnamese goods hold {top3_vn_share}.",
-      "Potential market: {pot1_country} imports {pot1_import} but Vietnamese goods hold only {pot1_vn_share}.",
-      "{pot2_country} is also worth considering for expansion."
+      "Potential market: {pot1_country} imports {pot1_import} but Vietnamese goods hold only {pot1_vn_share}."
     ],
     "competition": [
       "The largest extra-EU competitor to Vietnamese goods is {comp1_country} ({comp1_share}), followed by {comp2_country} ({comp2_share}).",
       "Vietnam ranks #{vn_rank} with a {vn_extra_eu_share} share."
     ],
-    "positioning": [
-      "Your overall capacity score is {positioning_score}/100, based on volume, approved certificates, company verification and export experience.",
-      "The EU import unit price of Vietnamese goods is {vn_unit_price}, {price_position} the extra-EU average ({extra_eu_unit_price}).",
-      "The company can supply {company_capacity}; target importers with matching order sizes."
+    "opportunities": [
+      "{pot1_country} has room to grow: imports are large but Vietnamese goods hold a low share.",
+      "Vietnamese goods are priced {price_position} the extra-EU average, which helps when quoting."
+    ],
+    "risks": [
+      "Main risks include price volatility and EU food-safety and traceability requirements.",
+      "Competitor to watch: {main_competitor}, holding {main_competitor_share} of extra-EU supply.",
+      "The figures are import statistics and do not reflect retail prices or specific channels."
     ],
     "compliance": [
       "EU import duty: {tariff_text}.",
@@ -78,16 +92,12 @@
       "Check rules of origin and documents before quoting."
     ],
     "branding": [
-      "The company's declared business model: {brand_model}.",
-      "The planned marketing budget is {budget_ratio} of revenue versus a benchmark of about {benchmark_pct} to build a brand in the EU: {branding_advice}."
-    ],
-    "risks": [
-      "Main risks include price volatility and EU food-safety and traceability requirements.",
-      "Competitor to watch: {main_competitor}, holding {main_competitor_share} of extra-EU supply.",
-      "The figures are import statistics and do not reflect retail prices or specific channels."
+      "The company's sales orientation: {orientation}.",
+      "The company's own description: {orientation_text}.",
+      "The planned budget is {budget_ratio} of revenue versus a benchmark of about {benchmark_pct} to build a brand in the EU: {branding_advice}."
     ],
     "next_steps": [
-      "Pick one priority market ({top1_country}), prepare certificates and find importers in the directory.",
+      "Pick one priority market ({target_country}), prepare certificates and find importers in the directory.",
       "Contact the VBA network for on-the-ground implementation advice."
     ]
   }

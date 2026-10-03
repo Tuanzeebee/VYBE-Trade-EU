@@ -3,6 +3,7 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 
+from app.modules.companies.schemas import FeaturedProductOut
 from app.modules.verification.schemas import PublicCertificateOut
 
 
@@ -27,6 +28,8 @@ class SupplierCardOut(BaseModel):
     city: str | None = None
     service_titles: list[str] = Field(default_factory=list)
     service_categories: list[str] = Field(default_factory=list)
+    is_demo: bool = False  # công ty dữ liệu giả lập: giao diện hiện nhãn "Dữ liệu minh hoạ"
+    featured_product: FeaturedProductOut | None = None
 
 
 class SupplierPage(BaseModel):

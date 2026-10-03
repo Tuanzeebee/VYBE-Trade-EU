@@ -734,3 +734,31 @@ async def get_sourcing_needs_for(
     """Nhu cầu của một buyer — module khác (RFQ, ghép nối) đọc qua đây, không query bảng."""
     row = await session.get(BuyerSourcingNeeds, company_id)
     return _needs_out(row) if row else None
+
+
+async def count_buyers_by_country(
+    session: AsyncSession, countries: list[str], category: str | None = None
+) -> dict[str, int]:
+    """Số buyer đã đăng ký (không ẩn hồ sơ) theo nước, tuỳ chọn lọc theo nhóm hàng cần mua.
+    Chỉ trả số đếm — không lộ tên buyer. Module markets dùng cho mục "Đối tác tiềm năng"."""
+    if not countries:
+        return {}
+    query = (
+        select(Company.country, func.count())
+        .where(
+            Company.type == CompanyType.buyer,
+            Company.is_hidden.is_(False),
+            Company.hide_profile_views.is_(False),
+            Company.country.in_(countries),
+        )
+        .group_by(Company.country)
+    )
+    if category:
+        query = query.where(
+            Company.id.in_(
+                select(CompanySourcingCategory.company_id).where(
+                    CompanySourcingCategory.category == category
+                )
+            )
+        )
+    return {code: int(total) for code, total in (await session.execute(query)).all()}

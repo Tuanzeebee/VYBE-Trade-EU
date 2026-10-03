@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   return {
     title: t('title'),
     description: t('description'),
-    keywords: ['B2B', 'Vietnam exporters', 'Nông sản', 'Thủy sản', 'Xác minh nhà cung ứng', 'VYBE TRADE'],
+    keywords: ['B2B', 'Vietnam exporters', 'Southeast Asia suppliers', 'Nông sản', 'Thủy sản', 'Xác minh nhà cung ứng', 'VYBE TRADE'],
   };
 }
 

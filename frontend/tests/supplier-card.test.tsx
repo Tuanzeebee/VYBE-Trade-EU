@@ -132,12 +132,42 @@ describe('Danh bạ nhà cung cấp (E2)', () => {
     wrap(await SupplierDirectory({ query: { q: 'gạo', country: 'VN' }, locale: 'vi' }));
     expect(screen.getByRole('listitem', { name: 'Nông Sản Lúa Vàng' })).toBeInTheDocument();
     expect(screen.getByLabelText('Tìm theo tên sản phẩm')).toHaveValue('gạo');
-    expect(screen.getByLabelText('Tìm theo tên sản phẩm')).toHaveAttribute('placeholder', 'hạt điều, tiêu, cá tra…');
+    expect(screen.getByLabelText('Tìm theo tên sản phẩm')).toHaveAttribute('placeholder', 'cà phê, hạt điều, dừa, cá tra…');
     expect(screen.getByLabelText('Quốc gia')).toHaveValue('VN');
     expect(screen.getByLabelText('Chứng nhận')).toBeInTheDocument();
     const listing = calls.find((c) => c.startsWith('/api/public/suppliers?'));
     expect(listing).toContain('q=g%E1%BA%A1o');
     expect(listing).toContain('country=VN');
+  });
+
+  it('thẻ kiểu marketplace: giá tham khảo, MOQ, nhãn minh hoạ và banner; có nước Đông Nam Á', async () => {
+    const featured = { name: '[DEMO] Cà phê nhân', price_min: '4', price_max: '5.6', currency: 'USD', unit: 'kg', moq: '500', moq_unit: 'kg', image_url: null };
+    serve({
+      items: [
+        supplier({ is_demo: true, featured_product: featured }),
+        supplier({ slug: 'thai', legal_name: 'Thai Co', country: 'TH', city: 'Chiang Mai', featured_product: null }),
+      ],
+      total: 2,
+      page: 1,
+      page_size: 12,
+    });
+    wrap(await SupplierDirectory({ query: {}, locale: 'vi' }));
+    const demo = screen.getByRole('listitem', { name: 'Nông Sản Lúa Vàng' });
+    expect(within(demo).getByTestId('price')).toHaveTextContent('Từ 4–5,6 USD/kg');
+    expect(within(demo).getByTestId('moq')).toHaveTextContent('Đặt tối thiểu 500 kg');
+    expect(within(demo).getByTestId('demo-badge')).toHaveTextContent('Dữ liệu minh hoạ');
+    expect(screen.getByTestId('demo-banner')).toBeInTheDocument();
+    const thai = screen.getByRole('listitem', { name: 'Thai Co' });
+    expect(within(thai).getByTestId('country')).toHaveTextContent('Chiang Mai, Thailand');
+    expect(within(thai).queryByTestId('price')).toBeNull();
+    expect(within(thai).queryByTestId('demo-badge')).toBeNull();
+    expect(screen.getByRole('complementary', { name: 'Lọc kết quả' })).toBeInTheDocument();
+  });
+
+  it('không có công ty minh hoạ thì không hiện banner', async () => {
+    serve({ items: [supplier()], total: 1, page: 1, page_size: 12 });
+    wrap(await SupplierDirectory({ query: {}, locale: 'vi' }));
+    expect(screen.queryByTestId('demo-banner')).toBeNull();
   });
 
   it('U10: tab nhà cung cấp dịch vụ gửi kind=services và lọc theo loại dịch vụ', async () => {
@@ -190,9 +220,10 @@ describe('readQuery / toSearch', () => {
 });
 
 describe('SUPPLIER_COUNTRIES — bộ lọc quốc gia', () => {
-  it('mỗi mã một lần (React key của <option> không trùng), Việt Nam đứng đầu', () => {
+  it('mỗi mã một lần (React key của <option> không trùng), Việt Nam đứng đầu, có các nước Đông Nam Á', () => {
     const codes = SUPPLIER_COUNTRIES.map((c) => c.code);
     expect(new Set(codes).size).toBe(codes.length);
     expect(codes[0]).toBe('VN');
+    expect(codes).toEqual(expect.arrayContaining(['TH', 'ID', 'MY', 'PH']));
   });
 });

@@ -192,6 +192,20 @@ describe('Máy tính tiết kiệm thuế (C2)', () => {
     expect(await screen.findByTestId('citation-missing')).toHaveTextContent('Chưa có trích dẫn nguồn');
   });
 
+  it('có trích dẫn thì hiện điều khoản, ngày ký và danh mục dưới mức thuế ưu đãi', async () => {
+    const citation = { legal_article: 'TEST-ARTICLE', signed_on: '2019-06-30', annex_ref: 'TEST-ANNEX' };
+    serve(() => json(200, { ...OK, citation_missing: false, citation }));
+    renderCalc();
+    await pickCoffee();
+    fillValue('10000');
+    submit();
+    const note = await screen.findByTestId('citation');
+    expect(note).toHaveTextContent('TEST-ARTICLE');
+    expect(note).toHaveTextContent('2019');
+    expect(note).toHaveTextContent('TEST-ANNEX');
+    expect(screen.queryByTestId('citation-missing')).not.toBeInTheDocument();
+  });
+
   it('N6b: có trích dẫn thì không hiện cảnh báo', async () => {
     serve(() => json(200, { ...OK, citation_missing: false }));
     renderCalc();

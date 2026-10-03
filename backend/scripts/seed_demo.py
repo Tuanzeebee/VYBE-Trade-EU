@@ -74,6 +74,14 @@ TYPE_LABEL_EN = {
     "both": "manufacturer and trader",
 }
 PLACES = ("Đắk Lắk", "Cần Thơ", "Đồng Tháp", "Bến Tre", "Lâm Đồng", "Bình Dương", "Hải Phòng")
+# Một phần công ty demo ở Đông Nam Á (mã nước, tên nước vi, tên nước en, nơi) để sàn không trông như
+# chỉ có một nước; Việt Nam vẫn chiếm đa số (3 trên 4 công ty).
+SEA_PLACES = (
+    ("TH", "Thái Lan", "Thailand", "Chiang Mai"),
+    ("ID", "Indonesia", "Indonesia", "Surabaya"),
+    ("MY", "Malaysia", "Malaysia", "Penang"),
+    ("PH", "Philippines", "Philippines", "Cebu"),
+)
 MARKETS = (("EU",), ("EU", "ASEAN"), ("EU", "DE", "NL"), ("EU", "US"))
 LANGUAGES = (("vi", "en"), ("vi", "en", "de"), ("vi", "en", "fr"))
 VARIANTS = (
@@ -102,6 +110,9 @@ class DemoCompany:
     industry: str
     business_type: str
     place: str
+    country: str
+    country_vi: str
+    country_en: str
     founded_year: int
     markets: tuple[str, ...]
     languages: tuple[str, ...]
@@ -116,6 +127,9 @@ def demo_companies(count: int) -> list[DemoCompany]:
     rows = []
     for n in range(1, count + 1):
         place = PLACES[n % len(PLACES)]
+        country, country_vi, country_en = "VN", "Việt Nam", "Vietnam"
+        if n % 4 == 3:
+            country, country_vi, country_en, place = SEA_PLACES[(n // 4) % len(SEA_PLACES)]
         industry = INDUSTRIES[n % len(INDUSTRIES)]
         # Cộng n // 6 để loại hình không dính cứng vào ngành (n % 6 và n % 3 tương quan).
         business_type = BUSINESS_TYPES[(n + n // len(INDUSTRIES)) % len(BUSINESS_TYPES)]
@@ -131,12 +145,16 @@ def demo_companies(count: int) -> list[DemoCompany]:
                 industry=industry,
                 business_type=business_type,
                 place=place,
+                country=country,
+                country_vi=country_vi,
+                country_en=country_en,
                 founded_year=1995 + n % 28,
                 markets=MARKETS[n % len(MARKETS)],
                 languages=LANGUAGES[n % len(LANGUAGES)],
                 description_vi=f"DỮ LIỆU DEMO. {prefix_vi} {style_vi.lower()} tại {place}.",
                 description_en=(
-                    f"DEMO DATA. {style_en} {TYPE_LABEL_EN[business_type]} from {place}, Vietnam."
+                    f"DEMO DATA. {style_en} {TYPE_LABEL_EN[business_type]} "
+                    f"from {place}, {country_en}."
                 ),
                 level=VerificationLevel.evfta_verified if n % 5 == 0 else VerificationLevel.basic,
                 product_count=2 + n % 4,
@@ -222,13 +240,14 @@ async def seed(
             type=CompanyType.exporter,
             slug=demo.slug,
             legal_name=demo.legal_name,
-            country="VN",
+            country=demo.country,
+            is_demo=True,
             business_type=demo.business_type,
             tax_id=f"03{demo.n:08d}" if pending else None,
             registration_number=f"DEMO-{demo.n:06d}" if pending else None,
             industry_sector=demo.industry,
             founded_year=demo.founded_year,
-            address=f"{demo.place}, Việt Nam",
+            address=f"{demo.place}, {demo.country_vi}",
             description_vi=demo.description_vi,
             description_en=demo.description_en,
             verification_status=(

@@ -129,7 +129,7 @@ describe('Máy tính thuế: trị giá tính thuế (C2-A)', () => {
     expect(screen.getByText(/DDP \(giá đã gồm thuế nhập khẩu\)/)).toBeInTheDocument();
   });
 
-  it('gửi Incoterm, cước, bảo hiểm, ngày nhập và tiền tệ (chỉ khi khác EUR)', async () => {
+  it('gửi Incoterm, cước, bảo hiểm và tiền tệ (chỉ khi khác EUR)', async () => {
     serve();
     renderCalc();
     await pickFish();
@@ -138,7 +138,6 @@ describe('Máy tính thuế: trị giá tính thuế (C2-A)', () => {
     incoterm('FOB');
     fireEvent.change(screen.getByLabelText(/Cước vận chuyển quốc tế/), { target: { value: '3000' } });
     fireEvent.change(screen.getByLabelText(/Phí bảo hiểm/), { target: { value: '500.50' } });
-    fireEvent.change(screen.getByLabelText(/Ngày nhập khẩu dự kiến/), { target: { value: '2022-12-31' } });
     submit();
     await screen.findByTestId('valuation-breakdown');
     expect(bodies).toEqual([
@@ -150,7 +149,6 @@ describe('Máy tính thuế: trị giá tính thuế (C2-A)', () => {
         currency: 'USD',
         freight: '3000',
         insurance: '500.50',
-        import_date: '2022-12-31',
       },
     ]);
   });
@@ -203,15 +201,10 @@ describe('Máy tính thuế: trị giá tính thuế (C2-A)', () => {
     expect(bodies).toEqual([]);
   });
 
-  it('ngày nhập ngoài khoảng cho phép thì báo lỗi và không gọi server', async () => {
+  it('không còn ô ngày nhập khẩu trong form', async () => {
     serve();
     renderCalc();
-    await pickFish();
-    value('100000');
-    fireEvent.change(screen.getByLabelText(/Ngày nhập khẩu dự kiến/), { target: { value: '2020-07-31' } });
-    submit();
-    expect(await screen.findByRole('alert')).toHaveTextContent('Ngày nhập khẩu phải từ 01/08/2020');
-    expect(bodies).toEqual([]);
+    expect(screen.queryByLabelText(/Ngày nhập khẩu dự kiến/)).toBeNull();
   });
 
   it('kết quả có bảng phân rã: từng bước, trị giá tính thuế, ngày và bậc thuế áp dụng', async () => {

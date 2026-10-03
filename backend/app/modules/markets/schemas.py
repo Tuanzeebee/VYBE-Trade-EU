@@ -142,6 +142,7 @@ class ReportIn(BaseModel):
     other_text: Annotated[str | None, Field(max_length=200)] = None
     annual_volume: Money | None = None
     budget: Money | None = None
+    production_region: Annotated[str | None, Field(max_length=120)] = None
 
     @model_validator(mode="after")
     def _has_subject(self) -> "ReportIn":
@@ -153,6 +154,8 @@ class ReportIn(BaseModel):
     def _orientation_rules(self) -> "ReportIn":
         if self.sales_orientation is None:
             return self
+        if not self.target_market:
+            raise ValueError("target_market is required")
         if not self.expected_revenue or self.expected_revenue <= 0:
             raise ValueError("expected_revenue is required and must be greater than 0")
         if budget_required(self.sales_orientation) and (not self.budget or self.budget <= 0):

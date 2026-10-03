@@ -11,6 +11,7 @@ export type FormValues = {
   expectedRevenue: string;
   annualVolume: string;
   budget: string;
+  productionRegion: string;
 };
 
 export const ORIENTATION_LABELS: Record<Orientation, string> = {
@@ -37,6 +38,7 @@ const positive = (s: string): boolean => {
 export function validateStep(step: 1 | 2 | 3, v: FormValues): string | null {
   if (step === 1) {
     if (!v.productId) return 'Chọn sản phẩm.';
+    if (!v.targetMarket) return 'Chọn thị trường định hướng.';
     if (!v.orientation) return 'Chọn định hướng bán hàng.';
     if (v.orientation === 'other' && !v.otherText.trim()) return 'Mô tả định hướng bán hàng của bạn.';
     return null;

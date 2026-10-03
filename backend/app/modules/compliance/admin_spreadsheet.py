@@ -60,6 +60,9 @@ TARIFF_COLUMNS = (
     Column("quota_note_en", help="Ghi chú hạn ngạch (tiếng Anh)."),
     Column("condition_note_en", help="Điều kiện áp dụng khác (tiếng Anh)."),
     Column("source_url", help="Nguồn văn bản pháp lý."),
+    Column("legal_article", help="Điều khoản của hiệp định áp dụng mức thuế ưu đãi."),
+    Column("signed_on", "date", help="Ngày ký văn bản/hiệp định (YYYY-MM-DD)."),
+    Column("annex_ref", help="Danh mục/phụ lục chứa dòng thuế."),
     Column("valid_from", "date", True, help="Ngày bắt đầu hiệu lực (YYYY-MM-DD)."),
     Column(
         "valid_until",

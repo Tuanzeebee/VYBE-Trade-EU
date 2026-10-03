@@ -31,6 +31,8 @@ from app.modules.markets.models import ConsultingLead, MarketInsight, MarketRepo
 from app.modules.markets.positioning import CapacityInput
 from app.modules.markets.report import (
     DISPLAY_SECTIONS,
+    LEGACY_KEYS,
+    PARTNERS_SECTION,
     SECTION_TITLES,
     SEGMENTS_SECTION,
     SUMMARY_SECTIONS,
@@ -160,6 +162,7 @@ async def create_report(
             "other_text": (data.other_text or "").strip() or None,
             "annual_volume": _str(data.annual_volume),
             "budget": _str(data.budget),
+            "production_region": (data.production_region or "").strip() or None,
         },
     )
     session.add(row)
@@ -311,6 +314,34 @@ async def _segments_text(session: AsyncSession, countries: list[str], hs6: str, 
     return "\n".join(lines)
 
 
+async def _partners_text(
+    session: AsyncSession, countries: list[str], category: str | None, lang: str
+) -> str:
+    """Mục đối tác tiềm năng: chỉ số buyer ĐÃ ĐĂNG KÝ trên nền tảng ở các thị trường liên quan
+    (lọc theo nhóm hàng cần mua khi biết). Không lộ tên buyer, không bịa; không có thì rỗng."""
+    codes = [c for c in dict.fromkeys(countries) if len(c) == 2]
+    counts = await companies.count_buyers_by_country(session, codes, category)
+    lines = [
+        f"{country(code, lang)}: {counts[code]} "
+        + ("buyer đã đăng ký" if lang == "vi" else "registered buyers")
+        for code in codes
+        if counts.get(code)
+    ]
+    if not lines:
+        return ""
+    intro = (
+        "Số buyer đã đăng ký trên nền tảng tại các thị trường liên quan"
+        if lang == "vi"
+        else "Buyers registered on the platform in the relevant markets"
+    )
+    suffix = (
+        (" (lọc theo nhóm hàng của bạn)." if lang == "vi" else " (filtered to your product group).")
+        if category
+        else "."
+    )
+    return intro + suffix + chr(10) + chr(10).join(lines)
+
+
 async def _narrative(
     chat: ChatModel, metrics: dict[str, str], lang: str
 ) -> tuple[dict[str, str], str]:
@@ -370,6 +401,11 @@ async def run_report(
             capacity_unit=company.capacity_unit,
             capacity_period=company.capacity_period,
             brand_model=row.input.get("brand_model"),
+            target_market=row.input.get("target_market"),
+            orientation=row.input.get("sales_orientation"),
+            orientation_text=row.input.get("other_text"),
+            production_region=row.input.get("production_region") or company.city,
+            export_markets=tuple(company.export_markets),
             positioning_score=str(positioning_result.score).replace(".", ",")
             if lang == "vi"
             else str(positioning_result.score),
@@ -392,6 +428,14 @@ async def run_report(
         segments_text = await _segments_text(
             session, [m.country for m in rec.top_markets], hs6, lang
         )
+        partner_countries = [m.country for m in rec.top_markets]
+        target = row.input.get("target_market")
+        if target and target != "EU":
+            partner_countries.insert(0, target)
+        partners_text = await _partners_text(
+            session, partner_countries, company.industry_sector, lang
+        )
+        extra = {SEGMENTS_SECTION: segments_text, PARTNERS_SECTION: partners_text}
         titles = SECTION_TITLES[lang]
         pdf = render_report(
             ReportDocument(
@@ -402,13 +446,9 @@ async def run_report(
                 source=values["source"],
                 narrative_source=source,
                 sections=[
-                    (
-                        key,
-                        titles[key],
-                        segments_text if key == SEGMENTS_SECTION else narrative.get(key, ""),
-                    )
+                    (key, titles[key], extra[key] if key in extra else narrative.get(key, ""))
                     for key in DISPLAY_SECTIONS
-                    if key != SEGMENTS_SECTION or segments_text
+                    if key not in extra or extra[key]
                 ],
                 tables=_pdf_tables(tables, lang),
                 demo_data=tariff.data_status == "demo_unreviewed",
@@ -437,6 +477,7 @@ async def run_report(
             "axes": {k: str(v) for k, v in positioning_result.axes.items()},
         },
         "segments": segments_text,
+        "partners": partners_text,
     }
     row.narrative = narrative
     row.narrative_source = source
@@ -456,11 +497,12 @@ async def _out(storage: Storage, row: MarketReport, *, full: bool) -> ReportOut:
     sections = []
     for key in DISPLAY_SECTIONS:
         locked = not full and key not in SUMMARY_SECTIONS
-        source_text = (
-            str(row.metrics.get("segments", ""))
-            if key == SEGMENTS_SECTION
-            else str(row.narrative.get(key, ""))
-        )
+        if key in (SEGMENTS_SECTION, PARTNERS_SECTION):
+            source_text = str(row.metrics.get(key, ""))
+        else:
+            source_text = str(
+                row.narrative.get(key) or row.narrative.get(LEGACY_KEYS.get(key, ""), "")
+            )
         sections.append(
             ReportSectionOut(
                 key=key, title=titles[key], text="" if locked else source_text, locked=locked

@@ -178,7 +178,7 @@ def render_report(doc: ReportDocument) -> bytes:
         story.append(Paragraph(escape(DEMO_NOTE[lang]), s["demo"]))
     story.append(Spacer(1, 4 * mm))
     tables = {table.kind: table for table in doc.tables}
-    after = {"recommendations": ("top", "potential"), "competition": ("competitors",)}
+    after = {"why_market": ("top", "potential"), "competition": ("competitors",)}
     for key, title, text in doc.sections:
         story.append(Paragraph(escape(title), s["h2"]))
         if text:

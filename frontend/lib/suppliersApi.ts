@@ -106,6 +106,17 @@ export async function fetchProfile(slug: string): Promise<PublicProfile | null> 
 
 export const industryLabel = (code: string | null | undefined) =>
   code ? (INDUSTRIES.find((i) => i.code === code)?.label ?? code) : null;
-// Nhà xuất khẩu chủ yếu ở Việt Nam, nhưng danh sách quốc gia dùng chung chưa có nước này.
-export const SUPPLIER_COUNTRIES = [{ code: 'VN', name: 'Vietnam' }, ...COUNTRIES.filter((c) => c.code !== 'VN')];
+// Nhà xuất khẩu chủ yếu ở Việt Nam, mở rộng sang Đông Nam Á; danh sách quốc gia dùng chung chưa có các nước này.
+const SOUTHEAST_ASIA = [
+  { code: 'TH', name: 'Thailand' },
+  { code: 'ID', name: 'Indonesia' },
+  { code: 'MY', name: 'Malaysia' },
+  { code: 'PH', name: 'Philippines' },
+  { code: 'KH', name: 'Cambodia' },
+  { code: 'LA', name: 'Laos' },
+  { code: 'MM', name: 'Myanmar' },
+  { code: 'SG', name: 'Singapore' },
+];
+const LEADING = [{ code: 'VN', name: 'Vietnam' }, ...SOUTHEAST_ASIA];
+export const SUPPLIER_COUNTRIES = [...LEADING, ...COUNTRIES.filter((c) => !LEADING.some((l) => l.code === c.code))];
 export const countryName = (code: string) => SUPPLIER_COUNTRIES.find((c) => c.code === code)?.name ?? code;

@@ -183,6 +183,8 @@ class Company(Base):
     tier_reviewed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     tier_expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     is_hidden: Mapped[bool] = mapped_column(Boolean, default=False, server_default=text("false"))
+    # Công ty dữ liệu giả lập (seed): giao diện công khai hiện nhãn "Dữ liệu minh hoạ".
+    is_demo: Mapped[bool] = mapped_column(Boolean, default=False, server_default=text("false"))
     profile_completeness_score: Mapped[Decimal] = mapped_column(
         Numeric(5, 2), default=Decimal("0"), server_default=text("0")
     )

@@ -199,7 +199,10 @@ function ReportView({ report }: { report: MarketReport }) {
           {section.key === 'segments' && !section.locked && !section.text && (
             <p className="text-sm text-slate-500">{tr('Chưa có dữ liệu thị trường cho nhóm hàng này.')}</p>
           )}
-          {section.key === 'recommendations' && (
+          {section.key === 'partners' && !section.locked && !section.text && (
+            <p className="text-sm text-slate-500">{tr('Chưa có buyer đã đăng ký phù hợp ở các thị trường này.')}</p>
+          )}
+          {section.key === 'why_market' && (
             <>
               <MarketTable rows={report.top_markets ?? []} label="Thị trường nên ưu tiên" />
               <MarketTable rows={report.potential_markets ?? []} label="Thị trường tiềm năng" />
@@ -242,6 +245,7 @@ export default function MarketReportPanel({ products }: { products: ProductOut[]
     expectedRevenue: '',
     annualVolume: '',
     budget: '',
+    productionRegion: '',
   });
   const [reportLanguage, setReportLanguage] = useState<'vi' | 'en'>(language === 'en' ? 'en' : 'vi');
   const [error, setError] = useState('');
@@ -298,6 +302,7 @@ export default function MarketReportPanel({ products }: { products: ProductOut[]
       expected_revenue: revenue ?? null,
       annual_volume: volume,
       budget,
+      production_region: values.productionRegion.trim() || null,
     };
     setBusy(true);
     const result = await createReport(input);
@@ -332,7 +337,7 @@ export default function MarketReportPanel({ products }: { products: ProductOut[]
       ) : (
         <form onSubmit={submit} className="grid gap-3 rounded-2xl border border-slate-200 bg-white p-4 sm:grid-cols-2" aria-label={tr('Tạo báo cáo')}>
           <p className="text-sm text-slate-700 sm:col-span-2">
-            {tr('Báo cáo gồm 3 bước: chọn định hướng, nhập mục tiêu, rồi xác nhận. Mất khoảng 2 phút.')}
+            {tr('Báo cáo gồm 3 bước: chọn sản phẩm, thị trường và định hướng, nhập mục tiêu, rồi xác nhận. Mất khoảng 2 phút.')}
           </p>
           <ol aria-label={tr('Các bước tạo báo cáo')} className="grid grid-cols-3 gap-2 sm:col-span-2">
             {(
@@ -370,7 +375,7 @@ export default function MarketReportPanel({ products }: { products: ProductOut[]
               <label className="text-xs font-semibold text-slate-700">
                 {tr('Thị trường quan tâm')}
                 <select className={inputCls} value={values.targetMarket} onChange={(e) => set({ targetMarket: e.target.value })}>
-                  <option value="">{tr('Chưa biết, gợi ý giúp tôi')}</option>
+                  <option value="">{tr('— Chọn thị trường —')}</option>
                   <option value="EU">{tr('Toàn EU')}</option>
                   {EU_COUNTRIES.map((c) => (
                     <option key={c.code} value={c.code}>
@@ -407,6 +412,10 @@ export default function MarketReportPanel({ products }: { products: ProductOut[]
               <label className="text-xs font-semibold text-slate-700">
                 {tr('Sản lượng dự kiến (tấn/năm, không bắt buộc)')}
                 <input className={inputCls} inputMode="numeric" value={values.annualVolume} onChange={(e) => set({ annualVolume: e.target.value })} />
+              </label>
+              <label className="text-xs font-semibold text-slate-700 sm:col-span-2">
+                {tr('Vùng sản xuất (không bắt buộc, mặc định theo thành phố trong hồ sơ)')}
+                <input className={inputCls} value={values.productionRegion} maxLength={120} onChange={(e) => set({ productionRegion: e.target.value })} />
               </label>
               <label className="text-xs font-semibold text-slate-700 sm:col-span-2">
                 {tr(budgetLabel(values.orientation))} {tr(budgetRequired(values.orientation) ? '(EUR/năm)' : '(EUR/năm, không bắt buộc)')}

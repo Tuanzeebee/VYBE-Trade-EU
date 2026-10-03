@@ -4548,6 +4548,28 @@ export interface components {
             /** Products */
             products: string[];
         };
+        /**
+         * FeaturedProductOut
+         * @description Một sản phẩm tiêu biểu trên thẻ danh bạ: giá tham khảo, MOQ và ảnh (nếu có).
+         */
+        FeaturedProductOut: {
+            /** Name */
+            name: string;
+            /** Price Min */
+            price_min?: string | null;
+            /** Price Max */
+            price_max?: string | null;
+            /** Currency */
+            currency?: string | null;
+            /** Unit */
+            unit?: string | null;
+            /** Moq */
+            moq?: string | null;
+            /** Moq Unit */
+            moq_unit?: string | null;
+            /** Image Url */
+            image_url?: string | null;
+        };
         /** FeedbackIn */
         FeedbackIn: {
             /** Was Helpful */
@@ -6131,6 +6153,8 @@ export interface components {
             annual_volume?: number | string | null;
             /** Budget */
             budget?: number | string | null;
+            /** Production Region */
+            production_region?: string | null;
         };
         /** ReportListItemOut */
         ReportListItemOut: {
@@ -7035,6 +7059,12 @@ export interface components {
             service_titles?: string[];
             /** Service Categories */
             service_categories?: string[];
+            /**
+             * Is Demo
+             * @default false
+             */
+            is_demo?: boolean;
+            featured_product?: components["schemas"]["FeaturedProductOut"] | null;
         };
         /**
          * SupplierCredentialsOut
@@ -7081,6 +7111,21 @@ export interface components {
             page: number;
             /** Page Size */
             page_size: number;
+        };
+        /**
+         * TariffCitationOut
+         * @description Nguồn của mức thuế ưu đãi: điều khoản hiệp định, ngày ký, danh mục/phụ lục.
+         */
+        TariffCitationOut: {
+            /** Legal Article */
+            legal_article: string;
+            /**
+             * Signed On
+             * Format: date
+             */
+            signed_on: string;
+            /** Annex Ref */
+            annex_ref: string;
         };
         /**
          * TariffIn
@@ -7160,6 +7205,12 @@ export interface components {
             condition_note_en?: string | null;
             /** Source Url */
             source_url?: string | null;
+            /** Legal Article */
+            legal_article?: string | null;
+            /** Signed On */
+            signed_on?: string | null;
+            /** Annex Ref */
+            annex_ref?: string | null;
             /**
              * Valid From
              * Format: date
@@ -7202,6 +7253,12 @@ export interface components {
             quota_note_en: string | null;
             /** Condition Note En */
             condition_note_en: string | null;
+            /** Legal Article */
+            legal_article?: string | null;
+            /** Signed On */
+            signed_on?: string | null;
+            /** Annex Ref */
+            annex_ref?: string | null;
             /** Source Url */
             source_url: string | null;
             /**
@@ -7255,6 +7312,12 @@ export interface components {
             condition_note_en?: string | null;
             /** Source Url */
             source_url?: string | null;
+            /** Legal Article */
+            legal_article?: string | null;
+            /** Signed On */
+            signed_on?: string | null;
+            /** Annex Ref */
+            annex_ref?: string | null;
             /** Valid From */
             valid_from?: string | null;
             /** Valid Until */
@@ -7319,6 +7382,7 @@ export interface components {
              * @default true
              */
             citation_missing?: boolean;
+            citation?: components["schemas"]["TariffCitationOut"] | null;
             agreement?: components["schemas"]["AgreementOut"] | null;
             /** Preferential Rate */
             preferential_rate?: string | null;

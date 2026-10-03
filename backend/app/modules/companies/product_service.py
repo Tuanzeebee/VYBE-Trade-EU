@@ -40,6 +40,7 @@ from app.modules.companies.schemas import (
     ExporterCardOut,
     ExporterPage,
     FacilityCodeOut,
+    FeaturedProductOut,
     OrderableProduct,
     PackagingIn,
     PackagingOut,
@@ -598,10 +599,37 @@ async def search_verified_exporters(
             city=c.city,
             service_titles=ordered([s.title for s in services[c.id]])[:3],
             service_categories=list(dict.fromkeys(s.category_code for s in services[c.id])),
+            is_demo=c.is_demo,
+            featured_product=await _featured_product(session, storage, products[c.id]),
         )
         for c in companies
     ]
     return ExporterPage(items=items, total=total, page=page, page_size=page_size)
+
+
+async def _featured_product(
+    session: AsyncSession, storage: Storage, products: list[Product]
+) -> FeaturedProductOut | None:
+    """Sản phẩm tiêu biểu của thẻ: sản phẩm đầu tiên có giá, thiếu thì sản phẩm đầu tiên."""
+    if not products:
+        return None
+    chosen = next((p for p in products if p.price_min is not None), products[0])
+    key = await session.scalar(
+        select(ProductImage.key)
+        .where(ProductImage.product_id == chosen.id)
+        .order_by(ProductImage.position)
+        .limit(1)
+    )
+    return FeaturedProductOut(
+        name=chosen.name,
+        price_min=chosen.price_min,
+        price_max=chosen.price_max,
+        currency=chosen.currency,
+        unit=chosen.unit,
+        moq=chosen.moq,
+        moq_unit=chosen.moq_unit,
+        image_url=await storage.presign_get(key) if key else None,
+    )
 
 
 async def get_product_names(

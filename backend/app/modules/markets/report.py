@@ -15,28 +15,40 @@ from decimal import Decimal
 from pathlib import Path
 from typing import Any
 
-# N5: định vị và năng lực đứng đầu. Đây là các phần do model/lời văn mẫu viết; mục "segments"
-# (phân khúc) là văn bản người duyệt nhập nên không nằm ở đây mà được ghép ở report_service.
+# Các mục do model/lời văn mẫu viết. Mục "segments" (phân khúc) và "partners" (đối tác tiềm năng)
+# là văn bản dựng từ dữ liệu đã duyệt/đã đăng ký nên không nằm ở đây mà được ghép ở report_service.
 SECTIONS = (
     "positioning",
-    "summary",
     "market",
-    "recommendations",
+    "why_market",
     "competition",
+    "opportunities",
+    "risks",
     "compliance",
     "branding",
-    "risks",
     "next_steps",
 )
 SEGMENTS_SECTION = "segments"
-# Thứ tự hiển thị: phân khúc nằm ngay sau "thị trường nên ưu tiên".
+PARTNERS_SECTION = "partners"
+# Thứ tự hiển thị: định vị → tổng quan → vì sao chọn thị trường → phân khúc, đối thủ, cơ hội, rủi ro
+# → đối tác tiềm năng → thuế, thương hiệu, bước tiếp theo.
 DISPLAY_SECTIONS = (
-    *SECTIONS[: SECTIONS.index("recommendations") + 1],
+    "positioning",
+    "market",
+    "why_market",
     SEGMENTS_SECTION,
-    *SECTIONS[SECTIONS.index("recommendations") + 1 :],
+    "competition",
+    "opportunities",
+    "risks",
+    PARTNERS_SECTION,
+    "compliance",
+    "branding",
+    "next_steps",
 )
+# Báo cáo cũ lưu lời văn theo khoá cũ; đọc lại thì lấy khoá cũ khi khoá mới trống.
+LEGACY_KEYS = {"market": "summary", "why_market": "recommendations"}
 # Phần miễn phí; phần còn lại cần gói đầy đủ
-SUMMARY_SECTIONS = ("positioning", "summary", "recommendations")
+SUMMARY_SECTIONS = ("positioning", "market", "why_market")
 PLACEHOLDER = re.compile(r"\{([a-z0-9_]+)\}")
 DIGIT = re.compile(r"[0-9]")
 MAX_SECTION_CHARS = 2000
@@ -45,27 +57,29 @@ BENCHMARKS_CSV = Path(__file__).resolve().parents[3] / "data" / "gtm_benchmarks.
 
 SECTION_TITLES = {
     "vi": {
-        "summary": "Tóm tắt",
-        "market": "Bức tranh thị trường EU",
-        "recommendations": "Thị trường nên ưu tiên",
+        "positioning": "Định vị và năng lực doanh nghiệp",
+        "market": "Tổng quan thị trường EU",
+        "why_market": "Vì sao chọn thị trường này",
+        "segments": "Phân khúc người mua",
         "competition": "Đối thủ và thị phần",
-        "positioning": "Định vị và năng lực",
-        "segments": "Phân khúc thị trường",
-        "compliance": "Thuế, hạn ngạch và cảnh báo",
-        "branding": "OEM hay thương hiệu riêng",
+        "opportunities": "Cơ hội",
         "risks": "Rủi ro cần lưu ý",
+        "partners": "Đối tác tiềm năng",
+        "compliance": "Thuế, hạn ngạch và cảnh báo",
+        "branding": "Định hướng bán hàng và thương hiệu",
         "next_steps": "Bước tiếp theo",
     },
     "en": {
-        "summary": "Summary",
+        "positioning": "Company positioning and capacity",
         "market": "EU market overview",
-        "recommendations": "Priority markets",
+        "why_market": "Why this market",
+        "segments": "Buyer segments",
         "competition": "Competitors and market shares",
-        "positioning": "Positioning and capacity",
-        "segments": "Market segments",
-        "compliance": "Tariffs, quotas and alerts",
-        "branding": "OEM or own brand",
+        "opportunities": "Opportunities",
         "risks": "Risks to watch",
+        "partners": "Potential partners",
+        "compliance": "Tariffs, quotas and alerts",
+        "branding": "Sales orientation and branding",
         "next_steps": "Next steps",
     },
 }
@@ -174,6 +188,30 @@ METRIC_DESCRIPTIONS: dict[str, str] = {
     "benchmark_pct": "mốc ngân sách marketing để xây thương hiệu ở EU",
     "branding_advice": "khuyến nghị OEM hay thương hiệu riêng theo quy tắc",
     "positioning_score": "điểm năng lực tổng hợp của doanh nghiệp trên thang 100",
+    "target_country": "thị trường mà doanh nghiệp muốn hướng tới",
+    "target_import": "nhập khẩu của thị trường doanh nghiệp muốn hướng tới",
+    "target_vn_share": "thị phần Việt Nam ở thị trường doanh nghiệp muốn hướng tới",
+    "target_growth": "tăng trưởng nhập khẩu bình quân năm của thị trường định hướng",
+    "target_status": "thị trường định hướng thuộc nhóm ưu tiên, tiềm năng hay chưa có gợi ý",
+    "orientation": "định hướng bán hàng doanh nghiệp chọn",
+    "orientation_text": "mô tả định hướng bán hàng do doanh nghiệp tự điền",
+    "production_region": "vùng sản xuất của doanh nghiệp",
+    "export_markets_text": "các thị trường doanh nghiệp đang xuất khẩu",
+}
+
+ORIENTATION_NAMES = {
+    "vi": {
+        "bulk": "xuất thô từ nhà máy",
+        "oem": "OEM (sản xuất cho nhãn khác)",
+        "own_brand": "thương hiệu riêng",
+        "other": "định hướng khác do doanh nghiệp tự mô tả",
+    },
+    "en": {
+        "bulk": "bulk export from the factory",
+        "oem": "OEM (producing for other labels)",
+        "own_brand": "own brand",
+        "other": "another orientation described by the company",
+    },
 }
 
 
@@ -185,6 +223,11 @@ class CompanyFacts:
     capacity_period: str | None = None
     brand_model: str | None = None  # oem | own_brand | both
     positioning_score: str | None = None  # điểm định vị đã định dạng (N5), vd "58,3"
+    target_market: str | None = None  # mã nước hoặc "EU"
+    orientation: str | None = None  # bulk | oem | own_brand | other
+    orientation_text: str | None = None
+    production_region: str | None = None
+    export_markets: tuple[str, ...] = ()
 
 
 def load_benchmarks(path: Path = BENCHMARKS_CSV) -> dict[str, Decimal]:
@@ -254,6 +297,49 @@ def branding_advice(budget_ratio: Decimal | None, benchmark: Decimal, lang: str)
         if below
         else "có thể thử thương hiệu riêng ở một thị trường ưu tiên"
     )
+
+
+def _add_target_metrics(
+    m: dict[str, str], rec: Mapping[str, Any], company: CompanyFacts, lang: str
+) -> None:
+    """Thị trường định hướng, định hướng bán hàng, vùng sản xuất, thị trường đang xuất."""
+    target = company.target_market
+    if target == "EU":
+        m["target_country"] = "toàn EU" if lang == "vi" else "the whole EU"
+    elif target:
+        m["target_country"] = country(target, lang)
+        row = next((c for c in rec.get("countries") or [] if c["country"] == target), None)
+        if row:
+            m["target_import"] = eur(Decimal(row["import_value"]), lang)
+            m["target_vn_share"] = pct(Decimal(row["vn_share"]), lang)
+            if row.get("import_cagr") is not None:
+                m["target_growth"] = pct(Decimal(row["import_cagr"]), lang)
+        in_top = any(c["country"] == target for c in rec.get("top_markets") or [])
+        in_pot = any(c["country"] == target for c in rec.get("potential_markets") or [])
+        status = "top" if in_top else "potential" if in_pot else "other"
+        m["target_status"] = {
+            "vi": {
+                "top": "thuộc nhóm thị trường nên ưu tiên",
+                "potential": "thuộc nhóm thị trường tiềm năng",
+                "other": "chưa nằm trong nhóm gợi ý, cần cân nhắc thêm",
+            },
+            "en": {
+                "top": "among the priority markets",
+                "potential": "among the potential markets",
+                "other": "not in the suggested group, so weigh it carefully",
+            },
+        }[lang if lang in ("vi", "en") else "vi"][status]
+    if company.orientation:
+        names = ORIENTATION_NAMES.get(lang, ORIENTATION_NAMES["vi"])
+        m["orientation"] = names.get(company.orientation, company.orientation)
+    if company.orientation_text:
+        m["orientation_text"] = company.orientation_text
+    if company.production_region:
+        m["production_region"] = company.production_region
+    if company.export_markets:
+        m["export_markets_text"] = ", ".join(
+            "EU" if code == "EU" else country(code, lang) for code in company.export_markets
+        )
 
 
 def build_metrics(
@@ -327,6 +413,7 @@ def build_metrics(
         period = company.capacity_period or "year"
         amount = f"{Decimal(company.capacity_value).normalize():f}"
         m["company_capacity"] = f"{amount} {unit}/{periods.get(period, period)}"
+    _add_target_metrics(m, rec, company, lang)
     if tariff_text:
         m["tariff_text"] = tariff_text
     if alerts:

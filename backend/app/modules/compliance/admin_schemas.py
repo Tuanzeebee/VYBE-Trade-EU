@@ -75,6 +75,9 @@ class TariffLineIn(BaseModel):
     quota_note_en: Text = None
     condition_note_en: Text = None
     source_url: Url = None
+    legal_article: Annotated[str | None, Field(max_length=255)] = None
+    signed_on: dt.date | None = None
+    annex_ref: Annotated[str | None, Field(max_length=255)] = None
     valid_from: dt.date
     valid_until: dt.date | None = None
 
@@ -106,6 +109,9 @@ class TariffLinePatch(BaseModel):
     quota_note_en: Text = None
     condition_note_en: Text = None
     source_url: Url = None
+    legal_article: Annotated[str | None, Field(max_length=255)] = None
+    signed_on: dt.date | None = None
+    annex_ref: Annotated[str | None, Field(max_length=255)] = None
     valid_from: dt.date | None = None
     valid_until: dt.date | None = None
 
@@ -148,6 +154,9 @@ class TariffLineOut(BaseModel):
     condition_note: str | None
     quota_note_en: str | None
     condition_note_en: str | None
+    legal_article: str | None = None
+    signed_on: dt.date | None = None
+    annex_ref: str | None = None
     source_url: str | None
     valid_from: dt.date
     valid_until: dt.date | None

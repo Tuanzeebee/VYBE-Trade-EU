@@ -108,6 +108,7 @@ from app.modules.compliance.schemas import (
     ShippingHintsOut,
     StagingOut,
     SubtypeOut,
+    TariffCitationOut,
     TariffIn,
     TariffOptionsOut,
     TariffOut,
@@ -613,6 +614,9 @@ def _line_data(line: TariffLine, evfta_rate_now: Decimal | None = None) -> Tarif
         condition_note=line.condition_note,
         quota_note_en=line.quota_note_en,
         condition_note_en=line.condition_note_en,
+        legal_article=line.legal_article,
+        signed_on=line.signed_on,
+        annex_ref=line.annex_ref,
     )
 
 
@@ -954,6 +958,13 @@ async def calculate_tariff(
         quota_note_en=result.quota_note_en,
         condition_note_en=result.condition_note_en,
         citation_missing=result.citation_missing,
+        citation=None
+        if result.citation_missing
+        else TariffCitationOut(
+            legal_article=result.legal_article or "",
+            signed_on=result.signed_on or dt.date.min,
+            annex_ref=result.annex_ref or "",
+        ),
     )
 
 

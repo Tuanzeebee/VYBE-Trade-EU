@@ -99,7 +99,7 @@ export const TRANSLATIONS = {
       viewAllInDirectory: 'Xem tất cả kết quả trong Danh bạ Nhà cung cấp'
     },
     directory: {
-      title: 'Tìm nhà cung cấp từ Việt Nam',
+      title: 'Tìm nhà cung cấp từ Việt Nam và Đông Nam Á',
       subtitle: 'Kết nối với các doanh nghiệp xuất khẩu uy tín, đã được xác minh bởi VYBE Trade.',
       verifiedDataNotice: 'Dữ liệu đã thẩm định OCR & L3 Verified',
       filters: 'Bộ lọc tìm kiếm',
@@ -116,7 +116,7 @@ export const TRANSLATIONS = {
       verified: 'Doanh nghiệp đã xác minh',
       verifiedDesc: '4 cấp độ trust từ L0 → L3',
       products: 'Sản phẩm đa dạng',
-      productsDesc: 'Thực phẩm & nông sản Việt Nam',
+      productsDesc: 'Thực phẩm & nông sản Việt Nam và Đông Nam Á',
       fast: 'Kết nối nhanh chóng',
       fastDesc: 'Gửi Request và trao đổi trực tiếp',
       ai: 'Trợ lý cá nhân hóa',
@@ -124,7 +124,7 @@ export const TRANSLATIONS = {
     },
     featured: {
       title: 'Doanh nghiệp nổi bật',
-      subtitle: 'Các nhà cung cấp Việt Nam đã được xác minh và sẵn sàng hợp tác',
+      subtitle: 'Các nhà cung cấp từ Việt Nam và Đông Nam Á đã được xác minh và sẵn sàng hợp tác',
       viewAll: 'Xem tất cả'
     },
     modal: {
@@ -174,7 +174,7 @@ export const TRANSLATIONS = {
       titlePre: 'Find ',
       titleHighlight: 'trusted suppliers',
       titlePost: ' from Vietnam and Southeast Asia for global markets',
-      subtitle: 'Discover verified enterprises, premium agricultural & food commodities, and direct trade partnerships with Vietnamese exporters.',
+      subtitle: 'Discover verified enterprises, premium agricultural & food commodities, and direct trade partnerships with exporters from Vietnam and across Southeast Asia.',
       searchPlaceholder: 'Search products, categories, suppliers...',
       category: 'Category',
       allCategories: 'All Categories',
@@ -188,8 +188,8 @@ export const TRANSLATIONS = {
       viewAllInDirectory: 'View all results in Supplier Directory'
     },
     directory: {
-      title: 'Find Verified Suppliers from Vietnam',
-      subtitle: 'Connect directly with certified Vietnamese exporters verified by VYBE Trade.',
+      title: 'Find Verified Suppliers from Vietnam and Southeast Asia',
+      subtitle: 'Connect directly with certified exporters from Vietnam and Southeast Asia, verified by VYBE Trade.',
       verifiedDataNotice: 'OCR Authenticated & L3 Verified Data',
       filters: 'Search Filters',
       resultsCount: 'suppliers found',
@@ -205,7 +205,7 @@ export const TRANSLATIONS = {
       verified: 'Verified Enterprises',
       verifiedDesc: '4 trust levels from L0 → L3',
       products: 'Diverse Commodities',
-      productsDesc: 'Vietnamese agricultural & food commodities',
+      productsDesc: 'Agricultural & food commodities from Vietnam and Southeast Asia',
       fast: 'Instant Connection',
       fastDesc: 'Direct request & trade messaging',
       ai: 'Personal assistant',
@@ -213,7 +213,7 @@ export const TRANSLATIONS = {
     },
     featured: {
       title: 'Featured Suppliers',
-      subtitle: 'Verified Vietnamese suppliers ready for international cooperation',
+      subtitle: 'Verified suppliers from Vietnam and Southeast Asia, ready for international cooperation',
       viewAll: 'View all'
     },
     modal: {
@@ -259,10 +259,10 @@ export const TRANSLATIONS = {
       home: 'Retour à la marketplace B2B'
     },
     hero: {
-      kicker: 'FOURNISSEURS VIETNAMIENS DE CONFIANCE. MARCHÉ MONDIAL.',
+      kicker: 'FOURNISSEURS DE CONFIANCE AU VIETNAM ET EN ASIE DU SUD-EST. MARCHÉ MONDIAL.',
       titlePre: 'Trouvez des ',
       titleHighlight: 'fournisseurs fiables',
-      titlePost: ' au Vietnam pour l’export international',
+      titlePost: ' au Vietnam et en Asie du Sud-Est pour l’export international',
       subtitle: 'Découvrez des producteurs certifiés, des produits agricoles et alimentaires de haute qualité et des opportunités d’approvisionnement direct.',
       searchPlaceholder: 'Rechercher un produit, une filière, un exportateur...',
       category: 'Catégorie',
@@ -277,8 +277,8 @@ export const TRANSLATIONS = {
       viewAllInDirectory: 'Voir tous les résultats dans l’annuaire'
     },
     directory: {
-      title: 'Trouver des fournisseurs vérifiés au Vietnam',
-      subtitle: 'Connectez-vous directement avec des exportateurs vietnamiens certifiés par VYBE Trade.',
+      title: 'Trouver des fournisseurs vérifiés au Vietnam et en Asie du Sud-Est',
+      subtitle: 'Connectez-vous directement avec des exportateurs certifiés du Vietnam et d’Asie du Sud-Est, vérifiés par VYBE Trade.',
       verifiedDataNotice: 'Données certifiées OCR & Vérification L3',
       filters: 'Filtres de recherche',
       resultsCount: 'fournisseurs trouvés',
@@ -294,15 +294,15 @@ export const TRANSLATIONS = {
       verified: 'Entreprises vérifiées',
       verifiedDesc: '4 niveaux de confiance de L0 à L3',
       products: 'Produits diversifiés',
-      productsDesc: 'Produits agricoles & alimentaires vietnamiens',
+      productsDesc: 'Produits agricoles & alimentaires du Vietnam et d’Asie du Sud-Est',
       fast: 'Connexion rapide',
       fastDesc: 'Envoi direct de RFQ et échanges directs',
-      ai: 'Propulsé par l’IA',
-      aiDesc: 'Audit documentaire OCR & détection des risques'
+      ai: 'Assistant personnalisé',
+      aiDesc: 'Suggestions adaptées à votre profil et à vos besoins'
     },
     featured: {
       title: 'Fournisseurs à la une',
-      subtitle: 'Exportateurs vietnamiens vérifiés et prêts à exporter',
+      subtitle: 'Exportateurs du Vietnam et d’Asie du Sud-Est, vérifiés et prêts à exporter',
       viewAll: 'Voir tout'
     },
     modal: {
@@ -348,11 +348,11 @@ export const TRANSLATIONS = {
       home: 'B2BマーケットプレイスTOP'
     },
     hero: {
-      kicker: 'ベトナムの信頼できる認証サプライヤー。グローバルな取引機会。',
+      kicker: 'ベトナム・東南アジアの信頼できる認証サプライヤー。グローバルな取引機会。',
       titlePre: '国際市場向け ',
-      titleHighlight: '信頼できるベトナム企業',
+      titleHighlight: '信頼できるベトナム・東南アジア企業',
       titlePost: ' と直接つながる',
-      subtitle: '厳格な審査を経たベトナムの農産品・加工食品輸出企業と高品質な商品をワンストップで検索・調達できます。',
+      subtitle: '厳格な審査を経たベトナム・東南アジアの農産品・加工食品輸出企業と高品質な商品をワンストップで検索・調達できます。',
       searchPlaceholder: '商品名、農産品カテゴリー、企業名で検索...',
       category: 'カテゴリー',
       allCategories: 'すべてのカテゴリー',
@@ -366,7 +366,7 @@ export const TRANSLATIONS = {
       viewAllInDirectory: 'サプライヤー一覧ですべての結果を表示'
     },
     directory: {
-      title: 'ベトナムの認証サプライヤーを探す',
+      title: 'ベトナム・東南アジアの認証サプライヤーを探す',
       subtitle: 'VYBE Tradeによって厳格に実在性・品質が検証された優良輸出企業と直接交渉。',
       verifiedDataNotice: 'OCR照合済・L3ランク認証データ',
       filters: '絞り込み条件',
@@ -383,15 +383,15 @@ export const TRANSLATIONS = {
       verified: '認証済みサプライヤー',
       verifiedDesc: 'L0からL3までの4段階信用ランク',
       products: '多彩な取扱品目',
-      productsDesc: 'ベトナム産農水産物・加工食品',
+      productsDesc: 'ベトナム・東南アジア産の農水産物・加工食品',
       fast: '迅速なダイレクト連携',
       fastDesc: 'RFQ（見積依頼）の送信と直接商談',
-      ai: 'AI搭載の信用評価',
-      aiDesc: '書類OCR自動照合・リスク検出'
+      ai: 'パーソナル・アシスタント',
+      aiDesc: 'プロフィールとニーズに合わせた提案'
     },
     featured: {
       title: '注目の優良サプライヤー',
-      subtitle: '認証済みで即座に商談可能なベトナム輸出企業',
+      subtitle: '認証済みで即座に商談可能なベトナム・東南アジアの輸出企業',
       viewAll: 'すべて見る'
     },
     modal: {

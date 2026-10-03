@@ -34,15 +34,10 @@ import {
 } from '../lib/tariffApi';
 
 const MAX_SHIPMENTS = 10000;
-const IMPORT_DATE_MIN = '2020-08-01';
 const CURRENCY_OPTIONS = ['EUR', 'USD', 'VND'];
-
-/** Ngày nhập khẩu muộn nhất cho phép: 3 năm kể từ hôm nay (khớp backend). */
-function importDateMax(): string {
-  const d = new Date();
-  d.setFullYear(d.getFullYear() + 3);
-  return d.toISOString().slice(0, 10);
-}
+type ContainerChoice = '' | '20ft' | '40ft';
+// Giá cước lưu theo loại container cụ thể (20GP, 40GP, 40HC…); 40ft gồm cả 40GP và 40HC.
+const CONTAINER_TYPES: Record<Exclude<ContainerChoice, ''>, string[]> = { '20ft': ['20GP'], '40ft': ['40GP', '40HC'] };
 
 const ERRORS = {
   rate_limited: 'Bạn đã tính quá nhiều lần. Vui lòng thử lại sau một phút.',
@@ -163,6 +158,11 @@ function Result({ data }: { data: TariffResult }) {
                 {agreementName ? ` · ${agreementName}` : ''} ({percent(data.evfta_rate ?? '0')})
               </dt>
               <dd className="text-lg font-bold text-teal-900">{money(data.evfta_duty)}</dd>
+              {data.citation && (
+                <p data-testid="citation" className="mt-1 text-xs text-teal-900">
+                  {tr('Căn cứ')}: {data.citation.legal_article} · {tr('Ký ngày')} {new Intl.DateTimeFormat(language === 'en' ? 'en-GB' : 'vi-VN', { dateStyle: 'long', timeZone: 'UTC' }).format(new Date(`${data.citation.signed_on}T00:00:00Z`))} · {tr('Danh mục')}: {data.citation.annex_ref}
+                </p>
+              )}
               {data.citation_missing && (
                 <p data-testid="citation-missing" className="mt-1 text-xs font-semibold text-amber-800">
                   {tr('Chưa có trích dẫn nguồn (điều khoản, ngày ký, danh mục) cho mức thuế này. Hãy đối chiếu trước khi dùng.')}
@@ -242,7 +242,8 @@ export default function TariffCalculator({ initialRoo }: { initialRoo?: RooStatu
   const [freight, setFreight] = useState('');
   const [insurance, setInsurance] = useState('');
   const [postBorder, setPostBorder] = useState('');
-  const [importDate, setImportDate] = useState('');
+  // Loại container chỉ để chọn giá cước tham khảo; không phải đầu vào của phép tính thuế.
+  const [container, setContainer] = useState<ContainerChoice>('');
   const incotermInfo = INCOTERMS.find((i) => i.code === incoterm);
   // N6a: giá cước/bảo hiểm tham khảo đã duyệt (undefined = chưa tải, null = lỗi tải).
   const [hints, setHints] = useState<ShippingHints | null | undefined>(undefined);
@@ -334,9 +335,6 @@ export default function TariffCalculator({ initialRoo }: { initialRoo?: RooStatu
     if (Object.values(costs).some((c) => c === null)) {
       return setError('Chi phí phải là số không âm, tối đa 2 chữ số thập phân (ví dụ 3000 hoặc 3000.50).');
     }
-    if (importDate && (importDate < IMPORT_DATE_MIN || importDate > importDateMax())) {
-      return setError('Ngày nhập khẩu phải từ 01/08/2020 đến tối đa 3 năm kể từ hôm nay.');
-    }
     setBusy(true);
     const outcome: TariffOutcome = await calculateTariff({
       hsCode: hs.code,
@@ -354,7 +352,6 @@ export default function TariffCalculator({ initialRoo }: { initialRoo?: RooStatu
       freight: costs.freight ?? undefined,
       insurance: costs.insurance ?? undefined,
       postBorderCosts: costs.postBorder ?? undefined,
-      importDate: importDate || undefined,
     });
     setBusy(false);
     if (outcome.ok) {
@@ -551,7 +548,15 @@ export default function TariffCalculator({ initialRoo }: { initialRoo?: RooStatu
           )}
           {incotermInfo?.costs.includes('freight') && (
             <div>
-              <label htmlFor="tariff-freight" className={label}>
+              <label htmlFor="tariff-container" className={label}>
+                {tr('Loại container (để xem giá cước tham khảo)')}
+              </label>
+              <select id="tariff-container" value={container} onChange={(e) => setContainer(e.target.value as ContainerChoice)} className={field}>
+                <option value="">{tr('Tất cả loại')}</option>
+                <option value="20ft">{tr('Container 20ft')}</option>
+                <option value="40ft">{tr('Container 40ft')}</option>
+              </select>
+              <label htmlFor="tariff-freight" className={`${label} mt-3`}>
                 {tr('Cước vận chuyển quốc tế (đến cửa khẩu nhập)')}
               </label>
               <input id="tariff-freight" inputMode="decimal" value={freight} onChange={(e) => setFreight(e.target.value)} className={field} />
@@ -560,7 +565,7 @@ export default function TariffCalculator({ initialRoo }: { initialRoo?: RooStatu
                   {tr('Chưa có giá tham khảo cho tuyến này. Nhập giá từ báo giá thật của đơn vị vận chuyển.')}
                 </p>
               )}
-              {hints?.freight.map((f) => (
+              {hints?.freight.filter((f) => !container || CONTAINER_TYPES[container].includes(f.container_type)).map((f) => (
                 <p key={f.container_type} className="mt-1 text-xs text-slate-700">
                   {tr('Giá tham khảo')}: {f.price_low}–{f.price_high} {f.currency} / {f.container_type} ({tr('nguồn')}: {f.source}).{' '}
                   {f.currency === currency ? (
@@ -608,20 +613,6 @@ export default function TariffCalculator({ initialRoo }: { initialRoo?: RooStatu
         <details className="rounded-xl border border-slate-200 p-3">
           <summary className="cursor-pointer text-sm font-semibold text-slate-700">{tr('Thêm thông tin tùy chọn')}</summary>
           <div className="mt-3 space-y-4">
-        <div>
-          <label htmlFor="tariff-import-date" className={label}>
-            {tr('Ngày nhập khẩu dự kiến (không bắt buộc, mặc định hôm nay)')}
-          </label>
-          <input
-            id="tariff-import-date"
-            type="date"
-            min={IMPORT_DATE_MIN}
-            max={importDateMax()}
-            value={importDate}
-            onChange={(e) => setImportDate(e.target.value)}
-            className={field}
-          />
-        </div>
         <div>
           <label htmlFor="tariff-shipments" className={label}>
             {tr('Số lô hàng mỗi năm (không bắt buộc)')}

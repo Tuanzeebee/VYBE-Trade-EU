@@ -223,6 +223,11 @@ class TariffLine(Base):
     quota_note_en: Mapped[str | None] = mapped_column(Text)
     condition_note_en: Mapped[str | None] = mapped_column(Text)
     source_url: Mapped[str | None] = mapped_column(String(1024))
+    # Trích dẫn mức thuế ưu đãi: điều khoản của hiệp định, ngày ký, danh mục/phụ lục. Do người
+    # duyệt luật TM nhập; không bao giờ tự điền từ kiến thức của model (AGENTS.md §6.1).
+    legal_article: Mapped[str | None] = mapped_column(String(255))
+    signed_on: Mapped[dt.date | None] = mapped_column(Date)
+    annex_ref: Mapped[str | None] = mapped_column(String(255))
     # SPEC_compliance_data_20_codes: thuế cơ sở lộ trình (%), nguồn MFN, cờ đã đối chiếu TARIC
     base_rate: Mapped[Decimal | None] = mapped_column(Numeric(7, 4))
     mfn_source: Mapped[str | None] = mapped_column(String(24))

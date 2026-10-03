@@ -33,5 +33,7 @@ describe('nhãn hiển thị (N2)', () => {
   it('trang chủ không còn "Hỗ trợ bởi AI"', () => {
     const lang = readFileSync(join(__dirname, '..', 'context', 'LanguageContext.tsx'), 'utf8');
     expect(lang).not.toMatch(/Hỗ trợ bởi AI|AI-Powered/);
+    // Cả bản fr và ja của thẻ tính năng cũng không còn chữ AI/IA.
+    expect(lang).not.toMatch(/Propulsé par l’IA|AI搭載/);
   });
 });

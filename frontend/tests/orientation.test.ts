@@ -9,6 +9,7 @@ const base: FormValues = {
   expectedRevenue: '',
   annualVolume: '',
   budget: '',
+  productionRegion: '',
 };
 const v = (over: Partial<FormValues>): FormValues => ({ ...base, ...over });
 
@@ -26,12 +27,13 @@ describe('orientation (N5)', () => {
     expect(budgetRequired('bulk')).toBe(false);
   });
 
-  it('bước 1 cần sản phẩm và hướng bán; "khác" cần mô tả', () => {
+  it('bước 1 cần sản phẩm, thị trường và hướng bán; "khác" cần mô tả', () => {
     expect(validateStep(1, v({}))).not.toBeNull();
-    expect(validateStep(1, v({ productId: 'p1' }))).not.toBeNull();
-    expect(validateStep(1, v({ productId: 'p1', orientation: 'bulk' }))).toBeNull();
-    expect(validateStep(1, v({ productId: 'p1', orientation: 'other', otherText: '  ' }))).not.toBeNull();
-    expect(validateStep(1, v({ productId: 'p1', orientation: 'other', otherText: 'Bán cho nhà máy' }))).toBeNull();
+    expect(validateStep(1, v({ productId: 'p1', targetMarket: 'DE' }))).not.toBeNull();
+    expect(validateStep(1, v({ productId: 'p1', orientation: 'bulk' }))).not.toBeNull(); // thiếu thị trường
+    expect(validateStep(1, v({ productId: 'p1', targetMarket: 'DE', orientation: 'bulk' }))).toBeNull();
+    expect(validateStep(1, v({ productId: 'p1', targetMarket: 'DE', orientation: 'other', otherText: '  ' }))).not.toBeNull();
+    expect(validateStep(1, v({ productId: 'p1', targetMarket: 'DE', orientation: 'other', otherText: 'Bán cho nhà máy' }))).toBeNull();
   });
 
   it('bước 2 cần doanh thu > 0; thương hiệu riêng cần thêm ngân sách', () => {

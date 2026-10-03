@@ -17393,5 +17393,110 @@
     "See detailed check results",
     "See detailed check results",
     "See detailed check results"
+  ],
+  "Chọn thị trường định hướng.": [
+    "Choose your target market.",
+    "Choisissez votre marché cible.",
+    "対象市場を選択してください。"
+  ],
+  "— Chọn thị trường —": [
+    "— Choose a market —",
+    "— Choisir un marché —",
+    "— 市場を選択 —"
+  ],
+  "Chưa có buyer đã đăng ký phù hợp ở các thị trường này.": [
+    "No matching registered buyers in these markets yet.",
+    "Aucun acheteur inscrit correspondant sur ces marchés pour l'instant.",
+    "これらの市場に該当する登録バイヤーはまだありません。"
+  ],
+  "Vùng sản xuất (không bắt buộc, mặc định theo thành phố trong hồ sơ)": [
+    "Production region (optional, defaults to the city in your profile)",
+    "Région de production (facultatif, par défaut la ville du profil)",
+    "生産地域（任意。既定はプロフィールの市区町村）"
+  ],
+  "Báo cáo gồm 3 bước: chọn sản phẩm, thị trường và định hướng, nhập mục tiêu, rồi xác nhận. Mất khoảng 2 phút.": [
+    "The report has 3 steps: choose product, market and approach, enter your goals, then confirm. It takes about 2 minutes.",
+    "Le rapport comporte 3 étapes : choisir produit, marché et approche, saisir les objectifs, puis confirmer. Environ 2 minutes.",
+    "レポートは3ステップ：製品・市場・方針を選び、目標を入力し、確認します。所要時間は約2分です。"
+  ],
+  "Loại container (để xem giá cước tham khảo)": [
+    "Container type (to see reference freight rates)",
+    "Type de conteneur (pour voir les tarifs de fret indicatifs)",
+    "コンテナの種類（参考運賃の表示用）"
+  ],
+  "Tất cả loại": [
+    "All types",
+    "Tous les types",
+    "すべての種類"
+  ],
+  "Căn cứ": [
+    "Basis",
+    "Base juridique",
+    "根拠"
+  ],
+  "Ký ngày": [
+    "Signed on",
+    "Signé le",
+    "署名日"
+  ],
+  "cà phê, hạt điều, dừa, cá tra…": [
+    "coffee, cashew, coconut, pangasius…",
+    "café, noix de cajou, noix de coco, pangasius…",
+    "コーヒー、カシューナッツ、ココナッツ、パンガシウス…"
+  ],
+  "Thailand": [
+    "Thailand",
+    "Thaïlande",
+    "タイ"
+  ],
+  "Indonesia": [
+    "Indonesia",
+    "Indonésie",
+    "インドネシア"
+  ],
+  "Malaysia": [
+    "Malaysia",
+    "Malaisie",
+    "マレーシア"
+  ],
+  "Cambodia": [
+    "Cambodia",
+    "Cambodge",
+    "カンボジア"
+  ],
+  "Laos": [
+    "Laos",
+    "Laos",
+    "ラオス"
+  ],
+  "Myanmar": [
+    "Myanmar",
+    "Birmanie",
+    "ミャンマー"
+  ],
+  "Dữ liệu minh hoạ": [
+    "Sample data",
+    "Données d'exemple",
+    "サンプルデータ"
+  ],
+  "Một số nhà cung cấp là dữ liệu minh hoạ để bạn xem trước trải nghiệm; hồ sơ thật sẽ thay thế dần.": [
+    "Some suppliers are sample data so you can preview the experience; real profiles will replace them over time.",
+    "Certains fournisseurs sont des données d'exemple pour vous présenter l'expérience ; les vrais profils les remplaceront progressivement.",
+    "一部のサプライヤーは体験を確認いただくためのサンプルデータです。実際のプロフィールに順次置き換わります。"
+  ],
+  "Đặt tối thiểu": [
+    "Min. order",
+    "Commande min.",
+    "最小注文"
+  ],
+  "Lọc kết quả": [
+    "Filter results",
+    "Filtrer les résultats",
+    "結果を絞り込む"
+  ],
+  "Áp dụng bộ lọc": [
+    "Apply filters",
+    "Appliquer les filtres",
+    "絞り込みを適用"
   ]
 }

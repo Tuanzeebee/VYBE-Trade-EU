@@ -18,9 +18,9 @@ const json = (status: number, body: unknown) =>
 
 const ID = '11111111-1111-4111-8111-111111111111';
 const base = { id: ID, query: 'cá tra', language: 'vi', product_id: null, created_at: '2026-10-02T08:00:00Z', finished_at: null };
-const SECTIONS = ['positioning', 'summary', 'market', 'recommendations', 'segments', 'competition', 'compliance', 'branding', 'risks', 'next_steps'];
-const FREE = ['positioning', 'summary', 'recommendations'];
-const TITLES: Record<string, string> = { positioning: 'Định vị và năng lực', summary: 'Tóm tắt', recommendations: 'Thị trường nên ưu tiên', segments: 'Phân khúc thị trường', risks: 'Rủi ro cần lưu ý' };
+const SECTIONS = ['positioning', 'market', 'why_market', 'segments', 'competition', 'opportunities', 'risks', 'partners', 'compliance', 'branding', 'next_steps'];
+const FREE = ['positioning', 'market', 'why_market'];
+const TITLES: Record<string, string> = { positioning: 'Định vị và năng lực doanh nghiệp', market: 'Tổng quan thị trường EU', why_market: 'Vì sao chọn thị trường này', segments: 'Phân khúc người mua', partners: 'Đối tác tiềm năng', risks: 'Rủi ro cần lưu ý' };
 const row = (country: string) => ({ country, value: '42700000', share: '0.7194', growth: '0.1420', unit_price: '3.39' });
 
 function ready(full: boolean) {
@@ -36,7 +36,7 @@ function ready(full: boolean) {
     tariff_data_status: 'demo_unreviewed',
     sections: SECTIONS.map((key) => {
       const locked = !full && !FREE.includes(key);
-      return { key, title: TITLES[key] ?? key, text: locked || key === 'segments' ? '' : `Lời văn ${key}: Đức nhập 42,7 triệu EUR.`, locked };
+      return { key, title: TITLES[key] ?? key, text: locked || key === 'segments' || key === 'partners' ? '' : `Lời văn ${key}: Đức nhập 42,7 triệu EUR.`, locked };
     }),
     positioning: { score: '58.3', axes: { volume: '50.0', certification: '33.3', trust: '100.0', experience: '50.0' } },
     top_markets: [row('ES'), row('DE'), row('NL')],
@@ -67,6 +67,7 @@ const products = [{ id: 'p-1', name: 'Cá tra phi lê' }] as unknown as ProductO
 
 function fillStep1(orientation: string) {
   fireEvent.change(screen.getByLabelText('Sản phẩm của bạn'), { target: { value: 'p-1' } });
+  fireEvent.change(screen.getByLabelText('Thị trường quan tâm'), { target: { value: 'DE' } });
   fireEvent.change(screen.getByLabelText('Định hướng bán hàng'), { target: { value: orientation } });
 }
 const wrap = (ui: React.ReactElement) =>
@@ -103,20 +104,21 @@ describe('Báo cáo go-to-market (U18)', () => {
       product_id: 'p-1',
       q: '',
       language: 'vi',
-      target_market: null,
+      target_market: 'DE',
       sales_orientation: 'oem',
       other_text: null,
       expected_revenue: '1000000',
       annual_volume: null,
       budget: null,
+      production_region: null,
     });
 
     detail = ready(false);
     await act(() => vi.advanceTimersByTimeAsync(3000));
     const view = await screen.findByTestId('report-view');
-    expect(within(view).getByRole('region', { name: 'Tóm tắt' })).toHaveTextContent('Lời văn summary');
+    expect(within(view).getByRole('region', { name: 'Tổng quan thị trường EU' })).toHaveTextContent('Lời văn market');
     expect(within(view).getByTestId('positioning-chart')).toHaveTextContent('58.3/100');
-    expect(within(view).getAllByRole('region')[0]).toHaveAccessibleName('Định vị và năng lực'); // định vị đứng đầu
+    expect(within(view).getAllByRole('region')[0]).toHaveAccessibleName('Định vị và năng lực doanh nghiệp'); // định vị đứng đầu
     expect(within(view).getByRole('region', { name: 'Rủi ro cần lưu ý' })).toHaveTextContent('Phần này có trong bản đầy đủ.');
     expect(within(view).getByRole('table', { name: 'Thị trường nên ưu tiên' })).toBeInTheDocument();
     expect(within(view).queryByRole('link', { name: 'Tải PDF' })).toBeNull();
@@ -174,6 +176,16 @@ describe('Báo cáo go-to-market (U18)', () => {
     wrap(<MarketReportPanel products={[]} />);
     expect(await screen.findByRole('status')).toHaveTextContent('Bạn cần thêm ít nhất một sản phẩm');
     expect(screen.queryByRole('button', { name: 'Tạo báo cáo' })).toBeNull();
+  });
+
+  it('thị trường định hướng bắt buộc: thiếu thì không qua bước 1', async () => {
+    serve((call) => (call.method === 'GET' ? json(200, []) : undefined));
+    wrap(<MarketReportPanel products={products} />);
+    fireEvent.change(screen.getByLabelText('Sản phẩm của bạn'), { target: { value: 'p-1' } });
+    fireEvent.change(screen.getByLabelText('Định hướng bán hàng'), { target: { value: 'bulk' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Tiếp' }));
+    expect(await screen.findByRole('alert')).toHaveTextContent('Chọn thị trường định hướng.');
+    expect(screen.queryByLabelText(/Doanh thu xuất khẩu dự kiến/)).toBeNull();
   });
 
   it('từng bước kiểm dữ liệu: thương hiệu riêng bắt buộc ngân sách thương hiệu, doanh thu bắt buộc', async () => {

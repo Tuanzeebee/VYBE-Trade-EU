@@ -64,6 +64,18 @@ describe('Gợi ý cước và bảo hiểm (N6a)', () => {
     expect(screen.getByLabelText(/Cước vận chuyển quốc tế/)).toHaveValue('3000.00');
   });
 
+  it('chọn loại container thì chỉ hiện giá cước của loại đó', async () => {
+    serve({ ...HINTS, freight: [{ ...HINTS.freight[0], container_type: '20GP', price_typical: '1800.00' }, HINTS.freight[0]] });
+    renderCalc();
+    fireEvent.change(screen.getByLabelText(/Điều kiện giao hàng/), { target: { value: 'FOB' } });
+    expect(await screen.findAllByRole('button', { name: /Dùng giá này/ })).toHaveLength(2);
+    fireEvent.change(screen.getByLabelText(/Loại container/), { target: { value: '40ft' } });
+    const buttons = screen.getAllByRole('button', { name: /Dùng giá này/ });
+    expect(buttons).toHaveLength(1);
+    fireEvent.click(buttons[0]);
+    expect(screen.getByLabelText(/Cước vận chuyển quốc tế/)).toHaveValue('3000.00');
+  });
+
   it('không có giá tham khảo: nói rõ là chưa có, không tự điền số nào', async () => {
     serve({ freight: [], insurance: null });
     renderCalc();

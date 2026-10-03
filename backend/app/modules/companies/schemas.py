@@ -623,6 +623,19 @@ class AdminProductPatch(BaseModel):
     approval_status: Literal["approved", "hidden"] | None = None
 
 
+class FeaturedProductOut(BaseModel):
+    """Một sản phẩm tiêu biểu trên thẻ danh bạ: giá tham khảo, MOQ và ảnh (nếu có)."""
+
+    name: str
+    price_min: Decimal | None = None
+    price_max: Decimal | None = None
+    currency: str | None = None
+    unit: str | None = None
+    moq: Decimal | None = None
+    moq_unit: str | None = None
+    image_url: str | None = None
+
+
 class ExporterCardOut(BaseModel):
     """Một dòng danh bạ công khai: chỉ trường được phép lộ (không email, mã số thuế, địa chỉ)."""
 
@@ -645,6 +658,8 @@ class ExporterCardOut(BaseModel):
     city: str | None = None
     service_titles: list[str] = Field(default_factory=list)  # tối đa 3
     service_categories: list[str] = Field(default_factory=list)
+    is_demo: bool = False
+    featured_product: FeaturedProductOut | None = None
 
 
 class ExporterPage(BaseModel):

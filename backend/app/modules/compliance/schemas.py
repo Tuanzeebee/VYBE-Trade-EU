@@ -240,6 +240,14 @@ class StagingOut(BaseModel):
     zero_from: dt.date | None
 
 
+class TariffCitationOut(BaseModel):
+    """Nguồn của mức thuế ưu đãi: điều khoản hiệp định, ngày ký, danh mục/phụ lục."""
+
+    legal_article: str
+    signed_on: dt.date
+    annex_ref: str
+
+
 class TariffOut(BaseModel):
     check_id: str
     status: Literal["ok", "unsupported", "needs_review", "quota_scenarios"]
@@ -259,6 +267,7 @@ class TariffOut(BaseModel):
     condition_note_en: str | None
     # N6b: True khi mức thuế ưu đãi chưa có trích dẫn nguồn (điều khoản, ngày ký, danh mục).
     citation_missing: bool = True
+    citation: TariffCitationOut | None = None
     # U12: hiệp định của kết quả. evfta_rate/evfta_duty giữ tên cũ (tương thích) và bằng
     # preferential_rate/preferential_duty — thuế ưu đãi theo hiệp định đã chọn.
     agreement: AgreementOut | None = None
