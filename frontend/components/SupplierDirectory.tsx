@@ -6,6 +6,7 @@ import { Link } from '../i18n/navigation';
 import { translateText, type Locale } from '../i18n/translate';
 import { INDUSTRIES } from '../lib/companyApi';
 import { fetchFilterOptions, fetchSuppliers, serviceCategoryLabel, SUPPLIER_COUNTRIES, toSearch, type SupplierQuery } from '../lib/suppliersApi';
+import CategoryStrip from './CategoryStrip';
 
 const field =
   'mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-[#083832] focus:ring-1 focus:ring-[#083832]';
@@ -29,6 +30,11 @@ export default async function SupplierDirectory({ query, locale }: { query: Supp
         {t(services ? 'Nhà cung cấp dịch vụ xuất khẩu đã xác minh' : 'Nhà cung cấp đã xác minh từ Việt Nam và Đông Nam Á')}
       </h1>
       <p className="mt-2 text-sm text-slate-600">{t('Chỉ những doanh nghiệp đã được xác minh mới xuất hiện trong danh bạ.')}</p>
+      {!services && (
+        <div className="mt-5">
+          <CategoryStrip t={t} active={query.category} />
+        </div>
+      )}
       <nav aria-label={t('Loại nhà cung cấp')} className="mt-5 flex flex-wrap gap-2">
         <Link href="/suppliers" aria-current={services ? undefined : 'page'} className={tab(!services)}>
           {t('Sản phẩm')}

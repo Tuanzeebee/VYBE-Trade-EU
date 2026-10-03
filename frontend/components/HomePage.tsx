@@ -6,6 +6,7 @@ import HomeSearchDropdown from './HomeSearchDropdown.tsx';
 import { useRouter } from '../i18n/navigation';
 import { POPULAR_TAGS } from '../lib/constants.ts';
 import FeaturedSuppliers from './FeaturedSuppliers';
+import CategoryStrip from './CategoryStrip';
 
 export interface HomePageProps {
   searchTerm: string;
@@ -403,6 +404,10 @@ export default function HomePage({
             <span>{tr(t.featured.viewAll)}</span>
             <ArrowRight className="w-4 h-4 stroke-[2.2]" />
           </button>
+        </div>
+
+        <div className="mb-5">
+          <CategoryStrip t={tr} />
         </div>
 
         <FeaturedSuppliers />
